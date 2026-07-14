@@ -1,0 +1,15 @@
+title: SkyrScout
+description: Independent football scouting project
+theme: null
+
+collections:
+  players:
+    output: true
+    permalink: /players/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "players"
+    values:
+      layout: player
