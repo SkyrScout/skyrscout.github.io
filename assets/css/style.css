@@ -50,6 +50,12 @@ body {
     font-weight: 700;
 }
 
+.brand-logo {
+    display: block;
+    width: clamp(150px, 18vw, 240px);
+    height: auto;
+}
+
 nav {
     display: flex;
     gap: clamp(18px, 3vw, 38px);
