@@ -1,6 +1,6 @@
-/* ===========================
+/* =========================
    SkyrScout
-   =========================== */
+   ========================= */
 
 * {
     margin: 0;
@@ -8,89 +8,112 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    color: white;
-
-    background: url("../images/background.png") center center / cover no-repeat fixed;
+html {
+    background: #080b0f;
 }
 
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    background: #080b0f;
+}
+
+/* Banneret har fast, kontrollert høyde */
 .banner {
     width: 100%;
-    display: block;
+    height: clamp(180px, 22vw, 340px);
+
+    background-image: url("../images/banner.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
+/* Menyen ligger under banneret – ikke oppå det */
 .topbar {
-
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    padding: 20px 60px;
+    min-height: 72px;
+    padding: 16px clamp(24px, 5vw, 80px);
 
-    margin-top: -95px;
-
-    position: relative;
-    z-index: 10;
+    background: rgba(7, 11, 15, 0.96);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.logo {
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    font-size: 2rem;
-    font-weight: bold;
-}
-
-.logo img {
-
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
+.brand {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.8rem;
+    font-weight: 700;
 }
 
 nav {
-
     display: flex;
-    gap: 35px;
+    gap: clamp(18px, 3vw, 38px);
 }
 
 nav a {
-
-    color: white;
+    color: #ffffff;
     text-decoration: none;
-    font-weight: bold;
-    transition: .2s;
+    font-weight: 700;
 }
 
 nav a:hover {
+    color: #53c8ee;
+}
 
-    color: #53d5ff;
+/* Body-bakgrunnen begynner først ETTER banner og meny */
+.page-background {
+    min-height: calc(100vh - 412px);
+    padding: clamp(48px, 7vw, 100px) 24px;
+
+    background-image: url("../images/background.png");
+    background-size: cover;
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .content {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 56px);
 
-    max-width: 1200px;
-    margin: 120px auto;
-    padding: 40px;
-
-    background: rgba(10,15,20,.55);
-
-    backdrop-filter: blur(10px);
-
-    border-radius: 18px;
+    background: rgba(8, 12, 16, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
 }
 
-.welcome h1 {
-
-    font-size: 3rem;
-    margin-bottom: 20px;
+.content h1 {
+    margin-bottom: 16px;
+    font-size: clamp(2rem, 5vw, 3.5rem);
 }
 
-.welcome p {
-
-    font-size: 1.25rem;
+.content p {
+    font-size: 1.15rem;
     line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    nav {
+        width: 100%;
+        gap: 18px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .page-background {
+        background-attachment: scroll;
+        background-position: 70% top;
+    }
 }
