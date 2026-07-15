@@ -84,17 +84,26 @@ title: Players
                     <input
                         type="search"
                         id="player-search"
-                        placeholder="Search by name, club, league or country"
+                        placeholder="Search by name, position, club, league or country"
                     >
+                </label>
+
+                <label class="player-sort" for="player-sort">
+                    <span>Sort by</span>
+
+                    <select id="player-sort">
+                        <option value="newest">Newest reports</option>
+                        <option value="oldest">Oldest reports</option>
+                        <option value="name-az">Name A–Z</option>
+                        <option value="name-za">Name Z–A</option>
+                    </select>
                 </label>
 
             </div>
 
             <div class="players-list" id="players-list">
 
-                {% assign sorted_players = site.players | sort: "report_date" | reverse %}
-
-                {% for player in sorted_players %}
+                {% for player in site.players %}
 
                     {% assign title_parts = player.title | split: ' – ' %}
 
@@ -109,7 +118,9 @@ title: Players
 
                     <article
                         class="player-list-card"
-                        data-player="{{ player.title | downcase | escape }}"
+                        data-name="{{ title_parts[0] | downcase | escape }}"
+                        data-date="{{ player.report_date | escape }}"
+                        data-search="{{ player.title | append: ' ' | append: player.position | downcase | escape }}"
                     >
 
                         <a
@@ -139,14 +150,12 @@ title: Players
 
                                     {% if title_parts[1] %}
                                         <p class="player-list-details">
+                                            {% if player.position %}
+                                                {{ player.position }} •
+                                            {% endif %}
 
-    {% if player.position %}
-        {{ player.position }} •
-    {% endif %}
-
-    {{ title_parts[1] }}
-
-</p>
+                                            {{ title_parts[1] }}
+                                        </p>
                                     {% endif %}
                                 </div>
 
@@ -160,18 +169,25 @@ title: Players
                             </div>
 
                             {% if player.summary %}
-    {% assign summary_lines = player.summary | newline_to_br | split: '<br />' %}
+                                {% assign summary_lines = player.summary
+                                    | newline_to_br
+                                    | split: '<br />'
+                                %}
 
-    {% for summary_line in summary_lines offset:1 limit:1 %}
-        <p class="player-list-summary">
-            {{ summary_line | strip_html | strip }}
-        </p>
-    {% endfor %}
-{% endif %}
+                                {% for summary_line in summary_lines offset:1 limit:1 %}
+                                    <p class="player-list-summary">
+                                        {{ summary_line | strip_html | strip }}
+                                    </p>
+                                {% endfor %}
+                            {% endif %}
 
                             {% if player.report_by %}
                                 <p class="player-list-byline">
                                     Scouting report by {{ player.report_by }}
+
+                                    {% if player.report_date %}
+                                        • Report date: {{ player.report_date }}
+                                    {% endif %}
                                 </p>
                             {% endif %}
 
@@ -203,15 +219,73 @@ title: Players
 
     <script>
         const searchInput = document.querySelector("#player-search");
-        const playerCards = document.querySelectorAll(".player-list-card");
+        const sortSelect = document.querySelector("#player-sort");
+        const playersList = document.querySelector("#players-list");
         const noResults = document.querySelector("#players-no-results");
 
-        searchInput.addEventListener("input", function () {
-            const searchTerm = searchInput.value.trim().toLowerCase();
+        function getPlayerCards() {
+            return Array.from(
+                document.querySelectorAll(".player-list-card")
+            );
+        }
+
+        function convertNorwegianDate(dateText) {
+            if (!dateText) {
+                return 0;
+            }
+
+            const parts = dateText.split(".");
+
+            if (parts.length !== 3) {
+                return 0;
+            }
+
+            const day = Number(parts[0]);
+            const month = Number(parts[1]) - 1;
+            const year = Number(parts[2]);
+
+            return new Date(year, month, day).getTime();
+        }
+
+        function sortPlayers(sortType) {
+            const cards = getPlayerCards();
+
+            cards.sort(function (a, b) {
+                const nameA = a.dataset.name;
+                const nameB = b.dataset.name;
+
+                const dateA = convertNorwegianDate(a.dataset.date);
+                const dateB = convertNorwegianDate(b.dataset.date);
+
+                if (sortType === "oldest") {
+                    return dateA - dateB;
+                }
+
+                if (sortType === "name-az") {
+                    return nameA.localeCompare(nameB);
+                }
+
+                if (sortType === "name-za") {
+                    return nameB.localeCompare(nameA);
+                }
+
+                return dateB - dateA;
+            });
+
+            cards.forEach(function (card) {
+                playersList.appendChild(card);
+            });
+        }
+
+        function filterPlayers() {
+            const searchTerm = searchInput.value
+                .trim()
+                .toLowerCase();
+
             let visiblePlayers = 0;
 
-            playerCards.forEach(function (card) {
-                const playerText = card.dataset.player;
+            getPlayerCards().forEach(function (card) {
+                const playerText = card.dataset.search;
                 const isVisible = playerText.includes(searchTerm);
 
                 card.hidden = !isVisible;
@@ -222,7 +296,16 @@ title: Players
             });
 
             noResults.hidden = visiblePlayers !== 0;
+        }
+
+        searchInput.addEventListener("input", filterPlayers);
+
+        sortSelect.addEventListener("change", function () {
+            sortPlayers(sortSelect.value);
         });
+
+        sortPlayers("newest");
+        filterPlayers();
     </script>
 
 </body>
