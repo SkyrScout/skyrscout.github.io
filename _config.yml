@@ -17,3 +17,9 @@ defaults:
       type: "players"
     values:
       layout: player
+
+  - scope:
+      path: ""
+      type: "update_posts"
+    values:
+      layout: updates
