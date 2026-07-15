@@ -7,9 +7,9 @@ collections:
     output: true
     permalink: /players/:name/
 
-    update_posts:
-  output: true
-  permalink: /updates/:name/
+  update_posts:
+    output: true
+    permalink: /updates/:name/
 
 defaults:
   - scope:
