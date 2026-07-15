@@ -70,11 +70,17 @@
 
 </p>
 
-    {% if page.report_by %}
-        <p class="report-byline">
-            Scouting report by {{ page.report_by }}
-        </p>
-    {% endif %}
+   {% if page.report_by %}
+    <p class="report-byline">
+        Scouting report by {{ page.report_by }}
+
+        {% if page.report_date %}
+            <span class="report-date">
+                • Report date: {{ page.report_date }}
+            </span>
+        {% endif %}
+    </p>
+{% endif %}
 </header>
 
             {% if page.youtube %}
