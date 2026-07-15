@@ -14,7 +14,13 @@ html {
 
 body {
     min-height: 100vh;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:
+    Arial,
+    Helvetica,
+    "Segoe UI Emoji",
+    "Apple Color Emoji",
+    "Noto Color Emoji",
+    sans-serif;
     color: #f5f7f8;
     background: #080b0f;
 }
