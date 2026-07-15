@@ -130,11 +130,12 @@
 
             {% if page.report %}
 
-    {% assign formatted_report = page.report
-        | replace: 'Areas for improvement', '### Areas for improvement'
-        | replace: 'Career trajectory and current form', '### Career trajectory and current form'
-        | replace: 'Transfer outlook', '### Transfer outlook'
-    %}
+   {% assign formatted_report = page.report
+    | replace: ' | ', ' • '
+    | replace: 'Areas for improvement', '### Areas for improvement'
+    | replace: 'Career trajectory and current form', '### Career trajectory and current form'
+    | replace: 'Transfer outlook', '### Transfer outlook'
+%}
 
     <section class="player-section player-report">
 
