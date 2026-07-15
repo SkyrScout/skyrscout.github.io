@@ -1,0 +1,198 @@
+---
+title: Players
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Players | SkyrScout</title>
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <img
+            src="/assets/images/banner.png"
+            alt="SkyrScout"
+            class="site-banner"
+        >
+
+        <nav class="navigation">
+
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-toggle"
+            >
+
+            <label
+                for="menu-toggle"
+                class="menu-button"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="navigation-links">
+                <a href="/">Home</a>
+                <a href="/players/">Players</a>
+                <a href="/updates/">Updates</a>
+                <a href="/podcast/">Podcast</a>
+                <a href="/music/">Music</a>
+                <a href="/about/">About</a>
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main class="page-background">
+
+        <section class="players-page">
+
+            <header class="players-page-header">
+                <div>
+                    <h1>Players</h1>
+
+                    <p>
+                        Scouting reports and video analysis of players from
+                        leagues around the world.
+                    </p>
+                </div>
+
+                <div class="players-count">
+                    <strong>{{ site.players | size }}</strong>
+                    <span>player reports</span>
+                </div>
+            </header>
+
+            <div class="players-tools">
+
+                <label class="player-search">
+                    <span>Search players</span>
+
+                    <input
+                        type="search"
+                        id="player-search"
+                        placeholder="Name, club, league or country"
+                    >
+                </label>
+
+            </div>
+
+            <div class="players-grid" id="players-grid">
+
+                {% assign sorted_players = site.players | sort: "title" %}
+
+                {% for player in sorted_players %}
+
+                    {% assign title_parts = player.title | split: ' – ' %}
+
+                    {% assign youtube_id = player.youtube
+                        | split: 'v='
+                        | last
+                        | split: '&'
+                        | first
+                        | split: '/'
+                        | last
+                    %}
+
+                    <article
+                        class="player-card"
+                        data-player="{{ player.title | downcase | escape }}"
+                    >
+
+                        {% if player.youtube %}
+                            <a
+                                class="player-card-image"
+                                href="{{ player.url }}"
+                                aria-label="View {{ title_parts[0] }}"
+                            >
+                                <img
+                                    src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                    alt="{{ player.title }}"
+                                    loading="lazy"
+                                >
+                            </a>
+                        {% endif %}
+
+                        <div class="player-card-content">
+
+                            <h2>
+                                <a href="{{ player.url }}">
+                                    {{ title_parts[0] }}
+                                </a>
+                            </h2>
+
+                            {% if title_parts[1] %}
+                                <p class="player-card-details">
+                                    {{ title_parts[1] }}
+                                </p>
+                            {% endif %}
+
+                            {% if player.report_by %}
+                                <p class="player-card-byline">
+                                    Report by {{ player.report_by }}
+                                </p>
+                            {% endif %}
+
+                            <a class="player-card-link" href="{{ player.url }}">
+                                View scouting report
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% else %}
+
+                    <div class="players-empty">
+                        <p>No player reports have been published yet.</p>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <p class="players-no-results" id="players-no-results">
+                No players match your search.
+            </p>
+
+        </section>
+
+    </main>
+
+    <script>
+        const searchInput = document.querySelector("#player-search");
+        const playerCards = document.querySelectorAll(".player-card");
+        const noResults = document.querySelector("#players-no-results");
+
+        searchInput.addEventListener("input", function () {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            let visiblePlayers = 0;
+
+            playerCards.forEach(function (card) {
+                const playerText = card.dataset.player;
+                const isVisible = playerText.includes(searchTerm);
+
+                card.hidden = !isVisible;
+
+                if (isVisible) {
+                    visiblePlayers += 1;
+                }
+            });
+
+            noResults.hidden = visiblePlayers !== 0;
+        });
+    </script>
+
+</body>
+</html>
