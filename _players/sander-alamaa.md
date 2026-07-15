@@ -3,6 +3,7 @@ layout: player
 title: "Sander Alamaa (2008) – FC Flora Tallinn | Premium Liiga, Estonia"
 youtube: "https://www.youtube.com/watch?v=2xF-nZy76OI"
 report_by: "Scout Pilgrim"
+position: "Left Winger"
 
 summary: |
   🇪🇪 Sander Alamaa | 18 y/o LW
