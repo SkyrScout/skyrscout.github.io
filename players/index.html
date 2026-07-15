@@ -59,12 +59,13 @@ title: Players
         <section class="players-page">
 
             <header class="players-page-header">
+
                 <div>
                     <h1>Players</h1>
 
                     <p>
-                        Scouting reports and video analysis of players from
-                        leagues around the world.
+                        Scouting reports and video analysis of players
+                        featured by SkyrScout.
                     </p>
                 </div>
 
@@ -72,23 +73,24 @@ title: Players
                     <strong>{{ site.players | size }}</strong>
                     <span>player reports</span>
                 </div>
+
             </header>
 
             <div class="players-tools">
 
-                <label class="player-search">
+                <label class="player-search" for="player-search">
                     <span>Search players</span>
 
                     <input
                         type="search"
                         id="player-search"
-                        placeholder="Name, club, league or country"
+                        placeholder="Search by name, club, league or country"
                     >
                 </label>
 
             </div>
 
-            <div class="players-grid" id="players-grid">
+            <div class="players-list" id="players-list">
 
                 {% assign sorted_players = site.players | sort: "title" %}
 
@@ -106,47 +108,66 @@ title: Players
                     %}
 
                     <article
-                        class="player-card"
+                        class="player-list-card"
                         data-player="{{ player.title | downcase | escape }}"
                     >
 
-                        {% if player.youtube %}
-                            <a
-                                class="player-card-image"
-                                href="{{ player.url }}"
-                                aria-label="View {{ title_parts[0] }}"
-                            >
+                        <a
+                            class="player-list-image"
+                            href="{{ player.url }}"
+                            aria-label="View {{ title_parts[0] }}"
+                        >
+                            {% if player.youtube %}
                                 <img
                                     src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
                                     alt="{{ player.title }}"
                                     loading="lazy"
                                 >
-                            </a>
-                        {% endif %}
+                            {% endif %}
+                        </a>
 
-                        <div class="player-card-content">
+                        <div class="player-list-content">
 
-                            <h2>
-                                <a href="{{ player.url }}">
-                                    {{ title_parts[0] }}
+                            <div class="player-list-heading">
+
+                                <div>
+                                    <h2>
+                                        <a href="{{ player.url }}">
+                                            {{ title_parts[0] }}
+                                        </a>
+                                    </h2>
+
+                                    {% if title_parts[1] %}
+                                        <p class="player-list-details">
+                                            {{ title_parts[1] }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+
+                                <a
+                                    class="player-list-action"
+                                    href="{{ player.url }}"
+                                >
+                                    View report
                                 </a>
-                            </h2>
 
-                            {% if title_parts[1] %}
-                                <p class="player-card-details">
-                                    {{ title_parts[1] }}
+                            </div>
+
+                            {% if player.summary %}
+                                <p class="player-list-summary">
+                                    {{ player.summary
+                                        | strip_html
+                                        | strip_newlines
+                                        | truncatewords: 28
+                                    }}
                                 </p>
                             {% endif %}
 
                             {% if player.report_by %}
-                                <p class="player-card-byline">
-                                    Report by {{ player.report_by }}
+                                <p class="player-list-byline">
+                                    Scouting report by {{ player.report_by }}
                                 </p>
                             {% endif %}
-
-                            <a class="player-card-link" href="{{ player.url }}">
-                                View scouting report
-                            </a>
 
                         </div>
 
@@ -162,7 +183,11 @@ title: Players
 
             </div>
 
-            <p class="players-no-results" id="players-no-results">
+            <p
+                class="players-no-results"
+                id="players-no-results"
+                hidden
+            >
                 No players match your search.
             </p>
 
@@ -172,7 +197,7 @@ title: Players
 
     <script>
         const searchInput = document.querySelector("#player-search");
-        const playerCards = document.querySelectorAll(".player-card");
+        const playerCards = document.querySelectorAll(".player-list-card");
         const noResults = document.querySelector("#players-no-results");
 
         searchInput.addEventListener("input", function () {
