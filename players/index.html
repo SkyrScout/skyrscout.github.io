@@ -139,8 +139,14 @@ title: Players
 
                                     {% if title_parts[1] %}
                                         <p class="player-list-details">
-                                            {{ title_parts[1] }}
-                                        </p>
+
+    {% if player.position %}
+        {{ player.position }} •
+    {% endif %}
+
+    {{ title_parts[1] }}
+
+</p>
                                     {% endif %}
                                 </div>
 
