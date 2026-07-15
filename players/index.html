@@ -154,14 +154,14 @@ title: Players
                             </div>
 
                             {% if player.summary %}
-                                <p class="player-list-summary">
-                                    {{ player.summary
-                                        | strip_html
-                                        | strip_newlines
-                                        | truncatewords: 28
-                                    }}
-                                </p>
-                            {% endif %}
+    {% assign summary_lines = player.summary | newline_to_br | split: '<br />' %}
+
+    {% for summary_line in summary_lines offset:1 limit:1 %}
+        <p class="player-list-summary">
+            {{ summary_line | strip_html | strip }}
+        </p>
+    {% endfor %}
+{% endif %}
 
                             {% if player.report_by %}
                                 <p class="player-list-byline">
