@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page.title }} | SkyrScout News</title>
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <img
+            src="/assets/images/banner.png"
+            alt="SkyrScout"
+            class="site-banner"
+        >
+
+        <nav class="navigation">
+
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-toggle"
+            >
+
+            <label
+                for="menu-toggle"
+                class="menu-button"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="navigation-links">
+                <a href="/">Home</a>
+                <a href="/players/">Players</a>
+                <a href="/news/">News</a>
+                <a href="/podcast/">Podcast</a>
+                <a href="/music/">Music</a>
+                <a href="/about/">About</a>
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main class="page-background">
+
+        <article class="news-article">
+
+            <header class="news-header">
+                <p class="news-date">
+                    {{ page.date | date: "%d.%m.%Y" }}
+                </p>
+
+                <h1>{{ page.title }}</h1>
+
+                {% if page.player %}
+                    <p class="news-player">
+                        Related player:
+                        <a href="/players/{{ page.player }}/">
+                            {{ page.player_name }}
+                        </a>
+                    </p>
+                {% endif %}
+            </header>
+
+            <section class="news-content">
+                {{ content }}
+            </section>
+
+            {% if page.source_url %}
+                <section class="news-source">
+                    <span>Source:</span>
+
+                    <a
+                        href="{{ page.source_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {{ page.source | default: "Original source" }}
+                    </a>
+                </section>
+            {% endif %}
+
+            {% if page.player %}
+                <section class="news-action">
+                    <a href="/players/{{ page.player }}/">
+                        View scouting report
+                    </a>
+                </section>
+            {% endif %}
+
+        </article>
+
+    </main>
+
+</body>
+</html>
