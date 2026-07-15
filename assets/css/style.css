@@ -19,57 +19,58 @@ body {
     background: #080b0f;
 }
 
-/* Banneret har fast, kontrollert høyde */
-.banner {
+/* Banneret vises i sitt riktige format */
+.site-banner {
     display: block;
     width: 100%;
     height: auto;
 }
 
-/* Menyen ligger under banneret – ikke oppå det */
-.topbar {
+/* Tynn navigasjonslinje */
+.navigation {
+    position: relative;
+    min-height: 46px;
+    background: rgba(7, 11, 15, 0.97);
+    border-bottom: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.navigation-links {
+    min-height: 46px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-
-    min-height: 72px;
-    padding: 16px clamp(24px, 5vw, 80px);
-
-    background: rgba(7, 11, 15, 0.96);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    gap: clamp(24px, 4vw, 52px);
+    padding: 0 24px;
 }
 
-.brand {
+.navigation-links a {
     color: #ffffff;
     text-decoration: none;
-    font-size: 1.8rem;
+    font-size: 0.95rem;
     font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
 }
 
-.brand-logo {
-    display: block;
-    width: clamp(150px, 18vw, 240px);
-    height: auto;
-}
-
-nav {
-    display: flex;
-    gap: clamp(18px, 3vw, 38px);
-}
-
-nav a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 700;
-}
-
-nav a:hover {
+.navigation-links a:hover {
     color: #53c8ee;
 }
 
-/* Body-bakgrunnen begynner først ETTER banner og meny */
+/* Skjult checkbox som styrer mobilmenyen */
+.menu-toggle {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Hamburgerknappen er skjult på store skjermer */
+.menu-button {
+    display: none;
+}
+
+/* Body-bakgrunnen starter under navigasjonen */
 .page-background {
-    min-height: calc(100vh - 412px);
+    min-height: calc(100vh - 46px);
     padding: clamp(48px, 7vw, 100px) 24px;
 
     background-image: url("../images/background.png");
@@ -80,42 +81,78 @@ nav a:hover {
 }
 
 .content {
-    width: min(1100px, 100%);
+    width: min(1000px, 100%);
     margin: 0 auto;
-    padding: clamp(28px, 5vw, 56px);
+    padding: clamp(28px, 5vw, 52px);
 
-    background: rgba(8, 12, 16, 0.82);
+    background: rgba(8, 12, 16, 0.80);
     border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 16px;
+    border-radius: 14px;
     backdrop-filter: blur(8px);
 }
 
 .content h1 {
     margin-bottom: 16px;
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: clamp(2rem, 5vw, 3.4rem);
 }
 
 .content p {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
+/* Mobil */
 @media (max-width: 720px) {
-    .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 16px;
+    .navigation {
+        min-height: 46px;
     }
 
-    nav {
+    .menu-button {
+        width: 46px;
+        height: 46px;
+        margin-left: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        padding: 0 14px;
+        cursor: pointer;
+    }
+
+    .menu-button span {
+        display: block;
         width: 100%;
-        gap: 18px;
-        overflow-x: auto;
-        padding-bottom: 4px;
+        height: 2px;
+        background: #ffffff;
+        border-radius: 2px;
+    }
+
+    .navigation-links {
+        display: none;
+        min-height: 0;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .navigation-links a {
+        padding: 14px 22px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .menu-toggle:checked ~ .navigation-links {
+        display: flex;
     }
 
     .page-background {
+        padding: 34px 16px;
         background-attachment: scroll;
-        background-position: 70% top;
+        background-position: 68% top;
+    }
+
+    .content {
+        padding: 26px 22px;
     }
 }
