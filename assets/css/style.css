@@ -668,3 +668,49 @@ img.emoji {
         align-self: flex-start;
     }
 }
+.player-sort {
+    display: block;
+    min-width: 230px;
+}
+
+.player-sort span {
+    display: block;
+    margin-bottom: 9px;
+    color: #dce4e8;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.player-sort select {
+    width: 100%;
+    height: 48px;
+    padding: 0 42px 0 16px;
+
+    color: #ffffff;
+    font: inherit;
+
+    background-color: rgba(255, 255, 255, 0.065);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+}
+
+.player-sort select:focus {
+    border-color: #53c8ee;
+    box-shadow: 0 0 0 3px rgba(83, 200, 238, 0.13);
+}
+
+.player-sort option {
+    color: #ffffff;
+    background: #10151a;
+}
+
+@media (min-width: 760px) {
+    .players-tools {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 230px;
+        align-items: end;
+        gap: 18px;
+    }
+}
