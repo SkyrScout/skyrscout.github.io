@@ -84,7 +84,7 @@
                     <h2>Scout Pilgrim Summary</h2>
 
                     <div class="summary-content">
-                        {{ page.summary | markdownify }}
+                        {{ page.summary | newline_to_br }}
                     </div>
                 </section>
             {% endif %}
@@ -121,31 +121,48 @@
 
             {% if page.transfermarkt or page.sofascore or page.other_source %}
                 <section class="player-section player-sources">
-                    <h2>Sources</h2>
+                    <h2>Data Sources</h2>
 
                     <div class="source-links">
 
                         {% if page.transfermarkt %}
-                            <a href="{{ page.transfermarkt }}"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                Transfermarkt
+                            <a
+                                href="{{ page.transfermarkt }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span class="source-name">Transfermarkt</span>
+                                <span class="source-description">
+                                    Player profile, career history and market value
+                                </span>
                             </a>
                         {% endif %}
 
                         {% if page.sofascore %}
-                            <a href="{{ page.sofascore }}"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                Sofascore
+                            <a
+                                href="{{ page.sofascore }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span class="source-name">Sofascore</span>
+                                <span class="source-description">
+                                    Match data, performance statistics and ratings
+                                </span>
                             </a>
                         {% endif %}
 
                         {% if page.other_source %}
-                            <a href="{{ page.other_source }}"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                {{ page.other_source_name | default: "Additional source" }}
+                            <a
+                                href="{{ page.other_source }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span class="source-name">
+                                    {{ page.other_source_name | default: "Additional source" }}
+                                </span>
+                                <span class="source-description">
+                                    Additional information and reference material
+                                </span>
                             </a>
                         {% endif %}
 
