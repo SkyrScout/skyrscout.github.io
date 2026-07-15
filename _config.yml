@@ -7,9 +7,9 @@ collections:
     output: true
     permalink: /players/:name/
 
-  news:
+    updates:
     output: true
-    permalink: /news/:name/
+    permalink: /updates/:name/
 
 defaults:
   - scope:
