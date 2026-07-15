@@ -60,6 +60,7 @@ title: Updates
 
             <header class="updates-page-header">
                 <h1>Updates</h1>
+
                 <p>
                     News, rumours and confirmed developments involving players
                     featured by SkyrScout.
@@ -68,40 +69,44 @@ title: Updates
 
             <div class="updates-list">
 
-                {% assign sorted_updates = site.update_posts | sort: "path" | reverse %}
+                {% if site.update_posts and site.update_posts.size > 0 %}
 
-                {% for update in sorted_updates %}
+                    {% assign sorted_updates = site.update_posts | sort: "path" | reverse %}
 
-                    {% assign update_filename = update.path | split: "/" | last %}
-                    {% assign update_date = update_filename | slice: 0, 10 | split: "-" %}
+                    {% for update in sorted_updates %}
 
-                    <article class="update-card">
+                        {% assign update_filename = update.path | split: "/" | last %}
+                        {% assign update_date = update_filename | slice: 0, 10 | split: "-" %}
 
-                        <p class="update-date">
-                            {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
-                        </p>
+                        <article class="update-card">
 
-                        <h2>
-                            <a href="{{ update.url }}">
-                                {{ update.title }}
-                            </a>
-                        </h2>
-
-                        {% if update.player_name %}
-                            <p class="update-player">
-                                {{ update.player_name }}
+                            <p class="update-date">
+                                {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
                             </p>
-                        {% endif %}
 
-                        <div class="update-excerpt">
-                            {{ update.content | strip_html | truncatewords: 35 }}
-                        </div>
+                            <h2>
+                                <a href="{{ update.url }}">
+                                    {{ update.title }}
+                                </a>
+                            </h2>
 
-                        <a class="update-link" href="{{ update.url }}">
-                            Read update
-                        </a>
+                            {% if update.player_name %}
+                                <p class="update-player">
+                                    {{ update.player_name }}
+                                </p>
+                            {% endif %}
 
-                    </article>
+                            <div class="update-excerpt">
+                                {{ update.content | strip_html | truncatewords: 35 }}
+                            </div>
+
+                            <a class="update-link" href="{{ update.url }}">
+                                Read update
+                            </a>
+
+                        </article>
+
+                    {% endfor %}
 
                 {% else %}
 
@@ -109,7 +114,7 @@ title: Updates
                         <p>No updates have been published yet.</p>
                     </div>
 
-                {% endfor %}
+                {% endif %}
 
             </div>
 
