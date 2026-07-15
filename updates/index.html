@@ -68,7 +68,7 @@ title: Updates
 
             <div class="updates-list">
 
-                {% assign sorted_updates = site.updates | sort: "path" | reverse %}
+                {% assign sorted_updates = site.update_posts | sort: "path" | reverse %}
 
                 {% for update in sorted_updates %}
 
