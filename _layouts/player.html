@@ -58,9 +58,17 @@
 <header class="player-header">
     <h1>{{ title_parts[0] }}</h1>
 
-    {% if title_parts[1] %}
-        <p class="player-subtitle">{{ title_parts[1] }}</p>
+    <p class="player-subtitle">
+
+    {% if page.position %}
+        {{ page.position }} •
     {% endif %}
+
+    {% if title_parts[1] %}
+        {{ title_parts[1] }}
+    {% endif %}
+
+</p>
 
     {% if page.report_by %}
         <p class="report-byline">
