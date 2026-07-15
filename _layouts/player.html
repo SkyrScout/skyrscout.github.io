@@ -185,22 +185,14 @@
         </article>
 
     </main>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/16.0.1/twemoji.min.js"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const summary = document.querySelector(".summary-content");
-
-        if (summary) {
-            twemoji.parse(summary, {
-                folder: "svg",
-                ext: ".svg"
-            });
-        }
+        twemoji.parse(document.body, {
+            folder: "svg",
+            ext: ".svg"
+        });
     });
 </script>
 </body>
