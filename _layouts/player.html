@@ -53,14 +53,21 @@
 
         <article class="player-page">
 
-            <header class="player-header">
-                <h1>{{ page.title }}</h1>
-                {% if page.report_by %}
-    <p class="report-byline">
-        Scouting report by {{ page.report_by }}
-    </p>
-{% endif %}
-            </header>
+            {% assign title_parts = page.title | split: ' – ' %}
+
+<header class="player-header">
+    <h1>{{ title_parts[0] }}</h1>
+
+    {% if title_parts[1] %}
+        <p class="player-subtitle">{{ title_parts[1] }}</p>
+    {% endif %}
+
+    {% if page.report_by %}
+        <p class="report-byline">
+            Scouting report by {{ page.report_by }}
+        </p>
+    {% endif %}
+</header>
 
             {% if page.youtube %}
                 {% assign youtube_id = page.youtube
