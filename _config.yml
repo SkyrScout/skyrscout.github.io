@@ -7,6 +7,10 @@ collections:
     output: true
     permalink: /players/:name/
 
+  news:
+    output: true
+    permalink: /news/:name/
+
 defaults:
   - scope:
       path: ""
