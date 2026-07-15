@@ -90,12 +90,6 @@ title: Updates
                                 </a>
                             </h2>
 
-                            {% if update.player_name %}
-                                <p class="update-player">
-                                    {{ update.player_name }}
-                                </p>
-                            {% endif %}
-
                             <div class="update-excerpt">
                                 {{ update.content | strip_html | truncatewords: 35 }}
                             </div>
