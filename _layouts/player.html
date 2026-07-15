@@ -130,24 +130,35 @@
 
             {% if page.report %}
 
-                {% assign formatted_report = page.report
-                    | replace: 'Areas for improvement', '### Areas for improvement'
-                    | replace: 'Career trajectory and current form', '### Career trajectory and current form'
-                    | replace: 'Transfer outlook', '### Transfer outlook'
-                %}
+    {% assign formatted_report = page.report
+        | replace: 'Areas for improvement', '### Areas for improvement'
+        | replace: 'Career trajectory and current form', '### Career trajectory and current form'
+        | replace: 'Transfer outlook', '### Transfer outlook'
+    %}
 
-                <section class="player-section player-report">
+    <section class="player-section player-report">
 
-                    <h2>Scouting Report</h2>
+        <h2>Scouting Report</h2>
 
-                    <div class="report-content">
-                        {{ formatted_report | markdownify }}
-                    </div>
+        <div class="report-content">
+            {{ formatted_report | markdownify }}
+        </div>
 
-                </section>
+    </section>
 
-            {% endif %}
+{% elsif content and content != "" %}
 
+    <section class="player-section player-report">
+
+        <h2>Scouting Report</h2>
+
+        <div class="report-content">
+            {{ content }}
+        </div>
+
+    </section>
+
+{% endif %}
             {% if page.podcast %}
 
                 {% assign spotify_embed = page.podcast
