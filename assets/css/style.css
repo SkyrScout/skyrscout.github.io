@@ -141,9 +141,10 @@ body {
 }
 
 .player-subtitle {
-    margin-top: 10px;
+    margin-top: 8px;
     color: #d8e0e4;
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    font-weight: 500;
     line-height: 1.4;
 }
 
@@ -158,9 +159,9 @@ img.emoji {
     ...
 }
 .report-byline {
-    margin-top: 12px;
-    color: #b9c4ca;
-    font-size: 1rem;
+    margin-top: 18px;
+    color: #9daab1;
+    font-size: 0.9rem;
     line-height: 1.4;
 }
 /* YouTube video */
