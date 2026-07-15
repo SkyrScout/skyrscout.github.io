@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page.title }} | SkyrScout</title>
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <img
+            src="/assets/images/banner.png"
+            alt="SkyrScout"
+            class="site-banner"
+        >
+
+        <nav class="navigation">
+
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-toggle"
+            >
+
+            <label
+                for="menu-toggle"
+                class="menu-button"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="navigation-links">
+                <a href="/">Home</a>
+                <a href="/players/">Players</a>
+                <a href="/podcast/">Podcast</a>
+                <a href="/music/">Music</a>
+                <a href="/about/">About</a>
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main class="page-background">
+
+        <article class="player-page">
+
+            <header class="player-header">
+                <h1>{{ page.title }}</h1>
+            </header>
+
+            {% if page.youtube %}
+                {% assign youtube_id = page.youtube
+                    | split: 'v='
+                    | last
+                    | split: '&'
+                    | first
+                    | split: '/'
+                    | last
+                %}
+
+                <section class="player-video">
+                    <div class="video-wrapper">
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ youtube_id }}"
+                            title="{{ page.title }}"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if page.summary %}
+                <section class="player-section player-summary">
+                    <h2>Scout Pilgrim Summary</h2>
+
+                    <div class="summary-content">
+                        {{ page.summary | markdownify }}
+                    </div>
+                </section>
+            {% endif %}
+
+            <section class="player-section player-report">
+                <h2>Scouting Report</h2>
+
+                <div class="report-content">
+                    {{ content }}
+                </div>
+            </section>
+
+            {% if page.spotify %}
+                <section class="player-section player-podcast">
+                    <h2>Scout of This World</h2>
+
+                    {% if page.podcast_time %}
+                        <p class="podcast-time">
+                            Segment starts at: <strong>{{ page.podcast_time }}</strong>
+                        </p>
+                    {% endif %}
+
+                    <iframe
+                        src="{{ page.spotify }}"
+                        width="100%"
+                        height="152"
+                        frameborder="0"
+                        allowfullscreen
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy">
+                    </iframe>
+                </section>
+            {% endif %}
+
+            {% if page.transfermarkt or page.sofascore or page.other_source %}
+                <section class="player-section player-sources">
+                    <h2>Sources</h2>
+
+                    <div class="source-links">
+
+                        {% if page.transfermarkt %}
+                            <a href="{{ page.transfermarkt }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Transfermarkt
+                            </a>
+                        {% endif %}
+
+                        {% if page.sofascore %}
+                            <a href="{{ page.sofascore }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Sofascore
+                            </a>
+                        {% endif %}
+
+                        {% if page.other_source %}
+                            <a href="{{ page.other_source }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                {{ page.other_source_name | default: "Additional source" }}
+                            </a>
+                        {% endif %}
+
+                    </div>
+                </section>
+            {% endif %}
+
+        </article>
+
+    </main>
+
+</body>
+</html>
