@@ -156,13 +156,15 @@ img.emoji {
 }
 
 .report-byline {
-    ...
-}
-.report-byline {
     margin-top: 18px;
+    margin-bottom: 8px;
     color: #9daab1;
     font-size: 0.9rem;
     line-height: 1.4;
+}
+.report-date {
+    color: #7f8b91;
+}
 }
 /* YouTube video */
 
