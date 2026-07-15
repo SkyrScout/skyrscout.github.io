@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>SkyrScout</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
@@ -10,32 +11,57 @@
 
 <body>
 
-   <header class="site-header">
-    <img src="assets/images/banner.png" alt="" class="banner">
+    <header class="site-header">
 
-    <div class="topbar">
-       <a class="brand" href="/">
-    <img src="/assets/images/SkyrScout_logo_uten%20bakgrunn.png"
-         alt="SkyrScout"
-         class="brand-logo">
-</a>
+        <img
+            src="assets/images/banner.png"
+            alt="SkyrScout"
+            class="site-banner"
+        >
 
-        <nav>
-            <a href="/">Home</a>
-            <a href="/players/">Players</a>
-            <a href="/podcast/">Podcast</a>
-            <a href="/music/">Music</a>
-            <a href="/about/">About</a>
+        <nav class="navigation">
+
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-toggle"
+            >
+
+            <label
+                for="menu-toggle"
+                class="menu-button"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="navigation-links">
+                <a href="/">Home</a>
+                <a href="/players/">Players</a>
+                <a href="/podcast/">Podcast</a>
+                <a href="/music/">Music</a>
+                <a href="/about/">About</a>
+            </div>
+
         </nav>
-    </div>
-</header>
 
-<main class="page-background">
-    <section class="content">
-        <h1>SkyrScout</h1>
-        <p>Scouting reports, videos and podcast discussions.</p>
-    </section>
-</main>
-    
+    </header>
+
+    <main class="page-background">
+
+        <section class="content">
+
+            <h1>SkyrScout</h1>
+
+            <p>
+                Scouting reports, videos and podcast discussions.
+            </p>
+
+        </section>
+
+    </main>
+
 </body>
 </html>
