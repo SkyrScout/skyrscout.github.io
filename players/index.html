@@ -92,7 +92,7 @@ title: Players
 
             <div class="players-list" id="players-list">
 
-                {% assign sorted_players = site.players | sort: "title" %}
+                {% assign sorted_players = site.players | sort: "report_date" | reverse %}
 
                 {% for player in sorted_players %}
 
