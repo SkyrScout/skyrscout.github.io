@@ -1,12 +1,16 @@
+---
+title: Updates
+---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SkyrScout</title>
+    <title>Updates | SkyrScout</title>
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
@@ -14,7 +18,7 @@
     <header class="site-header">
 
         <img
-            src="assets/images/banner.png"
+            src="/assets/images/banner.png"
             alt="SkyrScout"
             class="site-banner"
         >
@@ -40,6 +44,7 @@
             <div class="navigation-links">
                 <a href="/">Home</a>
                 <a href="/players/">Players</a>
+                <a href="/updates/">Updates</a>
                 <a href="/podcast/">Podcast</a>
                 <a href="/music/">Music</a>
                 <a href="/about/">About</a>
@@ -51,13 +56,61 @@
 
     <main class="page-background">
 
-        <section class="content">
+        <section class="updates-page">
 
-            <h1>SkyrScout</h1>
+            <header class="updates-page-header">
+                <h1>Updates</h1>
 
-            <p>
-                Scouting reports, videos and podcast discussions.
-            </p>
+                <p>
+                    News, rumours and confirmed developments involving players
+                    featured by SkyrScout.
+                </p>
+            </header>
+
+            <div class="updates-list">
+
+                {% if site.update_posts and site.update_posts.size > 0 %}
+
+                    {% assign sorted_updates = site.update_posts | sort: "path" | reverse %}
+
+                    {% for update in sorted_updates %}
+
+                        {% assign update_filename = update.path | split: "/" | last %}
+                        {% assign update_date = update_filename | slice: 0, 10 | split: "-" %}
+
+                        <article class="update-card">
+
+                            <p class="update-date">
+                                {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
+                            </p>
+
+                            <h2>
+                                <a href="{{ update.url }}">
+                                    {{ update.title }}
+                                </a>
+                            </h2>
+
+                            <div class="update-excerpt">
+                                {{ update.content | strip_html | truncatewords: 35 }}
+                            </div>
+
+                            <a class="update-link" href="{{ update.url }}">
+                                Read update
+                            </a>
+
+                        </article>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="updates-empty">
+                        <p>No updates have been published yet.</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
 
         </section>
 
