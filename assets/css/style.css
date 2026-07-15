@@ -15,22 +15,24 @@ html {
 body {
     min-height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
-    color: #ffffff;
+    color: #f5f7f8;
     background: #080b0f;
 }
 
-/* Banneret vises i sitt riktige format */
+/* =========================
+   Banner and navigation
+   ========================= */
+
 .site-banner {
     display: block;
     width: 100%;
     height: auto;
 }
 
-/* Tynn navigasjonslinje */
 .navigation {
     position: relative;
     min-height: 46px;
-    background: rgba(7, 11, 15, 0.97);
+    background: rgba(7, 11, 15, 0.98);
     border-bottom: 1px solid rgba(83, 200, 238, 0.55);
 }
 
@@ -56,22 +58,23 @@ body {
     color: #53c8ee;
 }
 
-/* Skjult checkbox som styrer mobilmenyen */
 .menu-toggle {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-/* Hamburgerknappen er skjult på store skjermer */
 .menu-button {
     display: none;
 }
 
-/* Body-bakgrunnen starter under navigasjonen */
+/* =========================
+   Shared page background
+   ========================= */
+
 .page-background {
     min-height: calc(100vh - 46px);
-    padding: clamp(48px, 7vw, 100px) 24px;
+    padding: clamp(40px, 6vw, 80px) 24px 90px;
 
     background-image: url("../images/background.png");
     background-size: cover;
@@ -80,12 +83,16 @@ body {
     background-attachment: fixed;
 }
 
+/* =========================
+   Homepage
+   ========================= */
+
 .content {
     width: min(1000px, 100%);
     margin: 0 auto;
     padding: clamp(28px, 5vw, 52px);
 
-    background: rgba(8, 12, 16, 0.80);
+    background: rgba(8, 12, 16, 0.86);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 14px;
     backdrop-filter: blur(8px);
@@ -101,7 +108,188 @@ body {
     line-height: 1.6;
 }
 
-/* Mobil */
+/* =========================
+   Player page
+   ========================= */
+
+.player-page {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+}
+
+.player-header {
+    margin-bottom: 28px;
+    padding: 28px 32px;
+
+    background: rgba(7, 11, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-left: 4px solid #53c8ee;
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+}
+
+.player-header h1 {
+    max-width: 950px;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.2;
+}
+
+/* YouTube video */
+
+.player-video {
+    margin-bottom: 30px;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+
+    background: #000000;
+    border-radius: 14px;
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Shared content panels */
+
+.player-section {
+    margin-bottom: 30px;
+    padding: clamp(26px, 4vw, 42px);
+
+    background: rgba(7, 11, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.player-section h2 {
+    margin-bottom: 22px;
+    padding-bottom: 13px;
+
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    line-height: 1.2;
+
+    border-bottom: 1px solid rgba(83, 200, 238, 0.42);
+}
+
+/* Summary */
+
+.player-summary {
+    background: rgba(4, 8, 12, 0.94);
+}
+
+.summary-content {
+    max-width: 820px;
+    font-size: clamp(1rem, 1.8vw, 1.12rem);
+    line-height: 1.85;
+}
+
+.summary-content br {
+    content: "";
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Report */
+
+.report-content {
+    max-width: 820px;
+    font-size: 1.05rem;
+    line-height: 1.78;
+}
+
+.report-content p {
+    margin-bottom: 1.25em;
+}
+
+.report-content h2,
+.report-content h3 {
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    padding-bottom: 8px;
+
+    line-height: 1.25;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.report-content h2 {
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+}
+
+.report-content h3 {
+    font-size: 1.3rem;
+}
+
+/* Podcast */
+
+.podcast-time {
+    margin-bottom: 18px;
+    color: #d8e0e4;
+}
+
+/* Data sources */
+
+.source-links {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 720px;
+}
+
+.source-links a {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    padding: 18px 20px;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 10px;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+.source-links a:hover {
+    transform: translateY(-2px);
+    background: rgba(83, 200, 238, 0.09);
+    border-color: rgba(83, 200, 238, 0.65);
+}
+
+.source-name {
+    color: #67d3f3;
+    font-size: 1.08rem;
+    font-weight: 700;
+}
+
+.source-description {
+    color: #b9c4ca;
+    font-size: 0.94rem;
+    line-height: 1.45;
+}
+
+/* =========================
+   Mobile
+   ========================= */
+
 @media (max-width: 720px) {
     .navigation {
         min-height: 46px;
@@ -111,10 +299,12 @@ body {
         width: 46px;
         height: 46px;
         margin-left: auto;
+
         display: flex;
         flex-direction: column;
         justify-content: center;
         gap: 5px;
+
         padding: 0 14px;
         cursor: pointer;
     }
@@ -123,6 +313,7 @@ body {
         display: block;
         width: 100%;
         height: 2px;
+
         background: #ffffff;
         border-radius: 2px;
     }
@@ -134,7 +325,8 @@ body {
         flex-direction: column;
         gap: 0;
         padding: 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.10);
+
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .navigation-links a {
@@ -147,12 +339,29 @@ body {
     }
 
     .page-background {
-        padding: 34px 16px;
+        padding: 30px 14px 60px;
         background-attachment: scroll;
         background-position: 68% top;
     }
 
-    .content {
-        padding: 26px 22px;
+    .content,
+    .player-header,
+    .player-section {
+        padding: 24px 20px;
+    }
+
+    .player-header {
+        margin-bottom: 20px;
+    }
+
+    .player-video,
+    .player-section {
+        margin-bottom: 20px;
+    }
+
+    .summary-content,
+    .report-content {
+        font-size: 1rem;
+        line-height: 1.68;
     }
 }
