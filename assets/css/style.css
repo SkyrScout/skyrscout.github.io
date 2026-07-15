@@ -136,8 +136,26 @@ body {
 
 .player-header h1 {
     max-width: 950px;
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    line-height: 1.2;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15;
+}
+
+.player-subtitle {
+    margin-top: 10px;
+    color: #d8e0e4;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.4;
+}
+
+img.emoji {
+    width: 1.15em;
+    height: 1.15em;
+    margin: 0 0.08em;
+    vertical-align: -0.18em;
+}
+
+.report-byline {
+    ...
 }
 .report-byline {
     margin-top: 12px;
