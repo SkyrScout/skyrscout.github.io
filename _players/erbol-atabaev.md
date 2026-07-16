@@ -4,6 +4,7 @@ title: "Erbol Atabaev (2001) – Muras United Manas | Jogorku Liga, Kyrgyzstan"
 youtube: "https://www.youtube.com/watch?v=W4bdnkYu6CA"
 report_by: "Scout Pilgrim"
 report_date: "16.07.2026"
+site_added: "16.07.2026"
 position: "Attacking Midfielder"
 
 summary: |
