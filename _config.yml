@@ -1,6 +1,14 @@
 title: SkyrScout
 description: Independent football scouting project
+
+url: "https://skyrscout.github.io"
+baseurl: ""
+
 theme: null
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
 
 collections:
   players:
