@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-16T14:15:47.055833Z",
+  "updated": "2026-07-16T14:49:48.528391+00:00",
   "episodes": [
     {
       "title": "\"Hvis og hvis min røv var spids\" (Scout America - Del 4)",
@@ -9,7 +9,10 @@
       "guid": "bf44a551-fcee-438a-9915-9aaa31446282",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/121654337/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-5-18%2F426377687-44100-2-17b540020122b.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1781776765420-84cb44e610527.jpg",
-      "duration": "01:25:01"
+      "duration": "01:25:01",
+      "episode_number": "3",
+      "season_number": "2",
+      "episode_type": "full"
     },
     {
       "title": "One Wing to Rule Them All",
@@ -19,7 +22,10 @@
       "guid": "ec1b937a-c887-4bbd-b89a-e8d78a80d69c",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/117370579/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-2-23%2F420623905-44100-2-f8af3beb459fb.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1774297311689-ae96a927fc50f.jpg",
-      "duration": "01:39:52"
+      "duration": "01:39:52",
+      "episode_number": "2",
+      "season_number": "2",
+      "episode_type": "full"
     },
     {
       "title": "\"Bon Scout i Asia\"",
@@ -29,7 +35,10 @@
       "guid": "73e0b700-0db9-49b8-9ec0-a7ab67b31640",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/114932577/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-1-2%2F417339645-44100-2-3b955e4431535.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1770066824072-e76547407040b.jpg",
-      "duration": "01:57:03"
+      "duration": "01:57:03",
+      "episode_number": "1",
+      "season_number": "2",
+      "episode_type": "full"
     },
     {
       "title": "\"Spitzgefühl\"",
@@ -39,7 +48,10 @@
       "guid": "9f28c8b3-5ad2-4750-bf89-20e0740625ee",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/112751826/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-11-17%2F414536306-44100-2-9581e9ace8622.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1765939298427-5c9937b0efeef.jpg",
-      "duration": "01:32:35"
+      "duration": "01:32:35",
+      "episode_number": "12",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"2 out of 3 Scouts does North America\"",
@@ -49,7 +61,10 @@
       "guid": "59cc044d-5d15-420a-9e2b-8de4d8ff9278",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/111750659/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-10-26%2F413226314-44100-2-a15723908c3d5.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1764181599152-02ba01e1d7753.jpg",
-      "duration": "01:32:30"
+      "duration": "01:32:30",
+      "episode_number": "11",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Vingar för pengarna\"",
@@ -59,7 +74,10 @@
       "guid": "1f1b9df1-88c9-4d59-ad7d-d0867f7a5aaa",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/110291756/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-9-27%2F410074670-44100-2-a65ed2f74698e.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1761592399085-7eaa362931a5.jpg",
-      "duration": "01:20:50"
+      "duration": "01:20:50",
+      "episode_number": "10",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Unikum fra Baltikum\"",
@@ -69,7 +87,10 @@
       "guid": "e39a53a1-e84c-4e0b-ae68-d4e63f32cf21",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/109455365/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-9-9%2F408979146-44100-2-3df4b11383d64.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1760043936205-14b13a7a3def2.jpg",
-      "duration": "01:37:22"
+      "duration": "01:37:22",
+      "episode_number": "9",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"The Full Monti - (Scout America - Del 3)\"",
@@ -79,7 +100,10 @@
       "guid": "6ca13c92-0a2d-4c30-b568-3057d92b3716",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/105107983/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-6-6%2F403411086-44100-2-54e934d578a04.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1751829113228-2f2687f4ae76f.jpg",
-      "duration": "01:10:56"
+      "duration": "01:10:56",
+      "episode_number": "8",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Alltid beredt! - (Scout America - Del 2)\"",
@@ -89,7 +113,10 @@
       "guid": "5bef0bab-b111-4dae-a738-24e4c550becc",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/104800521/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-29%2F403016272-44100-2-3809aa0f9f064.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1751230613654-4cb29ff5ad917.jpg",
-      "duration": "01:32:51"
+      "duration": "01:32:51",
+      "episode_number": "7",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"My Name is Lucas - (Scout America - Del 1)\"",
@@ -99,7 +126,10 @@
       "guid": "69b82bf4-b86d-4efd-a6f2-9af382b76286",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/104176135/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-5-15%2F402219704-44100-2-f5be501cbef83.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1750027171363-054994855fa0d.jpg",
-      "duration": "01:02:31"
+      "duration": "01:02:31",
+      "episode_number": "6",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"We got your back!\"",
@@ -109,7 +139,10 @@
       "guid": "b1bc6fc2-fcc0-4c79-b70f-0b8dcb8321fa",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/99230211/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-2-1%2F395790228-44100-2-af689dc9a69e.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1740869475080-31c71d4e0e81.jpg",
-      "duration": "01:04:36"
+      "duration": "01:04:36",
+      "episode_number": "5",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Bon Stop!\"",
@@ -119,7 +152,10 @@
       "guid": "ac872c4a-9b32-4a77-bac6-08f310765a7a",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/98550085/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-1-15%2F394942530-44100-2-ca176385d1e9d.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1739654780614-e9fcb03795e19.jpg",
-      "duration": "01:02:57"
+      "duration": "01:02:57",
+      "episode_number": "4",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Midfields of Gold\"",
@@ -129,7 +165,10 @@
       "guid": "57ab4fa1-148f-49f0-95b3-fcb05aeafdb7",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/97600780/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-0-26%2F393759024-44100-2-d54c9e807364f.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1741248491585-d414d95aa749d.jpg",
-      "duration": "01:15:00"
+      "duration": "01:15:00",
+      "episode_number": "3",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Scouting in on a Wing and a Player\"",
@@ -139,7 +178,10 @@
       "guid": "101e3672-789b-43f0-8648-f7f5fe276793",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/97251695/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-0-19%2F393325803-44100-2-ec85fb967b88.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1737286746730-7e74622bd0bf9.jpg",
-      "duration": "01:10:29"
+      "duration": "01:10:29",
+      "episode_number": "3",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "\"Beam Me Up, Scouty!\"",
@@ -149,7 +191,10 @@
       "guid": "0201c384-576b-4167-a21e-343c3abb3e62",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/96608929/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-0-5%2F392528703-44100-2-43059b7ddeb9d.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1736045343137-0c4c5f0aa0023.jpg",
-      "duration": "00:45:06"
+      "duration": "00:45:06",
+      "episode_number": "1",
+      "season_number": "1",
+      "episode_type": "full"
     },
     {
       "title": "Pilotepisode - \"Scoutergate\"",
@@ -159,7 +204,10 @@
       "guid": "36049436-cb8d-4578-8252-67ee739a12a5",
       "audio_url": "https://anchor.fm/s/ff9626c0/podcast/play/96608502/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2025-0-5%2F392528142-44100-2-ea9dedad8824f.mp3",
       "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/42780304/42780304-1736043299640-dd1bf3e3263a.jpg",
-      "duration": "00:56:05"
+      "duration": "00:56:05",
+      "episode_number": "1",
+      "season_number": "1",
+      "episode_type": "bonus"
     }
   ]
 }
