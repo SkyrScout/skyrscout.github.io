@@ -1,17 +1,21 @@
+---
+title: Scoutland Yard
+---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SkyrScout</title>
+    <title>Scoutland Yard | SkyrScout</title>
 
     <meta
         name="description"
-        content="Independent football scouting reports, player updates, podcast discussions and original music."
+        content="Scoutland Yard is the SkyrScout control room, featuring the latest scouting reports, player updates, podcast episodes and original music."
     >
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
@@ -19,7 +23,7 @@
     <header class="site-header">
 
         <img
-            src="assets/images/banner.png"
+            src="/assets/images/banner.png"
             alt="SkyrScout"
             class="site-banner"
         >
@@ -57,103 +61,591 @@
 
     <main class="page-background">
 
-        <section class="content scoutland-yard">
+        <section class="yard-page">
 
-            <p class="home-label">
-                The SkyrScout control room
-            </p>
+            <header class="yard-header">
 
-            <h1>Scoutland Yard</h1>
+                <p class="yard-label">
+                    The SkyrScout control room
+                </p>
 
-            <p class="home-intro">
-                Welcome to the home of SkyrScout.
-                Here you'll find our latest scouting reports, player updates,
-                podcast episodes and original music.
-            </p>
+                <h1>Scoutland Yard</h1>
 
-            <section class="construction-notice">
+                <p class="yard-intro">
+                    The front desk for SkyrScout. Find our latest scouting
+                    reports, player updates and episodes of Scout of This World.
+                </p>
 
-                <h2>🚧 Website under active development</h2>
+            </header>
+
+            <section class="construction-notice yard-construction">
+
+                <h2>Website under active development</h2>
 
                 <p>
-                    SkyrScout is continuously evolving.
-                    New scouting reports, podcast episodes, features and
-                    improvements are added regularly.
+                    SkyrScout is continuously evolving. New scouting reports,
+                    content, features and improvements are added regularly.
                 </p>
 
                 <p>
-                    Thank you for your patience and for following our journey.
+                    Thank you for your patience and interest while we continue
+                    building the website.
                 </p>
 
             </section>
 
-            <div class="home-grid">
+            <section class="yard-section">
 
-                <section class="home-card">
+                <div class="yard-section-heading">
 
-                    <h2>Latest reports added</h2>
+                    <div>
+                        <p class="yard-section-label">
+                            Scouting
+                        </p>
 
-                    <p>
-                        The newest scouting reports added to SkyrScout.
-                    </p>
+                        <h2>Latest reports added</h2>
 
-                    <div id="latest-reports">
-                        <p>Coming soon...</p>
+                        <p>
+                            The most recently added scouting reports. The report
+                            date shown on each profile tells you when the
+                            assessment was originally written.
+                        </p>
                     </div>
 
-                </section>
+                    <a href="/players/">
+                        View all players
+                    </a>
 
-                <section class="home-card">
+                </div>
 
-                    <h2>Latest updates</h2>
+                <div
+                    class="yard-report-grid"
+                    id="yard-report-grid"
+                >
 
-                    <p>
-                        Transfer rumours, player news and recent developments.
-                    </p>
+                    {% for player in site.players %}
 
-                    <div id="latest-updates">
-                        <p>Coming soon...</p>
+                        {% assign title_parts = player.title | split: ' – ' %}
+
+                        {% assign youtube_id = player.youtube
+                            | split: 'v='
+                            | last
+                            | split: '&'
+                            | first
+                            | split: '/'
+                            | last
+                        %}
+
+                        <article
+                            class="yard-report-card"
+                            data-site-added="{{ player.site_added | escape }}"
+                        >
+
+                            <a
+                                class="yard-report-image"
+                                href="{{ player.url }}"
+                                aria-label="View {{ title_parts[0] }}"
+                            >
+                                {% if player.youtube %}
+                                    <img
+                                        src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                        alt="{{ title_parts[0] }}"
+                                        loading="lazy"
+                                    >
+                                {% endif %}
+                            </a>
+
+                            <div class="yard-report-content">
+
+                                <p class="yard-report-added">
+                                    Added {{ player.site_added }}
+                                </p>
+
+                                <h3>
+                                    <a href="{{ player.url }}">
+                                        {{ title_parts[0] }}
+                                    </a>
+                                </h3>
+
+                                <p class="yard-report-details">
+                                    {% if player.position %}
+                                        {{ player.position }}
+                                    {% endif %}
+
+                                    {% if player.position and title_parts[1] %}
+                                        •
+                                    {% endif %}
+
+                                    {% if title_parts[1] %}
+                                        {{ title_parts[1] }}
+                                    {% endif %}
+                                </p>
+
+                                {% if player.report_date %}
+                                    <p class="yard-report-date">
+                                        Report date: {{ player.report_date }}
+                                    </p>
+                                {% endif %}
+
+                                <a
+                                    class="yard-card-action"
+                                    href="{{ player.url }}"
+                                >
+                                    View report
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <section class="yard-section">
+
+                <div class="yard-section-heading">
+
+                    <div>
+                        <p class="yard-section-label">
+                            Newsroom
+                        </p>
+
+                        <h2>Latest updates</h2>
+
+                        <p>
+                            News, rumours and confirmed developments involving
+                            players featured by SkyrScout.
+                        </p>
                     </div>
 
-                </section>
+                    <a href="/updates/">
+                        View all updates
+                    </a>
 
-                <section class="home-card">
+                </div>
 
-                    <h2>Latest podcast</h2>
+                <div class="yard-update-list">
 
-                    <p>
-                        The latest episode of Scout of This World.
-                    </p>
+                    {% assign sorted_updates = site.update_posts
+                        | sort: "path"
+                        | reverse
+                    %}
 
-                    <div id="latest-podcast">
-                        <p>Coming soon...</p>
+                    {% for update in sorted_updates limit: 3 %}
+
+                        {% assign update_filename = update.path
+                            | split: "/"
+                            | last
+                        %}
+
+                        {% assign update_date = update_filename
+                            | slice: 0, 10
+                            | split: "-"
+                        %}
+
+                        <article class="yard-update-card">
+
+                            <p class="yard-update-date">
+                                {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
+                            </p>
+
+                            <h3>
+                                <a href="{{ update.url }}">
+                                    {{ update.title }}
+                                </a>
+                            </h3>
+
+                            <p>
+                                {{ update.content
+                                    | strip_html
+                                    | truncatewords: 28
+                                }}
+                            </p>
+
+                            <a
+                                class="yard-text-link"
+                                href="{{ update.url }}"
+                            >
+                                Read update
+                            </a>
+
+                        </article>
+
+                    {% else %}
+
+                        <p class="yard-empty">
+                            No updates have been published yet.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <section class="yard-section">
+
+                <div class="yard-section-heading">
+
+                    <div>
+                        <p class="yard-section-label">
+                            Podcast
+                        </p>
+
+                        <h2>Latest episode</h2>
+
+                        <p>
+                            The latest episode of our Norwegian-language
+                            scouting podcast, Scout of This World.
+                        </p>
                     </div>
 
-                </section>
+                    <a href="/podcast/">
+                        Explore the podcast
+                    </a>
 
-                <section class="home-card">
+                </div>
 
-                    <h2>From 404 Bon Blondes</h2>
+                <div
+                    class="yard-podcast"
+                    id="yard-latest-podcast"
+                >
+                    <p class="yard-loading">
+                        Loading latest episode...
+                    </p>
+                </div>
 
-                    <p>
-                        Original music featured across SkyrScout.
+            </section>
+
+            <aside class="yard-music">
+
+                <div
+                    class="yard-music-image"
+                    id="yard-music-image"
+                ></div>
+
+                <div class="yard-music-content">
+
+                    <p class="yard-section-label">
+                        From 404 Bon Blondes
                     </p>
 
-                    <div id="latest-music">
-                        <p>Coming soon...</p>
+                    <h2 id="yard-music-title">
+                        Original music from the SkyrScout universe
+                    </h2>
+
+                    <p>
+                        404 Bon Blondes provides most of the original music
+                        featured in SkyrScout videos.
+                    </p>
+
+                    <div class="yard-music-actions">
+
+                        <a
+                            class="yard-card-action"
+                            id="yard-music-video-link"
+                            href="/music/"
+                        >
+                            Latest release
+                        </a>
+
+                        <a
+                            class="yard-text-link"
+                            href="/music/"
+                        >
+                            Explore Music
+                        </a>
+
                     </div>
 
-                </section>
+                </div>
 
-            </div>
-
-            <p class="home-quote">
-                <em>"We don't chase views. We chase players."</em>
-            </p>
+            </aside>
 
         </section>
 
     </main>
+
+    <script>
+        function convertNorwegianDate(dateText) {
+            if (!dateText) {
+                return 0;
+            }
+
+            const parts = dateText.split(".");
+
+            if (parts.length !== 3) {
+                return 0;
+            }
+
+            const day = Number(parts[0]);
+            const month = Number(parts[1]) - 1;
+            const year = Number(parts[2]);
+
+            return new Date(year, month, day).getTime();
+        }
+
+        function sortLatestReports() {
+            const reportGrid = document.querySelector(
+                "#yard-report-grid"
+            );
+
+            if (!reportGrid) {
+                return;
+            }
+
+            const cards = Array.from(
+                reportGrid.querySelectorAll(".yard-report-card")
+            );
+
+            cards.sort(function (a, b) {
+                return (
+                    convertNorwegianDate(b.dataset.siteAdded) -
+                    convertNorwegianDate(a.dataset.siteAdded)
+                );
+            });
+
+            cards.forEach(function (card, index) {
+                card.hidden = index >= 3;
+                reportGrid.appendChild(card);
+            });
+        }
+
+        function stripHtml(html) {
+            const temporaryElement = document.createElement("div");
+            temporaryElement.innerHTML = html || "";
+
+            return (
+                temporaryElement.textContent ||
+                temporaryElement.innerText ||
+                ""
+            )
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function formatDuration(duration) {
+            if (!duration) {
+                return "";
+            }
+
+            const parts = duration.split(":").map(Number);
+
+            if (
+                parts.length === 3 &&
+                parts.every(Number.isFinite)
+            ) {
+                const hours = parts[0];
+                const minutes = parts[1];
+
+                if (hours > 0) {
+                    return `${hours} t ${minutes} min`;
+                }
+
+                return `${minutes} min`;
+            }
+
+            return duration;
+        }
+
+        async function loadLatestPodcast() {
+            const container = document.querySelector(
+                "#yard-latest-podcast"
+            );
+
+            try {
+                const response = await fetch(
+                    "/assets/data/podcast-episodes.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load podcast data.");
+                }
+
+                const data = await response.json();
+                const episode = data.episodes?.[0];
+
+                if (!episode) {
+                    throw new Error("No podcast episodes found.");
+                }
+
+                const episodeUrl =
+                    episode.link || episode.audio_url || "/podcast/";
+
+                const publishedDate = episode.published
+                    ? new Date(episode.published)
+                    : null;
+
+                const description = stripHtml(
+                    episode.description
+                );
+
+                const metadata = [];
+
+                if (episode.season_number) {
+                    metadata.push(
+                        `Season ${episode.season_number}`
+                    );
+                }
+
+                if (episode.episode_number) {
+                    metadata.push(
+                        `Episode ${episode.episode_number}`
+                    );
+                }
+
+                if (publishedDate) {
+                    metadata.push(
+                        publishedDate.toLocaleDateString(
+                            "nb-NO",
+                            {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            }
+                        )
+                    );
+                }
+
+                const duration = formatDuration(
+                    episode.duration
+                );
+
+                if (duration) {
+                    metadata.push(duration);
+                }
+
+                container.innerHTML = `
+                    <a
+                        class="yard-podcast-image"
+                        href="${episodeUrl}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ${
+                            episode.image
+                                ? `
+                                    <img
+                                        src="${episode.image}"
+                                        alt="${episode.title || "Scout of This World"}"
+                                    >
+                                `
+                                : ""
+                        }
+                    </a>
+
+                    <div class="yard-podcast-content">
+
+                        <p class="yard-podcast-meta">
+                            ${metadata.join(" • ")}
+                        </p>
+
+                        <h3>
+                            <a
+                                href="${episodeUrl}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ${episode.title || "Scout of This World"}
+                            </a>
+                        </h3>
+
+                        ${
+                            description
+                                ? `
+                                    <p class="yard-podcast-description">
+                                        ${description}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                        <a
+                            class="yard-card-action"
+                            href="${episodeUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open on Spotify
+                        </a>
+
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error(error);
+
+                container.innerHTML = `
+                    <p class="yard-empty">
+                        The latest podcast episode could not be loaded.
+                    </p>
+                `;
+            }
+        }
+
+        async function loadLatestMusic() {
+            const imageContainer = document.querySelector(
+                "#yard-music-image"
+            );
+
+            const title = document.querySelector(
+                "#yard-music-title"
+            );
+
+            const videoLink = document.querySelector(
+                "#yard-music-video-link"
+            );
+
+            try {
+                const response = await fetch(
+                    "/assets/data/music-videos.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load music data.");
+                }
+
+                const data = await response.json();
+                const video = data.videos?.[0];
+
+                if (!video) {
+                    return;
+                }
+
+                title.textContent =
+                    video.title || "Latest release";
+
+                videoLink.href = video.url || "/music/";
+                videoLink.target = "_blank";
+                videoLink.rel = "noopener noreferrer";
+
+                if (video.thumbnail) {
+                    imageContainer.innerHTML = `
+                        <a
+                            href="${video.url || "/music/"}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img
+                                src="${video.thumbnail}"
+                                alt="${video.title || "404 Bon Blondes"}"
+                            >
+                        </a>
+                    `;
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        sortLatestReports();
+        loadLatestPodcast();
+        loadLatestMusic();
+    </script>
 
 </body>
 </html>
