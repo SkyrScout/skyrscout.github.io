@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ page.title }} | SkyrScout News</title>
+    <title>{{ page.title }} | SkyrScout Updates</title>
 
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
@@ -40,7 +40,7 @@
             <div class="navigation-links">
                 <a href="/">Home</a>
                 <a href="/players/">Players</a>
-                <a href="/news/">News</a>
+                <a href="/updates/">Updates</a>
                 <a href="/podcast/">Podcast</a>
                 <a href="/music/">Music</a>
                 <a href="/about/">About</a>
@@ -52,32 +52,35 @@
 
     <main class="page-background">
 
-        <article class="news-article">
+        <article class="update-article">
 
-            <header class="news-header">
-                <p class="news-date">
+            <header class="update-article-header">
+
+                <p class="update-article-date">
                     {{ page.date | date: "%d.%m.%Y" }}
                 </p>
 
                 <h1>{{ page.title }}</h1>
 
                 {% if page.player %}
-                    <p class="news-player">
+                    <p class="update-related-player">
                         Related player:
                         <a href="/players/{{ page.player }}/">
                             {{ page.player_name }}
                         </a>
                     </p>
                 {% endif %}
+
             </header>
 
-            <section class="news-content">
+            <section class="update-article-content">
                 {{ content }}
             </section>
 
             {% if page.source_url %}
-                <section class="news-source">
-                    <span>Source:</span>
+                <section class="update-source">
+
+                    <span>Source</span>
 
                     <a
                         href="{{ page.source_url }}"
@@ -86,11 +89,12 @@
                     >
                         {{ page.source | default: "Original source" }}
                     </a>
+
                 </section>
             {% endif %}
 
             {% if page.player %}
-                <section class="news-action">
+                <section class="update-action">
                     <a href="/players/{{ page.player }}/">
                         View scouting report
                     </a>
@@ -100,10 +104,12 @@
         </article>
 
     </main>
-<script
-    async
-    src="https://platform.twitter.com/widgets.js"
-    charset="utf-8">
-</script>
+
+    <script
+        async
+        src="https://platform.twitter.com/widgets.js"
+        charset="utf-8">
+    </script>
+
 </body>
 </html>
