@@ -1429,3 +1429,115 @@ img.emoji {
         font-size: 0.82rem;
     }
 }
+/* Podcast episode improvements */
+
+.podcast-episode-search {
+    display: block;
+    margin: 0 0 24px;
+}
+
+.podcast-episode-search span {
+    display: block;
+    margin-bottom: 9px;
+    color: #dce4e8;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.podcast-episode-search input {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px;
+
+    color: #ffffff;
+    font: inherit;
+
+    background: rgba(255, 255, 255, 0.065);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    outline: none;
+}
+
+.podcast-episode-search input::placeholder {
+    color: #96a4ab;
+}
+
+.podcast-episode-search input:focus {
+    border-color: #53c8ee;
+    box-shadow: 0 0 0 3px rgba(83, 200, 238, 0.13);
+}
+
+.podcast-episode-no-results {
+    margin: 0 0 20px;
+    padding: 16px 18px;
+
+    color: #c5cfd4;
+
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 9px;
+}
+
+.podcast-episode-card {
+    grid-template-columns: 230px minmax(0, 1fr);
+}
+
+.podcast-episode-image {
+    min-height: 230px;
+}
+
+.podcast-episode-image img {
+    min-height: 230px;
+}
+
+.podcast-episode-number {
+    margin: 0 0 8px;
+
+    color: #53c8ee;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.podcast-episode-description {
+    display: -webkit-box;
+    overflow: hidden;
+
+    margin: 0 0 20px;
+    max-width: 650px;
+
+    color: #c5cfd4;
+    font-size: 0.95rem;
+    line-height: 1.55;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.podcast-episode-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.podcast-episode-action img {
+    width: 18px;
+    height: 18px;
+}
+
+@media (max-width: 650px) {
+    .podcast-episode-card {
+        grid-template-columns: 125px minmax(0, 1fr);
+    }
+
+    .podcast-episode-image,
+    .podcast-episode-image img {
+        min-height: 150px;
+    }
+
+    .podcast-episode-description {
+        -webkit-line-clamp: 2;
+        font-size: 0.88rem;
+    }
+}
