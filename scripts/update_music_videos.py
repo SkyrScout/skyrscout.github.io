@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from html import unescape
 
-CHANNEL_ID = "UCuKJAZQLRdFdLCiVWUj_xHA"
+CHANNEL_ID = "UCuKJAZQLRdFdLCiVwUj_xHA"
 FEED_URL = (
     "https://www.youtube.com/feeds/videos.xml"
     f"?channel_id={CHANNEL_ID}"
