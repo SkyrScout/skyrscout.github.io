@@ -1577,3 +1577,9 @@ img.emoji {
         height: 125px;
     }
 }
+.music-youtube-action img,
+.music-channel a img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
