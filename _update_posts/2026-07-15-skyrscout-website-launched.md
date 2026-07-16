@@ -1,1 +1,9 @@
+---
+title: "SkyrScout website launched"
+---
+
+The SkyrScout website is now live.
+
+This is where we will publish scouting updates, transfer developments and other news related to players featured by SkyrScout.
+
 
