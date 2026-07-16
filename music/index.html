@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Music | 404 Bon Blondes</title>
+
+    <meta
+        name="description"
+        content="Original music from 404 Bon Blondes, the house band behind much of the music featured in SkyrScout videos."
+    >
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <img
+            src="/assets/images/banner.png"
+            alt="SkyrScout"
+            class="site-banner"
+        >
+
+        <nav class="navigation">
+
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-toggle"
+            >
+
+            <label
+                for="menu-toggle"
+                class="menu-button"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="navigation-links">
+                <a href="/">Home</a>
+                <a href="/players/">Players</a>
+                <a href="/updates/">Updates</a>
+                <a href="/podcast/">Podcast</a>
+                <a href="/music/">Music</a>
+                <a href="/about/">About</a>
+            </div>
+
+        </nav>
+
+    </header>
+
+    <main class="page-background">
+
+        <section class="music-page">
+
+            <header class="music-page-header">
+
+                <p class="music-label">
+                    Original music
+                </p>
+
+                <h1>404 Bon Blondes</h1>
+
+                <p>
+                    404 Bon Blondes started as the AI house band for the
+                    <strong>Scout of This World</strong> football podcast.
+                    Fronted by Claudia Scout, the project has since developed
+                    into an independent music channel.
+                </p>
+
+                <p>
+                    404 Bon Blondes also provides most of the original music
+                    featured in SkyrScout videos.
+                </p>
+
+            </header>
+
+            <section class="music-latest">
+
+                <h2>Latest release</h2>
+
+                <div
+                    class="music-latest-content"
+                    id="music-latest-content"
+                >
+                    <p class="music-loading">
+                        Loading latest release...
+                    </p>
+                </div>
+
+            </section>
+
+            <section class="music-playlist">
+
+                <div class="music-playlist-heading">
+
+                    <div>
+                        <h2>404 Bon Blondes</h2>
+
+                        <p>
+                            Songs and music videos from the channel.
+                        </p>
+                    </div>
+
+                    <a
+                        href="https://www.youtube.com/playlist?list=PL-uJ2EY321LJpZDj15CYKU2k2pe4R5k4H"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open playlist
+                    </a>
+
+                </div>
+
+                <div class="music-video-frame">
+                    <iframe
+                        src="https://www.youtube.com/embed/videoseries?list=PL-uJ2EY321LJpZDj15CYKU2k2pe4R5k4H"
+                        title="404 Bon Blondes playlist"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+            </section>
+
+            <section class="music-playlist">
+
+                <div class="music-playlist-heading">
+
+                    <div>
+                        <h2>Instrumentals</h2>
+
+                        <p>
+                            Original instrumental music from 404 Bon Blondes.
+                        </p>
+                    </div>
+
+                    <a
+                        href="https://www.youtube.com/playlist?list=PL-uJ2EY321LKwgWOSQQZwz2Fb3JjB3E2K"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open playlist
+                    </a>
+
+                </div>
+
+                <div class="music-video-frame">
+                    <iframe
+                        src="https://www.youtube.com/embed/videoseries?list=PL-uJ2EY321LKwgWOSQQZwz2Fb3JjB3E2K"
+                        title="404 Bon Blondes instrumentals playlist"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+            </section>
+
+            <section class="music-channel">
+
+                <div>
+                    <h2>Visit 404 Bon Blondes</h2>
+
+                    <p>
+                        Find all songs, instrumentals and music videos on
+                        the official YouTube channel.
+                    </p>
+                </div>
+
+                <a
+                    href="https://www.youtube.com/@404BonBlondes"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <img
+                        src="https://cdn.simpleicons.org/youtube/081015"
+                        alt=""
+                        aria-hidden="true"
+                    >
+
+                    <span>Visit YouTube channel</span>
+                </a>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <script>
+        function stripHtml(html) {
+            const temporaryElement = document.createElement("div");
+            temporaryElement.innerHTML = html || "";
+
+            return (
+                temporaryElement.textContent ||
+                temporaryElement.innerText ||
+                ""
+            )
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        async function loadLatestMusicVideo() {
+            const latestContainer = document.querySelector(
+                "#music-latest-content"
+            );
+
+            try {
+                const response = await fetch(
+                    "/assets/data/music-videos.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load music video data.");
+                }
+
+                const data = await response.json();
+                const latestVideo = data.videos?.[0];
+
+                if (!latestVideo) {
+                    latestContainer.innerHTML =
+                        "<p>No music videos were found.</p>";
+                    return;
+                }
+
+                const publishedDate = latestVideo.published
+                    ? new Date(latestVideo.published)
+                    : null;
+
+                const description = stripHtml(
+                    latestVideo.description
+                );
+
+                latestContainer.innerHTML = `
+                    <div class="music-latest-video">
+
+                        <div class="music-video-frame">
+                            <iframe
+                                src="${latestVideo.embed_url}"
+                                title="${latestVideo.title}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen
+                                loading="lazy">
+                            </iframe>
+                        </div>
+
+                        <div class="music-latest-details">
+
+                            <h3>${latestVideo.title}</h3>
+
+                            ${
+                                publishedDate
+                                    ? `
+                                        <p class="music-latest-date">
+                                            ${publishedDate.toLocaleDateString(
+                                                "en-GB",
+                                                {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric"
+                                                }
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                description
+                                    ? `
+                                        <p class="music-latest-description">
+                                            ${description}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+                            <a
+                                class="music-youtube-action"
+                                href="${latestVideo.url}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <img
+                                    src="https://cdn.simpleicons.org/youtube/081015"
+                                    alt=""
+                                    aria-hidden="true"
+                                >
+
+                                <span>Watch on YouTube</span>
+                            </a>
+
+                        </div>
+
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error(error);
+
+                latestContainer.innerHTML =
+                    "<p>Could not load the latest release right now.</p>";
+            }
+        }
+
+        loadLatestMusicVideo();
+    </script>
+
+</body>
+</html>
