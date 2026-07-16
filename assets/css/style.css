@@ -1541,3 +1541,39 @@ img.emoji {
         font-size: 0.88rem;
     }
 }
+/* Keep podcast artwork square and uncropped */
+
+.podcast-episode-card {
+    grid-template-columns: 230px minmax(0, 1fr);
+}
+
+.podcast-episode-image {
+    width: 230px;
+    height: 230px;
+    min-height: 0;
+    align-self: center;
+    background: #090d11;
+}
+
+.podcast-episode-image img {
+    width: 230px;
+    height: 230px;
+    min-height: 0;
+    object-fit: contain;
+}
+
+@media (max-width: 650px) {
+    .podcast-episode-card {
+        grid-template-columns: 125px minmax(0, 1fr);
+    }
+
+    .podcast-episode-image {
+        width: 125px;
+        height: 125px;
+    }
+
+    .podcast-episode-image img {
+        width: 125px;
+        height: 125px;
+    }
+}
