@@ -714,3 +714,38 @@ img.emoji {
         gap: 18px;
     }
 }
+/* =========================
+   Construction notice
+   ========================= */
+
+.construction-notice {
+    width: min(920px, calc(100% - 32px));
+    margin: 24px auto 48px;
+    padding: 28px 32px;
+
+    background: rgba(7, 11, 15, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-left: 4px solid #53c8ee;
+    border-radius: 14px;
+    box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.construction-notice h2 {
+    margin: 0 0 14px;
+    color: #ffffff;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
+}
+
+.construction-notice p {
+    margin: 0;
+    max-width: 760px;
+    color: #c5cfd4;
+    font-size: 1rem;
+    line-height: 1.65;
+}
+
+.construction-notice p + p {
+    margin-top: 12px;
+}
