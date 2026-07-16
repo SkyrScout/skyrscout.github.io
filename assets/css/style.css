@@ -986,3 +986,136 @@ img.emoji {
 .update-article-header h1 {
     font-size: clamp(2rem, 4.2vw, 3rem);
 }
+/* =========================
+   About page
+   ========================= */
+
+.about-page {
+    width: min(960px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 56px 0;
+}
+
+.about-header,
+.about-content,
+.about-links {
+    background: rgba(7, 11, 15, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.about-header {
+    margin-bottom: 20px;
+    padding: clamp(28px, 5vw, 44px);
+    border-left: 4px solid #53c8ee;
+}
+
+.about-header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+}
+
+.about-content {
+    padding: clamp(26px, 4vw, 40px);
+}
+
+.about-content p {
+    margin: 0 0 20px;
+    color: #d5dde1;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.about-content p:last-child {
+    margin-bottom: 0;
+}
+
+.about-links {
+    margin-top: 20px;
+    padding: clamp(26px, 4vw, 40px);
+}
+
+.about-links h2 {
+    margin: 0 0 22px;
+    padding-bottom: 14px;
+
+    color: #ffffff;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+
+    border-bottom: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.about-links-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.about-link-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    min-height: 84px;
+    padding: 16px 18px;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 11px;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+.about-link-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.075);
+    border-color: rgba(83, 200, 238, 0.65);
+}
+
+.about-link-card img {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.about-link-card span {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.about-link-card strong {
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.about-link-card small {
+    color: #aeb9bf;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 650px) {
+    .about-page {
+        width: min(100% - 20px, 960px);
+        padding: 28px 0;
+    }
+
+    .about-links-list {
+        grid-template-columns: 1fr;
+    }
+
+    .about-content p {
+        font-size: 1rem;
+    }
+}
