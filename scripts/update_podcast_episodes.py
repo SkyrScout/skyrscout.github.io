@@ -2,7 +2,7 @@ import json
 import os
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from html import unescape
 
@@ -10,6 +10,7 @@ RSS_URL = "https://anchor.fm/s/ff9626c0/podcast/rss"
 OUTPUT_FILE = "assets/data/podcast-episodes.json"
 
 ITUNES_NAMESPACE = "http://www.itunes.com/dtds/podcast-1.0.dtd"
+CONTENT_NAMESPACE = "http://purl.org/rss/1.0/modules/content/"
 
 
 def clean_text(value: str | None) -> str:
@@ -56,6 +57,11 @@ def main() -> None:
     if channel is None:
         raise RuntimeError("Could not find the RSS channel.")
 
+    channel_image = find_text(
+        channel,
+        f"{{{ITUNES_NAMESPACE}}}image",
+    )
+
     episodes = []
 
     for item in channel.findall("item"):
@@ -71,24 +77,44 @@ def main() -> None:
         if image is not None:
             image_url = image.attrib.get("href", "")
 
+        description = find_text(
+            item,
+            f"{{{CONTENT_NAMESPACE}}}encoded",
+        )
+
+        if not description:
+            description = find_text(item, "description")
+
         episode = {
             "title": find_text(item, "title"),
-            "description": find_text(item, "description"),
+            "description": description,
             "published": parse_date(find_text(item, "pubDate")),
             "link": find_text(item, "link"),
             "guid": find_text(item, "guid"),
             "audio_url": audio_url,
-            "image": image_url,
+            "image": image_url or channel_image,
             "duration": find_text(
                 item,
                 f"{{{ITUNES_NAMESPACE}}}duration",
+            ),
+            "episode_number": find_text(
+                item,
+                f"{{{ITUNES_NAMESPACE}}}episode",
+            ),
+            "season_number": find_text(
+                item,
+                f"{{{ITUNES_NAMESPACE}}}season",
+            ),
+            "episode_type": find_text(
+                item,
+                f"{{{ITUNES_NAMESPACE}}}episodeType",
             ),
         }
 
         episodes.append(episode)
 
     output = {
-        "updated": datetime.utcnow().isoformat() + "Z",
+        "updated": datetime.now(timezone.utc).isoformat(),
         "episodes": episodes,
     }
 
