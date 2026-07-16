@@ -166,28 +166,32 @@
                     | replace: 'open.spotify.com/episode/', 'open.spotify.com/embed/episode/'
                 %}
 
-                <section class="player-section player-podcast">
+               {% if page.podcast %}
 
-                    <h2>Scout of This World</h2>
+<section class="player-section player-podcast">
 
-                    {% if page.podcast_timestamp %}
-                        <p class="podcast-time">
-                            Aaron Malouda segment starts at:
-                            <strong>{{ page.podcast_timestamp }}</strong>
-                        </p>
-                    {% endif %}
+    <h2>Scout of This World</h2>
 
-                    <iframe
-                        src="{{ spotify_embed }}"
-                        width="100%"
-                        height="152"
-                        frameborder="0"
-                        allowfullscreen
-                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        loading="lazy">
-                    </iframe>
+    {% if page.podcast_timestamp %}
+        <p class="podcast-time">
+            Segment starts at:
+            <strong>{{ page.podcast_timestamp }}</strong>
+        </p>
+    {% endif %}
 
-                </section>
+    <iframe
+        src="{{ spotify_embed }}"
+        width="100%"
+        height="152"
+        frameborder="0"
+        allowfullscreen
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+    </iframe>
+
+</section>
+
+{% endif %}
 
             {% endif %}
 
