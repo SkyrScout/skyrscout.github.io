@@ -167,23 +167,129 @@
     <h2>Episoder</h2>
 
     <p class="podcast-episodes-intro">
-        De nyeste episodene fra Scout of This World på Spotify.
+        De nyeste episodene fra Scout of This World.
     </p>
 
-    <iframe
-        src="https://open.spotify.com/embed/show/7kQc1nObXtDTjJxy7oUpdZ?utm_source=generator"
-        width="100%"
-        height="500"
-        frameborder="0"
-        allowfullscreen
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy">
-    </iframe>
+    <div
+        class="podcast-episode-list"
+        id="podcast-episode-list"
+    >
+        <p class="podcast-loading">
+            Laster episoder...
+        </p>
+    </div>
 
 </section>
         </section>
 
     </main>
+<script>
+    async function loadPodcastEpisodes() {
+        const episodeList = document.querySelector(
+            "#podcast-episode-list"
+        );
 
+        try {
+            const response = await fetch(
+                "/assets/data/podcast-episodes.json"
+            );
+
+            if (!response.ok) {
+                throw new Error("Could not load episode data.");
+            }
+
+            const data = await response.json();
+            const episodes = data.episodes || [];
+
+            episodeList.innerHTML = "";
+
+            if (episodes.length === 0) {
+                episodeList.innerHTML =
+                    "<p>Ingen episoder ble funnet.</p>";
+                return;
+            }
+
+            episodes.forEach(function (episode) {
+                const card = document.createElement("article");
+                card.className = "podcast-episode-card";
+
+                const imageLink = document.createElement("a");
+                imageLink.className = "podcast-episode-image";
+                imageLink.href = episode.link || episode.audio_url;
+                imageLink.target = "_blank";
+                imageLink.rel = "noopener noreferrer";
+
+                if (episode.image) {
+                    const image = document.createElement("img");
+                    image.src = episode.image;
+                    image.alt = episode.title || "Podcast episode";
+                    image.loading = "lazy";
+                    imageLink.appendChild(image);
+                }
+
+                const content = document.createElement("div");
+                content.className = "podcast-episode-content";
+
+                const title = document.createElement("h3");
+
+                const titleLink = document.createElement("a");
+                titleLink.href = episode.link || episode.audio_url;
+                titleLink.target = "_blank";
+                titleLink.rel = "noopener noreferrer";
+                titleLink.textContent =
+                    episode.title || "Scout of This World";
+
+                title.appendChild(titleLink);
+
+                const metadata = document.createElement("p");
+                metadata.className = "podcast-episode-meta";
+
+                const metadataParts = [];
+
+                if (episode.published) {
+                    const date = new Date(episode.published);
+
+                    metadataParts.push(
+                        date.toLocaleDateString("nb-NO", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
+                        })
+                    );
+                }
+
+                if (episode.duration) {
+                    metadataParts.push(episode.duration);
+                }
+
+                metadata.textContent = metadataParts.join(" • ");
+
+                const action = document.createElement("a");
+                action.className = "podcast-episode-action";
+                action.href = episode.link || episode.audio_url;
+                action.target = "_blank";
+                action.rel = "noopener noreferrer";
+                action.textContent = "Åpne episoden";
+
+                content.appendChild(title);
+                content.appendChild(metadata);
+                content.appendChild(action);
+
+                card.appendChild(imageLink);
+                card.appendChild(content);
+
+                episodeList.appendChild(card);
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            episodeList.innerHTML =
+                "<p>Kunne ikke laste episodene akkurat nå.</p>";
+        }
+    }
+
+    loadPodcastEpisodes();
+</script>
 </body>
 </html>
