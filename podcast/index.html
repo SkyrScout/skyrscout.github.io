@@ -200,9 +200,61 @@
 
     </main>
 <script>
+    function stripHtml(html) {
+        const temporaryElement = document.createElement("div");
+        temporaryElement.innerHTML = html || "";
+
+        return (
+            temporaryElement.textContent ||
+            temporaryElement.innerText ||
+            ""
+        )
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function formatDuration(duration) {
+        if (!duration) {
+            return "";
+        }
+
+        const parts = duration.split(":").map(Number);
+
+        if (
+            parts.length === 3 &&
+            parts.every(Number.isFinite)
+        ) {
+            const hours = parts[0];
+            const minutes = parts[1];
+
+            if (hours > 0) {
+                return `${hours} t ${minutes} min`;
+            }
+
+            return `${minutes} min`;
+        }
+
+        if (
+            parts.length === 2 &&
+            parts.every(Number.isFinite)
+        ) {
+            return `${parts[0]} min`;
+        }
+
+        return duration;
+    }
+
     async function loadPodcastEpisodes() {
         const episodeList = document.querySelector(
             "#podcast-episode-list"
+        );
+
+        const searchInput = document.querySelector(
+            "#podcast-episode-search"
+        );
+
+        const noResults = document.querySelector(
+            "#podcast-episode-no-results"
         );
 
         try {
@@ -226,12 +278,29 @@
             }
 
             episodes.forEach(function (episode) {
+                const episodeUrl =
+                    episode.link || episode.audio_url || "#";
+
+                const descriptionText = stripHtml(
+                    episode.description
+                );
+
                 const card = document.createElement("article");
                 card.className = "podcast-episode-card";
 
+                card.dataset.search = [
+                    episode.title,
+                    descriptionText,
+                    episode.episode_number,
+                    episode.season_number
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
+
                 const imageLink = document.createElement("a");
                 imageLink.className = "podcast-episode-image";
-                imageLink.href = episode.link || episode.audio_url;
+                imageLink.href = episodeUrl;
                 imageLink.target = "_blank";
                 imageLink.rel = "noopener noreferrer";
 
@@ -240,22 +309,37 @@
                     image.src = episode.image;
                     image.alt = episode.title || "Podcast episode";
                     image.loading = "lazy";
+
                     imageLink.appendChild(image);
                 }
 
                 const content = document.createElement("div");
                 content.className = "podcast-episode-content";
 
+                if (episode.episode_number) {
+                    const episodeNumber =
+                        document.createElement("p");
+
+                    episodeNumber.className =
+                        "podcast-episode-number";
+
+                    episodeNumber.textContent =
+                        `Episode ${episode.episode_number}`;
+
+                    content.appendChild(episodeNumber);
+                }
+
                 const title = document.createElement("h3");
 
                 const titleLink = document.createElement("a");
-                titleLink.href = episode.link || episode.audio_url;
+                titleLink.href = episodeUrl;
                 titleLink.target = "_blank";
                 titleLink.rel = "noopener noreferrer";
                 titleLink.textContent =
                     episode.title || "Scout of This World";
 
                 title.appendChild(titleLink);
+                content.appendChild(title);
 
                 const metadata = document.createElement("p");
                 metadata.className = "podcast-episode-meta";
@@ -274,21 +358,55 @@
                     );
                 }
 
-                if (episode.duration) {
-                    metadataParts.push(episode.duration);
+                const formattedDuration = formatDuration(
+                    episode.duration
+                );
+
+                if (formattedDuration) {
+                    metadataParts.push(formattedDuration);
                 }
 
                 metadata.textContent = metadataParts.join(" • ");
+                content.appendChild(metadata);
+
+                if (descriptionText) {
+                    const description =
+                        document.createElement("p");
+
+                    description.className =
+                        "podcast-episode-description";
+
+                    description.textContent = descriptionText;
+
+                    content.appendChild(description);
+                }
 
                 const action = document.createElement("a");
                 action.className = "podcast-episode-action";
-                action.href = episode.link || episode.audio_url;
+                action.href = episodeUrl;
                 action.target = "_blank";
                 action.rel = "noopener noreferrer";
-                action.textContent = "Åpne episoden";
 
-                content.appendChild(title);
-                content.appendChild(metadata);
+                const spotifyIcon =
+                    document.createElement("img");
+
+                spotifyIcon.src =
+                    "https://cdn.simpleicons.org/spotify/081015";
+
+                spotifyIcon.alt = "";
+                spotifyIcon.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                const actionText =
+                    document.createElement("span");
+
+                actionText.textContent = "Åpne på Spotify";
+
+                action.appendChild(spotifyIcon);
+                action.appendChild(actionText);
+
                 content.appendChild(action);
 
                 card.appendChild(imageLink);
@@ -296,6 +414,36 @@
 
                 episodeList.appendChild(card);
             });
+
+            function filterEpisodes() {
+                const searchTerm = searchInput.value
+                    .trim()
+                    .toLowerCase();
+
+                const cards = episodeList.querySelectorAll(
+                    ".podcast-episode-card"
+                );
+
+                let visibleEpisodes = 0;
+
+                cards.forEach(function (card) {
+                    const isVisible =
+                        card.dataset.search.includes(searchTerm);
+
+                    card.hidden = !isVisible;
+
+                    if (isVisible) {
+                        visibleEpisodes += 1;
+                    }
+                });
+
+                noResults.hidden = visibleEpisodes !== 0;
+            }
+
+            searchInput.addEventListener(
+                "input",
+                filterEpisodes
+            );
 
         } catch (error) {
             console.error(error);
