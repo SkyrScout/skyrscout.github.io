@@ -979,3 +979,10 @@ img.emoji {
         font-size: 1rem;
     }
 }
+.update-article {
+    width: min(1040px, calc(100% - 32px));
+}
+
+.update-article-header h1 {
+    font-size: clamp(2rem, 4.2vw, 3rem);
+}
