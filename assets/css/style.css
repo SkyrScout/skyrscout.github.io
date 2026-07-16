@@ -1322,3 +1322,110 @@ img.emoji {
     width: 100%;
     border-radius: 12px;
 }
+/* =========================
+   Podcast episode list
+   ========================= */
+
+.podcast-episode-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.podcast-episode-card {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 12px;
+}
+
+.podcast-episode-image {
+    display: block;
+    min-height: 190px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.podcast-episode-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 190px;
+    object-fit: cover;
+}
+
+.podcast-episode-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 26px;
+}
+
+.podcast-episode-content h3 {
+    margin: 0 0 12px;
+    font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+    line-height: 1.25;
+}
+
+.podcast-episode-content h3 a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.podcast-episode-content h3 a:hover {
+    color: #67d3f3;
+}
+
+.podcast-episode-meta {
+    margin: 0 0 20px;
+    color: #aeb9bf;
+    font-size: 0.92rem;
+}
+
+.podcast-episode-action {
+    display: inline-block;
+    padding: 10px 15px;
+
+    color: #081015;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    background: #53c8ee;
+    border-radius: 7px;
+}
+
+.podcast-episode-action:hover {
+    background: #78daf5;
+}
+
+.podcast-loading {
+    color: #b8c2cc;
+}
+
+@media (max-width: 650px) {
+    .podcast-episode-card {
+        grid-template-columns: 110px minmax(0, 1fr);
+    }
+
+    .podcast-episode-image,
+    .podcast-episode-image img {
+        min-height: 130px;
+    }
+
+    .podcast-episode-content {
+        padding: 16px;
+    }
+
+    .podcast-episode-content h3 {
+        font-size: 1.05rem;
+    }
+
+    .podcast-episode-meta {
+        margin-bottom: 14px;
+        font-size: 0.82rem;
+    }
+}
