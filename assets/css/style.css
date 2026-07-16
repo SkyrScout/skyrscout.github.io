@@ -1803,3 +1803,404 @@ img.emoji {
         width: 100%;
     }
 }
+/* =========================
+   Scoutland Yard homepage
+   ========================= */
+
+.yard-page {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 56px 0;
+}
+
+.yard-header,
+.yard-section,
+.yard-music {
+    background: rgba(7, 11, 15, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.yard-header {
+    padding: clamp(30px, 5vw, 48px);
+    border-left: 4px solid #53c8ee;
+}
+
+.yard-label,
+.yard-section-label {
+    margin: 0 0 10px;
+    color: #53c8ee;
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.yard-header h1 {
+    margin: 0 0 16px;
+    color: #ffffff;
+    font-size: clamp(2.7rem, 7vw, 5rem);
+    line-height: 1;
+}
+
+.yard-intro {
+    margin: 0;
+    max-width: 760px;
+    color: #cbd4d9;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    line-height: 1.65;
+}
+
+.yard-construction {
+    width: 100%;
+    margin: 20px 0 0;
+}
+
+.yard-section {
+    margin-top: 20px;
+    padding: clamp(26px, 4vw, 40px);
+}
+
+.yard-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(83, 200, 238, 0.5);
+}
+
+.yard-section-heading h2,
+.yard-music h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    line-height: 1.2;
+}
+
+.yard-section-heading p:not(.yard-section-label),
+.yard-music-content > p:not(.yard-section-label) {
+    margin: 10px 0 0;
+    max-width: 720px;
+    color: #b8c2cc;
+    line-height: 1.6;
+}
+
+.yard-section-heading > a {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    color: #67d3f3;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(83, 200, 238, 0.48);
+    border-radius: 7px;
+}
+
+.yard-section-heading > a:hover {
+    color: #ffffff;
+    background: rgba(83, 200, 238, 0.12);
+}
+
+.yard-report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.yard-report-card {
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 11px;
+}
+
+.yard-report-image {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #080b0e;
+}
+
+.yard-report-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.yard-report-content {
+    display: flex;
+    align-items: flex-start;
+    flex: 1;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.yard-report-added,
+.yard-update-date,
+.yard-podcast-meta {
+    margin: 0 0 8px;
+    color: #53c8ee;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.yard-report-content h3,
+.yard-update-card h3,
+.yard-podcast-content h3 {
+    margin: 0 0 10px;
+    line-height: 1.25;
+}
+
+.yard-report-content h3 {
+    font-size: 1.35rem;
+}
+
+.yard-report-content h3 a,
+.yard-update-card h3 a,
+.yard-podcast-content h3 a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.yard-report-content h3 a:hover,
+.yard-update-card h3 a:hover,
+.yard-podcast-content h3 a:hover {
+    color: #67d3f3;
+}
+
+.yard-report-details {
+    margin: 0 0 12px;
+    color: #c8d1d5;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.yard-report-date {
+    margin: 0 0 20px;
+    color: #98a5ac;
+    font-size: 0.87rem;
+}
+
+.yard-card-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    padding: 10px 15px;
+    color: #081015;
+    font-size: 0.88rem;
+    font-weight: 800;
+    text-decoration: none;
+    background: #53c8ee;
+    border-radius: 7px;
+}
+
+.yard-card-action:hover {
+    background: #78daf5;
+}
+
+.yard-update-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.yard-update-card {
+    padding: 22px 24px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 10px;
+}
+
+.yard-update-card h3 {
+    font-size: 1.3rem;
+}
+
+.yard-update-card > p:not(.yard-update-date) {
+    margin: 0 0 14px;
+    color: #c5cfd4;
+    line-height: 1.6;
+}
+
+.yard-text-link {
+    color: #67d3f3;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.yard-text-link:hover {
+    color: #ffffff;
+}
+
+.yard-podcast {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 11px;
+}
+
+.yard-podcast-image {
+    display: block;
+    width: 230px;
+    height: 230px;
+    background: #080b0e;
+}
+
+.yard-podcast-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.yard-podcast-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    padding: 26px 30px;
+}
+
+.yard-podcast-content h3 {
+    font-size: clamp(1.35rem, 3vw, 1.9rem);
+}
+
+.yard-podcast-description {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0 0 20px;
+    color: #c5cfd4;
+    line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.yard-music {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.yard-music-image {
+    min-height: 175px;
+    background: #080b0e;
+}
+
+.yard-music-image a,
+.yard-music-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.yard-music-image img {
+    object-fit: cover;
+}
+
+.yard-music-content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 28px 32px;
+}
+
+.yard-music-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.yard-music-actions .yard-card-action {
+    margin-top: 0;
+}
+
+.yard-loading,
+.yard-empty {
+    margin: 0;
+    color: #b8c2cc;
+}
+
+@media (max-width: 850px) {
+    .yard-report-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .yard-report-card {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .yard-report-image {
+        height: 100%;
+        aspect-ratio: auto;
+    }
+
+    .yard-podcast {
+        grid-template-columns: 180px minmax(0, 1fr);
+    }
+
+    .yard-podcast-image {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+@media (max-width: 650px) {
+    .yard-page {
+        width: min(100% - 20px, 1120px);
+        padding: 28px 0;
+    }
+
+    .yard-section-heading {
+        flex-direction: column;
+    }
+
+    .yard-section-heading > a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .yard-report-card,
+    .yard-podcast,
+    .yard-music {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .yard-report-image {
+        aspect-ratio: 16 / 9;
+    }
+
+    .yard-podcast-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    .yard-music-image {
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+    }
+
+    .yard-music-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .yard-music-actions .yard-card-action {
+        width: 100%;
+    }
+}
