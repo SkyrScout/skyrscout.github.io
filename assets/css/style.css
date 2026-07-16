@@ -1290,3 +1290,35 @@ img.emoji {
         font-size: 1rem;
     }
 }
+.podcast-episodes {
+    margin-top: 20px;
+    padding: clamp(26px, 4vw, 40px);
+
+    background: rgba(7, 11, 15, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.podcast-episodes h2 {
+    margin: 0 0 14px;
+    padding-bottom: 14px;
+
+    color: #ffffff;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+
+    border-bottom: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.podcast-episodes-intro {
+    margin: 0 0 22px;
+    color: #b8c2cc;
+    line-height: 1.6;
+}
+
+.podcast-episodes iframe {
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+}
