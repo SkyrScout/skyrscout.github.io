@@ -1583,3 +1583,229 @@ img.emoji {
     height: 20px;
     flex-shrink: 0;
 }
+/* =========================
+   Music page
+   ========================= */
+
+.music-page {
+    width: min(1040px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 56px 0;
+}
+
+.music-page-header,
+.music-latest,
+.music-playlist,
+.music-channel {
+    background: rgba(7, 11, 15, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.music-page-header {
+    margin-bottom: 20px;
+    padding: clamp(28px, 5vw, 44px);
+    border-left: 4px solid #53c8ee;
+}
+
+.music-label {
+    margin: 0 0 10px;
+    color: #53c8ee;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.music-page-header h1 {
+    margin: 0 0 16px;
+    color: #ffffff;
+    font-size: clamp(2.3rem, 5vw, 3.6rem);
+    line-height: 1.08;
+}
+
+.music-page-header p {
+    margin: 0;
+    max-width: 800px;
+    color: #cbd4d9;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.music-page-header p + p {
+    margin-top: 12px;
+}
+
+.music-latest,
+.music-playlist,
+.music-channel {
+    margin-top: 20px;
+    padding: clamp(26px, 4vw, 40px);
+}
+
+.music-latest h2,
+.music-playlist h2,
+.music-channel h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    line-height: 1.2;
+}
+
+.music-latest > h2 {
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.music-latest-video {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.music-latest-details {
+    min-width: 0;
+}
+
+.music-latest-details h3 {
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    line-height: 1.25;
+}
+
+.music-latest-date {
+    margin: 0 0 16px;
+    color: #53c8ee;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.music-latest-description {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0 0 22px;
+    color: #c5cfd4;
+    font-size: 0.97rem;
+    line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 7;
+}
+
+.music-video-frame {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000000;
+    border-radius: 12px;
+}
+
+.music-video-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.music-youtube-action,
+.music-channel > a,
+.music-playlist-heading > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 11px 16px;
+    color: #081015;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-decoration: none;
+    background: #53c8ee;
+    border-radius: 7px;
+}
+
+.music-youtube-action:hover,
+.music-channel > a:hover,
+.music-playlist-heading > a:hover {
+    background: #78daf5;
+}
+
+.music-youtube-action img,
+.music-channel a img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.music-playlist-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.music-playlist-heading p {
+    margin: 8px 0 0;
+    color: #b8c2cc;
+    line-height: 1.55;
+}
+
+.music-playlist-heading > a {
+    flex-shrink: 0;
+}
+
+.music-channel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 48px;
+}
+
+.music-channel p {
+    margin: 10px 0 0;
+    color: #b8c2cc;
+    line-height: 1.6;
+}
+
+.music-loading {
+    color: #b8c2cc;
+}
+
+@media (max-width: 800px) {
+    .music-latest-video {
+        grid-template-columns: 1fr;
+    }
+
+    .music-playlist-heading,
+    .music-channel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 650px) {
+    .music-page {
+        width: min(100% - 20px, 1040px);
+        padding: 28px 0;
+    }
+
+    .music-page-header,
+    .music-latest,
+    .music-playlist,
+    .music-channel {
+        padding: 22px;
+    }
+
+    .music-playlist-heading > a,
+    .music-channel > a {
+        width: 100%;
+    }
+}
