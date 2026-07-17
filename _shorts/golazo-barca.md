@@ -1,15 +1,4 @@
 
----
-layout: short
-
-title: "GOLAZO from former Barca Youth"
-
-player_slug: "erbol-atabaev"
-
-youtube: "https://www.youtube.com/shorts/Q5wLixizoqk"
-
-publish_date: "17.07.2026"
-
 description: |
   GOLAZO from 🇰🇬 Erbol Atabaev (2002) 🤯
 
@@ -18,5 +7,3 @@ description: |
   He cushions the ball on his foot, pops it over his marker's head without letting it hit the ground, then buries the volley into the far corner.
 
   The former Barcelona youth midfielder showing exactly why he's such a special talent!
-
----
