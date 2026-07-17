@@ -204,7 +204,59 @@ title: Scoutland Yard
                 </div>
 
             </section>
+<section class="yard-section">
 
+    <div class="yard-section-heading">
+        <div>
+            <p class="yard-section-label">Video</p>
+            <h2>Latest Shorts</h2>
+            <p>Quick scouting clips and standout individual actions.</p>
+        </div>
+
+        <a href="/shorts/">View all Shorts</a>
+    </div>
+
+    <div class="yard-report-grid">
+
+        {% assign latest_shorts = site.shorts
+            | sort: "publish_date"
+            | reverse
+        %}
+
+        {% for short in latest_shorts limit: 3 %}
+
+            {% assign youtube_id = short.youtube
+                | split: "shorts/"
+                | last
+                | split: "?"
+                | first
+            %}
+
+            <article class="yard-report-card">
+
+                <a class="yard-report-image" href="{{ short.url }}">
+                    <img
+                        src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                        alt="{{ short.title }}"
+                        loading="lazy"
+                    >
+                </a>
+
+                <div class="yard-report-content">
+                    <h3><a href="{{ short.url }}">{{ short.title }}</a></h3>
+
+                    <a class="yard-card-action" href="{{ short.url }}">
+                        Watch Short
+                    </a>
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
             <section class="yard-section">
 
                 <div class="yard-section-heading">
