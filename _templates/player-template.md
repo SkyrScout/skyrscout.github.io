@@ -22,6 +22,9 @@
 # • Leave podcast fields empty if there is no podcast episode.
 ###############################################################################
 
+# Layout used for all player profiles.
+layout: player
+
 # Full YouTube title.
 # Format:
 # "Player Name (Birth year) – Club | League, Country"
@@ -33,9 +36,15 @@ youtube: ""
 # Name of the report author.
 report_by: "Scout Pilgrim"
 
-# Date the report was originally published.
+# Date the scouting report was originally written.
+# This is the date of the assessment, not the date it was added to the website.
 # Format: DD.MM.YYYY
 report_date: ""
+
+# Date the player report was published on the SkyrScout website.
+# This controls the order under "Latest reports added" on Scoutland Yard.
+# Format: DD.MM.YYYY
+site_added: ""
 
 # Write the position in full.
 # Example:
