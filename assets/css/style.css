@@ -2249,3 +2249,95 @@ img.emoji {
 .report-button:hover {
     background: #0f97b5;
 }
+.shorts-index-page {
+    max-width: 1180px;
+}
+
+.shorts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    margin-top: 28px;
+}
+
+.short-card {
+    overflow: hidden;
+    background: rgba(7, 12, 17, 0.96);
+    border: 1px solid rgba(65, 199, 231, 0.25);
+    border-radius: 14px;
+}
+
+.short-card-image-link {
+    position: relative;
+    display: block;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    background: #05080b;
+}
+
+.short-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.short-card-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 58px;
+    height: 58px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 4px;
+    background: rgba(0, 0, 0, 0.78);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+}
+
+.short-card-content {
+    padding: 22px;
+}
+
+.short-card-content h2 {
+    margin: 0 0 10px;
+    font-size: 1.35rem;
+    line-height: 1.25;
+}
+
+.short-card-content h2 a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.short-card-content h2 a:hover {
+    color: #41c7e7;
+}
+
+.short-card-player {
+    margin: 0 0 14px;
+    color: #b8c3cc;
+    font-weight: 600;
+}
+
+.short-card-description {
+    margin: 0 0 18px;
+    line-height: 1.55;
+    color: #e2e6e9;
+}
+
+@media (max-width: 640px) {
+    .shorts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .short-card {
+        max-width: 420px;
+        margin: 0 auto;
+    }
+}
