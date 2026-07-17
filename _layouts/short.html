@@ -97,14 +97,11 @@
                     | first
                 %}
 
-                <section class="player-video">
+               <section class="player-section short-video-section">
 
-                    <div style="
-                        width: 100%;
-                        max-width: 430px;
-                        margin: 0 auto;
-                        aspect-ratio: 9 / 16;
-                    ">
+    <div class="short-video-frame">
+
+        <div class="short-video-wrapper">
 
                         <iframe
                             src="https://www.youtube.com/embed/{{ youtube_id }}"
@@ -119,9 +116,11 @@
                             allowfullscreen>
                         </iframe>
 
-                    </div>
+                           </div>
 
-                </section>
+    </div>
+
+</section>
 
             {% endif %}
 
