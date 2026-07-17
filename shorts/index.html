@@ -1,0 +1,106 @@
+---
+layout: default
+title: "Shorts"
+permalink: /shorts/
+---
+
+<main class="page-background">
+
+    <section class="player-page shorts-index-page">
+
+        <header class="player-header">
+            <h1>SkyrScout Shorts</h1>
+
+            <p class="player-subtitle">
+                Quick scouting clips, individual actions and standout moments.
+            </p>
+        </header>
+
+        {% assign sorted_shorts = site.shorts | sort: "publish_date" | reverse %}
+
+        {% if sorted_shorts.size > 0 %}
+
+            <section class="shorts-grid">
+
+                {% for short in sorted_shorts %}
+
+                    {% assign player = site.players
+                        | where: "slug", short.player_slug
+                        | first
+                    %}
+
+                    {% assign youtube_id = short.youtube
+                        | split: 'shorts/'
+                        | last
+                        | split: '?'
+                        | first
+                        | split: '&'
+                        | first
+                    %}
+
+                    <article class="short-card">
+
+                        <a href="{{ short.url }}" class="short-card-image-link">
+
+                            <img
+                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                alt="{{ short.title }}"
+                                class="short-card-image"
+                                loading="lazy"
+                            >
+
+                            <span class="short-card-play">▶</span>
+
+                        </a>
+
+                        <div class="short-card-content">
+
+                            <h2>
+                                <a href="{{ short.url }}">
+                                    {{ short.title }}
+                                </a>
+                            </h2>
+
+                            {% if player %}
+
+                                {% assign player_title_parts = player.title | split: ' – ' %}
+
+                                <p class="short-card-player">
+                                    {{ player_title_parts[0] }}
+
+                                    {% if player.position %}
+                                        • {{ player.position }}
+                                    {% endif %}
+                                </p>
+
+                            {% endif %}
+
+                            {% if short.description %}
+                                <p class="short-card-description">
+                                    {{ short.description | strip_newlines | truncate: 150 }}
+                                </p>
+                            {% endif %}
+
+                            <a href="{{ short.url }}" class="report-button">
+                                Watch Short →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% else %}
+
+            <section class="player-section">
+                <p>No Shorts have been added yet.</p>
+            </section>
+
+        {% endif %}
+
+    </section>
+
+</main>
