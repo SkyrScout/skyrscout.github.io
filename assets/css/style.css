@@ -2341,3 +2341,29 @@ img.emoji {
         margin: 0 auto;
     }
 }
+.short-list-image {
+    flex: 0 0 220px;
+    height: 390px;
+    background: #05080b;
+}
+
+.short-list-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 760px) {
+    .short-list-card {
+        align-items: stretch;
+    }
+
+    .short-list-image {
+        flex: none;
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        aspect-ratio: 9 / 16;
+        margin: 0 auto;
+    }
+}
