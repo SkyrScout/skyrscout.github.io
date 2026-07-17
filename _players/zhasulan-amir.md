@@ -54,7 +54,7 @@ position: "Centre-Forward"
 # Paste the COMPLETE Summary below.
 # Keep two spaces before every line.
 summary: |
-  🇰🇿 Zhasulan Amir | 19 y/o CF
+🇰🇿 Zhasulan Amir | 19 y/o CF
 ⚡ Explosive, two-footed attacker with elite pace & ball carrying
 🎯 Smart box movement, fearless in duels & strong aerial threat
 🔄 Versatile profile – best suited as a modern No.9
@@ -70,7 +70,7 @@ summary: |
 # - Career trajectory and current form
 # - Transfer outlook
 report: |
-  Zhasulan Amir | 19-year-old centre-forward | Kazakhstan
+Zhasulan Amir | 19-year-old centre-forward | Kazakhstan
 
 Zhasulan Amir is a highly versatile attacking player standing 183 cm tall, currently representing FC Ordabasy in the Kazakhstan Premier League. Although capable of playing as an attacking midfielder, winger, second striker, or as a lone centre-forward, his long-term potential appears highest as a number nine.
 
