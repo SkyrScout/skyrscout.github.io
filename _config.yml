@@ -15,6 +15,10 @@ collections:
     output: true
     permalink: /players/:name/
 
+  shorts:
+    output: true
+    permalink: /shorts/:name/
+
   update_posts:
     output: true
     permalink: /updates/:name/
@@ -25,6 +29,12 @@ defaults:
       type: "players"
     values:
       layout: player
+
+  - scope:
+      path: ""
+      type: "shorts"
+    values:
+      layout: short
 
   - scope:
       path: ""
