@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page.title }} | SkyrScout</title>
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <img
+            src="/assets/images/banner.png"
+            alt="SkyrScout"
+            class="site-banner"
+        >
+
+        <nav class="navigation">
+
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-toggle"
+            >
+
+            <label
+                for="menu-toggle"
+                class="menu-button"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="navigation-links">
+                <a href="/">Home</a>
+                <a href="/players/">Players</a>
+                <a href="/shorts/">Shorts</a>
+                <a href="/updates/">Updates</a>
+                <a href="/podcast/">Podcast</a>
+                <a href="/music/">Music</a>
+                <a href="/about/">About</a>
+            </div>
+
+        </nav>
+
+    </header>
+
+    {% assign player = site.players
+        | where: "slug", page.player_slug
+        | first
+    %}
+
+    <main class="page-background">
+
+        <article class="player-page short-page">
+
+            <header class="player-header">
+
+                <h1>{{ page.title }}</h1>
+
+                {% if player %}
+
+                    {% assign player_title_parts = player.title | split: ' – ' %}
+
+                    <p class="player-subtitle">
+                        {{ player_title_parts[0] }}
+
+                        {% if player.position %}
+                            • {{ player.position }}
+                        {% endif %}
+                    </p>
+
+                {% endif %}
+
+                {% if page.publish_date %}
+                    <p class="report-byline">
+                        Published {{ page.publish_date }}
+                    </p>
+                {% endif %}
+
+            </header>
+
+            {% if page.youtube %}
+
+                {% assign youtube_id = page.youtube
+                    | split: 'shorts/'
+                    | last
+                    | split: '?'
+                    | first
+                    | split: '&'
+                    | first
+                %}
+
+                <section class="player-video">
+
+                    <div style="
+                        width: 100%;
+                        max-width: 430px;
+                        margin: 0 auto;
+                        aspect-ratio: 9 / 16;
+                    ">
+
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ youtube_id }}"
+                            title="{{ page.title }}"
+                            style="
+                                width: 100%;
+                                height: 100%;
+                                border: 0;
+                                border-radius: 12px;
+                            "
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+            {% if page.description %}
+
+                <section class="player-section">
+
+                    <h2>About this Short</h2>
+
+                    <div class="report-content">
+                        {{ page.description | newline_to_br }}
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+            {% if player %}
+
+                <section class="player-section">
+
+                    <h2>Player Report</h2>
+
+                    {% assign player_title_parts = player.title | split: ' – ' %}
+
+                    <p>
+                        Learn more about
+                        <strong>{{ player_title_parts[0] }}</strong>
+                        in the complete SkyrScout player profile.
+                    </p>
+
+                    <p>
+                        <a
+                            href="{{ player.url }}"
+                            class="report-button"
+                        >
+                            View full scouting report
+                        </a>
+                    </p>
+
+                </section>
+
+            {% else %}
+
+                <section class="player-section">
+
+                    <h2>Player Report</h2>
+
+                    <p>
+                        No matching player profile was found for:
+                        <strong>{{ page.player_slug }}</strong>
+                    </p>
+
+                </section>
+
+            {% endif %}
+
+        </article>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            twemoji.parse(document.body, {
+                folder: "svg",
+                ext: ".svg"
+            });
+        });
+    </script>
+
+</body>
+</html>
