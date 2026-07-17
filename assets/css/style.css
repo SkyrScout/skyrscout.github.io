@@ -2234,3 +2234,18 @@ img.emoji {
     border-radius: 12px;
     display: block;
 }
+.report-button {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: #18b7d8;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.report-button:hover {
+    background: #0f97b5;
+}
