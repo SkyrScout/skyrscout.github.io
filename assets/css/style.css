@@ -2204,3 +2204,33 @@ img.emoji {
         width: 100%;
     }
 }
+.short-video-section {
+    display: flex;
+    justify-content: center;
+    padding: 32px;
+}
+
+.short-video-frame {
+    width: 100%;
+    max-width: 760px;
+    padding: 28px;
+    background: rgba(7, 12, 17, 0.96);
+    border: 1px solid rgba(65, 199, 231, 0.28);
+    border-radius: 16px;
+    box-sizing: border-box;
+}
+
+.short-video-wrapper {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    aspect-ratio: 9 / 16;
+}
+
+.short-video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 12px;
+    display: block;
+}
