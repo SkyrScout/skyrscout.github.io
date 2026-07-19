@@ -23,21 +23,54 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
             </header>
 
-            <section class="construction-notice yard-construction">
+           {% assign latest_updates = site.update_posts
+    | sort: "path"
+    | reverse
+%}
 
-                <h2>Website under active development</h2>
+{% assign latest_update = latest_updates | first %}
 
-                <p>
-                    SkyrScout is continuously evolving. New scouting reports,
-                    content, features and improvements are added regularly.
-                </p>
+{% if latest_update %}
 
-                <p>
-                    Thank you for your patience and interest while we continue
-                    building the website.
-                </p>
+    {% assign latest_update_filename = latest_update.path
+        | split: "/"
+        | last
+    %}
 
-            </section>
+    {% assign latest_update_date = latest_update_filename
+        | slice: 0, 10
+        | split: "-"
+    %}
+
+    <section class="construction-notice yard-construction">
+
+        <p class="yard-section-label">
+            Latest update
+            •
+            {{ latest_update_date[2] }}.{{ latest_update_date[1] }}.{{ latest_update_date[0] }}
+        </p>
+
+        <h2>
+            {{ latest_update.title }}
+        </h2>
+
+        <p>
+            {{ latest_update.content
+                | strip_html
+                | truncatewords: 24
+            }}
+        </p>
+
+        <a
+            class="yard-text-link"
+            href="{{ latest_update.url }}"
+        >
+            Read update
+        </a>
+
+    </section>
+
+{% endif %}
 
             <section class="yard-section">
 
