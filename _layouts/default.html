@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: 'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% if page.browser_title %}{{ page.browser_title }}{% elsif page.collection == 'update_posts' %}{{ page.title }} | SkyrScout Updates{% elsif page.title %}{{ page.title }} | SkyrScout{% else %}SkyrScout{% endif %}</title>
+
+    {% assign meta_description = page.meta_description | default: page.description %}
+    {% if meta_description == nil and page.summary %}
+        {% assign meta_description = page.summary | strip_newlines | strip %}
+    {% endif %}
+    {% if meta_description %}
+        <meta name="description" content="{{ meta_description | strip_html | strip_newlines | escape }}">
+    {% endif %}
+
+    <link rel="canonical" href="{{ page.url | absolute_url }}">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    {% include analytics.html %}
+</head>
+
+<body>
+
+    {% include site-header.html %}
+
+    {{ content }}
+
+</body>
+</html>

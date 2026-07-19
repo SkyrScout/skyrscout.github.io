@@ -1,62 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+---
+layout: default
+---
 
-    <title>{{ page.title }} | SkyrScout</title>
+{% assign player = site.players
+    | where: "slug", page.player_slug
+    | first
+%}
 
-    <link rel="stylesheet" href="/assets/css/style.css">
-</head>
-
-<body>
-
-    <header class="site-header">
-
-        <img
-            src="/assets/images/banner.png"
-            alt="SkyrScout"
-            class="site-banner"
-        >
-
-        <nav class="navigation">
-
-            <input
-                type="checkbox"
-                id="menu-toggle"
-                class="menu-toggle"
-            >
-
-            <label
-                for="menu-toggle"
-                class="menu-button"
-                aria-label="Open navigation menu"
-            >
-                <span></span>
-                <span></span>
-                <span></span>
-            </label>
-
-            <div class="navigation-links">
-                <a href="/">Home</a>
-                <a href="/players/">Players</a>
-                <a href="/shorts/">Shorts</a>
-                <a href="/updates/">Updates</a>
-                <a href="/podcast/">Podcast</a>
-                <a href="/music/">Music</a>
-                <a href="/about/">About</a>
-            </div>
-
-        </nav>
-
-    </header>
-
-    {% assign player = site.players
-        | where: "slug", page.player_slug
-        | first
-    %}
-
-    <main class="page-background">
+<main class="page-background">
 
         <article class="player-page short-page">
 
@@ -192,6 +143,3 @@
             });
         });
     </script>
-
-</body>
-</html>
