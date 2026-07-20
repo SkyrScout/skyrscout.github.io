@@ -27,16 +27,22 @@ layout: default
                 </p>
 
                 {% if page.report_by %}
-                    <p class="report-byline">
-                        Scouting report by {{ page.report_by }}
+    <p class="report-byline">
 
-                        {% if page.report_date %}
-                            <span class="report-date">
-                                &nbsp;•&nbsp;Report date: {{ page.report_date }}
-                            </span>
-                        {% endif %}
-                    </p>
-                {% endif %}
+        {% if page.profile_type == "video" %}
+            Video scouting profile by {{ page.report_by }}
+        {% else %}
+            Scouting report by {{ page.report_by }}
+        {% endif %}
+
+        {% if page.report_date %}
+            <span class="report-date">
+                &nbsp;•&nbsp;Report date: {{ page.report_date }}
+            </span>
+        {% endif %}
+
+    </p>
+{% endif %}
 
             </header>
 
@@ -91,7 +97,13 @@ layout: default
 
     <section class="player-section player-report">
 
-        <h2>Scouting Report</h2>
+        <h2>
+    {% if page.profile_type == "video" %}
+        Video Scout Profile
+    {% else %}
+        Scouting Report
+    {% endif %}
+</h2>
 
         <div class="report-content">
             {{ formatted_report | markdownify }}
@@ -103,7 +115,13 @@ layout: default
 
     <section class="player-section player-report">
 
-        <h2>Scouting Report</h2>
+        <h2>
+    {% if page.profile_type == "video" %}
+        Video Scout Profile
+    {% else %}
+        Scouting Report
+    {% endif %}
+</h2>
 
         <div class="report-content">
             {{ content }}
