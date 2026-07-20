@@ -17,6 +17,8 @@ position: "Centre-Forward"
 summary: |
   🇹🇳 Omar Ben Ali is a Tunisian centre-forward born in 2005, playing for CS Sfaxien.
 
+  The video scouting profile shows the following selected actions in chronological order:
+
   vs Kairouanaise, 5 October 2025: Gets a penalty. Two goals.
 
   vs Soliman, 19 October 2025: Goal.
