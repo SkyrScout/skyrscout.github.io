@@ -33,7 +33,11 @@ report: |
 
   Career trajectory and current form
 
-  N/A
+  Ladefoged came through the ranks at Næsby BK before joining Sønderjyske in 2022. After struggling to establish himself as a regular starter, he gained valuable senior experience during loan spells with Næstved and Esbjerg.
+
+  During the summer of 2024, Ladefoged came close to a move to Norwegian Eliteserien side Tromsø IL, but the transfer ultimately fell through. He instead joined Esbjerg on loan before leaving Sønderjyske permanently in January 2025 to sign a four-year contract with Västerås SK.
+
+  His move to Sweden has provided the breakthrough he needed. Despite missing part of the season, Ladefoged has scored 10 goals and provided 1 assist in just 15 Superettan appearances, establishing himself as one of the league's most effective strikers. His combination of exceptional size, mobility and goalscoring has made him one of the more intriguing centre-forward profiles in Scandinavian football heading into the 2026 season.
 
   Transfer outlook
 
