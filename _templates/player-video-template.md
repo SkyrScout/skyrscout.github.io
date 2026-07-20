@@ -7,6 +7,7 @@
 ###############################################################################
 
 layout: player
+profile_type: "video"
 
 # Full YouTube title.
 title: ""
