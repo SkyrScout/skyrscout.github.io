@@ -2370,3 +2370,18 @@ img.emoji {
 .yard-report-card[hidden] {
     display: none;
 }
+.report-button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    background: #4fc3e8;
+    color: #071015;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 7px;
+    transition: 0.2s ease;
+}
+
+.report-button:hover {
+    background: #74d3ef;
+}
