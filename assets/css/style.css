@@ -2367,3 +2367,6 @@ img.emoji {
         margin: 0 auto;
     }
 }
+.yard-report-card[hidden] {
+    display: none;
+}
