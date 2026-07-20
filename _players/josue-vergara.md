@@ -48,7 +48,7 @@ report: |
 
   A move during the next winter transfer window appears more realistic. Should he continue scoring and perform well in European qualifiers, interest from significantly stronger leagues is likely to intensify. Profile-wise, he looks particularly well suited to Nordic football, and the Norwegian Eliteserien could be an excellent next step if his development continues at the current pace.
 
-transfermarkt: ""
+transfermarkt: "transfermarkt: "https://www.transfermarkt.com/josue-vergara/profil/spieler/1291709""
 
 sofascore: "https://www.sofascore.com/football/player/josue-vergara/1916618#tab:season"
 
