@@ -89,16 +89,73 @@
     {% if page.youtube %}
         <meta name="twitter:image" content="{{ social_image }}">
     {% endif %}
-    {% if page.collection == 'players' %}
+        {% if page.collection == 'players' %}
 
         {% assign schema_title_parts = page.title | split: ' – ' %}
+
         {% assign schema_player_name = schema_title_parts[0]
             | split: ' ('
             | first
             | strip
         %}
 
-        
+        {% assign schema_context = schema_title_parts[1] | default: '' %}
+        {% assign schema_context_parts = schema_context | split: ' | ' %}
+        {% assign schema_report_club = schema_context_parts[0] | strip %}
+
+        {% assign schema_upload_date = nil %}
+
+        {% if page.report_date %}
+
+            {% assign schema_date_parts = page.report_date | split: '.' %}
+
+            {% if schema_date_parts.size == 3 %}
+
+                {% assign schema_day = schema_date_parts[0] | strip %}
+                {% assign schema_month = schema_date_parts[1] | strip %}
+                {% assign schema_year = schema_date_parts[2] | strip %}
+
+                {% assign schema_year_size = schema_year | size %}
+
+                {% if schema_year_size == 2 %}
+                    {% assign schema_year = '20' | append: schema_year %}
+                {% endif %}
+
+                {% capture schema_upload_date %}
+                    {{ schema_year }}-{{ schema_month }}-{{ schema_day }}
+                {% endcapture %}
+
+                {% assign schema_upload_date = schema_upload_date | strip %}
+
+            {% endif %}
+
+        {% endif %}
+
+        {% if page.youtube %}
+
+            {% assign schema_youtube_id = page.youtube
+                | split: 'v='
+                | last
+                | split: '&'
+                | first
+                | split: '/'
+                | last
+            %}
+
+            {% capture schema_thumbnail %}
+                https://img.youtube.com/vi/{{ schema_youtube_id }}/hqdefault.jpg
+            {% endcapture %}
+
+            {% assign schema_thumbnail = schema_thumbnail | strip %}
+
+            {% capture schema_embed_url %}
+                https://www.youtube.com/embed/{{ schema_youtube_id }}
+            {% endcapture %}
+
+            {% assign schema_embed_url = schema_embed_url | strip %}
+
+        {% endif %}
+
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -121,7 +178,6 @@
                     "name": "Professional footballer"
                 }
 
-               
                 {% if page.transfermarkt or page.sofascore %}
                 ,
                 "sameAs": [
@@ -136,6 +192,37 @@
                 ]
                 {% endif %}
             }
+
+            {% if page.youtube and schema_upload_date %}
+            ,
+            "video": {
+                "@type": "VideoObject",
+                "@id": {{ page.url | absolute_url | append: "#video" | jsonify }},
+                "name": {{ page.title | jsonify }},
+                "thumbnailUrl": {{ schema_thumbnail | jsonify }},
+                "uploadDate": {{ schema_upload_date | jsonify }},
+                "embedUrl": {{ schema_embed_url | jsonify }},
+                "url": {{ page.youtube | jsonify }},
+
+                "about": {
+                    "@id": {{ page.url | absolute_url | append: "#player" | jsonify }}
+                }
+
+                {% if meta_description %}
+                ,
+                "description": {{ clean_description | jsonify }}
+                {% endif %}
+
+                {% if schema_report_club and schema_report_club != "" %}
+                ,
+                "mentions": {
+                    "@type": "SportsTeam",
+                    "name": {{ schema_report_club | jsonify }},
+                    "sport": "Football"
+                }
+                {% endif %}
+            }
+            {% endif %}
         }
         </script>
 
