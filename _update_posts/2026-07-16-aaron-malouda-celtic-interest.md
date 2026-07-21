@@ -1,6 +1,7 @@
 ---
 title: "Aaron Malouda attracting Celtic interest"
-
+player: "aaron-malouda"
+player_name: "Aaron Malouda"
 source: "The New Saints FC on X"
 source_url: "https://x.com/tnsfc/status/2077134480012128727"
 ---
