@@ -1,0 +1,57 @@
+---
+layout: null
+permalink: /sitemap-skyrscout.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://skyrscout.github.io/</loc>
+    </url>
+
+    <url>
+        <loc>https://skyrscout.github.io/players/</loc>
+    </url>
+
+    <url>
+        <loc>https://skyrscout.github.io/shorts/</loc>
+    </url>
+
+    <url>
+        <loc>https://skyrscout.github.io/updates/</loc>
+    </url>
+
+    <url>
+        <loc>https://skyrscout.github.io/podcast/</loc>
+    </url>
+
+    <url>
+        <loc>https://skyrscout.github.io/music/</loc>
+    </url>
+
+    <url>
+        <loc>https://skyrscout.github.io/about/</loc>
+    </url>
+
+
+    {% for player in site.players %}
+    <url>
+        <loc>https://skyrscout.github.io{{ player.url }}</loc>
+    </url>
+    {% endfor %}
+
+
+    {% for short in site.shorts %}
+    <url>
+        <loc>https://skyrscout.github.io{{ short.url }}</loc>
+    </url>
+    {% endfor %}
+
+
+    {% for update in site.update_posts %}
+    <url>
+        <loc>https://skyrscout.github.io{{ update.url }}</loc>
+    </url>
+    {% endfor %}
+
+</urlset>
