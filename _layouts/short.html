@@ -6,7 +6,121 @@ layout: default
     | where: "slug", page.player_slug
     | first
 %}
+{% assign short_upload_date = nil %}
 
+{% if page.publish_date %}
+
+    {% assign short_date_parts = page.publish_date | split: '.' %}
+
+    {% if short_date_parts.size == 3 %}
+
+        {% assign short_day = short_date_parts[0] | strip %}
+        {% assign short_month = short_date_parts[1] | strip %}
+        {% assign short_year = short_date_parts[2] | strip %}
+
+        {% assign short_year_size = short_year | size %}
+
+        {% if short_year_size == 2 %}
+            {% assign short_year = '20' | append: short_year %}
+        {% endif %}
+
+        {% capture short_upload_date %}
+            {{ short_year }}-{{ short_month }}-{{ short_day }}
+        {% endcapture %}
+
+        {% assign short_upload_date = short_upload_date | strip %}
+
+    {% endif %}
+
+{% endif %}
+
+
+{% assign youtube_id = nil %}
+
+{% if page.youtube %}
+
+    {% assign youtube_id = page.youtube
+        | split: 'shorts/'
+        | last
+        | split: '?'
+        | first
+        | split: '&'
+        | first
+    %}
+
+{% endif %}
+
+
+{% if player %}
+
+    {% assign short_player_name = player.title
+        | split: ' – '
+        | first
+        | split: ' ('
+        | first
+        | strip
+    %}
+
+    {% assign short_player_id = player.url
+        | absolute_url
+        | append: '#player'
+    %}
+
+{% endif %}
+
+
+{% if page.youtube and youtube_id and short_upload_date %}
+
+    {% capture short_thumbnail %}
+        https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg
+    {% endcapture %}
+
+    {% assign short_thumbnail = short_thumbnail | strip %}
+
+    {% capture short_embed_url %}
+        https://www.youtube.com/embed/{{ youtube_id }}
+    {% endcapture %}
+
+    {% assign short_embed_url = short_embed_url | strip %}
+
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+
+        "@id": {{ page.url | absolute_url | append: "#video" | jsonify }},
+
+        "name": {{ page.title | jsonify }},
+        "thumbnailUrl": {{ short_thumbnail | jsonify }},
+        "uploadDate": {{ short_upload_date | jsonify }},
+        "embedUrl": {{ short_embed_url | jsonify }},
+        "url": {{ page.youtube | jsonify }},
+        "mainEntityOfPage": {{ page.url | absolute_url | jsonify }},
+
+        "publisher": {
+            "@type": "Organization",
+            "name": "SkyrScout",
+            "url": "https://skyrscout.github.io/"
+        }
+
+        {% if page.description %}
+        ,
+        "description": {{ page.description | strip_html | strip_newlines | jsonify }}
+        {% endif %}
+
+        {% if player %}
+        ,
+        "about": {
+            "@type": "Person",
+            "@id": {{ short_player_id | jsonify }},
+            "name": {{ short_player_name | jsonify }}
+        }
+        {% endif %}
+    }
+    </script>
+
+{% endif %}
 <main class="page-background">
 
         <article class="player-page short-page">
@@ -39,15 +153,7 @@ layout: default
 
             {% if page.youtube %}
 
-                {% assign youtube_id = page.youtube
-                    | split: 'shorts/'
-                    | last
-                    | split: '?'
-                    | first
-                    | split: '&'
-                    | first
-                %}
-
+               
                <section class="player-section short-video-section">
 
     <div class="short-video-frame">
