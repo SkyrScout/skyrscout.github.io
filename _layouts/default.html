@@ -98,12 +98,7 @@
             | strip
         %}
 
-        {% assign schema_club_parts = schema_title_parts[1]
-            | split: ' | '
-        %}
-
-        {% assign schema_club = schema_club_parts[0] | strip %}
-
+        
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -126,15 +121,7 @@
                     "name": "Professional footballer"
                 }
 
-                {% if schema_club and schema_club != "" %}
-                ,
-                "affiliation": {
-                    "@type": "SportsTeam",
-                    "name": {{ schema_club | jsonify }},
-                    "sport": "Football"
-                }
-                {% endif %}
-
+               
                 {% if page.transfermarkt or page.sofascore %}
                 ,
                 "sameAs": [
