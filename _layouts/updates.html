@@ -4,61 +4,85 @@ layout: default
 
 <main class="page-background">
 
-        <article class="update-article">
+    <article class="update-article">
 
-            <header class="update-article-header">
+        <header class="update-article-header">
 
-                <p class="update-article-date">
-                    {{ page.date | date: "%d.%m.%Y" }}
-                </p>
+            <p class="update-article-date">
+                {{ page.date | date: "%d.%m.%Y" }}
+            </p>
 
-                <h1>{{ page.title }}</h1>
-
-                {% if page.player %}
-                    <p class="update-related-player">
-                        Related player:
-                        <a href="/players/{{ page.player }}/">
-                            {{ page.player_name }}
-                        </a>
-                    </p>
-                {% endif %}
-
-            </header>
-
-            <section class="update-article-content">
-                {{ content }}
-            </section>
-
-            {% if page.source_url %}
-                <section class="update-source">
-
-                    <span>Source</span>
-
-                    <a
-                        href="{{ page.source_url }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {{ page.source | default: "Original source" }}
-                    </a>
-
-                </section>
-            {% endif %}
+            <h1>{{ page.title }}</h1>
 
             {% if page.player %}
-                <section class="update-action">
+                <p class="update-related-player">
+                    Related player:
                     <a href="/players/{{ page.player }}/">
-                        View scouting report
+                        {{ page.player_name }}
                     </a>
-                </section>
+                </p>
             {% endif %}
 
-        </article>
+        </header>
 
-    </main>
+        <section class="update-article-content">
+            {{ content }}
+        </section>
 
-    <script
-        async
-        src="https://platform.twitter.com/widgets.js"
-        charset="utf-8">
-    </script>
+        {% if page.source_url or page.source_via_url %}
+
+            <section class="update-source">
+
+                <span>Sources</span>
+
+                <p class="update-source-links">
+
+                    {% if page.source_url %}
+                        <a
+                            href="{{ page.source_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {{ page.source | default: "Original source" }}
+                        </a>
+                    {% endif %}
+
+                    {% if page.source_via_url %}
+                        <br>
+                        Via:
+                        <a
+                            href="{{ page.source_via_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {{ page.source_via | default: "Secondary source" }}
+                        </a>
+                    {% endif %}
+
+                </p>
+
+            </section>
+
+        {% endif %}
+
+        {% if page.player %}
+
+            <section class="update-action">
+
+                <a href="/players/{{ page.player }}/">
+                    View scouting report
+                </a>
+
+            </section>
+
+        {% endif %}
+
+    </article>
+
+</main>
+
+<script
+    async
+    src="https://platform.twitter.com/widgets.js"
+    charset="utf-8">
+</script>
