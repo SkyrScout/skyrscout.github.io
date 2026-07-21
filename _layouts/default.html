@@ -240,9 +240,16 @@
             "url": {{ page.podcast | jsonify }},
 
             "partOfSeries": {
-                "@type": "PodcastSeries",
-                "name": "Scout of This World"
-            }
+    "@type": "PodcastSeries",
+    "@id": "https://skyrscout.github.io/podcast/#podcastseries",
+    "name": "Scout of This World",
+    "url": "https://skyrscout.github.io/podcast/",
+    "sameAs": [
+        "https://open.spotify.com/show/7kQc1nObXtDTjJxy7oUpdZ",
+        "https://www.youtube.com/@ScoutofThisWorld78",
+        "https://x.com/Sotw_BonScout"
+    ]
+}
         }
     }
     {% endif %}
