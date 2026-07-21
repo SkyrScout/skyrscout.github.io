@@ -51,8 +51,10 @@ layout: default
     {% if page.player %}
     ,
     "about": {
-        "@id": {{ update_player_id | jsonify }}
-    }
+    "@type": "Person",
+    "@id": {{ update_player_id | jsonify }},
+    "name": {{ page.player_name | jsonify }}
+}
     {% endif %}
 
     {% if page.source_url or page.source_via_url %}
