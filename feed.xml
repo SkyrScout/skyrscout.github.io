@@ -1,0 +1,164 @@
+---
+layout: null
+permalink: /feed.xml
+---
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+    <title>SkyrScout – Latest scouting content</title>
+
+    <id>https://skyrscout.github.io/feed.xml</id>
+
+    <link
+        rel="self"
+        type="application/atom+xml"
+        href="https://skyrscout.github.io/feed.xml"
+    />
+
+    <link
+        rel="alternate"
+        type="text/html"
+        href="https://skyrscout.github.io/"
+    />
+
+    <link
+        rel="hub"
+        href="https://pubsubhubbub.appspot.com/"
+    />
+
+    <updated>{{ site.time | date_to_xmlschema }}</updated>
+
+    <author>
+        <name>SkyrScout</name>
+        <uri>https://skyrscout.github.io/</uri>
+    </author>
+
+    <!-- build: {{ site.github.build_revision }} -->
+
+
+    {% for player in site.players %}
+
+        {% assign player_date_parts = player.site_added | split: '.' %}
+
+        {% if player_date_parts.size == 3 %}
+
+            {% assign player_day = player_date_parts[0] | strip %}
+            {% assign player_month = player_date_parts[1] | strip %}
+            {% assign player_year = player_date_parts[2] | strip %}
+
+            {% capture player_updated %}
+                {{ player_year }}-{{ player_month }}-{{ player_day }}T00:00:00Z
+            {% endcapture %}
+
+            {% assign player_updated = player_updated | strip %}
+
+        {% else %}
+
+            {% assign player_updated = site.time | date_to_xmlschema %}
+
+        {% endif %}
+
+        <entry>
+
+            <title>{{ player.title | xml_escape }}</title>
+
+            <id>https://skyrscout.github.io{{ player.url }}</id>
+
+            <link
+                rel="alternate"
+                type="text/html"
+                href="https://skyrscout.github.io{{ player.url }}"
+            />
+
+            <updated>{{ player_updated }}</updated>
+
+            <category term="player" />
+
+            {% if player.summary %}
+                <summary type="text">{{ player.summary | strip_html | strip_newlines | strip | xml_escape }}</summary>
+            {% else %}
+                <summary type="text">SkyrScout player scouting profile.</summary>
+            {% endif %}
+
+        </entry>
+
+    {% endfor %}
+
+
+    {% for short in site.shorts %}
+
+        {% assign short_date_parts = short.publish_date | split: '.' %}
+
+        {% if short_date_parts.size == 3 %}
+
+            {% assign short_day = short_date_parts[0] | strip %}
+            {% assign short_month = short_date_parts[1] | strip %}
+            {% assign short_year = short_date_parts[2] | strip %}
+
+            {% capture short_updated %}
+                {{ short_year }}-{{ short_month }}-{{ short_day }}T00:00:00Z
+            {% endcapture %}
+
+            {% assign short_updated = short_updated | strip %}
+
+        {% else %}
+
+            {% assign short_updated = site.time | date_to_xmlschema %}
+
+        {% endif %}
+
+        <entry>
+
+            <title>{{ short.title | xml_escape }}</title>
+
+            <id>https://skyrscout.github.io{{ short.url }}</id>
+
+            <link
+                rel="alternate"
+                type="text/html"
+                href="https://skyrscout.github.io{{ short.url }}"
+            />
+
+            <updated>{{ short_updated }}</updated>
+
+            <category term="short" />
+
+            {% if short.description %}
+                <summary type="text">{{ short.description | strip_html | strip_newlines | strip | xml_escape }}</summary>
+            {% else %}
+                <summary type="text">SkyrScout football Short.</summary>
+            {% endif %}
+
+        </entry>
+
+    {% endfor %}
+
+
+    {% for update in site.update_posts %}
+
+        <entry>
+
+            <title>{{ update.title | xml_escape }}</title>
+
+            <id>https://skyrscout.github.io{{ update.url }}</id>
+
+            <link
+                rel="alternate"
+                type="text/html"
+                href="https://skyrscout.github.io{{ update.url }}"
+            />
+
+            <updated>{{ update.date | date_to_xmlschema }}</updated>
+
+            <category term="update" />
+
+            {% if update.description %}
+                <summary type="text">{{ update.description | strip_html | strip_newlines | strip | xml_escape }}</summary>
+            {% else %}
+                <summary type="text">SkyrScout player update.</summary>
+            {% endif %}
+
+        </entry>
+
+    {% endfor %}
+
+</feed>
