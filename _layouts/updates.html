@@ -2,6 +2,88 @@
 layout: default
 ---
 
+{% assign update_description = page.meta_description | default: page.description %}
+
+{% if update_description == nil %}
+    {% assign update_description = content
+        | strip_html
+        | strip_newlines
+        | replace: "  ", " "
+        | strip
+        | truncate: 300
+    %}
+{% endif %}
+
+{% if page.player %}
+    {% assign update_player_url = '/players/'
+        | append: page.player
+        | append: '/'
+        | absolute_url
+    %}
+
+    {% assign update_player_id = update_player_url
+        | append: '#player'
+    %}
+{% endif %}
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": {{ page.url | absolute_url | append: "#article" | jsonify }},
+    "url": {{ page.url | absolute_url | jsonify }},
+    "headline": {{ page.title | jsonify }},
+    "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+    "description": {{ update_description | jsonify }},
+
+    "author": {
+        "@type": "Organization",
+        "name": "SkyrScout",
+        "url": "https://skyrscout.github.io/"
+    },
+
+    "isPartOf": {
+        "@type": "WebSite",
+        "name": "SkyrScout",
+        "url": "https://skyrscout.github.io/"
+    }
+
+    {% if page.player %}
+    ,
+    "about": {
+        "@id": {{ update_player_id | jsonify }}
+    }
+    {% endif %}
+
+    {% if page.source_url or page.source_via_url %}
+    ,
+    "citation": [
+
+        {% if page.source_url %}
+        {
+            "@type": "WebPage",
+            "name": {{ page.source | default: "Original source" | jsonify }},
+            "url": {{ page.source_url | jsonify }}
+        }
+        {% endif %}
+
+        {% if page.source_url and page.source_via_url %}
+        ,
+        {% endif %}
+
+        {% if page.source_via_url %}
+        {
+            "@type": "WebPage",
+            "name": {{ page.source_via | default: "Secondary source" | jsonify }},
+            "url": {{ page.source_via_url | jsonify }}
+        }
+        {% endif %}
+
+    ]
+    {% endif %}
+}
+</script>
+
 <main class="page-background">
 
     <article class="update-article">
@@ -14,7 +96,7 @@ layout: default
 
             <h1>{{ page.title }}</h1>
 
-            {% if page.player %}
+            {% if page.player and page.show_related_player %}
                 <p class="update-related-player">
                     Related player:
                     <a href="/players/{{ page.player }}/">
@@ -65,7 +147,7 @@ layout: default
 
         {% endif %}
 
-        {% if page.player %}
+        {% if page.player and page.show_related_player %}
 
             <section class="update-action">
 
