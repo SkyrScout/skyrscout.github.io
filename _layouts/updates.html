@@ -5,13 +5,17 @@ layout: default
 {% assign update_description = page.meta_description | default: page.description %}
 
 {% if update_description == nil %}
+
     {% assign update_description = content
+        | split: '</p>'
+        | first
         | strip_html
         | strip_newlines
         | replace: "  ", " "
         | strip
         | truncate: 300
     %}
+
 {% endif %}
 
 {% if page.player %}
