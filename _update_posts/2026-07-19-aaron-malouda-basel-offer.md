@@ -1,6 +1,7 @@
 ---
 title: "FC Basel submit final offer for Aaron Malouda"
-
+player: "mohamed-el-amine-ramdaoui"
+player_name: "Mohamed El Amine Ramdaoui"
 source: "L'Équipe"
 source_url: "https://www.lequipe.fr/Football/Actualites/Mercato-ancien-joueur-du-losc-aaron-malouda-du-sabah-fk-vers-le-fc-bale/1705643"
 
