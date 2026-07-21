@@ -25,7 +25,37 @@ layout: default
         | append: '#player'
     %}
 {% endif %}
+{% assign update_article_image = nil %}
 
+{% if page.player %}
+
+    {% capture update_player_path %}/players/{{ page.player }}/{% endcapture %}
+
+    {% assign update_player_doc = site.players
+        | where: "url", update_player_path
+        | first
+    %}
+
+    {% if update_player_doc and update_player_doc.youtube %}
+
+        {% assign update_youtube_id = update_player_doc.youtube
+            | split: 'v='
+            | last
+            | split: '&'
+            | first
+            | split: '/'
+            | last
+        %}
+
+        {% capture update_article_image %}
+            https://img.youtube.com/vi/{{ update_youtube_id }}/hqdefault.jpg
+        {% endcapture %}
+
+        {% assign update_article_image = update_article_image | strip %}
+
+    {% endif %}
+
+{% endif %}
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
