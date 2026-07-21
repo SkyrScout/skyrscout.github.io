@@ -1,6 +1,7 @@
 ---
 title: "Mohamed El Amine Ramdaoui set to join Baltika Kaliningrad"
-
+player: "mohamed-el-amine-ramdaoui"
+player_name: "Mohamed El Amine Ramdaoui"
 source: "Maghreb-Foot"
 source_url: "https://maghreb-foot.com/%D9%88%D9%83%D9%8A%D9%84-%D8%A3%D8%B9%D9%85%D8%A7%D9%84%D9%87-%D9%8A%D9%83%D8%B4%D9%81-%D8%AD%D8%B5%D8%B1%D9%8A%D8%A7-%D9%84%D9%80-%D9%85%D8%BA%D8%B1%D8%A8-%D9%81%D9%88%D9%88%D8%AA-%D8%B1%D9%85/"
 
