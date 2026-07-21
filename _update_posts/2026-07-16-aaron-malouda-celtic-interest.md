@@ -1,5 +1,8 @@
 ---
 title: "Aaron Malouda attracting Celtic interest"
+
+source: "The New Saints FC on X"
+source_url: "https://x.com/tnsfc/status/2077134480012128727"
 ---
 
 Aaron Malouda is reportedly attracting interest from Celtic.
