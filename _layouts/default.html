@@ -89,7 +89,70 @@
     {% if page.youtube %}
         <meta name="twitter:image" content="{{ social_image }}">
     {% endif %}
+    {% if page.collection == 'players' %}
 
+        {% assign schema_title_parts = page.title | split: ' – ' %}
+        {% assign schema_player_name = schema_title_parts[0]
+            | split: ' ('
+            | first
+            | strip
+        %}
+
+        {% assign schema_club_parts = schema_title_parts[1]
+            | split: ' | '
+        %}
+
+        {% assign schema_club = schema_club_parts[0] | strip %}
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "@id": {{ page.url | absolute_url | append: "#webpage" | jsonify }},
+            "url": {{ page.url | absolute_url | jsonify }},
+            "name": {{ page.title | jsonify }},
+
+            {% if meta_description %}
+            "description": {{ clean_description | jsonify }},
+            {% endif %}
+
+            "mainEntity": {
+                "@type": "Person",
+                "@id": {{ page.url | absolute_url | append: "#player" | jsonify }},
+                "name": {{ schema_player_name | jsonify }},
+
+                "hasOccupation": {
+                    "@type": "Occupation",
+                    "name": "Professional footballer"
+                }
+
+                {% if schema_club and schema_club != "" %}
+                ,
+                "affiliation": {
+                    "@type": "SportsTeam",
+                    "name": {{ schema_club | jsonify }},
+                    "sport": "Football"
+                }
+                {% endif %}
+
+                {% if page.transfermarkt or page.sofascore %}
+                ,
+                "sameAs": [
+                    {% if page.transfermarkt %}
+                        {{ page.transfermarkt | jsonify }}
+                        {% if page.sofascore %},{% endif %}
+                    {% endif %}
+
+                    {% if page.sofascore %}
+                        {{ page.sofascore | jsonify }}
+                    {% endif %}
+                ]
+                {% endif %}
+            }
+        }
+        </script>
+
+    {% endif %}
     <link rel="stylesheet" href="/assets/css/style.css">
     <link
         rel="icon"
