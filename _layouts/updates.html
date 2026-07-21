@@ -63,10 +63,14 @@ layout: default
     "@id": {{ page.url | absolute_url | append: "#article" | jsonify }},
     "url": {{ page.url | absolute_url | jsonify }},
     "headline": {{ page.title | jsonify }},
-    "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
-    "description": {{ update_description | jsonify }},
+"datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+"description": {{ update_description | jsonify }},
 
-    "author": {
+{% if update_article_image %}
+"image": {{ update_article_image | jsonify }},
+{% endif %}
+
+"author": {
         "@type": "Organization",
         "name": "SkyrScout",
         "url": "https://skyrscout.github.io/"
