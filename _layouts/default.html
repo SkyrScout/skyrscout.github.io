@@ -155,7 +155,40 @@
             {% assign schema_embed_url = schema_embed_url | strip %}
 
         {% endif %}
+{% assign schema_podcast_seconds = nil %}
 
+{% if page.podcast and page.podcast_timestamp %}
+
+    {% assign schema_podcast_parts = page.podcast_timestamp | split: ':' %}
+
+    {% if schema_podcast_parts.size == 3 %}
+
+        {% assign schema_podcast_hours = schema_podcast_parts[0] | plus: 0 %}
+        {% assign schema_podcast_minutes = schema_podcast_parts[1] | plus: 0 %}
+        {% assign schema_podcast_secs = schema_podcast_parts[2] | plus: 0 %}
+
+        {% assign schema_podcast_hour_seconds = schema_podcast_hours | times: 3600 %}
+        {% assign schema_podcast_minute_seconds = schema_podcast_minutes | times: 60 %}
+
+        {% assign schema_podcast_seconds = schema_podcast_hour_seconds
+            | plus: schema_podcast_minute_seconds
+            | plus: schema_podcast_secs
+        %}
+
+    {% elsif schema_podcast_parts.size == 2 %}
+
+        {% assign schema_podcast_minutes = schema_podcast_parts[0] | plus: 0 %}
+        {% assign schema_podcast_secs = schema_podcast_parts[1] | plus: 0 %}
+
+        {% assign schema_podcast_minute_seconds = schema_podcast_minutes | times: 60 %}
+
+        {% assign schema_podcast_seconds = schema_podcast_minute_seconds
+            | plus: schema_podcast_secs
+        %}
+
+    {% endif %}
+
+{% endif %}
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -168,30 +201,52 @@
             "description": {{ clean_description | jsonify }},
             {% endif %}
 
-            "mainEntity": {
-                "@type": "Person",
-                "@id": {{ page.url | absolute_url | append: "#player" | jsonify }},
-                "name": {{ schema_player_name | jsonify }},
+           "mainEntity": {
+    "@type": "Person",
+    "@id": {{ page.url | absolute_url | append: "#player" | jsonify }},
+    "name": {{ schema_player_name | jsonify }},
 
-                "hasOccupation": {
-                    "@type": "Occupation",
-                    "name": "Professional footballer"
-                }
+    "hasOccupation": {
+        "@type": "Occupation",
+        "name": "Professional footballer"
+    }
 
-                {% if page.transfermarkt or page.sofascore %}
-                ,
-                "sameAs": [
-                    {% if page.transfermarkt %}
-                        {{ page.transfermarkt | jsonify }}
-                        {% if page.sofascore %},{% endif %}
-                    {% endif %}
+    {% if page.transfermarkt or page.sofascore %}
+    ,
+    "sameAs": [
+        {% if page.transfermarkt %}
+            {{ page.transfermarkt | jsonify }}
+            {% if page.sofascore %},{% endif %}
+        {% endif %}
 
-                    {% if page.sofascore %}
-                        {{ page.sofascore | jsonify }}
-                    {% endif %}
-                ]
-                {% endif %}
+        {% if page.sofascore %}
+            {{ page.sofascore | jsonify }}
+        {% endif %}
+    ]
+    {% endif %}
+
+    {% if page.podcast %}
+    ,
+    "subjectOf": {
+        "@type": "Clip",
+        "name": {{ schema_player_name | append: " – Scout of This World segment" | jsonify }},
+
+        {% if schema_podcast_seconds %}
+        "startOffset": {{ schema_podcast_seconds }},
+        {% endif %}
+
+        "partOfEpisode": {
+            "@type": "PodcastEpisode",
+            "url": {{ page.podcast | jsonify }},
+
+            "partOfSeries": {
+                "@type": "PodcastSeries",
+                "name": "Scout of This World"
             }
+        }
+    }
+    {% endif %}
+}
 
             {% if page.youtube and schema_upload_date %}
             ,
