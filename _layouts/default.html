@@ -4,19 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% if page.browser_title %}{{ page.browser_title }}{% elsif page.collection == 'update_posts' %}{{ page.title }} | SkyrScout Updates{% elsif page.title %}{{ page.title }} | SkyrScout{% else %}SkyrScout{% endif %}</title>
+    {% capture page_title %}
+        {% if page.browser_title %}
+            {{ page.browser_title }}
+        {% elsif page.collection == 'update_posts' %}
+            {{ page.title }} | SkyrScout Updates
+        {% elsif page.title %}
+            {{ page.title }} | SkyrScout
+        {% else %}
+            SkyrScout
+        {% endif %}
+    {% endcapture %}
+
+    <title>{{ page_title | strip }}</title>
 
     {% assign meta_description = page.meta_description | default: page.description %}
+
     {% if meta_description == nil and page.summary %}
         {% assign meta_description = page.summary | strip_newlines | strip %}
     {% endif %}
+
     {% if meta_description %}
-        <meta name="description" content="{{ meta_description | strip_html | strip_newlines | escape }}">
+        {% assign clean_description = meta_description
+            | strip_html
+            | strip_newlines
+            | strip
+        %}
+
+        <meta
+            name="description"
+            content="{{ clean_description | escape }}"
+        >
     {% endif %}
 
     <link rel="canonical" href="{{ page.url | absolute_url }}">
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="SkyrScout">
+    <meta property="og:title" content="{{ page_title | strip | escape }}">
+    <meta property="og:url" content="{{ page.url | absolute_url }}">
+    <meta property="og:type" content="website">
+
+    {% if meta_description %}
+        <meta
+            property="og:description"
+            content="{{ clean_description | escape }}"
+        >
+    {% endif %}
+
+    {% if page.youtube %}
+        {% assign youtube_id = page.youtube
+            | split: 'v='
+            | last
+            | split: '&'
+            | first
+            | split: '/'
+            | last
+        %}
+
+        {% assign social_image = 'https://img.youtube.com/vi/'
+            | append: youtube_id
+            | append: '/hqdefault.jpg'
+        %}
+
+        <meta property="og:image" content="{{ social_image }}">
+    {% endif %}
+
+    <!-- X / Twitter -->
+    {% if page.youtube %}
+        <meta name="twitter:card" content="summary_large_image">
+    {% else %}
+        <meta name="twitter:card" content="summary">
+    {% endif %}
+
+    <meta name="twitter:title" content="{{ page_title | strip | escape }}">
+
+    {% if meta_description %}
+        <meta
+            name="twitter:description"
+            content="{{ clean_description | escape }}"
+        >
+    {% endif %}
+
+    {% if page.youtube %}
+        <meta name="twitter:image" content="{{ social_image }}">
+    {% endif %}
+
     <link rel="stylesheet" href="/assets/css/style.css">
-<link rel="icon" type="image/png" href="/assets/images/skyrscout-favicon.png">
+    <link
+        rel="icon"
+        type="image/png"
+        href="/assets/images/skyrscout-favicon.png"
+    >
+
     {% include analytics.html %}
 </head>
 
