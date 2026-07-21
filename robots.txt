@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://skyrscout.github.io/sitemap-skyrscout.xml
+Sitemap: https://skyrscout.github.io/feed.xml
