@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "status": "prototype",
+    "updated": "2026-07-22",
+    "note": "Temporary Card Lab seed. Kevin Benkic values were supplied manually by the user and are not live API values. Future automation should replace this file from YouTube Data API / YouTube Analytics plus stored snapshots."
+  },
+  "kevin-benkic": {
+    "views": 410,
+    "views_approximate": true,
+    "watch_hours": 194,
+    "likes": null,
+    "views_48h": null,
+    "views_30d": null,
+    "video_age_days": null,
+    "video_minutes": null,
+    "average_viewed_pct": null
+  }
+}
