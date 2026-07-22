@@ -2791,3 +2791,97 @@ img.emoji {
     color: #ffffff;
     text-decoration: underline;
 }
+/* Players - scouting crew counters */
+
+.players-scout-counts {
+    margin: 0 0 28px;
+    padding: 18px 20px;
+    background: rgba(9, 20, 27, 0.78);
+    border: 1px solid rgba(103, 211, 243, 0.18);
+    border-radius: 12px;
+}
+
+.players-scout-counts-label {
+    display: block;
+    margin-bottom: 12px;
+    color: #8f9ca3;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.players-scout-counts-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.players-scout-count {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    color: #ffffff;
+    text-decoration: none;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.players-scout-count:hover {
+    background: rgba(103, 211, 243, 0.08);
+    border-color: rgba(103, 211, 243, 0.35);
+    transform: translateY(-1px);
+}
+
+.players-scout-count strong {
+    flex: 0 0 auto;
+    color: #67d3f3;
+    font-size: 1.55rem;
+    line-height: 1;
+}
+
+.players-scout-count span {
+    min-width: 0;
+    color: #dce5e9;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.player-list-author-link {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.player-list-author-link:hover {
+    color: #67d3f3;
+    text-decoration: underline;
+}
+
+@media (max-width: 650px) {
+
+    .players-scout-counts {
+        padding: 16px;
+    }
+
+    .players-scout-counts-list {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .players-scout-count {
+        padding: 10px 12px;
+    }
+
+    .players-scout-count strong {
+        min-width: 32px;
+        font-size: 1.4rem;
+    }
+}
