@@ -4,256 +4,323 @@ title: "Players"
 description: "Scouting reports and video analysis of players featured by SkyrScout."
 ---
 
+{% assign pilgrim_count = site.players | where: "report_by", "Scout Pilgrim" | size %}
+{% assign pippen_count = site.players | where: "report_by", "Scouty Pippen" | size %}
+{% assign bon_count = site.players | where: "report_by", "Bon Scout" | size %}
+
 <main class="page-background">
 
-        <section class="players-page">
+    <section class="players-page">
 
-            <header class="players-page-header">
+        <header class="players-page-header">
 
-                <div>
-                    <h1>Players</h1>
+            <div>
+                <h1>Players</h1>
 
-                    <p>
-                        Scouting reports and video analysis of players
-                        featured by SkyrScout.
-                    </p>
-                </div>
+                <p>
+                    Scouting reports and video analysis of players
+                    featured by SkyrScout.
+                </p>
+            </div>
 
-                <div class="players-count">
-                    <strong>{{ site.players | size }}</strong>
-                    <span>player reports</span>
-                </div>
+            <div class="players-count">
+                <strong>{{ site.players | size }}</strong>
+                <span>player profiles</span>
+            </div>
 
-            </header>
+        </header>
 
-            <div class="players-tools">
+        <div class="players-scout-counts">
 
-                <label class="player-search" for="player-search">
-                    <span>Search players</span>
+            <span class="players-scout-counts-label">
+                Player profiles by scout
+            </span>
 
-                    <input
-                        type="search"
-                        id="player-search"
-                        placeholder="Search by name, position, club, league or country"
-                    >
-                </label>
+            <div class="players-scout-counts-list">
 
-                <label class="player-sort" for="player-sort">
-                    <span>Sort by</span>
+                <a
+                    class="players-scout-count"
+                    href="/about/#scout-pilgrim"
+                >
+                    <strong>{{ pilgrim_count }}</strong>
+                    <span>Scout Pilgrim</span>
+                </a>
 
-                    <select id="player-sort">
-                        <option value="newest">Newest reports</option>
-                        <option value="oldest">Oldest reports</option>
-                        <option value="name-az">Name A–Z</option>
-                        <option value="name-za">Name Z–A</option>
-                    </select>
-                </label>
+                <a
+                    class="players-scout-count"
+                    href="/about/#scouty-pippen"
+                >
+                    <strong>{{ pippen_count }}</strong>
+                    <span>Scouty Pippen</span>
+                </a>
+
+                <a
+                    class="players-scout-count"
+                    href="/about/#bon-scout"
+                >
+                    <strong>{{ bon_count }}</strong>
+                    <span>Bon Scout</span>
+                </a>
 
             </div>
 
-            <div class="players-list" id="players-list">
+        </div>
 
-                {% for player in site.players %}
+        <div class="players-tools">
 
-                    {% assign title_parts = player.title | split: ' – ' %}
+            <label class="player-search" for="player-search">
+                <span>Search players</span>
 
-                    {% assign youtube_id = player.youtube
-                        | split: 'v='
-                        | last
-                        | split: '&'
-                        | first
-                        | split: '/'
-                        | last
-                    %}
+                <input
+                    type="search"
+                    id="player-search"
+                    placeholder="Search by name, position, club, league or country"
+                >
+            </label>
 
-                    <article
-                        class="player-list-card"
-                        data-name="{{ title_parts[0] | downcase | escape }}"
-                        data-date="{{ player.report_date | escape }}"
-                        data-search="{{ player.title | append: ' ' | append: player.position | downcase | escape }}"
+            <label class="player-sort" for="player-sort">
+                <span>Sort by</span>
+
+                <select id="player-sort">
+                    <option value="newest">Newest reports</option>
+                    <option value="oldest">Oldest reports</option>
+                    <option value="name-az">Name A–Z</option>
+                    <option value="name-za">Name Z–A</option>
+                </select>
+            </label>
+
+        </div>
+
+        <div class="players-list" id="players-list">
+
+            {% for player in site.players %}
+
+                {% assign title_parts = player.title | split: ' – ' %}
+
+                {% assign youtube_id = player.youtube
+                    | split: 'v='
+                    | last
+                    | split: '&'
+                    | first
+                    | split: '/'
+                    | last
+                %}
+
+                {% assign scout_url = "" %}
+
+                {% if player.report_by == "Bon Scout" %}
+                    {% assign scout_url = "/about/#bon-scout" %}
+                {% elsif player.report_by == "Scout Pilgrim" %}
+                    {% assign scout_url = "/about/#scout-pilgrim" %}
+                {% elsif player.report_by == "Scouty Pippen" %}
+                    {% assign scout_url = "/about/#scouty-pippen" %}
+                {% endif %}
+
+                <article
+                    class="player-list-card"
+                    data-name="{{ title_parts[0] | downcase | escape }}"
+                    data-date="{{ player.report_date | escape }}"
+                    data-search="{{ player.title | append: ' ' | append: player.position | downcase | escape }}"
+                >
+
+                    <a
+                        class="player-list-image"
+                        href="{{ player.url }}"
+                        aria-label="View {{ title_parts[0] }}"
                     >
+                        {% if player.youtube %}
+                            <img
+                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                alt="{{ player.title }}"
+                                loading="lazy"
+                            >
+                        {% endif %}
+                    </a>
 
-                        <a
-                            class="player-list-image"
-                            href="{{ player.url }}"
-                            aria-label="View {{ title_parts[0] }}"
-                        >
-                            {% if player.youtube %}
-                                <img
-                                    src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                    alt="{{ player.title }}"
-                                    loading="lazy"
-                                >
-                            {% endif %}
-                        </a>
+                    <div class="player-list-content">
 
-                        <div class="player-list-content">
+                        <div class="player-list-heading">
 
-                            <div class="player-list-heading">
+                            <div>
+                                <h2>
+                                    <a href="{{ player.url }}">
+                                        {{ title_parts[0] }}
+                                    </a>
+                                </h2>
 
-                                <div>
-                                    <h2>
-                                        <a href="{{ player.url }}">
-                                            {{ title_parts[0] }}
-                                        </a>
-                                    </h2>
+                                {% if title_parts[1] %}
+                                    <p class="player-list-details">
+                                        {% if player.position %}
+                                            {{ player.position }} •
+                                        {% endif %}
 
-                                    {% if title_parts[1] %}
-                                        <p class="player-list-details">
-                                            {% if player.position %}
-                                                {{ player.position }} •
-                                            {% endif %}
-
-                                            {{ title_parts[1] }}
-                                        </p>
-                                    {% endif %}
-                                </div>
-
-                                <a
-                                    class="player-list-action"
-                                    href="{{ player.url }}"
-                                >
-                                    View report
-                                </a>
-
+                                        {{ title_parts[1] }}
+                                    </p>
+                                {% endif %}
                             </div>
 
-                            {% if player.summary %}
-                                {% assign summary_lines = player.summary
-                                    | newline_to_br
-                                    | split: '<br />'
-                                %}
-
-                                {% for summary_line in summary_lines offset:1 limit:1 %}
-                                    <p class="player-list-summary">
-                                        {{ summary_line | strip_html | strip }}
-                                    </p>
-                                {% endfor %}
-                            {% endif %}
-
-                            {% if player.report_by %}
-                                <p class="player-list-byline">
-                                    Scouting report by {{ player.report_by }}
-
-                                    {% if player.report_date %}
-                                        • Report date: {{ player.report_date }}
-                                    {% endif %}
-                                </p>
-                            {% endif %}
+                            <a
+                                class="player-list-action"
+                                href="{{ player.url }}"
+                            >
+                                View profile
+                            </a>
 
                         </div>
 
-                    </article>
+                        {% if player.summary %}
+                            {% assign summary_lines = player.summary
+                                | newline_to_br
+                                | split: '<br />'
+                            %}
 
-                {% else %}
+                            {% for summary_line in summary_lines offset:1 limit:1 %}
+                                <p class="player-list-summary">
+                                    {{ summary_line | strip_html | strip }}
+                                </p>
+                            {% endfor %}
+                        {% endif %}
 
-                    <div class="players-empty">
-                        <p>No player reports have been published yet.</p>
+                        {% if player.report_by %}
+                            <p class="player-list-byline">
+
+                                {% if player.profile_type == "video" %}
+                                    Video scouting profile by
+                                {% else %}
+                                    Scouting report by
+                                {% endif %}
+
+                                {% if scout_url != "" %}
+                                    <a
+                                        class="player-list-author-link"
+                                        href="{{ scout_url }}"
+                                    >
+                                        {{ player.report_by }}
+                                    </a>
+                                {% else %}
+                                    {{ player.report_by }}
+                                {% endif %}
+
+                                {% if player.report_date %}
+                                    • Report date: {{ player.report_date }}
+                                {% endif %}
+
+                            </p>
+                        {% endif %}
+
                     </div>
 
-                {% endfor %}
+                </article>
 
-            </div>
+            {% else %}
 
-            <p
-                class="players-no-results"
-                id="players-no-results"
-                hidden
-            >
-                No players match your search.
-            </p>
+                <div class="players-empty">
+                    <p>No player profiles have been published yet.</p>
+                </div>
 
-        </section>
+            {% endfor %}
 
-    </main>
+        </div>
 
-    <script>
-        const searchInput = document.querySelector("#player-search");
-        const sortSelect = document.querySelector("#player-sort");
-        const playersList = document.querySelector("#players-list");
-        const noResults = document.querySelector("#players-no-results");
+        <p
+            class="players-no-results"
+            id="players-no-results"
+            hidden
+        >
+            No players match your search.
+        </p>
 
-        function getPlayerCards() {
-            return Array.from(
-                document.querySelectorAll(".player-list-card")
-            );
+    </section>
+
+</main>
+
+<script>
+    const searchInput = document.querySelector("#player-search");
+    const sortSelect = document.querySelector("#player-sort");
+    const playersList = document.querySelector("#players-list");
+    const noResults = document.querySelector("#players-no-results");
+
+    function getPlayerCards() {
+        return Array.from(
+            document.querySelectorAll(".player-list-card")
+        );
+    }
+
+    function convertNorwegianDate(dateText) {
+        if (!dateText) {
+            return 0;
         }
 
-        function convertNorwegianDate(dateText) {
-            if (!dateText) {
-                return 0;
+        const parts = dateText.split(".");
+
+        if (parts.length !== 3) {
+            return 0;
+        }
+
+        const day = Number(parts[0]);
+        const month = Number(parts[1]) - 1;
+        const year = Number(parts[2]);
+
+        return new Date(year, month, day).getTime();
+    }
+
+    function sortPlayers(sortType) {
+        const cards = getPlayerCards();
+
+        cards.sort(function (a, b) {
+            const nameA = a.dataset.name;
+            const nameB = b.dataset.name;
+
+            const dateA = convertNorwegianDate(a.dataset.date);
+            const dateB = convertNorwegianDate(b.dataset.date);
+
+            if (sortType === "oldest") {
+                return dateA - dateB;
             }
 
-            const parts = dateText.split(".");
-
-            if (parts.length !== 3) {
-                return 0;
+            if (sortType === "name-az") {
+                return nameA.localeCompare(nameB);
             }
 
-            const day = Number(parts[0]);
-            const month = Number(parts[1]) - 1;
-            const year = Number(parts[2]);
+            if (sortType === "name-za") {
+                return nameB.localeCompare(nameA);
+            }
 
-            return new Date(year, month, day).getTime();
-        }
-
-        function sortPlayers(sortType) {
-            const cards = getPlayerCards();
-
-            cards.sort(function (a, b) {
-                const nameA = a.dataset.name;
-                const nameB = b.dataset.name;
-
-                const dateA = convertNorwegianDate(a.dataset.date);
-                const dateB = convertNorwegianDate(b.dataset.date);
-
-                if (sortType === "oldest") {
-                    return dateA - dateB;
-                }
-
-                if (sortType === "name-az") {
-                    return nameA.localeCompare(nameB);
-                }
-
-                if (sortType === "name-za") {
-                    return nameB.localeCompare(nameA);
-                }
-
-                return dateB - dateA;
-            });
-
-            cards.forEach(function (card) {
-                playersList.appendChild(card);
-            });
-        }
-
-        function filterPlayers() {
-            const searchTerm = searchInput.value
-                .trim()
-                .toLowerCase();
-
-            let visiblePlayers = 0;
-
-            getPlayerCards().forEach(function (card) {
-                const playerText = card.dataset.search;
-                const isVisible = playerText.includes(searchTerm);
-
-                card.hidden = !isVisible;
-
-                if (isVisible) {
-                    visiblePlayers += 1;
-                }
-            });
-
-            noResults.hidden = visiblePlayers !== 0;
-        }
-
-        searchInput.addEventListener("input", filterPlayers);
-
-        sortSelect.addEventListener("change", function () {
-            sortPlayers(sortSelect.value);
+            return dateB - dateA;
         });
 
-        sortPlayers("newest");
-        filterPlayers();
-    </script>
+        cards.forEach(function (card) {
+            playersList.appendChild(card);
+        });
+    }
+
+    function filterPlayers() {
+        const searchTerm = searchInput.value
+            .trim()
+            .toLowerCase();
+
+        let visiblePlayers = 0;
+
+        getPlayerCards().forEach(function (card) {
+            const playerText = card.dataset.search;
+            const isVisible = playerText.includes(searchTerm);
+
+            card.hidden = !isVisible;
+
+            if (isVisible) {
+                visiblePlayers += 1;
+            }
+        });
+
+        noResults.hidden = visiblePlayers !== 0;
+    }
+
+    searchInput.addEventListener("input", filterPlayers);
+
+    sortSelect.addEventListener("change", function () {
+        sortPlayers(sortSelect.value);
+    });
+
+    sortPlayers("newest");
+    filterPlayers();
+</script>
