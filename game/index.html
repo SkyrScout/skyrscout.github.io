@@ -21,20 +21,76 @@ robots: "noindex, nofollow"
             </p>
 
             <div class="game-beta-actions">
-                <button type="button" id="draw-three">Draw 3 cards</button>
-                <button type="button" class="game-secondary-button" id="show-all">Show all cards</button>
+                <button type="button" id="start-draft">Start a 5-player draft</button>
+                <button type="button" class="game-secondary-button" id="show-all">Browse all cards</button>
             </div>
         </header>
+
+        <section class="game-draw-zone game-scout-zone" id="scout-zone" hidden>
+            <div class="game-section-heading">
+                <div>
+                    <p class="game-beta-kicker">Step 1 of 2</p>
+                    <h2>Choose your Scout</h2>
+                </div>
+                <p>Your Scout will affect the team later. In this Beta, the choice is saved for the draft but has no gameplay bonus yet.</p>
+            </div>
+
+            <div class="game-instruction">
+                <strong>What do I do?</strong>
+                Choose one Scout. After that, the game will draw three player cards at a time.
+            </div>
+
+            <div class="game-scout-grid">
+                <button type="button" class="game-scout-card" data-scout="Bon Scout">
+                    <span class="game-scout-role">Scout</span>
+                    <strong>Bon Scout</strong>
+                    <span>Choose Bon Scout</span>
+                </button>
+                <button type="button" class="game-scout-card" data-scout="Scout Pilgrim">
+                    <span class="game-scout-role">Scout</span>
+                    <strong>Scout Pilgrim</strong>
+                    <span>Choose Scout Pilgrim</span>
+                </button>
+                <button type="button" class="game-scout-card" data-scout="Scouty Pippen">
+                    <span class="game-scout-role">Scout</span>
+                    <strong>Scouty Pippen</strong>
+                    <span>Choose Scouty Pippen</span>
+                </button>
+            </div>
+        </section>
 
         <section class="game-draw-zone" id="draw-zone" hidden>
             <div class="game-section-heading">
                 <div>
-                    <p class="game-beta-kicker">Test draw</p>
-                    <h2>Your cards</h2>
+                    <p class="game-beta-kicker">Step 2 of 2 · Draft</p>
+                    <h2>Choose 1 of 3</h2>
                 </div>
-                <p>Random draw from the current SkyrScout player pool.</p>
+                <p id="draft-progress">Pick one player to add to your team.</p>
             </div>
+
+            <div class="game-instruction">
+                <strong>How the draft works</strong>
+                Three random players are drawn. Click <em>Add to my team</em> on ONE card.
+                The other two are discarded, then three new players are drawn. Repeat until your five-player test team is complete.
+            </div>
+
             <div class="game-card-grid game-draw-grid" id="draw-grid"></div>
+        </section>
+
+        <section class="game-draw-zone game-team-zone" id="team-zone" hidden>
+            <div class="game-section-heading">
+                <div>
+                    <p class="game-beta-kicker">My team</p>
+                    <h2 id="team-heading">0 / 5 players</h2>
+                </div>
+                <p id="chosen-scout"></p>
+            </div>
+            <div class="game-card-grid game-team-grid" id="team-grid"></div>
+            <div class="game-draft-complete" id="draft-complete" hidden>
+                <strong>Draft complete.</strong>
+                This is your five-player Beta team. Match play comes later.
+                <button type="button" id="restart-draft">Start a new draft</button>
+            </div>
         </section>
 
         <section class="game-card-pool">
@@ -73,25 +129,44 @@ robots: "noindex, nofollow"
                         | last
                     %}
 
-                    {% assign position_down = player.position | downcase %}
+                    {% assign primary_position = player.position | split: '/' | first | strip %}
+                    {% assign position_down = primary_position | downcase %}
                     {% assign card_group = "midfielder" %}
                     {% assign card_class = "Controller" %}
 
                     {% if position_down contains "centre-forward"
                         or position_down contains "center-forward"
-                        or position_down contains "striker" %}
+                        or position_down contains "striker"
+                        or position_down == "cf" %}
                         {% assign card_group = "striker" %}
                         {% assign card_class = "Striker" %}
-                    {% elsif position_down contains "winger" %}
+                    {% elsif position_down contains "left winger"
+                        or position_down contains "right winger"
+                        or position_down == "winger"
+                        or position_down == "lw"
+                        or position_down == "rw" %}
                         {% assign card_group = "winger" %}
                         {% assign card_class = "Raider" %}
-                    {% elsif position_down contains "back"
-                        or position_down contains "centre-back"
+                    {% elsif position_down contains "left back"
+                        or position_down contains "right back"
+                        or position_down contains "wing-back"
+                        or position_down contains "wing back"
+                        or position_down == "lb"
+                        or position_down == "rb"
+                        or position_down == "lwb"
+                        or position_down == "rwb" %}
+                        {% assign card_group = "defender" %}
+                        {% assign card_class = "Engine" %}
+                    {% elsif position_down contains "centre-back"
                         or position_down contains "center-back"
-                        or position_down contains "defender" %}
+                        or position_down contains "defender"
+                        or position_down == "cb" %}
                         {% assign card_group = "defender" %}
                         {% assign card_class = "Tank" %}
-                    {% elsif position_down contains "midfield" %}
+                    {% elsif position_down contains "midfield"
+                        or position_down == "dm"
+                        or position_down == "cm"
+                        or position_down == "am" %}
                         {% assign card_group = "midfielder" %}
                         {% assign card_class = "Controller" %}
                     {% endif %}
@@ -111,6 +186,7 @@ robots: "noindex, nofollow"
                         data-card
                         data-group="{{ card_group }}"
                         data-name="{{ player_name | escape }}"
+                        data-primary-position="{{ primary_position | escape }}"
                     >
                         <div class="skyr-card-frame">
                             <div class="skyr-card-topline">
