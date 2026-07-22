@@ -4,220 +4,434 @@ layout: default
 
 <main class="page-background">
 
-        <article class="player-page">
+    <article class="player-page">
 
-            {% assign title_parts = page.title | split: ' – ' %}
+        {% assign title_parts = page.title | split: ' – ' %}
 
-            <header class="player-header">
+        <header class="player-header">
 
-                <h1>{{ title_parts[0] }}</h1>
+            <h1>{{ title_parts[0] }}</h1>
 
-                <p class="player-subtitle">
-                    {% if page.position %}
-                        {{ page.position }}
+            <p class="player-subtitle">
+                {% if page.position %}
+                    {{ page.position }}
+                {% endif %}
+
+                {% if page.position and title_parts[1] %}
+                    •
+                {% endif %}
+
+                {% if title_parts[1] %}
+                    {{ title_parts[1] }}
+                {% endif %}
+            </p>
+
+            {% if page.report_by %}
+                <p class="report-byline">
+
+                    {% if page.profile_type == "video" %}
+                        Video scouting profile by {{ page.report_by }}
+                    {% else %}
+                        Scouting report by {{ page.report_by }}
                     {% endif %}
 
-                    {% if page.position and title_parts[1] %}
-                        •
+                    {% if page.report_date %}
+                        <span class="report-date">
+                            &nbsp;•&nbsp;Report date: {{ page.report_date }}
+                        </span>
                     {% endif %}
 
-                    {% if title_parts[1] %}
-                        {{ title_parts[1] }}
-                    {% endif %}
                 </p>
+            {% endif %}
 
-                {% if page.report_by %}
-    <p class="report-byline">
+            <button
+                type="button"
+                class="player-share-button"
+                id="player-share-button"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="18" cy="5" r="2.5"></circle>
+                    <circle cx="6" cy="12" r="2.5"></circle>
+                    <circle cx="18" cy="19" r="2.5"></circle>
+                    <path d="M8.2 10.8L15.8 6.2M8.2 13.2L15.8 17.8"></path>
+                </svg>
 
-        {% if page.profile_type == "video" %}
-            Video scouting profile by {{ page.report_by }}
-        {% else %}
-            Scouting report by {{ page.report_by }}
+                <span>Share player profile</span>
+            </button>
+
+        </header>
+
+        <dialog
+            class="player-share-dialog"
+            id="player-share-dialog"
+        >
+
+            <div class="player-share-dialog-header">
+
+                <h2>Share player profile</h2>
+
+                <button
+                    type="button"
+                    class="player-share-close"
+                    id="player-share-close"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div class="player-share-options">
+
+                <a
+                    class="player-share-option"
+                    id="player-share-x"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="player-share-icon">𝕏</span>
+                    <span>X</span>
+                </a>
+
+                <a
+                    class="player-share-option"
+                    id="player-share-facebook"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="player-share-icon">f</span>
+                    <span>Facebook</span>
+                </a>
+
+                <a
+                    class="player-share-option"
+                    id="player-share-whatsapp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="player-share-icon">◉</span>
+                    <span>WhatsApp</span>
+                </a>
+
+                <a
+                    class="player-share-option"
+                    id="player-share-email"
+                >
+                    <span class="player-share-icon">✉</span>
+                    <span>Email</span>
+                </a>
+
+            </div>
+
+            <div class="player-share-copy">
+
+                <input
+                    type="text"
+                    id="player-share-url"
+                    readonly
+                    aria-label="Player profile URL"
+                >
+
+                <button
+                    type="button"
+                    id="player-share-copy-button"
+                >
+                    Copy
+                </button>
+
+            </div>
+
+        </dialog>
+
+        {% if page.youtube %}
+
+            {% assign youtube_id = page.youtube
+                | split: 'v='
+                | last
+                | split: '&'
+                | first
+                | split: '/'
+                | last
+            %}
+
+            <section class="player-video">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                        src="https://www.youtube.com/embed/{{ youtube_id }}"
+                        title="{{ page.title }}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+
+                </div>
+
+            </section>
+
         {% endif %}
 
-        {% if page.report_date %}
-            <span class="report-date">
-                &nbsp;•&nbsp;Report date: {{ page.report_date }}
-            </span>
+        {% if page.summary %}
+
+            <section class="player-section player-summary">
+
+                <h2>Summary</h2>
+
+                <div class="summary-content">
+                    {{ page.summary | newline_to_br }}
+                </div>
+
+            </section>
+
         {% endif %}
 
-    </p>
-{% endif %}
+        {% if page.report %}
 
-            </header>
+            {% assign formatted_report = page.report
+                | replace: ' | ', ' • '
+                | replace: 'Areas for improvement', '### Areas for improvement'
+                | replace: 'Career trajectory and current form', '### Career trajectory and current form'
+                | replace: 'Transfer outlook', '### Transfer outlook'
+            %}
 
-            {% if page.youtube %}
+            <section class="player-section player-report">
 
-                {% assign youtube_id = page.youtube
-                    | split: 'v='
-                    | last
-                    | split: '&'
-                    | first
-                    | split: '/'
-                    | last
-                %}
+                <h2>
+                    {% if page.profile_type == "video" %}
+                        Video Scout Profile
+                    {% else %}
+                        Scouting Report
+                    {% endif %}
+                </h2>
 
-                <section class="player-video">
-                    <div class="video-wrapper">
+                <div class="report-content">
+                    {{ formatted_report | markdownify }}
+                </div>
 
-                        <iframe
-                            src="https://www.youtube.com/embed/{{ youtube_id }}"
-                            title="{{ page.title }}"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen>
-                        </iframe>
+            </section>
 
-                    </div>
-                </section>
+        {% elsif content and content != "" %}
 
-            {% endif %}
+            <section class="player-section player-report">
 
-            {% if page.summary %}
+                <h2>
+                    {% if page.profile_type == "video" %}
+                        Video Scout Profile
+                    {% else %}
+                        Scouting Report
+                    {% endif %}
+                </h2>
 
-                <section class="player-section player-summary">
+                <div class="report-content">
+                    {{ content }}
+                </div>
 
-                    <h2>Summary</h2>
+            </section>
 
-                    <div class="summary-content">
-                        {{ page.summary | newline_to_br }}
-                    </div>
+        {% endif %}
 
-                </section>
+        {% if page.podcast %}
 
-            {% endif %}
+            {% assign spotify_embed = page.podcast
+                | replace: 'open.spotify.com/episode/', 'open.spotify.com/embed/episode/'
+            %}
 
-            {% if page.report %}
+            {% if page.podcast != "" %}
 
-   {% assign formatted_report = page.report
-    | replace: ' | ', ' • '
-    | replace: 'Areas for improvement', '### Areas for improvement'
-    | replace: 'Career trajectory and current form', '### Career trajectory and current form'
-    | replace: 'Transfer outlook', '### Transfer outlook'
-%}
+                <section class="player-section player-podcast">
 
-    <section class="player-section player-report">
+                    <h2>Scout of This World</h2>
 
-        <h2>
-    {% if page.profile_type == "video" %}
-        Video Scout Profile
-    {% else %}
-        Scouting Report
-    {% endif %}
-</h2>
+                    {% if page.podcast_timestamp %}
+                        <p class="podcast-time">
+                            Segment starts at:
+                            <strong>{{ page.podcast_timestamp }}</strong>
+                        </p>
+                    {% endif %}
 
-        <div class="report-content">
-            {{ formatted_report | markdownify }}
-        </div>
-
-    </section>
-
-{% elsif content and content != "" %}
-
-    <section class="player-section player-report">
-
-        <h2>
-    {% if page.profile_type == "video" %}
-        Video Scout Profile
-    {% else %}
-        Scouting Report
-    {% endif %}
-</h2>
-
-        <div class="report-content">
-            {{ content }}
-        </div>
-
-    </section>
-
-{% endif %}
-            {% if page.podcast %}
-
-                {% assign spotify_embed = page.podcast
-                    | replace: 'open.spotify.com/episode/', 'open.spotify.com/embed/episode/'
-                %}
-
-               {% if page.podcast != "" %}
-
-<section class="player-section player-podcast">
-
-    <h2>Scout of This World</h2>
-
-    {% if page.podcast_timestamp %}
-        <p class="podcast-time">
-            Segment starts at:
-            <strong>{{ page.podcast_timestamp }}</strong>
-        </p>
-    {% endif %}
-
-    <iframe
-        src="{{ spotify_embed }}"
-        width="100%"
-        height="152"
-        frameborder="0"
-        allowfullscreen
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy">
-    </iframe>
-
-</section>
-
-{% endif %}
-
-            {% endif %}
-
-            {% if page.transfermarkt or page.sofascore %}
-
-                <section class="player-section player-sources">
-
-                    <h2>Data Sources</h2>
-
-                    <div class="source-links">
-
-                        {% if page.transfermarkt %}
-                            <a
-                                href="{{ page.transfermarkt }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <span class="source-name">Transfermarkt</span>
-
-                                <span class="source-description">
-                                    Player profile, career history and market value
-                                </span>
-                            </a>
-                        {% endif %}
-
-                        {% if page.sofascore %}
-                            <a
-                                href="{{ page.sofascore }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <span class="source-name">Sofascore</span>
-
-                                <span class="source-description">
-                                    Match data, performance statistics and ratings
-                                </span>
-                            </a>
-                        {% endif %}
-
-                    </div>
+                    <iframe
+                        src="{{ spotify_embed }}"
+                        width="100%"
+                        height="152"
+                        frameborder="0"
+                        allowfullscreen
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy">
+                    </iframe>
 
                 </section>
 
             {% endif %}
 
-        </article>
+        {% endif %}
 
-    </main>
+        {% if page.transfermarkt or page.sofascore %}
 
-    <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+            <section class="player-section player-sources">
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            twemoji.parse(document.body, {
-                folder: "svg",
-                ext: ".svg"
-            });
+                <h2>Data Sources</h2>
+
+                <div class="source-links">
+
+                    {% if page.transfermarkt %}
+                        <a
+                            href="{{ page.transfermarkt }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span class="source-name">Transfermarkt</span>
+
+                            <span class="source-description">
+                                Player profile, career history and market value
+                            </span>
+                        </a>
+                    {% endif %}
+
+                    {% if page.sofascore %}
+                        <a
+                            href="{{ page.sofascore }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span class="source-name">Sofascore</span>
+
+                            <span class="source-description">
+                                Match data, performance statistics and ratings
+                            </span>
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+    </article>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        twemoji.parse(document.body, {
+            folder: "svg",
+            ext: ".svg"
         });
-    </script>
+
+        const shareButton = document.getElementById("player-share-button");
+        const shareDialog = document.getElementById("player-share-dialog");
+        const closeButton = document.getElementById("player-share-close");
+
+        const shareX = document.getElementById("player-share-x");
+        const shareFacebook = document.getElementById("player-share-facebook");
+        const shareWhatsapp = document.getElementById("player-share-whatsapp");
+        const shareEmail = document.getElementById("player-share-email");
+
+        const shareUrlInput = document.getElementById("player-share-url");
+        const copyButton = document.getElementById("player-share-copy-button");
+
+        const playerName = document.querySelector(".player-header h1").textContent.trim();
+        const shareUrl = window.location.href.split("#")[0];
+        const shareTitle = playerName + " | SkyrScout";
+        const shareText = playerName + " – scouting profile on SkyrScout";
+
+        shareUrlInput.value = shareUrl;
+
+        shareX.href =
+            "https://x.com/intent/tweet?text=" +
+            encodeURIComponent(shareText) +
+            "&url=" +
+            encodeURIComponent(shareUrl);
+
+        shareFacebook.href =
+            "https://www.facebook.com/sharer/sharer.php?u=" +
+            encodeURIComponent(shareUrl);
+
+        shareWhatsapp.href =
+            "https://api.whatsapp.com/send?text=" +
+            encodeURIComponent(shareText + "\n" + shareUrl);
+
+        shareEmail.href =
+            "mailto:?subject=" +
+            encodeURIComponent(shareTitle) +
+            "&body=" +
+            encodeURIComponent(shareText + "\n\n" + shareUrl);
+
+        shareButton.addEventListener("click", async function () {
+
+            const mobileShare =
+                typeof navigator.share === "function" &&
+                window.matchMedia("(max-width: 900px)").matches;
+
+            if (mobileShare) {
+
+                try {
+
+                    await navigator.share({
+                        title: shareTitle,
+                        text: shareText,
+                        url: shareUrl
+                    });
+
+                    return;
+
+                } catch (error) {
+
+                    if (error.name === "AbortError") {
+                        return;
+                    }
+
+                }
+
+            }
+
+            shareDialog.showModal();
+
+        });
+
+        closeButton.addEventListener("click", function () {
+            shareDialog.close();
+        });
+
+        shareDialog.addEventListener("click", function (event) {
+
+            const rect = shareDialog.getBoundingClientRect();
+
+            const inside =
+                event.clientX >= rect.left &&
+                event.clientX <= rect.right &&
+                event.clientY >= rect.top &&
+                event.clientY <= rect.bottom;
+
+            if (!inside) {
+                shareDialog.close();
+            }
+
+        });
+
+        copyButton.addEventListener("click", async function () {
+
+            try {
+
+                await navigator.clipboard.writeText(shareUrl);
+
+            } catch (error) {
+
+                shareUrlInput.select();
+                document.execCommand("copy");
+
+            }
+
+            copyButton.textContent = "Copied";
+
+            setTimeout(function () {
+                copyButton.textContent = "Copy";
+            }, 1800);
+
+        });
+
+    });
+</script>
