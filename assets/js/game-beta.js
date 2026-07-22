@@ -1,3 +1,16 @@
+/*
+ * SKYRSCOUT CARD GAME — FUTURE DEVELOPMENT NOTES
+ *
+ * GLOBAL LEADERBOARD:
+ * If/when scoring is implemented, use a global and persistent leaderboard.
+ * Google Firebase / Cloud Firestore is a possible backend while the game
+ * remains hosted on GitHub Pages.
+ *
+ * A local-only highscore is NOT wanted.
+ *
+ * Do not implement the leaderboard until gameplay and the scoring system
+ * have been defined.
+ */
 document.addEventListener("DOMContentLoaded", function () {
     const cardGrid = document.getElementById("game-card-grid");
     const drawZone = document.getElementById("draw-zone");
