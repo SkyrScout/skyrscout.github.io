@@ -2572,3 +2572,210 @@ img.emoji {
 .player-share-dialog {
     margin: auto;
 }
+/* =========================
+   SkyrScout crew cards
+   ========================= */
+
+.about-team {
+    margin-top: 20px;
+    padding: clamp(26px, 4vw, 40px);
+
+    background: rgba(7, 11, 15, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.about-team-heading {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.about-team-label {
+    margin: 0 0 8px;
+
+    color: #53c8ee;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.about-team-heading h2 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+}
+
+.about-team-heading > p:last-child {
+    margin: 0;
+    color: #b8c2cc;
+    line-height: 1.6;
+}
+
+.scout-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.scout-card {
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px;
+
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-top: 3px solid #53c8ee;
+    border-radius: 12px;
+}
+
+.scout-card-header {
+    margin-bottom: 18px;
+}
+
+.scout-card-role {
+    margin: 0 0 8px;
+
+    color: #53c8ee;
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+}
+
+.scout-card h3 {
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 1.65rem;
+    line-height: 1.1;
+}
+
+.scout-card-quote {
+    margin: 10px 0 0;
+
+    color: #98a5ac;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.scout-card-bio {
+    margin: 0 0 24px;
+
+    color: #d4dce0;
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+.scout-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-bottom: 24px;
+}
+
+.scout-stat {
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr) 28px;
+    align-items: center;
+    gap: 9px;
+}
+
+.scout-stat > span:first-child {
+    color: #c1cbd0;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.scout-stat strong {
+    color: #ffffff;
+    font-size: 0.88rem;
+    text-align: right;
+}
+
+.scout-stat-bar {
+    display: block;
+    overflow: hidden;
+
+    height: 6px;
+
+    background: rgba(255, 255, 255, 0.09);
+    border-radius: 999px;
+}
+
+.scout-stat-bar > span {
+    display: block;
+    height: 100%;
+
+    background: #53c8ee;
+    border-radius: inherit;
+}
+
+.scout-trait {
+    margin-top: auto;
+    padding: 15px 16px;
+
+    background: rgba(83, 200, 238, 0.07);
+    border: 1px solid rgba(83, 200, 238, 0.22);
+    border-radius: 9px;
+}
+
+.scout-trait > span {
+    display: block;
+    margin-bottom: 5px;
+
+    color: #53c8ee;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.scout-trait strong {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.scout-trait p {
+    margin: 0;
+
+    color: #bfc9ce;
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+#bon-scout,
+#scout-pilgrim,
+#scouty-pippen {
+    scroll-margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+    .scout-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .about-team {
+        padding: 22px;
+    }
+
+    .scout-card {
+        padding: 20px;
+    }
+
+    .scout-stat {
+        grid-template-columns: 82px minmax(0, 1fr) 28px;
+    }
+}
