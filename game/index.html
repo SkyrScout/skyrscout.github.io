@@ -187,8 +187,10 @@ robots: "noindex, nofollow"
                         data-group="{{ card_group }}"
                         data-name="{{ player_name | escape }}"
                         data-primary-position="{{ primary_position | escape }}"
+                        data-rarity="{{ rarity | downcase | escape }}"
                     >
                         <div class="skyr-card-frame">
+                            <span class="skyr-card-shine" aria-hidden="true"></span>
                             <div class="skyr-card-topline">
                                 <span class="skyr-card-rarity">{{ rarity }}</span>
                                 <span class="skyr-card-year">{{ birth_year }}</span>
