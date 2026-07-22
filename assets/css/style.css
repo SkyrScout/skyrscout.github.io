@@ -2885,3 +2885,63 @@ img.emoji {
         font-size: 1.4rem;
     }
 }
+/* Additional player videos */
+
+.additional-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.additional-video-card {
+    overflow: hidden;
+    background: rgba(8, 15, 20, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+
+.additional-video-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.additional-video-heading h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 0.95rem;
+    line-height: 1.35;
+}
+
+.additional-video-date {
+    flex: 0 0 auto;
+    color: #8f9ca3;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.additional-video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000000;
+}
+
+.additional-video-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+@media (max-width: 700px) {
+
+    .additional-videos-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
