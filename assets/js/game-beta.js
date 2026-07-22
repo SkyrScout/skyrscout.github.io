@@ -250,7 +250,12 @@ document.addEventListener("DOMContentLoaded", function () {
             choice.type = "button";
             choice.className = "game-draft-choice";
             choice.textContent = "Add to my team";
-            choice.addEventListener("click", function () {
+
+            clone.setAttribute("role", "button");
+            clone.setAttribute("tabindex", "0");
+            clone.setAttribute("aria-label", "Add " + (card.dataset.name || "this player") + " to my team");
+
+            function selectThisCard() {
                 if (drawGrid.classList.contains("is-resolving")) {
                     return;
                 }
@@ -271,7 +276,34 @@ document.addEventListener("DOMContentLoaded", function () {
                     drawGrid.classList.remove("is-resolving");
                     chooseCard(card);
                 }, 620);
+            }
+
+            clone.addEventListener("click", function (event) {
+                if (event.target.closest(".skyr-card-footer a")) {
+                    return;
+                }
+
+                selectThisCard();
             });
+
+            clone.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    selectThisCard();
+                }
+            });
+
+            choice.addEventListener("click", function (event) {
+                event.stopPropagation();
+                selectThisCard();
+            });
+
+            const profileLink = clone.querySelector(".skyr-card-footer a");
+            if (profileLink) {
+                profileLink.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                });
+            }
 
             clone.querySelector(".skyr-card-frame").appendChild(choice);
             drawGrid.appendChild(clone);
