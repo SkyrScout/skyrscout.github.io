@@ -2567,3 +2567,8 @@ img.emoji {
     }
 
 }
+/* Desktop share dialog adjustment */
+
+.player-share-dialog {
+    margin: auto;
+}
