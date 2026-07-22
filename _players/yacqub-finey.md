@@ -11,10 +11,10 @@ position: "Attacking Midfielder / Centre-Forward / Right Winger"
 
 summary: |
   🇸🇴🇸🇪 Yacqub Finey | AM / CF / RW
-  🔄 Versatile attacker — operates as a No.9, No.10 or from the right
-  🎯 Consistent goal threat with intelligent movement in advanced areas
-  ⚽ Scores from open play, inside the box and direct free kicks
-  🧠 Creates as well as finishes — multiple assists across two seasons
+  🧠 Primarily used as an attacking midfielder for GIF Sundsvall
+  🔄 Versatile attacker who can also operate at centre-forward or from the right
+  🎯 SkyrScout sees his highest potential as a No.9 or No.10
+  ⚽ Consistent goal threat from open play and direct free kicks
   🎥 Three SkyrScout videos covering his 2024 and 2025 Superettan performances
 
 report: |
