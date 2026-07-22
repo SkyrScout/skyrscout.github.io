@@ -11,7 +11,7 @@ robots: "noindex, nofollow"
 <main class="page-background game-beta-background">
     <section class="game-beta-page">
 
-        <header class="game-beta-header">
+        <header class="game-beta-header" id="game-landing">
             <p class="game-beta-kicker">Experimental prototype</p>
             <h1>SkyrScout Card Game <span>Beta</span></h1>
             <p class="game-beta-intro">
@@ -20,11 +20,52 @@ robots: "noindex, nofollow"
                 player's SkyrScout video — not our assessment of the player's football ability.
             </p>
 
-            <div class="game-beta-actions">
-                <button type="button" id="start-draft">Start a 5-player draft</button>
-                <button type="button" class="game-secondary-button" id="show-all">Browse all cards</button>
+            <div class="game-beta-actions game-mode-actions">
+                <button type="button" id="start-draft">
+                    <span class="game-action-label">Play</span>
+                    <strong>Start draft</strong>
+                    <small>Choose a Scout and build your five-player team.</small>
+                </button>
+
+                <button type="button" class="game-secondary-button" id="show-all">
+                    <span class="game-action-label">Browse</span>
+                    <strong>Card Library</strong>
+                    <small>Explore every available SkyrScout player card.</small>
+                </button>
+
+                <button type="button" class="game-secondary-button" id="open-card-lab">
+                    <span class="game-action-label">Test</span>
+                    <strong>Card Lab</strong>
+                    <small>Feed video data into cards and test the prototype game engine.</small>
+                </button>
             </div>
         </header>
+
+        <section class="game-mode-bar" id="game-play-bar" hidden>
+            <div>
+                <p class="game-beta-kicker">Play mode</p>
+                <strong>Build your five-player team</strong>
+            </div>
+            <button type="button" class="game-secondary-button" id="leave-draft">← Leave draft</button>
+        </section>
+
+        <section class="game-mode-bar" id="game-library-bar" hidden>
+            <div>
+                <p class="game-beta-kicker">Card Library</p>
+                <strong>Browse the current SkyrScout card pool</strong>
+                <span>These cards are not part of an active draft.</span>
+            </div>
+            <button type="button" class="game-secondary-button" id="leave-library">← Back to game menu</button>
+        </section>
+
+        <section class="game-mode-bar" id="game-lab-bar" hidden>
+            <div>
+                <p class="game-beta-kicker">Card Lab</p>
+                <strong>Raw video data → game stats → phase clash</strong>
+                <span>Prototype formulas only. Nothing here represents football ability.</span>
+            </div>
+            <button type="button" class="game-secondary-button" id="leave-lab">← Back to game menu</button>
+        </section>
 
         <section class="game-draw-zone game-scout-zone" id="scout-zone" hidden>
             <div class="game-section-heading">
@@ -93,10 +134,145 @@ robots: "noindex, nofollow"
             </div>
         </section>
 
-        <section class="game-card-pool">
+
+        <section class="game-card-lab" id="game-card-lab" hidden>
             <div class="game-section-heading">
                 <div>
-                    <p class="game-beta-kicker">Current pool</p>
+                    <p class="game-beta-kicker">Prototype engine</p>
+                    <h2>Card Lab</h2>
+                </div>
+                <p>Change the raw numbers and watch the card respond.</p>
+            </div>
+
+            <div class="game-instruction">
+                <strong>What are we testing?</strong>
+                Long-term video performance builds the card. Recent activity can temporarily
+                boost it. Missing data stays missing — the engine does not invent values.
+                The formulas are deliberately provisional so we can see what feels right.
+            </div>
+
+            <div class="game-lab-source-note" id="game-lab-source-note">
+                Loading prototype video data…
+            </div>
+
+            <div class="game-lab-cards">
+                <section class="game-lab-card-panel" data-lab-side="a">
+                    <div class="game-lab-panel-head">
+                        <span>Card A</span>
+                        <select id="lab-player-a" aria-label="Choose Card A"></select>
+                    </div>
+
+                    <div class="game-lab-identity" id="lab-identity-a"></div>
+
+                    <div class="game-lab-input-grid">
+                        <label>Lifetime views
+                            <input id="lab-a-views" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Watch time (hours)
+                            <input id="lab-a-watch" type="number" min="0" step="0.1" placeholder="—">
+                        </label>
+                        <label>Likes
+                            <input id="lab-a-likes" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Views last 48h
+                            <input id="lab-a-48h" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Views last 30d
+                            <input id="lab-a-30d" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Video age (days)
+                            <input id="lab-a-age" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Video length (min)
+                            <input id="lab-a-length" type="number" min="0" step="0.1" placeholder="—">
+                        </label>
+                        <label>Average viewed (%)
+                            <input id="lab-a-retention" type="number" min="0" max="100" step="0.1" placeholder="—">
+                        </label>
+                    </div>
+
+                    <div class="game-lab-metrics" id="lab-metrics-a"></div>
+                    <details class="game-lab-why">
+                        <summary>Why did the engine score it this way?</summary>
+                        <div id="lab-why-a"></div>
+                    </details>
+                </section>
+
+                <section class="game-lab-card-panel" data-lab-side="b">
+                    <div class="game-lab-panel-head">
+                        <span>Card B</span>
+                        <select id="lab-player-b" aria-label="Choose Card B"></select>
+                    </div>
+
+                    <div class="game-lab-identity" id="lab-identity-b"></div>
+
+                    <div class="game-lab-input-grid">
+                        <label>Lifetime views
+                            <input id="lab-b-views" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Watch time (hours)
+                            <input id="lab-b-watch" type="number" min="0" step="0.1" placeholder="—">
+                        </label>
+                        <label>Likes
+                            <input id="lab-b-likes" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Views last 48h
+                            <input id="lab-b-48h" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Views last 30d
+                            <input id="lab-b-30d" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Video age (days)
+                            <input id="lab-b-age" type="number" min="0" step="1" placeholder="—">
+                        </label>
+                        <label>Video length (min)
+                            <input id="lab-b-length" type="number" min="0" step="0.1" placeholder="—">
+                        </label>
+                        <label>Average viewed (%)
+                            <input id="lab-b-retention" type="number" min="0" max="100" step="0.1" placeholder="—">
+                        </label>
+                    </div>
+
+                    <div class="game-lab-metrics" id="lab-metrics-b"></div>
+                    <details class="game-lab-why">
+                        <summary>Why did the engine score it this way?</summary>
+                        <div id="lab-why-b"></div>
+                    </details>
+                </section>
+            </div>
+
+            <section class="game-lab-clash">
+                <div class="game-section-heading">
+                    <div>
+                        <p class="game-beta-kicker">First game test</p>
+                        <h2>Phase clash</h2>
+                    </div>
+                    <p>This is a test bench, not the final match engine.</p>
+                </div>
+
+                <div class="game-clash-controls">
+                    <label>
+                        Match phase
+                        <select id="lab-phase">
+                            <option value="build-up">Build-up</option>
+                            <option value="breakthrough">Breakthrough</option>
+                            <option value="chance">Chance</option>
+                            <option value="resistance">Resistance</option>
+                        </select>
+                    </label>
+                    <button type="button" id="run-lab-clash">Run phase clash</button>
+                </div>
+
+                <div class="game-clash-result" id="lab-clash-result">
+                    Choose two cards, add any data you know, then run the phase clash.
+                </div>
+            </section>
+        </section>
+
+        <section class="game-card-pool" id="game-card-pool" hidden>
+            <div class="game-section-heading">
+                <div>
+                    <p class="game-beta-kicker">Card Library</p>
                     <h2>Player cards</h2>
                 </div>
                 <p id="game-card-count">Loading card pool…</p>
@@ -180,6 +356,12 @@ robots: "noindex, nofollow"
                     {% assign height = player.height %}
                     {% assign game_views = player.game_views %}
                     {% assign game_likes = player.game_likes %}
+                    {% assign game_watch_hours = player.game_watch_hours %}
+                    {% assign game_views_48h = player.game_views_48h %}
+                    {% assign game_views_30d = player.game_views_30d %}
+                    {% assign game_video_age_days = player.game_video_age_days %}
+                    {% assign game_video_minutes = player.game_video_minutes %}
+                    {% assign game_average_viewed_pct = player.game_average_viewed_pct %}
 
                     <article
                         class="skyr-card"
@@ -187,7 +369,19 @@ robots: "noindex, nofollow"
                         data-group="{{ card_group }}"
                         data-name="{{ player_name | escape }}"
                         data-primary-position="{{ primary_position | escape }}"
+                        data-position-full="{{ player.position | escape }}"
+                        data-card-class="{{ card_class | escape }}"
+                        data-scout="{{ player.report_by | escape }}"
+                        data-slug="{{ player.slug | default: player_name | slugify }}"
                         data-rarity="{{ rarity | downcase | escape }}"
+                        data-game-views="{{ game_views }}"
+                        data-game-likes="{{ game_likes }}"
+                        data-game-watch-hours="{{ game_watch_hours }}"
+                        data-game-views-48h="{{ game_views_48h }}"
+                        data-game-views-30d="{{ game_views_30d }}"
+                        data-game-video-age-days="{{ game_video_age_days }}"
+                        data-game-video-minutes="{{ game_video_minutes }}"
+                        data-game-average-viewed-pct="{{ game_average_viewed_pct }}"
                     >
                         <div class="skyr-card-frame">
                             <span class="skyr-card-shine" aria-hidden="true"></span>
@@ -275,9 +469,9 @@ robots: "noindex, nofollow"
             </div>
         </section>
 
-        <aside class="game-beta-note">
+        <aside class="game-beta-note" id="game-beta-note">
             <strong>Beta rule:</strong>
-            Card values, rarity and future combat strength are game mechanics driven by
+            Card values, rarity and future game strength are mechanics driven by
             SkyrScout video performance and popularity. They do not represent player ability.
         </aside>
 
