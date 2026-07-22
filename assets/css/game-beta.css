@@ -827,3 +827,14 @@
         transform: none !important;
     }
 }
+
+
+/* Whole-card selection in the active draft */
+.game-draw-grid .skyr-card {
+    cursor: pointer;
+}
+
+.game-draw-grid .skyr-card:focus-visible .skyr-card-frame {
+    outline: 2px solid #78daf5;
+    outline-offset: 4px;
+}
