@@ -25,6 +25,11 @@
  * Initially the league can use computer-controlled clubs. Matches should include
  * meaningful card/player decisions rather than being pure simulations.
  *
+ * VISUAL CARD FEEL:
+ * Cards use subtle pointer-driven 3D tilt on desktop.
+ * Draft selection visually lifts the chosen card and fades the rejected cards.
+ * Rarity-specific material effects are scaffolded for future real rarity data.
+ *
  * CURRENT BETA:
  * Choose Scout -> Draw 3 -> Choose 1 -> Build a five-player test team.
  * Scout choice has no bonus yet. Match play is not implemented yet.
@@ -60,10 +65,62 @@ document.addEventListener("DOMContentLoaded", function () {
     let availableCards = [];
     let currentDraw = [];
 
+
+    const canTilt =
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function resetCardTilt(card) {
+        card.classList.remove("is-tilting");
+        card.style.setProperty("--tilt-x", "0deg");
+        card.style.setProperty("--tilt-y", "0deg");
+        card.style.setProperty("--shine-x", "50%");
+        card.style.setProperty("--shine-y", "50%");
+    }
+
+    function enableCardTilt(card) {
+        if (!canTilt || card.dataset.tiltReady === "true") {
+            return;
+        }
+
+        card.dataset.tiltReady = "true";
+
+        card.addEventListener("pointermove", function (event) {
+            if (card.classList.contains("is-chosen") ||
+                card.classList.contains("is-rejected")) {
+                return;
+            }
+
+            const rect = card.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / rect.width;
+            const y = (event.clientY - rect.top) / rect.height;
+
+            const rotateY = (x - 0.5) * 10;
+            const rotateX = (0.5 - y) * 8;
+
+            card.classList.add("is-tilting");
+            card.style.setProperty("--tilt-x", rotateX.toFixed(2) + "deg");
+            card.style.setProperty("--tilt-y", rotateY.toFixed(2) + "deg");
+            card.style.setProperty("--shine-x", (x * 100).toFixed(1) + "%");
+            card.style.setProperty("--shine-y", (y * 100).toFixed(1) + "%");
+        });
+
+        card.addEventListener("pointerleave", function () {
+            resetCardTilt(card);
+        });
+    }
+
+    function enableTiltWithin(container) {
+        if (!container) return;
+        Array.from(container.querySelectorAll(".skyr-card")).forEach(enableCardTilt);
+    }
+
     if (count) {
         count.textContent =
             cards.length + (cards.length === 1 ? " card" : " cards") + " in the current pool";
     }
+
+    enableTiltWithin(cardGrid);
 
     function setFilter(filter) {
         cards.forEach(function (card) {
@@ -136,6 +193,8 @@ document.addEventListener("DOMContentLoaded", function () {
             teamGrid.appendChild(clone);
         });
 
+        enableTiltWithin(teamGrid);
+
         teamHeading.textContent = team.length + " / " + TEAM_SIZE + " players";
         chosenScoutText.textContent = "Scout: " + selectedScout;
         teamZone.hidden = false;
@@ -190,12 +249,33 @@ document.addEventListener("DOMContentLoaded", function () {
             choice.className = "game-draft-choice";
             choice.textContent = "Add to my team";
             choice.addEventListener("click", function () {
-                chooseCard(card);
+                if (drawGrid.classList.contains("is-resolving")) {
+                    return;
+                }
+
+                drawGrid.classList.add("is-resolving");
+
+                Array.from(drawGrid.querySelectorAll(".skyr-card")).forEach(function (drawnClone) {
+                    resetCardTilt(drawnClone);
+
+                    if (drawnClone === clone) {
+                        drawnClone.classList.add("is-chosen");
+                    } else {
+                        drawnClone.classList.add("is-rejected");
+                    }
+                });
+
+                window.setTimeout(function () {
+                    drawGrid.classList.remove("is-resolving");
+                    chooseCard(card);
+                }, 620);
             });
 
             clone.querySelector(".skyr-card-frame").appendChild(choice);
             drawGrid.appendChild(clone);
         });
+
+        enableTiltWithin(drawGrid);
 
         draftProgress.textContent =
             "Pick 1 player. " + (TEAM_SIZE - team.length) + " team spot" +
