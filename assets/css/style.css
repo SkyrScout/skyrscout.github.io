@@ -2385,3 +2385,185 @@ img.emoji {
 .report-button:hover {
     background: #74d3ef;
 }
+/* =========================
+   Player profile sharing
+   ========================= */
+
+.player-share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 14px;
+    padding: 10px 15px;
+
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(83, 200, 238, 0.5);
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.player-share-button:hover {
+    background: rgba(83, 200, 238, 0.12);
+    border-color: #53c8ee;
+}
+
+.player-share-button svg {
+    width: 19px;
+    height: 19px;
+
+    fill: #53c8ee;
+    stroke: #53c8ee;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+}
+
+.player-share-dialog {
+    width: min(600px, calc(100vw - 32px));
+    padding: 24px;
+
+    color: #f5f7f8;
+    background: #0d1217;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
+}
+
+.player-share-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.player-share-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 24px;
+}
+
+.player-share-dialog-header h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.player-share-close {
+    width: 38px;
+    height: 38px;
+
+    color: #ffffff;
+    font-size: 1.7rem;
+    line-height: 1;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 50%;
+
+    cursor: pointer;
+}
+
+.player-share-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+
+    margin-bottom: 24px;
+}
+
+.player-share-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+
+    padding: 8px;
+
+    color: #ffffff;
+    font-size: 0.88rem;
+    text-align: center;
+    text-decoration: none;
+
+    border-radius: 10px;
+}
+
+.player-share-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.player-share-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 700;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+}
+
+.player-share-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9px;
+}
+
+.player-share-copy input {
+    min-width: 0;
+    padding: 12px 14px;
+
+    color: #c8d1d5;
+    font: inherit;
+    font-size: 0.9rem;
+
+    background: transparent;
+    border: 0;
+    outline: 0;
+}
+
+.player-share-copy button {
+    padding: 0 18px;
+
+    color: #081015;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    background: #53c8ee;
+    border: 0;
+
+    cursor: pointer;
+}
+
+.player-share-copy button:hover {
+    background: #78daf5;
+}
+
+@media (max-width: 600px) {
+
+    .player-share-dialog {
+        padding: 20px;
+    }
+
+    .player-share-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
