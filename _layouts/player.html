@@ -197,7 +197,7 @@ layout: default
 
         {% endif %}
 
-        {% if page.summary %}
+                {% if page.summary %}
 
             <section class="player-section player-summary">
 
@@ -205,6 +205,63 @@ layout: default
 
                 <div class="summary-content">
                     {{ page.summary | newline_to_br }}
+                </div>
+
+            </section>
+
+        {% endif %}
+
+        {% if page.additional_videos and page.additional_videos.size > 0 %}
+
+            <section class="player-section player-additional-videos">
+
+                <h2>More SkyrScout Videos</h2>
+
+                <div class="additional-videos-grid">
+
+                    {% for video in page.additional_videos %}
+
+                        {% assign additional_youtube_id = video.youtube
+                            | split: 'v='
+                            | last
+                            | split: '&'
+                            | first
+                            | split: '/'
+                            | last
+                        %}
+
+                        <article class="additional-video-card">
+
+                            <div class="additional-video-heading">
+
+                                {% if video.title %}
+                                    <h3>{{ video.title }}</h3>
+                                {% endif %}
+
+                                {% if video.date %}
+                                    <span class="additional-video-date">
+                                        {{ video.date }}
+                                    </span>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="additional-video-wrapper">
+
+                                <iframe
+                                    src="https://www.youtube.com/embed/{{ additional_youtube_id }}"
+                                    title="{% if video.title %}{{ video.title }}{% else %}{{ page.title }}{% endif %}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen
+                                    loading="lazy">
+                                </iframe>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
                 </div>
 
             </section>
