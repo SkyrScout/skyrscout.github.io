@@ -458,3 +458,152 @@
         width: 100%;
     }
 }
+
+
+/* =========================
+   Draft flow
+   ========================= */
+
+.game-scout-zone,
+.game-team-zone {
+    margin-bottom: 28px;
+}
+
+.game-instruction {
+    margin: -4px 0 24px;
+    padding: 14px 16px;
+    color: #c6d1d6;
+    line-height: 1.55;
+    background: rgba(83, 200, 238, 0.06);
+    border: 1px solid rgba(83, 200, 238, 0.18);
+    border-radius: 10px;
+}
+
+.game-instruction strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #ffffff;
+}
+
+.game-scout-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.game-scout-card {
+    min-height: 180px;
+    padding: 22px;
+    color: #eef5f7;
+    text-align: left;
+    background: linear-gradient(155deg, rgba(25, 34, 42, 0.98), rgba(7, 11, 15, 0.99));
+    border: 1px solid rgba(130, 220, 245, 0.34);
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.game-scout-card:hover,
+.game-scout-card.is-selected {
+    transform: translateY(-3px);
+    border-color: #78daf5;
+    box-shadow: 0 18px 34px rgba(0,0,0,0.35);
+}
+
+.game-scout-card strong,
+.game-scout-card span {
+    display: block;
+}
+
+.game-scout-card strong {
+    margin: 24px 0 8px;
+    font-size: 1.35rem;
+}
+
+.game-scout-card > span:last-child {
+    color: #8fdff5;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.game-scout-role {
+    color: #7e8e96;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.game-draft-choice {
+    width: calc(100% - 26px);
+    min-height: 42px;
+    margin: 10px 13px 13px;
+    color: #071015;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 900;
+    background: #67d3f3;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.game-draft-choice:hover {
+    background: #91e4f8;
+}
+
+.game-team-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.game-team-grid .skyr-card-heading {
+    min-height: 58px;
+}
+
+.game-team-grid .skyr-card-footer,
+.game-team-grid .skyr-card-data {
+    display: none;
+}
+
+.game-draft-complete {
+    margin-top: 24px;
+    padding: 18px;
+    color: #c7d2d7;
+    line-height: 1.55;
+    background: rgba(83, 200, 238, 0.07);
+    border: 1px solid rgba(83, 200, 238, 0.25);
+    border-radius: 10px;
+}
+
+.game-draft-complete strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #ffffff;
+    font-size: 1.1rem;
+}
+
+.game-draft-complete button {
+    display: block;
+    margin-top: 14px;
+    min-height: 42px;
+    padding: 0 14px;
+    color: #071015;
+    font: inherit;
+    font-weight: 900;
+    background: #67d3f3;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+    .game-team-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .game-scout-grid,
+    .game-team-grid {
+        grid-template-columns: 1fr;
+    }
+}
