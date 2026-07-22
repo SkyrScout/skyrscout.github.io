@@ -1,0 +1,209 @@
+---
+layout: "default"
+title: "SkyrScout Card Game Beta"
+browser_title: "Card Game Beta | SkyrScout"
+description: "Experimental SkyrScout card game prototype."
+robots: "noindex, nofollow"
+---
+
+<link rel="stylesheet" href="/assets/css/game-beta.css">
+
+<main class="page-background game-beta-background">
+    <section class="game-beta-page">
+
+        <header class="game-beta-header">
+            <p class="game-beta-kicker">Experimental prototype</p>
+            <h1>SkyrScout Card Game <span>Beta</span></h1>
+            <p class="game-beta-intro">
+                Player cards are generated from SkyrScout profiles.
+                Game strength will be based on the performance and popularity of each
+                player's SkyrScout video — not our assessment of the player's football ability.
+            </p>
+
+            <div class="game-beta-actions">
+                <button type="button" id="draw-three">Draw 3 cards</button>
+                <button type="button" class="game-secondary-button" id="show-all">Show all cards</button>
+            </div>
+        </header>
+
+        <section class="game-draw-zone" id="draw-zone" hidden>
+            <div class="game-section-heading">
+                <div>
+                    <p class="game-beta-kicker">Test draw</p>
+                    <h2>Your cards</h2>
+                </div>
+                <p>Random draw from the current SkyrScout player pool.</p>
+            </div>
+            <div class="game-card-grid game-draw-grid" id="draw-grid"></div>
+        </section>
+
+        <section class="game-card-pool">
+            <div class="game-section-heading">
+                <div>
+                    <p class="game-beta-kicker">Current pool</p>
+                    <h2>Player cards</h2>
+                </div>
+                <p id="game-card-count">Loading card pool…</p>
+            </div>
+
+            <div class="game-filter-row" aria-label="Filter player cards">
+                <button type="button" class="game-filter is-active" data-filter="all">All</button>
+                <button type="button" class="game-filter" data-filter="defender">Defenders</button>
+                <button type="button" class="game-filter" data-filter="midfielder">Midfielders</button>
+                <button type="button" class="game-filter" data-filter="winger">Wingers</button>
+                <button type="button" class="game-filter" data-filter="striker">Strikers</button>
+            </div>
+
+            <div class="game-card-grid" id="game-card-grid">
+
+                {% for player in site.players %}
+
+                    {% assign title_parts = player.title | split: ' – ' %}
+                    {% assign player_identity = title_parts[0] %}
+                    {% assign name_parts = player_identity | split: ' (' %}
+                    {% assign player_name = name_parts[0] %}
+                    {% assign birth_year = name_parts[1] | remove: ')' %}
+
+                    {% assign youtube_id = player.youtube
+                        | split: 'v='
+                        | last
+                        | split: '&'
+                        | first
+                        | split: '/'
+                        | last
+                    %}
+
+                    {% assign position_down = player.position | downcase %}
+                    {% assign card_group = "midfielder" %}
+                    {% assign card_class = "Controller" %}
+
+                    {% if position_down contains "centre-forward"
+                        or position_down contains "center-forward"
+                        or position_down contains "striker" %}
+                        {% assign card_group = "striker" %}
+                        {% assign card_class = "Striker" %}
+                    {% elsif position_down contains "winger" %}
+                        {% assign card_group = "winger" %}
+                        {% assign card_class = "Raider" %}
+                    {% elsif position_down contains "back"
+                        or position_down contains "centre-back"
+                        or position_down contains "center-back"
+                        or position_down contains "defender" %}
+                        {% assign card_group = "defender" %}
+                        {% assign card_class = "Tank" %}
+                    {% elsif position_down contains "midfield" %}
+                        {% assign card_group = "midfielder" %}
+                        {% assign card_class = "Controller" %}
+                    {% endif %}
+
+                    {% if player.game_class %}
+                        {% assign card_class = player.game_class %}
+                    {% endif %}
+
+                    {% assign rarity = player.game_rarity | default: "Prototype" %}
+                    {% assign nationality = player.nationality | default: player.country %}
+                    {% assign height = player.height %}
+                    {% assign game_views = player.game_views %}
+                    {% assign game_likes = player.game_likes %}
+
+                    <article
+                        class="skyr-card"
+                        data-card
+                        data-group="{{ card_group }}"
+                        data-name="{{ player_name | escape }}"
+                    >
+                        <div class="skyr-card-frame">
+                            <div class="skyr-card-topline">
+                                <span class="skyr-card-rarity">{{ rarity }}</span>
+                                <span class="skyr-card-year">{{ birth_year }}</span>
+                            </div>
+
+                            <div class="skyr-card-heading">
+                                <h3>{{ player_name }}</h3>
+                                <p>
+                                    {% if nationality %}
+                                        <span class="skyr-card-nationality">{{ nationality }}</span>
+                                        <span aria-hidden="true"> · </span>
+                                    {% endif %}
+                                    <span>{{ player.position }}</span>
+                                </p>
+                            </div>
+
+                            <div class="skyr-card-image">
+                                {% if player.youtube %}
+                                    <img
+                                        src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                        alt="{{ player_name }}"
+                                        loading="lazy"
+                                    >
+                                {% else %}
+                                    <div class="skyr-card-no-image">No video image</div>
+                                {% endif %}
+
+                                <span class="skyr-card-class">{{ card_class }}</span>
+                            </div>
+
+                            <div class="skyr-card-gamebar">
+                                <div>
+                                    <span>Card status</span>
+                                    <strong>{{ rarity }}</strong>
+                                </div>
+                                <div>
+                                    <span>Class</span>
+                                    <strong>{{ card_class }}</strong>
+                                </div>
+                            </div>
+
+                            {% if height or player.game_traits %}
+                                <div class="skyr-card-traits">
+                                    {% if height %}
+                                        <span>{{ height }}</span>
+                                    {% endif %}
+
+                                    {% for trait in player.game_traits %}
+                                        <span>{{ trait }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="skyr-card-data">
+                                {% if game_views or game_likes %}
+                                    {% if game_views %}
+                                        <span>▶ {{ game_views }}</span>
+                                    {% endif %}
+                                    {% if game_likes %}
+                                        <span>♥ {{ game_likes }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="skyr-card-pending">Live card data pending</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="skyr-card-footer">
+                                <span>
+                                    {% if player.report_by %}
+                                        Scouted by {{ player.report_by }}
+                                    {% else %}
+                                        SkyrScout
+                                    {% endif %}
+                                </span>
+                                <a href="{{ player.url }}">Profile →</a>
+                            </div>
+                        </div>
+                    </article>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <aside class="game-beta-note">
+            <strong>Beta rule:</strong>
+            Card values, rarity and future combat strength are game mechanics driven by
+            SkyrScout video performance and popularity. They do not represent player ability.
+        </aside>
+
+    </section>
+</main>
+
+<script src="/assets/js/game-beta.js"></script>
