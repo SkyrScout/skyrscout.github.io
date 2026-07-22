@@ -27,22 +27,40 @@ layout: default
             </p>
 
             {% if page.report_by %}
-                <p class="report-byline">
 
-                    {% if page.profile_type == "video" %}
-                        Video scouting profile by {{ page.report_by }}
-                    {% else %}
-                        Scouting report by {{ page.report_by }}
-                    {% endif %}
+    {% assign scout_url = "" %}
 
-                    {% if page.report_date %}
-                        <span class="report-date">
-                            &nbsp;•&nbsp;Report date: {{ page.report_date }}
-                        </span>
-                    {% endif %}
+    {% if page.report_by == "Bon Scout" %}
+        {% assign scout_url = "/about/#bon-scout" %}
+    {% elsif page.report_by == "Scout Pilgrim" %}
+        {% assign scout_url = "/about/#scout-pilgrim" %}
+    {% elsif page.report_by == "Scouty Pippen" %}
+        {% assign scout_url = "/about/#scouty-pippen" %}
+    {% endif %}
 
-                </p>
-            {% endif %}
+    <p class="report-byline">
+
+        {% if page.profile_type == "video" %}
+            Video scouting profile by
+        {% else %}
+            Scouting report by
+        {% endif %}
+
+        {% if scout_url != "" %}
+            <a class="report-author-link" href="{{ scout_url }}">{{ page.report_by }}</a>
+        {% else %}
+            {{ page.report_by }}
+        {% endif %}
+
+        {% if page.report_date %}
+            <span class="report-date">
+                &nbsp;•&nbsp;Report date: {{ page.report_date }}
+            </span>
+        {% endif %}
+
+    </p>
+
+{% endif %}
 
             <button
                 type="button"
