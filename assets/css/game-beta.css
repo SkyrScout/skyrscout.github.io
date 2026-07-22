@@ -607,3 +607,223 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================
+   Card feel: 3D tilt + selection pop
+   ========================= */
+
+.skyr-card {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --lift: 0px;
+    --card-scale: 1;
+    --shine-x: 50%;
+    --shine-y: 50%;
+    transform-style: preserve-3d;
+}
+
+.skyr-card-frame {
+    transform:
+        perspective(900px)
+        rotateX(var(--tilt-x))
+        rotateY(var(--tilt-y))
+        translateY(var(--lift))
+        scale(var(--card-scale));
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition:
+        transform 0.16s ease-out,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.25s ease,
+        filter 0.25s ease;
+}
+
+.skyr-card:hover .skyr-card-frame {
+    transform:
+        perspective(900px)
+        rotateX(var(--tilt-x))
+        rotateY(var(--tilt-y))
+        translateY(-6px)
+        scale(1.012);
+}
+
+/* A very restrained moving reflection. */
+.skyr-card-shine {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            circle at var(--shine-x) var(--shine-y),
+            rgba(255,255,255,0.16) 0%,
+            rgba(120,218,245,0.06) 18%,
+            transparent 46%
+        );
+    mix-blend-mode: screen;
+    transition: opacity 0.18s ease;
+}
+
+.skyr-card.is-tilting .skyr-card-shine {
+    opacity: 0.8;
+}
+
+/* Tiny depth separation between the "printed" layers. */
+.skyr-card-heading,
+.skyr-card-topline {
+    transform: translateZ(10px);
+}
+
+.skyr-card-image {
+    transform: translateZ(15px);
+}
+
+.skyr-card-class {
+    transform: translateZ(22px);
+}
+
+.skyr-card-gamebar,
+.skyr-card-traits,
+.skyr-card-data,
+.skyr-card-footer,
+.game-draft-choice {
+    transform: translateZ(8px);
+}
+
+/* Draft choice: chosen card comes forward, rejected cards fall away. */
+.game-draw-grid.is-resolving {
+    pointer-events: none;
+}
+
+.game-draw-grid .skyr-card.is-chosen {
+    z-index: 20;
+}
+
+.game-draw-grid .skyr-card.is-chosen .skyr-card-frame {
+    animation: skyr-card-selected 0.62s cubic-bezier(.18,.85,.24,1) forwards;
+    border-color: rgba(139, 232, 255, 0.95);
+    box-shadow:
+        0 34px 65px rgba(0,0,0,0.58),
+        0 0 34px rgba(83,200,238,0.24);
+}
+
+.game-draw-grid .skyr-card.is-chosen .skyr-card-shine {
+    opacity: 1;
+    animation: skyr-card-selection-flash 0.62s ease forwards;
+}
+
+.game-draw-grid .skyr-card.is-rejected .skyr-card-frame {
+    transform:
+        perspective(900px)
+        translateY(14px)
+        scale(0.94);
+    opacity: 0.26;
+    filter: grayscale(0.55) brightness(0.72);
+}
+
+@keyframes skyr-card-selected {
+    0% {
+        transform:
+            perspective(900px)
+            rotateX(var(--tilt-x))
+            rotateY(var(--tilt-y))
+            translateY(-6px)
+            scale(1.012);
+    }
+    38% {
+        transform:
+            perspective(900px)
+            rotateX(0deg)
+            rotateY(0deg)
+            translateY(-24px)
+            scale(1.10);
+    }
+    70% {
+        transform:
+            perspective(900px)
+            rotateX(0deg)
+            rotateY(0deg)
+            translateY(-18px)
+            scale(1.075);
+    }
+    100% {
+        transform:
+            perspective(900px)
+            rotateX(0deg)
+            rotateY(0deg)
+            translateY(-16px)
+            scale(1.06);
+    }
+}
+
+@keyframes skyr-card-selection-flash {
+    0% { opacity: 0.15; }
+    35% { opacity: 1; }
+    100% { opacity: 0.45; }
+}
+
+/*
+ * Future rarity material hooks.
+ * These are deliberately subtle until real YouTube-derived rarity exists.
+ */
+.skyr-card[data-rarity="rare"] .skyr-card-frame {
+    border-color: rgba(112, 205, 245, 0.50);
+}
+
+.skyr-card[data-rarity="epic"] .skyr-card-frame {
+    box-shadow:
+        0 16px 34px rgba(0,0,0,0.38),
+        0 0 18px rgba(122, 136, 255, 0.10);
+}
+
+.skyr-card[data-rarity="mythic"] .skyr-card-shine {
+    background:
+        linear-gradient(
+            115deg,
+            transparent 15%,
+            rgba(115,226,255,0.08) 32%,
+            rgba(255,255,255,0.20) 46%,
+            rgba(160,128,255,0.10) 58%,
+            transparent 78%
+        ),
+        radial-gradient(
+            circle at var(--shine-x) var(--shine-y),
+            rgba(255,255,255,0.22),
+            transparent 42%
+        );
+}
+
+@media (hover: none), (pointer: coarse) {
+    .skyr-card-frame,
+    .skyr-card:hover .skyr-card-frame {
+        transform: none;
+    }
+
+    .skyr-card-shine {
+        display: none;
+    }
+
+    .game-draw-grid .skyr-card.is-chosen .skyr-card-frame {
+        animation: skyr-card-selected-mobile 0.48s ease forwards;
+    }
+
+    @keyframes skyr-card-selected-mobile {
+        0% { transform: scale(1); }
+        50% { transform: translateY(-10px) scale(1.055); }
+        100% { transform: translateY(-6px) scale(1.035); }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skyr-card-frame,
+    .skyr-card-shine,
+    .game-draw-grid .skyr-card.is-chosen .skyr-card-frame {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+}
