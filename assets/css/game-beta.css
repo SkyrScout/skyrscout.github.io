@@ -838,3 +838,474 @@
     outline: 2px solid #78daf5;
     outline-offset: 4px;
 }
+
+
+/* =========================
+   v0.5: clear Play / Library modes
+   ========================= */
+
+.game-mode-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 820px;
+}
+
+.game-mode-actions button {
+    min-height: 112px;
+    padding: 18px 20px;
+    text-align: left;
+}
+
+.game-mode-actions button span,
+.game-mode-actions button strong,
+.game-mode-actions button small {
+    display: block;
+}
+
+.game-mode-actions button strong {
+    margin: 4px 0 7px;
+    font-size: 1.25rem;
+    line-height: 1.15;
+}
+
+.game-mode-actions button small {
+    max-width: 310px;
+    font-size: 0.78rem;
+    font-weight: 650;
+    line-height: 1.45;
+    opacity: 0.78;
+}
+
+.game-action-label {
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.72;
+}
+
+.game-mode-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 24px;
+    padding: 18px 22px;
+    background:
+        linear-gradient(145deg, rgba(11, 18, 24, 0.97), rgba(5, 9, 13, 0.96));
+    border: 1px solid rgba(83, 200, 238, 0.25);
+    border-left: 4px solid #53c8ee;
+    border-radius: 14px;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.28);
+}
+
+.game-mode-bar[hidden] {
+    display: none;
+}
+
+.game-mode-bar .game-beta-kicker {
+    margin-bottom: 4px;
+}
+
+.game-mode-bar strong,
+.game-mode-bar span {
+    display: block;
+}
+
+.game-mode-bar strong {
+    color: #f7fafb;
+    font-size: 1.05rem;
+}
+
+.game-mode-bar span {
+    margin-top: 4px;
+    color: #94a5ad;
+    font-size: 0.82rem;
+}
+
+.game-mode-bar button {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 0 14px;
+    color: #dfe7ea;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 850;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.game-mode-bar button:hover {
+    color: #081015;
+    background: #78daf5;
+    border-color: #78daf5;
+}
+
+/* Library cards can still tilt, but don't pretend the whole card is a button. */
+#game-card-pool .skyr-card {
+    cursor: default;
+}
+
+#game-card-pool .skyr-card-footer a {
+    cursor: pointer;
+}
+
+@media (max-width: 720px) {
+    .game-mode-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .game-mode-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .game-mode-bar button {
+        width: 100%;
+    }
+}
+
+
+/* =========================
+   v0.6 Card Lab
+   ========================= */
+
+.game-mode-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.game-card-lab {
+    margin-bottom: 28px;
+    padding: clamp(24px, 4vw, 38px);
+    background:
+        linear-gradient(145deg, rgba(11, 18, 24, 0.97), rgba(5, 9, 13, 0.96));
+    border: 1px solid rgba(83, 200, 238, 0.22);
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.game-card-lab[hidden] {
+    display: none;
+}
+
+.game-lab-source-note {
+    margin-bottom: 24px;
+    padding: 11px 13px;
+    color: #9fb0b8;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+}
+
+.game-lab-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.game-lab-card-panel {
+    min-width: 0;
+    padding: 18px;
+    background:
+        linear-gradient(155deg, rgba(25, 34, 42, 0.96), rgba(7, 11, 15, 0.98));
+    border: 1px solid rgba(130, 220, 245, 0.24);
+    border-radius: 15px;
+}
+
+.game-lab-panel-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.game-lab-panel-head > span {
+    color: #53c8ee;
+    font-size: 0.72rem;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.game-lab-panel-head select,
+.game-lab-input-grid input,
+.game-clash-controls select {
+    width: 100%;
+    color: #edf4f6;
+    font: inherit;
+    background: #0a1015;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 7px;
+}
+
+.game-lab-panel-head select,
+.game-clash-controls select {
+    min-height: 42px;
+    padding: 0 10px;
+}
+
+.game-lab-identity {
+    min-height: 66px;
+    margin-bottom: 16px;
+    padding: 12px 13px;
+    color: #c8d3d8;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    background: rgba(83,200,238,0.055);
+    border: 1px solid rgba(83,200,238,0.13);
+    border-radius: 9px;
+}
+
+.game-lab-identity strong {
+    display: block;
+    margin-bottom: 2px;
+    color: #ffffff;
+    font-size: 1.08rem;
+}
+
+.game-lab-identity .game-lab-eligible {
+    color: #8edff5;
+}
+
+.game-lab-input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.game-lab-input-grid label {
+    color: #8fa0a8;
+    font-size: 0.69rem;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+.game-lab-input-grid input {
+    min-height: 39px;
+    margin-top: 5px;
+    padding: 0 9px;
+}
+
+.game-lab-metrics {
+    display: grid;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.game-lab-metric {
+    display: grid;
+    grid-template-columns: 112px 1fr 44px;
+    align-items: center;
+    gap: 10px;
+}
+
+.game-lab-metric-name {
+    color: #bcc8cd;
+    font-size: 0.73rem;
+    font-weight: 850;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.game-lab-meter {
+    height: 8px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.07);
+    border-radius: 999px;
+}
+
+.game-lab-meter span {
+    display: block;
+    width: var(--metric-width, 0%);
+    height: 100%;
+    background: linear-gradient(90deg, #53c8ee, #a2e9fb);
+    border-radius: inherit;
+    transition: width 0.25s ease;
+}
+
+.game-lab-metric-value {
+    color: #eef4f6;
+    font-size: 0.76rem;
+    font-weight: 900;
+    text-align: right;
+}
+
+.game-lab-metric.is-pending .game-lab-meter span {
+    width: 0;
+}
+
+.game-lab-metric.is-pending .game-lab-metric-value {
+    color: #6f7e85;
+}
+
+.game-lab-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.game-lab-summary > div {
+    padding: 10px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.075);
+    border-radius: 8px;
+}
+
+.game-lab-summary span,
+.game-lab-summary strong {
+    display: block;
+}
+
+.game-lab-summary span {
+    margin-bottom: 3px;
+    color: #788990;
+    font-size: 0.61rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.game-lab-summary strong {
+    color: #eaf2f5;
+    font-size: 0.88rem;
+}
+
+.game-lab-why {
+    margin-top: 14px;
+    color: #9eafb7;
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+.game-lab-why summary {
+    color: #7ed8f2;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.game-lab-why p {
+    margin: 9px 0 0;
+}
+
+.game-lab-clash {
+    margin-top: 28px;
+    padding-top: 26px;
+    border-top: 1px solid rgba(83,200,238,0.20);
+}
+
+.game-clash-controls {
+    display: flex;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.game-clash-controls label {
+    flex: 1 1 260px;
+    max-width: 360px;
+    color: #8fa0a8;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.game-clash-controls select {
+    display: block;
+    margin-top: 6px;
+}
+
+.game-clash-controls button {
+    min-height: 42px;
+    padding: 0 16px;
+    color: #071015;
+    font: inherit;
+    font-weight: 900;
+    background: #67d3f3;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.game-clash-result {
+    padding: 17px;
+    color: #c7d2d7;
+    line-height: 1.55;
+    background: rgba(83,200,238,0.055);
+    border: 1px solid rgba(83,200,238,0.16);
+    border-radius: 10px;
+}
+
+.game-clash-result strong {
+    color: #ffffff;
+}
+
+.game-clash-scoreline {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 14px;
+    align-items: center;
+    margin: 12px 0;
+    text-align: center;
+}
+
+.game-clash-scoreline > div {
+    padding: 13px;
+    background: rgba(255,255,255,0.035);
+    border-radius: 8px;
+}
+
+.game-clash-scoreline b {
+    display: block;
+    margin-top: 4px;
+    color: #8fe2f7;
+    font-size: 1.55rem;
+}
+
+.game-clash-vs {
+    color: #67777f;
+    font-size: 0.75rem;
+    font-weight: 900;
+}
+
+@media (max-width: 900px) {
+    .game-mode-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .game-lab-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .game-lab-input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-lab-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .game-clash-controls {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .game-clash-controls label {
+        max-width: none;
+        width: 100%;
+    }
+
+    .game-clash-controls button {
+        width: 100%;
+    }
+
+    .game-clash-scoreline {
+        grid-template-columns: 1fr;
+    }
+}
