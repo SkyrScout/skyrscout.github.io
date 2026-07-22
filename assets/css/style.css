@@ -2779,3 +2779,15 @@ img.emoji {
         grid-template-columns: 82px minmax(0, 1fr) 28px;
     }
 }
+/* Scouting report author links */
+
+.report-author-link {
+    color: #67d3f3;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.report-author-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
