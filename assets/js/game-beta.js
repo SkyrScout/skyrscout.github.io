@@ -186,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
         team.forEach(function (card) {
             const clone = card.cloneNode(true);
             clone.hidden = false;
+            delete clone.dataset.tiltReady;
 
             const choiceButton = clone.querySelector(".game-draft-choice");
             if (choiceButton) choiceButton.remove();
@@ -243,6 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
         currentDraw.forEach(function (card) {
             const clone = card.cloneNode(true);
             clone.hidden = false;
+            delete clone.dataset.tiltReady;
 
             const choice = document.createElement("button");
             choice.type = "button";
