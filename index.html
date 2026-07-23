@@ -46,16 +46,7 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
             </a>
 
         {% endfor %}
-{% for update in latest_updates limit: 3 %}
 
-    <a
-        class="yard-marquee-item"
-        href="{{ update.url }}"
-    >
-        {{ update.title }}
-    </a>
-
-{% endfor %}
     </div>
 
 </section>
