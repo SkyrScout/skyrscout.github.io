@@ -349,7 +349,7 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
     const options = {
         width: '100%',
         height: '152',
-        uri: "{{ page.podcast }}"
+        url: "{{ page.podcast }}"
     };
 
     IFrameAPI.createController(element, options, (EmbedController) => {
