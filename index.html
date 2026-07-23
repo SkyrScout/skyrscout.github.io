@@ -28,50 +28,28 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
     | reverse
 %}
 
-{% assign latest_update = latest_updates | first %}
+<section class="yard-marquee">
 
-{% if latest_update %}
+    <div class="yard-marquee-label">
+        LATEST UPDATES
+    </div>
 
-    {% assign latest_update_filename = latest_update.path
-        | split: "/"
-        | last
-    %}
+    <div class="yard-marquee-items">
 
-    {% assign latest_update_date = latest_update_filename
-        | slice: 0, 10
-        | split: "-"
-    %}
+        {% for update in latest_updates limit: 3 %}
 
-    <section class="construction-notice yard-construction">
+            <a
+                class="yard-marquee-item"
+                href="{{ update.url }}"
+            >
+                {{ update.title }}
+            </a>
 
-        <p class="yard-section-label">
-            Latest update
-            •
-            {{ latest_update_date[2] }}.{{ latest_update_date[1] }}.{{ latest_update_date[0] }}
-        </p>
+        {% endfor %}
 
-        <h2>
-            {{ latest_update.title }}
-        </h2>
+    </div>
 
-        <p>
-            {{ latest_update.content
-                | strip_html
-                | truncatewords: 24
-            }}
-        </p>
-
-        <a
-            class="yard-text-link"
-            href="{{ latest_update.url }}"
-        >
-            Read update
-        </a>
-
-    </section>
-
-{% endif %}
-
+</section>
             <section class="yard-section">
 
                 <div class="yard-section-heading">
