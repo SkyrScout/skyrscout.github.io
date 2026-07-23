@@ -3046,3 +3046,26 @@ img.emoji {
         border-bottom: 0;
     }
 }
+@keyframes yard-marquee-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.yard-marquee-items {
+    display: flex;
+    width: max-content;
+    animation: yard-marquee-scroll 24s linear infinite;
+}
+
+.yard-marquee:hover .yard-marquee-items {
+    animation-play-state: paused;
+}
+
+.yard-marquee-item {
+    min-width: 360px;
+}
