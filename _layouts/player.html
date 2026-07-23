@@ -353,8 +353,8 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
     };
 
     IFrameAPI.createController(element, options, (EmbedController) => {
-        EmbedController.seek(startSeconds);
-    });
+    EmbedController.loadEntity("{{ page.podcast }}", false, startSeconds);
+});
 };
 </script>
 <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
