@@ -2945,3 +2945,104 @@ img.emoji {
     }
 
 }
+/* =========================
+   Scoutland Yard - Latest Updates Marquee
+   ========================= */
+
+.yard-marquee {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    margin-top: 20px;
+    background:
+        linear-gradient(
+            110deg,
+            rgba(8, 13, 18, 0.94),
+            rgba(15, 25, 31, 0.92)
+        );
+    border: 1px solid rgba(83, 200, 238, 0.45);
+    border-radius: 12px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.28),
+        0 0 22px rgba(239, 169, 76, 0.10);
+}
+
+.yard-marquee::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 35%,
+        rgba(255, 181, 82, 0.08) 50%,
+        transparent 65%
+    );
+}
+
+.yard-marquee-label {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    color: #ffffff;
+    background: rgba(83, 200, 238, 0.14);
+    border-right: 1px solid rgba(83, 200, 238, 0.4);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.yard-marquee-items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 1;
+}
+
+.yard-marquee-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    color: #e8eef2;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-decoration: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.yard-marquee-item:last-child {
+    border-right: 0;
+}
+
+.yard-marquee-item:hover {
+    color: #ffffff;
+    background: rgba(255, 181, 82, 0.08);
+}
+
+@media (max-width: 760px) {
+    .yard-marquee {
+        display: block;
+    }
+
+    .yard-marquee-label {
+        border-right: 0;
+        border-bottom: 1px solid rgba(83, 200, 238, 0.4);
+    }
+
+    .yard-marquee-items {
+        grid-template-columns: 1fr;
+    }
+
+    .yard-marquee-item {
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .yard-marquee-item:last-child {
+        border-bottom: 0;
+    }
+}
