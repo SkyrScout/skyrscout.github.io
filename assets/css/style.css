@@ -3188,3 +3188,20 @@ img.emoji {
     flex: 0 0 auto;
     width: max-content;
 }
+/* Update articles – improve readability */
+
+.update-article-content {
+    line-height: 1.75;
+}
+
+.update-article-content p {
+    margin: 0 0 1.25rem;
+}
+
+.update-article-content p:last-child {
+    margin-bottom: 0;
+}
+
+.update-article-content .report-button {
+    margin-top: 0.75rem;
+}
