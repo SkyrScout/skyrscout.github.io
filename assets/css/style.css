@@ -3184,3 +3184,7 @@ img.emoji {
             transparent 70%
         );
 }
+.yard-marquee-items {
+    flex: 0 0 auto;
+    width: max-content;
+}
