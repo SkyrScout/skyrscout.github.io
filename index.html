@@ -247,10 +247,7 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
                 <div class="yard-update-list">
 
-                    {% assign sorted_updates = site.update_posts
-                        | sort: "path"
-                        | reverse
-                    %}
+                    {% assign sorted_updates = latest_updates %}
 
                     {% for update in sorted_updates limit: 3 %}
 
