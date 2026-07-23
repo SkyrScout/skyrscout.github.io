@@ -23,10 +23,19 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
             </header>
 
-           {% assign latest_updates = site.update_posts
+           {% assign timed_updates = site.update_posts
+    | where_exp: "update", "update.published_at"
+    | sort: "published_at"
+    | reverse
+%}
+
+{% assign old_updates = site.update_posts
+    | where_exp: "update", "update.published_at == nil"
     | sort: "path"
     | reverse
 %}
+
+{% assign latest_updates = timed_updates | concat: old_updates %}
 
 <section class="yard-marquee">
 
