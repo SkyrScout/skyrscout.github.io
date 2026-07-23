@@ -115,9 +115,10 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                         %}
 
                         <article
-                            class="yard-report-card"
-                            data-report-date="{{ player.report_date | escape }}"
-                        >
+    class="yard-report-card"
+    data-site-added="{{ player.site_added | escape }}"
+    data-report-date="{{ player.report_date | escape }}"
+>
 
                             <a
                                 class="yard-report-image"
@@ -432,11 +433,34 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
             );
 
             cards.sort(function (a, b) {
-                return (
-                    convertNorwegianDate(b.dataset.siteAdded) -
-                    convertNorwegianDate(a.dataset.siteAdded)
-                );
-            });
+    return (
+        convertNorwegianDate(b.dataset.siteAdded) -
+        convertNorwegianDate(a.dataset.siteAdded)
+    );
+});
+
+let newestReportCard = null;
+let newestReportDate = 0;
+
+cards.forEach(function (card) {
+    const reportDate = convertNorwegianDate(
+        card.dataset.reportDate
+    );
+
+    if (reportDate > newestReportDate) {
+        newestReportDate = reportDate;
+        newestReportCard = card;
+    }
+});
+
+if (newestReportCard) {
+    const index = cards.indexOf(newestReportCard);
+
+    if (index > 0) {
+        cards.splice(index, 1);
+        cards.unshift(newestReportCard);
+    }
+}
 
             cards.forEach(function (card, index) {
                 card.hidden = index >= 12;
