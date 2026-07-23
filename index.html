@@ -432,35 +432,35 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                 reportGrid.querySelectorAll(".yard-report-card")
             );
 
-            cards.sort(function (a, b) {
-    return (
-        convertNorwegianDate(b.dataset.siteAdded) -
-        convertNorwegianDate(a.dataset.siteAdded)
-    );
+            const newestReports = [...cards]
+    .sort(function (a, b) {
+        return (
+            convertNorwegianDate(b.dataset.reportDate) -
+            convertNorwegianDate(a.dataset.reportDate)
+        );
+    })
+    .slice(0, 3);
+
+const remainingCards = cards
+    .filter(function (card) {
+        return !newestReports.includes(card);
+    })
+    .sort(function (a, b) {
+        return (
+            convertNorwegianDate(b.dataset.siteAdded) -
+            convertNorwegianDate(a.dataset.siteAdded)
+        );
+    });
+
+const sortedCards = [
+    ...newestReports,
+    ...remainingCards
+];
+
+sortedCards.forEach(function (card, index) {
+    card.hidden = index >= 12;
+    reportGrid.appendChild(card);
 });
-
-let newestReportCard = null;
-let newestReportDate = 0;
-
-cards.forEach(function (card) {
-    const reportDate = convertNorwegianDate(
-        card.dataset.reportDate
-    );
-
-    if (reportDate > newestReportDate) {
-        newestReportDate = reportDate;
-        newestReportCard = card;
-    }
-});
-
-if (newestReportCard) {
-    const index = cards.indexOf(newestReportCard);
-
-    if (index > 0) {
-        cards.splice(index, 1);
-        cards.unshift(newestReportCard);
-    }
-}
 
             cards.forEach(function (card, index) {
                 card.hidden = index >= 12;
