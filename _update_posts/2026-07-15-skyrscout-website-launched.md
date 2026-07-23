@@ -1,5 +1,6 @@
 ---
 title: "SkyrScout website launched"
+published_at: 2026-07-15 20:29:38 +0200
 ---
 
 The SkyrScout website is now live.

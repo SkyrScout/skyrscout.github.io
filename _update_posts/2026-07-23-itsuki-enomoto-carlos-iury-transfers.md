@@ -1,5 +1,6 @@
 ---
 title: "Itsuki Enomoto and Carlos Iury move on from Singha Chiangrai United"
+published_at: 2026-07-23 10:23:57 +0200
 ---
 
 Two players featured by SkyrScout are on the move after leaving Singha Chiangrai United.

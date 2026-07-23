@@ -4,6 +4,7 @@ player: "aaron-malouda"
 player_name: "Aaron Malouda"
 source: "The New Saints FC on X"
 source_url: "https://x.com/tnsfc/status/2077134480012128727"
+published_at: 2026-07-16 13:32:57 +0200
 ---
 
 Aaron Malouda is reportedly attracting interest from Celtic.

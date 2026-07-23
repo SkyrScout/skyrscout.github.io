@@ -4,6 +4,7 @@ player: "wendell-gabriel"
 player_name: "Wendell Gabriel"
 source: "IFK Göteborg"
 source_url: "https://ifkgoteborg.se/nyheter/a-lag/2026/forlust-i-forsta-kvalmatchen/"
+published_at: 2026-07-22 10:35:23 +0200
 ---
 
 Wendell Gabriel scored twice as FCI Levadia secured a 2–1 away victory over IFK Göteborg in the UEFA Conference League second qualifying round.

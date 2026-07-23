@@ -4,7 +4,7 @@ player: "eduards-daskevics"
 player_name: "Eduards Daskevics"
 source: "UEFA"
 source_url: "https://www.uefa.com/uefaconferenceleague/match/2048821--fcsb-vs-auda/"
-published_at: 2026-07-23 22:00:00 +0200
+published_at: 2026-07-23 22:11:28 +0200
 ---
 
 Eduards Daskevics opened the scoring after just five minutes as FK Auda claimed an impressive 3–2 away victory over FCSB in the first leg of the UEFA Conference League second qualifying round.

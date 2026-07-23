@@ -2,6 +2,7 @@
 title: "New scouting report: Umar Talantbekov"
 player: "umar-talantbekov"
 player_name: "Umar Talantbekov"
+published_at: 2026-07-23 15:51:19 +0200
 ---
 
 SkyrScout has published a new scouting report on 17-year-old Kyrgyz centre-forward Umar Talantbekov of FK Abdysh-Ata Kant.

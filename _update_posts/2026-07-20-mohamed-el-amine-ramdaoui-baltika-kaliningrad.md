@@ -7,6 +7,7 @@ source_url: "https://maghreb-foot.com/%D9%88%D9%83%D9%8A%D9%84-%D8%A3%D8%B9%D9%8
 
 source_via: "Africafoot"
 source_via_url: "https://africafoot.com/radar-actus-africafoot-fil-actus-du-19-juillet-2026/"
+published_at: 2026-07-20 12:59:07 +0200
 ---
 
 Mohamed El Amine Ramdaoui is set to join Russian Premier League side Baltika Kaliningrad. According to Africafoot, citing Maghreb-Foot, the 20-year-old Algerian striker will sign a three-year contract, with the transfer fee reportedly set at €1.5 million.

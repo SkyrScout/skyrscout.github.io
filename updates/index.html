@@ -21,7 +21,7 @@ description: "News, rumours and confirmed developments involving players feature
 
                 {% if site.update_posts and site.update_posts.size > 0 %}
 
-                    {% assign sorted_updates = site.update_posts | sort: "path" | reverse %}
+                    {% assign sorted_updates = site.update_posts | sort: "published_at" | reverse %}
 
                     {% for update in sorted_updates %}
 

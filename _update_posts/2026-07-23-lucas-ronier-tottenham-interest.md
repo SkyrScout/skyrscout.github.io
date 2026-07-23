@@ -7,6 +7,7 @@ source_url: "https://sportwitness.co.uk/tottenham-interest-confirmed-in-brazil-c
 
 source_via: "ESPN Brazil journalist André Hernan"
 source_via_url: "https://x.com/SportsCenterBR/status/2079955322823696798"
+published_at: 2026-07-23 18:37:05 +0200
 ---
 
 Tottenham are among the clubs monitoring Coritiba winger Lucas Ronier, according to Sport Witness, citing ESPN Brazil journalist André Hernan. Fulham and clubs in Italy are also following the 21-year-old Brazilian.
