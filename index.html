@@ -419,54 +419,47 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
             return new Date(year, month, day).getTime();
         }
 
-        function sortLatestReports() {
-            const reportGrid = document.querySelector(
-                "#yard-report-grid"
+       function sortLatestReports() {
+    const reportGrid = document.querySelector("#yard-report-grid");
+
+    if (!reportGrid) {
+        return;
+    }
+
+    const cards = Array.from(
+        reportGrid.querySelectorAll(".yard-report-card")
+    );
+
+    const newestReports = [...cards]
+        .sort(function (a, b) {
+            return (
+                convertNorwegianDate(b.dataset.reportDate) -
+                convertNorwegianDate(a.dataset.reportDate)
             );
+        })
+        .slice(0, 3);
 
-            if (!reportGrid) {
-                return;
-            }
-
-            const cards = Array.from(
-                reportGrid.querySelectorAll(".yard-report-card")
+    const remainingCards = cards
+        .filter(function (card) {
+            return !newestReports.includes(card);
+        })
+        .sort(function (a, b) {
+            return (
+                convertNorwegianDate(b.dataset.siteAdded) -
+                convertNorwegianDate(a.dataset.siteAdded)
             );
+        });
 
-            const newestReports = [...cards]
-    .sort(function (a, b) {
-        return (
-            convertNorwegianDate(b.dataset.reportDate) -
-            convertNorwegianDate(a.dataset.reportDate)
-        );
-    })
-    .slice(0, 3);
+    const sortedCards = [
+        ...newestReports,
+        ...remainingCards
+    ];
 
-const remainingCards = cards
-    .filter(function (card) {
-        return !newestReports.includes(card);
-    })
-    .sort(function (a, b) {
-        return (
-            convertNorwegianDate(b.dataset.siteAdded) -
-            convertNorwegianDate(a.dataset.siteAdded)
-        );
+    sortedCards.forEach(function (card, index) {
+        card.hidden = index >= 12;
+        reportGrid.appendChild(card);
     });
-
-const sortedCards = [
-    ...newestReports,
-    ...remainingCards
-];
-
-sortedCards.forEach(function (card, index) {
-    card.hidden = index >= 12;
-    reportGrid.appendChild(card);
-});
-
-            cards.forEach(function (card, index) {
-                card.hidden = index >= 12;
-                reportGrid.appendChild(card);
-            });
-        }
+}
 
         function stripHtml(html) {
             const temporaryElement = document.createElement("div");
