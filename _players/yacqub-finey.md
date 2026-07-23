@@ -4,9 +4,11 @@ profile_type: "video"
 
 title: "Yacqub Finey (2003) – GIF Sundsvall | Superettan, Sweden (2nd Tier)"
 youtube: "https://www.youtube.com/watch?v=yqoEWuLHM1I"
+
 report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
+
 position: "Attacking Midfielder / Centre-Forward / Right Winger"
 
 summary: |
@@ -18,7 +20,9 @@ summary: |
   🎥 Three SkyrScout videos covering his 2024 and 2025 Superettan performances
 
 report: |
-  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
+  Finey is a big, physically strong player with decent top speed and a good engine. He has good ball control, reads the game well and spots teammates making runs in behind.
+
+  He has an accurate foot both for passing and finishing, and can operate either as a midfielder or as a forward.
 
 additional_videos:
   - youtube: "https://www.youtube.com/watch?v=e2y2Fo8esjA"
