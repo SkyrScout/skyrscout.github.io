@@ -666,7 +666,11 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                 console.error(error);
             }
         }
+const marqueeItems = document.querySelector(".yard-marquee-items");
 
+if (marqueeItems) {
+    marqueeItems.innerHTML += marqueeItems.innerHTML;
+}
         sortLatestReports();
         loadLatestPodcast();
         loadLatestMusic();
