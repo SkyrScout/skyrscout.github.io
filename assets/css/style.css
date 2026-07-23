@@ -3069,3 +3069,118 @@ img.emoji {
 .yard-marquee-item {
     min-width: 360px;
 }
+/* MARQUEE – clipping + light treatment */
+
+.yard-marquee-label {
+    position: relative;
+    z-index: 10;
+    flex: 0 0 auto;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(13, 33, 42, 0.98),
+            rgba(9, 20, 27, 0.98)
+        );
+    box-shadow:
+        8px 0 18px rgba(0, 0, 0, 0.55),
+        inset -1px 0 rgba(83, 200, 238, 0.45);
+}
+
+.yard-marquee-items {
+    position: relative;
+    z-index: 1;
+}
+
+.yard-marquee-item {
+    min-width: 360px;
+    border-right: 0;
+}
+
+.yard-marquee-item::before {
+    content: "◆";
+    color: #d9a34a;
+    margin-right: 14px;
+    font-size: 0.65rem;
+    text-shadow:
+        0 0 8px rgba(255, 181, 82, 0.75);
+}
+
+.yard-marquee {
+    border-color: rgba(83, 200, 238, 0.55);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.35),
+        0 0 18px rgba(83, 200, 238, 0.10),
+        0 0 28px rgba(255, 174, 68, 0.10);
+}
+
+.yard-marquee::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+        linear-gradient(
+            105deg,
+            transparent 25%,
+            rgba(255, 184, 85, 0.10) 48%,
+            transparent 70%
+        );
+}/* MARQUEE – clipping + light treatment */
+
+.yard-marquee-label {
+    position: relative;
+    z-index: 10;
+    flex: 0 0 auto;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(13, 33, 42, 0.98),
+            rgba(9, 20, 27, 0.98)
+        );
+    box-shadow:
+        8px 0 18px rgba(0, 0, 0, 0.55),
+        inset -1px 0 rgba(83, 200, 238, 0.45);
+}
+
+.yard-marquee-items {
+    position: relative;
+    z-index: 1;
+}
+
+.yard-marquee-item {
+    min-width: 360px;
+    border-right: 0;
+}
+
+.yard-marquee-item::before {
+    content: "◆";
+    color: #d9a34a;
+    margin-right: 14px;
+    font-size: 0.65rem;
+    text-shadow:
+        0 0 8px rgba(255, 181, 82, 0.75);
+}
+
+.yard-marquee {
+    border-color: rgba(83, 200, 238, 0.55);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.35),
+        0 0 18px rgba(83, 200, 238, 0.10),
+        0 0 28px rgba(255, 174, 68, 0.10);
+}
+
+.yard-marquee::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+        linear-gradient(
+            105deg,
+            transparent 25%,
+            rgba(255, 184, 85, 0.10) 48%,
+            transparent 70%
+        );
+}
