@@ -12,7 +12,7 @@ nationalities:
   - Brazil
 birth_date: "2001-03-08"
 height_cm: 176
-preferred_foot: "Right"
+preferred_foot: "Both"
 positions:
   - role: "Left Winger"
     side: "left"
