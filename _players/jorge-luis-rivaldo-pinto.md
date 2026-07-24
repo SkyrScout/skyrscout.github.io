@@ -14,9 +14,9 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Colombia
-birth_date:
+birth_date: "2003-09-28"
 height_cm: 189
-preferred_foot:
+preferred_foot: "Both"
 positions:
   - role: "Centre-Forward"
     side: "centre"
