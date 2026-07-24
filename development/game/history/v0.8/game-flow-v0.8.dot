@@ -1,0 +1,72 @@
+digraph SkyrScoutGame {
+  graph [rankdir=TB, bgcolor="#0b1117", pad=0.35, nodesep=0.38, ranksep=0.55, fontname="Arial"];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, color="#3c6677", fontcolor="#eef7fb", fillcolor="#14212b", margin="0.12,0.08"];
+  edge [color="#6b8793", fontcolor="#b9cbd3", fontname="Arial", fontsize=9, arrowsize=0.7];
+
+  start [label="START", shape=oval, fillcolor="#18394a", color="#53c8ee"];
+  scout [label="Choose Scout\n(real report_by distribution)"];
+  draft1 [label="Draft DEFENDER\nchoose 1 of 3"];
+  draft2 [label="Draft MIDFIELDER\nchoose 1 of 3"];
+  draft3 [label="Draft ATTACKER\nchoose 1 of 3"];
+  draft4 [label="Draft WILDCARD\nchoose 1 of 3"];
+  draft5 [label="Draft WILDCARD\nchoose 1 of 3"];
+  opponent [label="AUTO-DRAW OPPONENT\nHigh Press / Low Block / Counter / Aerial", fillcolor="#2c281b", color="#c7a84b"];
+
+  start -> scout -> draft1 -> draft2 -> draft3 -> draft4 -> draft5 -> opponent;
+
+  subgraph cluster_round {
+    label="ONE MATCH ROUND — repeat 5 times";
+    labelloc=t;
+    color="#274351";
+    fontcolor="#8fdff5";
+    style="rounded";
+
+    buildup [label="BUILD-UP\nChoose unused player"];
+    breakthrough [label="BREAKTHROUGH\nChoose unused player"];
+    chance [label="CHANCE\nChoose unused player"];
+    userresult [label="Your attack result", shape=diamond, fillcolor="#172a32"];
+    oppattack [label="Automatic opponent attack", fillcolor="#2c281b", color="#c7a84b"];
+    defence [label="Defender counter-effect\nposition/class + situational height\n+ available YouTube Momentum\n(half if defender joined your attack)"];
+    oppresult [label="Opponent scores?", shape=diamond, fillcolor="#2a1d20", color="#9a5860"];
+
+    buildup -> breakthrough [label="success"];
+    breakthrough -> chance [label="success"];
+    chance -> userresult;
+    buildup -> userresult [label="fail"];
+    breakthrough -> userresult [label="fail"];
+    userresult -> oppattack;
+    defence -> oppattack [label="reduces scoring chance"];
+    oppattack -> oppresult;
+  }
+
+  opponent -> buildup;
+  oppresult -> buildup [label="next round", style=dashed];
+  final [label="FINAL SCORE after 5 rounds", shape=oval, fillcolor="#18394a", color="#53c8ee"];
+  oppresult -> final [label="after round 5"];
+
+  subgraph cluster_data {
+    label="DATA LAYERS";
+    color="#274351";
+    fontcolor="#8fdff5";
+    style="rounded";
+
+    football [label="FOOTBALL\nposition / height / structured traits\nMissing = no effect", fillcolor="#173024"];
+    youtube [label="LONG-FORM YOUTUBE\nviews / watch time / likes / recent form\n→ capped Momentum\nMissing = no effect", fillcolor="#261f35"];
+    shorts [label="SHORTS\nplayer-linked signature ability\n+ separate Short Buzz\nBon Scout = creator bonus", fillcolor="#302915"];
+    scoutdata [label="SCOUT\nprofile counts + category tendency\nfrom current player data", fillcolor="#1e2934"];
+
+    football -> buildup [style=dotted];
+    football -> breakthrough [style=dotted];
+    football -> chance [style=dotted];
+    football -> defence [style=dotted];
+    youtube -> buildup [style=dotted];
+    youtube -> breakthrough [style=dotted];
+    youtube -> chance [style=dotted];
+    youtube -> defence [style=dotted];
+    shorts -> breakthrough [style=dotted];
+    shorts -> chance [style=dotted];
+    scoutdata -> buildup [style=dotted];
+    scoutdata -> breakthrough [style=dotted];
+    scoutdata -> chance [style=dotted];
+  }
+}
