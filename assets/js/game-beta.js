@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const draftComplete = document.getElementById("draft-complete");
     const startButton = document.getElementById("start-draft");
     const restartButton = document.getElementById("restart-draft");
+    const continueToMatchButton = document.getElementById("continue-to-match");
     const showAllButton = document.getElementById("show-all");
     const openLabButton = document.getElementById("open-card-lab");
     const openMatchLabButton = document.getElementById("open-match-lab");
@@ -106,6 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const matchPhaseTitle = document.getElementById("match-phase-title");
     const matchPhaseHelp = document.getElementById("match-phase-help");
     const matchChoiceGrid = document.getElementById("match-choice-grid");
+    const matchLineupStatus = document.getElementById("match-lineup-status");
 
     if (!cardGrid) {
         return;
@@ -1016,6 +1018,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function matchDemoCards() {
+        // A completed draft is the real Match Lab lineup.
+        // Only use the hard-coded demo five when Match Lab is opened without a draft.
+        if (team.length === TEAM_SIZE) {
+            return team.slice();
+        }
+
         const bySlug = new Map();
         cards.forEach(function (card) {
             const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
@@ -1025,6 +1033,25 @@ document.addEventListener("DOMContentLoaded", function () {
         return MATCH_DEMO_SLUGS
             .map(function (slug) { return bySlug.get(slug); })
             .filter(Boolean);
+    }
+
+    function renderMatchLineupStatus() {
+        if (!matchLineupStatus) return;
+
+        const lineup = matchDemoCards();
+        const names = lineup.map(function (card) {
+            return card.dataset.name || "Unknown player";
+        });
+
+        if (team.length === TEAM_SIZE) {
+            matchLineupStatus.innerHTML =
+                '<strong>Your drafted team:</strong> ' + names.join(' · ') +
+                (selectedScout ? '<br><span>Scout: ' + selectedScout + '</span>' : '');
+        } else {
+            matchLineupStatus.innerHTML =
+                '<strong>Demo lineup:</strong> ' + names.join(' · ') +
+                '<br><span>Build a five-player team in PLAY to test your own draft here.</span>';
+        }
     }
 
     function signaturesForPlayer(slug, phase) {
@@ -1372,6 +1399,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (matchLab) matchLab.hidden = false;
 
         await loadSignatureEvents();
+        renderMatchLineupStatus();
         resetMatchLab();
 
         if (matchBar) {
@@ -1573,6 +1601,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (restartButton) {
         restartButton.addEventListener("click", resetDraft);
+    }
+
+    if (continueToMatchButton) {
+        continueToMatchButton.addEventListener("click", enterMatchLabMode);
     }
 
     if (showAllButton) {

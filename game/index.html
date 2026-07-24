@@ -144,8 +144,11 @@ robots: "noindex, nofollow"
             <div class="game-card-grid game-team-grid" id="team-grid"></div>
             <div class="game-draft-complete" id="draft-complete" hidden>
                 <strong>Draft complete.</strong>
-                This is your five-player Beta team. Match play comes later.
-                <button type="button" id="restart-draft">Start a new draft</button>
+                This is your five-player Beta team. Take it directly into Match Lab.
+                <div class="game-draft-complete-actions">
+                    <button type="button" id="continue-to-match">Play with this team</button>
+                    <button type="button" class="game-secondary-button" id="restart-draft">Start a new draft</button>
+                </div>
             </div>
         </section>
 
@@ -300,6 +303,10 @@ robots: "noindex, nofollow"
                 A linked Short can become a one-use signature ability for that player instead of a separate card.
             </div>
 
+            <div class="game-match-lineup" id="match-lineup-status">
+                <strong>Lineup:</strong> No drafted team loaded.
+            </div>
+
             <div class="game-match-scoreboard" aria-label="Match Lab score">
                 <div><span>Attacks</span><strong id="match-attacks">0 / 5</strong></div>
                 <div><span>Goals</span><strong id="match-goals">0</strong></div>
@@ -394,6 +401,8 @@ robots: "noindex, nofollow"
                         {% assign card_class = "Raider" %}
                     {% elsif position_down contains "left back"
                         or position_down contains "right back"
+                        or position_down contains "left-back"
+                        or position_down contains "right-back"
                         or position_down contains "wing-back"
                         or position_down contains "wing back"
                         or position_down == "lb"

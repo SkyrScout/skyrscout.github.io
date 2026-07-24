@@ -581,9 +581,17 @@
     font-size: 1.1rem;
 }
 
-.game-draft-complete button {
-    display: block;
+.game-draft-complete-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-top: 14px;
+}
+
+.game-draft-complete button {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0;
     min-height: 42px;
     padding: 0 14px;
     color: #071015;
@@ -1323,6 +1331,25 @@
     border: 1px solid rgba(83, 200, 238, 0.28);
     border-radius: 18px;
     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.game-match-lineup {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    color: #d5e0e5;
+    line-height: 1.55;
+    background: rgba(83, 200, 238, 0.06);
+    border: 1px solid rgba(83, 200, 238, 0.22);
+    border-radius: 10px;
+}
+
+.game-match-lineup strong {
+    color: #ffffff;
+}
+
+.game-match-lineup span {
+    color: #8fa1aa;
+    font-size: 0.88rem;
 }
 
 .game-match-scoreboard {
