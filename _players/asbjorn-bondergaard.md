@@ -12,9 +12,9 @@ site_added: "23.07.2026"
 position: Centre-Forward
 nationalities:
   - Denmark
-birth_date:
+birth_date: "2004-05-05"
 height_cm: 184
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Centre-Forward"
     side: "centre"
@@ -22,10 +22,10 @@ positions:
 
 summary: |
   🇩🇰 Asbjørn Bøndergaard | CF
-  📏 184 cm striker, on loan at Fredericia from Silkeborg
-  ⚡ Quick forward with excellent runs in behind
-  🎯 Calm, accurate finisher with both feet and his head
-  🧠 Strong movement and positioning inside the box
+  ⚡ Quick striker with excellent timing and runs in behind
+  🎯 Calm, accurate finisher; dangerous with both feet and in the air
+  🧠 Strong movement & positioning inside the box
+  💪 Robust enough to hold off defenders and protect his position
   📊 12 goals + 2 assists in 18 NordicBet Liga matches
   🇩🇰 Denmark youth international from U16 to U20 level
 
