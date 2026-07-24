@@ -1,0 +1,60 @@
+name: Notify WebSub
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "_players/**"
+      - "_shorts/**"
+      - "_update_posts/**"
+      - "feed.xml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify-websub:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Wait for GitHub Pages
+        run: |
+          echo "Waiting 60 seconds for GitHub Pages/feed.xml to update..."
+          sleep 60
+
+      - name: Notify WebSub hub
+        env:
+          FEED_URL: "https://skyrscout.github.io/feed.xml"
+        run: |
+          set -euo pipefail
+
+          HUB_URL="https://pubsubhubbub.appspot.com/"
+
+          for attempt in 1 2 3; do
+            echo "WebSub attempt $attempt/3..."
+
+            status="$(
+              curl                 -sS                 --connect-timeout 10                 --max-time 20                 -o /tmp/websub-response.txt                 -w "%{http_code}"                 -X POST                 "$HUB_URL"                 -H "Content-Type: application/x-www-form-urlencoded"                 --data-urlencode "hub.mode=publish"                 --data-urlencode "hub.url=$FEED_URL"               || true
+            )"
+
+            cat /tmp/websub-response.txt 2>/dev/null || true
+            echo
+            echo "HTTP status: ${status:-curl-failed}"
+
+            if [ "$status" = "204" ]; then
+              echo "WebSub notification accepted."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Waiting 30 seconds before retry..."
+              sleep 30
+            fi
+          done
+
+          echo "WebSub notification failed after 3 attempts."
+          exit 1
