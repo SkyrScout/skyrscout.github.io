@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    {% if page.robots %}
+        <meta name="robots" content="{{ page.robots }}">
+    {% endif %}
+
     {% capture page_title %}
         {% if page.browser_title %}
             {{ page.browser_title }}
