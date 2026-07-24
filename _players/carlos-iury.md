@@ -10,7 +10,7 @@ site_added: "23.07.2026"
 position: Left Winger
 nationalities:
   - Brazil
-birth_date:
+birth_date: "2001-03-08"
 height_cm: 176
 preferred_foot: "Right"
 positions:
