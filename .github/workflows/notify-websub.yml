@@ -18,6 +18,7 @@ permissions:
 jobs:
   notify-websub:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
 
@@ -33,7 +34,7 @@ jobs:
 
           for attempt in {1..30}; do
 
-            feed="$(curl -fsSL --retry 2 --retry-delay 2 "$FEED_URL" || true)"
+            feed="$(curl -fsSL --connect-timeout 10 --max-time 30 --retry 2 --retry-delay 2 "$FEED_URL" || true)"
 
             if printf '%s' "$feed" | grep -q "$COMMIT_SHA"; then
               echo "Published feed contains the current commit."
@@ -49,27 +50,42 @@ jobs:
           exit 1
 
 
+      - name: Allow feed to propagate
+        run: |
+          echo "Feed is live. Waiting 30 seconds before notifying WebSub."
+          sleep 30
+
+
       - name: Notify WebSub hub
         env:
           FEED_URL: "https://skyrscout.github.io/feed.xml"
         run: |
           set -euo pipefail
 
-          status="$(
-            curl \
-              -sS \
-              -o /tmp/websub-response.txt \
-              -w "%{http_code}" \
-              -X POST \
-              "https://pubsubhubbub.appspot.com/" \
-              -H "Content-Type: application/x-www-form-urlencoded" \
-              --data-urlencode "hub.mode=publish" \
-              --data-urlencode "hub.url=$FEED_URL"
-          )"
+          HUB_URL="https://pubsubhubbub.appspot.com/"
 
-          cat /tmp/websub-response.txt || true
+          for attempt in 1 2 3; do
+            echo "WebSub attempt $attempt/3..."
 
-          echo
-          echo "WebSub HTTP status: $status"
+            status="$(
+              curl                 -sS                 --connect-timeout 10                 --max-time 30                 -o /tmp/websub-response.txt                 -w "%{http_code}"                 -X POST                 "$HUB_URL"                 -H "Content-Type: application/x-www-form-urlencoded"                 --data-urlencode "hub.mode=publish"                 --data-urlencode "hub.url=$FEED_URL"               || echo "000"
+            )"
 
-          test "$status" = "204"
+            cat /tmp/websub-response.txt 2>/dev/null || true
+
+            echo
+            echo "WebSub HTTP status: $status"
+
+            if [ "$status" = "204" ]; then
+              echo "WebSub notification accepted."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "WebSub did not succeed. Waiting 20 seconds before retry."
+              sleep 20
+            fi
+          done
+
+          echo "WebSub notification failed after 3 attempts."
+          exit 1
