@@ -8,7 +8,7 @@ site_added: "22.07.2026"
 position: Attacking Midfielder / Left Winger
 nationalities:
   - Serbia
-birth_date:
+birth_date: "2006-07-15"
 height_cm: 169
 preferred_foot: "Right"
 positions:
