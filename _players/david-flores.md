@@ -14,7 +14,7 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Honduras
-birth_date:
+birth_date: "2008-01-13"
 height_cm: 188
 preferred_foot:
 positions:
