@@ -27,4 +27,5 @@ transfermarkt: "https://www.transfermarkt.com/gustav-lindgren/profil/spieler/900
 sofascore: "https://www.sofascore.com/no/football/player/lindgren-gustav/1175710#tab:season"
 
 podcast:
-podcast_timestamp:---
+podcast_timestamp:
+---
