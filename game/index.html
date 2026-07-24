@@ -38,6 +38,12 @@ robots: "noindex, nofollow"
                     <strong>Card Lab</strong>
                     <small>Feed video data into cards and test the prototype game engine.</small>
                 </button>
+
+                <button type="button" class="game-secondary-button" id="open-match-lab">
+                    <span class="game-action-label">Playtest</span>
+                    <strong>Match Lab</strong>
+                    <small>Build an attack through football phases and trigger player signature abilities.</small>
+                </button>
             </div>
         </header>
 
@@ -65,6 +71,15 @@ robots: "noindex, nofollow"
                 <span>Prototype formulas only. Nothing here represents football ability.</span>
             </div>
             <button type="button" class="game-secondary-button" id="leave-lab">← Back to game menu</button>
+        </section>
+
+        <section class="game-mode-bar" id="game-match-bar" hidden>
+            <div>
+                <p class="game-beta-kicker">Match Lab · v0.7</p>
+                <strong>Build-up → Breakthrough → Chance</strong>
+                <span>Flow prototype: player choices and linked Short signature abilities.</span>
+            </div>
+            <button type="button" class="game-secondary-button" id="leave-match-lab">← Back to game menu</button>
         </section>
 
         <section class="game-draw-zone game-scout-zone" id="scout-zone" hidden>
@@ -267,6 +282,60 @@ robots: "noindex, nofollow"
                     Choose two cards, add any data you know, then run the phase clash.
                 </div>
             </section>
+        </section>
+
+        <section class="game-match-lab" id="game-match-lab" hidden>
+            <div class="game-section-heading">
+                <div>
+                    <p class="game-beta-kicker">First attack-sequence prototype</p>
+                    <h2>Match Lab</h2>
+                </div>
+                <p>Five attacks. Choose one player in each phase. A player cannot be reused in the same attack.</p>
+            </div>
+
+            <div class="game-instruction">
+                <strong>What are we testing?</strong>
+                This mode deliberately does <em>not</em> use the unfinished long-form Match Index yet.
+                It tests the football flow: choose the right player for BUILD-UP, BREAKTHROUGH and CHANCE.
+                A linked Short can become a one-use signature ability for that player instead of a separate card.
+            </div>
+
+            <div class="game-match-scoreboard" aria-label="Match Lab score">
+                <div><span>Attacks</span><strong id="match-attacks">0 / 5</strong></div>
+                <div><span>Goals</span><strong id="match-goals">0</strong></div>
+                <div><span>Signatures used</span><strong id="match-signatures">0</strong></div>
+            </div>
+
+            <div class="game-match-phase-strip" id="match-phase-strip" aria-label="Attack phases">
+                <span data-match-phase="build-up">1 · Build-up</span>
+                <span data-match-phase="breakthrough">2 · Breakthrough</span>
+                <span data-match-phase="chance">3 · Chance</span>
+            </div>
+
+            <div class="game-match-narrative" id="match-narrative">
+                <strong>Ready for the first attack.</strong>
+                <p>Start the playtest, then choose which player handles each phase.</p>
+            </div>
+
+            <div class="game-match-actions">
+                <button type="button" id="start-match-attack">Start first attack</button>
+                <button type="button" class="game-secondary-button" id="reset-match-lab">Reset playtest</button>
+            </div>
+
+            <div class="game-match-choice-heading" id="match-choice-heading" hidden>
+                <p class="game-beta-kicker">Your decision</p>
+                <h3 id="match-phase-title">Choose a player</h3>
+                <p id="match-phase-help"></p>
+            </div>
+
+            <div class="game-match-choice-grid" id="match-choice-grid"></div>
+
+            <details class="game-match-rules">
+                <summary>What is provisional in this playtest?</summary>
+                <p><strong>Phase odds:</strong> derived only from the existing class affinity table. They are placeholders for testing decisions, not football ratings.</p>
+                <p><strong>Signature abilities:</strong> currently get a small one-use prototype bonus. When a Short view count is known, a separate capped Buzz bonus can be added. Shorts and long-form videos remain on different popularity scales.</p>
+                <p><strong>Future connection:</strong> the demo event file is shaped so it can later be generated from <code>_shorts</code>, <code>player_slug</code> and YouTube snapshots without changing the match flow.</p>
+            </details>
         </section>
 
         <section class="game-card-pool" id="game-card-pool" hidden>

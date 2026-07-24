@@ -1309,3 +1309,322 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================
+   Match Lab v0.7
+   Flow prototype only
+   ========================= */
+
+.game-match-lab {
+    margin-top: 28px;
+    padding: clamp(22px, 4vw, 36px);
+    background: linear-gradient(145deg, rgba(11, 18, 24, 0.98), rgba(5, 9, 13, 0.97));
+    border: 1px solid rgba(83, 200, 238, 0.28);
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.game-match-scoreboard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0 18px;
+}
+
+.game-match-scoreboard > div {
+    padding: 16px 18px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.game-match-scoreboard span {
+    display: block;
+    margin-bottom: 4px;
+    color: #94a1a9;
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.game-match-scoreboard strong {
+    color: #f4f8fa;
+    font-size: 1.55rem;
+}
+
+.game-match-phase-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.game-match-phase-strip span {
+    padding: 11px 12px;
+    color: #819099;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+}
+
+.game-match-phase-strip span.is-current {
+    color: #081015;
+    background: #53c8ee;
+    border-color: #53c8ee;
+}
+
+.game-match-phase-strip span.is-complete {
+    color: #9adfb7;
+    border-color: rgba(116, 214, 157, 0.35);
+    background: rgba(116, 214, 157, 0.08);
+}
+
+.game-match-narrative {
+    min-height: 116px;
+    padding: 18px 20px;
+    color: #dbe3e7;
+    line-height: 1.65;
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid rgba(83, 200, 238, 0.16);
+    border-radius: 14px;
+}
+
+.game-match-narrative > strong {
+    color: #fff;
+    font-size: 1.05rem;
+}
+
+.game-match-narrative p {
+    margin: 7px 0 0;
+}
+
+.game-match-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 24px;
+}
+
+.game-match-actions button,
+.game-match-play-button,
+.game-match-signature-button {
+    min-height: 42px;
+    padding: 9px 14px;
+    color: #081015;
+    font: inherit;
+    font-weight: 900;
+    background: #53c8ee;
+    border: 1px solid #53c8ee;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.game-match-actions button:disabled,
+.game-match-play-button:disabled,
+.game-match-signature-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.game-match-choice-heading {
+    margin: 10px 0 14px;
+}
+
+.game-match-choice-heading h3 {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+}
+
+.game-match-choice-heading > p:last-child {
+    margin: 0;
+    color: #9aa7ae;
+}
+
+.game-match-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.game-match-choice {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+}
+
+.game-match-choice.is-used {
+    opacity: 0.48;
+}
+
+.game-match-choice-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.game-match-choice-top strong,
+.game-match-choice-top span {
+    display: block;
+}
+
+.game-match-choice-top strong {
+    color: #f5f8fa;
+    line-height: 1.2;
+}
+
+.game-match-choice-top span {
+    margin-top: 4px;
+    color: #8f9da5;
+    font-size: 0.76rem;
+    line-height: 1.35;
+}
+
+.game-match-choice-top b {
+    flex: 0 0 auto;
+    color: #53c8ee;
+    font-size: 1.05rem;
+}
+
+.game-match-play-button {
+    width: 100%;
+    color: #dce7eb;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.game-match-signature-button {
+    width: 100%;
+    color: #071014;
+    text-align: left;
+    background: linear-gradient(135deg, #f7cf58, #53c8ee);
+    border: 0;
+}
+
+.game-match-signature-button span,
+.game-match-signature-button small {
+    display: block;
+}
+
+.game-match-signature-button small {
+    margin-top: 3px;
+    font-size: 0.7rem;
+    opacity: 0.72;
+    text-transform: uppercase;
+}
+
+.game-match-signature-preview,
+.game-match-no-signature {
+    margin: 0;
+    color: #97a5ad;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.game-match-play {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.game-match-play-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #fff;
+}
+
+.game-match-play-head span {
+    color: #8fa0a9;
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.game-match-signature-used {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 8px;
+    color: #081015;
+    font-size: 0.72rem;
+    font-weight: 900;
+    background: #f7cf58;
+    border-radius: 999px;
+}
+
+.game-match-transition {
+    color: #b9c8cf;
+    font-weight: 800;
+}
+
+.game-match-outcome,
+.game-match-final {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+}
+
+.game-match-outcome.is-goal {
+    color: #bdf4ce;
+    background: rgba(80, 210, 128, 0.10);
+    border: 1px solid rgba(80, 210, 128, 0.24);
+}
+
+.game-match-outcome.is-ended {
+    color: #e8bec0;
+    background: rgba(220, 95, 100, 0.08);
+    border: 1px solid rgba(220, 95, 100, 0.20);
+}
+
+.game-match-final {
+    color: #f6df86;
+    background: rgba(247, 207, 88, 0.08);
+    border: 1px solid rgba(247, 207, 88, 0.22);
+}
+
+.game-match-rules {
+    margin-top: 24px;
+    padding: 14px 16px;
+    color: #aeb9bf;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+.game-match-rules summary {
+    color: #dbe5e9;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.game-match-rules code {
+    color: #7ad7f4;
+}
+
+@media (max-width: 1080px) {
+    .game-match-choice-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .game-match-scoreboard,
+    .game-match-phase-strip,
+    .game-match-choice-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-match-phase-strip span {
+        text-align: left;
+    }
+}

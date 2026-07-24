@@ -1,0 +1,62 @@
+{
+  "_meta": {
+    "status": "prototype",
+    "updated": "2026-07-24",
+    "note": "Match Lab v0.7 demo bridge. Future generation should come from SkyrScout _shorts + player_slug + stored YouTube snapshots. Missing YouTube metrics remain null. Signature abilities are player-linked events, not drawable cards."
+  },
+  "events": [
+    {
+      "id": "sander-alamaa-spin-doctor",
+      "player_slug": "sander-alamaa",
+      "title": "The Spin Doctor",
+      "phase": "breakthrough",
+      "event_category": "skill",
+      "event_tags": [
+        "dribbling",
+        "body-feint",
+        "nutmeg",
+        "acceleration"
+      ],
+      "description": "Sander Alamaa beats two defenders with close control, a sharp body feint and a perfectly timed nutmeg before accelerating away.",
+      "youtube": "https://www.youtube.com/shorts/BqeREyGMjag",
+      "views": null,
+      "views_snapshot_at": null
+    },
+    {
+      "id": "erbol-atabaev-touch-of-genius",
+      "player_slug": "erbol-atabaev",
+      "title": "A Touch of Pure Genius",
+      "phase": "chance",
+      "event_category": "goal",
+      "event_tags": [
+        "first-touch",
+        "flick",
+        "skill",
+        "volley",
+        "goal"
+      ],
+      "description": "Erbol Atabaev cushions the ball on his foot, pops it over his marker's head without letting it hit the ground, then buries the volley into the far corner.",
+      "youtube": "https://www.youtube.com/shorts/Q5wLixizoqk",
+      "views": null,
+      "views_snapshot_at": null
+    },
+    {
+      "id": "yacqub-finey-top-corner",
+      "player_slug": "yacqub-finey",
+      "title": "Top Corner",
+      "phase": "chance",
+      "event_category": "goal",
+      "event_tags": [
+        "set-piece",
+        "free-kick",
+        "ball-striking",
+        "goal"
+      ],
+      "description": "A free kick opens up. Yacqub Finey steps up and snipes the top corner.",
+      "youtube": "https://www.youtube.com/shorts/ByYgpdN-FxU",
+      "views": 18100,
+      "views_snapshot_at": "2026-07-24",
+      "views_source": "manual user-observed prototype snapshot"
+    }
+  ]
+}

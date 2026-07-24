@@ -40,6 +40,15 @@
  * - Versatility is derived from the player's listed positions.
  * - Future Scout Influence can combine visible Scout stats with damped video reach.
  *
+ * MATCH LAB / SIGNATURE ABILITIES:
+ * - v0.7 adds a flow-only attack prototype: BUILD-UP -> BREAKTHROUGH -> CHANCE.
+ * - Signature abilities are linked player events sourced from Shorts, NOT drawable cards.
+ * - One player may accumulate multiple linked Shorts / abilities over time.
+ * - game-signature-events.json is a temporary bridge shaped like future generated data.
+ * - Missing Short metrics remain missing. Known Short views may add a small capped Buzz modifier.
+ * - Shorts stay separate from long-form base rarity and need their own popularity scale.
+ * - Long-form Match Index is intentionally NOT wired into Match Lab v0.7; this first tests flow and choices.
+ *
  * CURRENT BETA:
  * Landing menu -> PLAY, CARD LIBRARY or CARD LAB.
  * PLAY: Choose Scout -> Draw 3 -> Choose 1 -> Build a five-player test team.
@@ -53,8 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const playBar = document.getElementById("game-play-bar");
     const libraryBar = document.getElementById("game-library-bar");
     const labBar = document.getElementById("game-lab-bar");
+    const matchBar = document.getElementById("game-match-bar");
     const cardPool = document.getElementById("game-card-pool");
     const cardLab = document.getElementById("game-card-lab");
+    const matchLab = document.getElementById("game-match-lab");
     const scoutZone = document.getElementById("scout-zone");
     const drawZone = document.getElementById("draw-zone");
     const drawGrid = document.getElementById("draw-grid");
@@ -68,9 +79,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const restartButton = document.getElementById("restart-draft");
     const showAllButton = document.getElementById("show-all");
     const openLabButton = document.getElementById("open-card-lab");
+    const openMatchLabButton = document.getElementById("open-match-lab");
     const leaveDraftButton = document.getElementById("leave-draft");
     const leaveLibraryButton = document.getElementById("leave-library");
     const leaveLabButton = document.getElementById("leave-lab");
+    const leaveMatchLabButton = document.getElementById("leave-match-lab");
     const count = document.getElementById("game-card-count");
     const filters = Array.from(document.querySelectorAll(".game-filter"));
     const scoutButtons = Array.from(document.querySelectorAll("[data-scout]"));
@@ -81,6 +94,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const labPhase = document.getElementById("lab-phase");
     const runLabClashButton = document.getElementById("run-lab-clash");
     const labClashResult = document.getElementById("lab-clash-result");
+
+    const matchAttacks = document.getElementById("match-attacks");
+    const matchGoals = document.getElementById("match-goals");
+    const matchSignatures = document.getElementById("match-signatures");
+    const matchPhaseStrip = document.getElementById("match-phase-strip");
+    const matchNarrative = document.getElementById("match-narrative");
+    const startMatchAttackButton = document.getElementById("start-match-attack");
+    const resetMatchLabButton = document.getElementById("reset-match-lab");
+    const matchChoiceHeading = document.getElementById("match-choice-heading");
+    const matchPhaseTitle = document.getElementById("match-phase-title");
+    const matchPhaseHelp = document.getElementById("match-phase-help");
+    const matchChoiceGrid = document.getElementById("match-choice-grid");
 
     if (!cardGrid) {
         return;
@@ -98,6 +123,25 @@ document.addEventListener("DOMContentLoaded", function () {
     let gameVideoStatsMeta = {};
     let labDataLoaded = false;
     const labEdits = { a: {}, b: {} };
+
+    const MATCH_ATTACK_LIMIT = 5;
+    const MATCH_PHASES = ["build-up", "breakthrough", "chance"];
+    const MATCH_DEMO_SLUGS = [
+        "yacqub-finey",
+        "sander-alamaa",
+        "erbol-atabaev",
+        "kevin-benkic",
+        "fernando-mimbacas"
+    ];
+
+    let signatureEvents = [];
+    let signatureDataLoaded = false;
+    let matchAttackCount = 0;
+    let matchGoalCount = 0;
+    let matchCurrentPhaseIndex = -1;
+    let matchAttackUsedPlayers = new Set();
+    let matchUsedSignatures = new Set();
+    let matchAttackActive = false;
 
 
     const canTilt =
@@ -193,6 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (drawZone) drawZone.hidden = true;
         if (teamZone) teamZone.hidden = true;
         if (cardLab) cardLab.hidden = true;
+        if (matchLab) matchLab.hidden = true;
     }
 
     function showLanding() {
@@ -202,8 +247,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (playBar) playBar.hidden = true;
         if (libraryBar) libraryBar.hidden = true;
         if (labBar) labBar.hidden = true;
+        if (matchBar) matchBar.hidden = true;
         if (cardPool) cardPool.hidden = true;
         if (cardLab) cardLab.hidden = true;
+        if (matchLab) matchLab.hidden = true;
 
         window.scrollTo({
             top: 0,
@@ -216,8 +263,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (playBar) playBar.hidden = false;
         if (libraryBar) libraryBar.hidden = true;
         if (labBar) labBar.hidden = true;
+        if (matchBar) matchBar.hidden = true;
         if (cardPool) cardPool.hidden = true;
         if (cardLab) cardLab.hidden = true;
+        if (matchLab) matchLab.hidden = true;
 
         resetDraft();
     }
@@ -229,8 +278,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (playBar) playBar.hidden = true;
         if (libraryBar) libraryBar.hidden = false;
         if (labBar) labBar.hidden = true;
+        if (matchBar) matchBar.hidden = true;
         if (cardPool) cardPool.hidden = false;
         if (cardLab) cardLab.hidden = true;
+        if (matchLab) matchLab.hidden = true;
 
         setFilter("all");
 
@@ -942,8 +993,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (playBar) playBar.hidden = true;
         if (libraryBar) libraryBar.hidden = true;
         if (labBar) labBar.hidden = false;
+        if (matchBar) matchBar.hidden = true;
         if (cardPool) cardPool.hidden = true;
         if (cardLab) cardLab.hidden = false;
+        if (matchLab) matchLab.hidden = true;
 
         await loadGameVideoStats();
 
@@ -959,6 +1012,370 @@ document.addEventListener("DOMContentLoaded", function () {
                 behavior: "smooth",
                 block: "start"
             });
+        }
+    }
+
+    function matchDemoCards() {
+        const bySlug = new Map();
+        cards.forEach(function (card) {
+            const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
+            bySlug.set(slug, card);
+        });
+
+        return MATCH_DEMO_SLUGS
+            .map(function (slug) { return bySlug.get(slug); })
+            .filter(Boolean);
+    }
+
+    function signaturesForPlayer(slug, phase) {
+        return signatureEvents.filter(function (event) {
+            return event.player_slug === slug &&
+                event.phase === phase &&
+                !matchUsedSignatures.has(event.id);
+        });
+    }
+
+    function signatureBuzz(views) {
+        if (!Number.isFinite(Number(views))) {
+            return { bonus: 0, label: "Views pending" };
+        }
+
+        const value = Number(views);
+        if (value >= 50000) return { bonus: 8, label: "+8 Buzz" };
+        if (value >= 15000) return { bonus: 6, label: "+6 Buzz" };
+        if (value >= 5000) return { bonus: 4, label: "+4 Buzz" };
+        if (value >= 1000) return { bonus: 2, label: "+2 Buzz" };
+        return { bonus: 0, label: "No Buzz bonus" };
+    }
+
+    function phaseBaseChance(card, phase) {
+        const className = card.dataset.cardClass || "Controller";
+        const affinity = (phaseAffinity[phase] && phaseAffinity[phase][className]) || 1;
+
+        // Flow test only: neutral base + existing class affinity.
+        // Long-form Match Index will replace/modify this later.
+        return clamp(Math.round(62 + (affinity - 1) * 100), 45, 78);
+    }
+
+    function phaseDisplayName(phase) {
+        return {
+            "build-up": "BUILD-UP",
+            breakthrough: "BREAKTHROUGH",
+            chance: "CHANCE"
+        }[phase] || String(phase || "").toUpperCase();
+    }
+
+    function phaseHelpText(phase) {
+        return {
+            "build-up": "Controllers and Engines are natural fits. Get the move started without losing possession.",
+            breakthrough: "Raiders are strongest here. Beat the next line and create danger.",
+            chance: "Strikers are natural finishers, but a matching signature ability can create a special route to goal."
+        }[phase] || "Choose the player who fits this phase best.";
+    }
+
+    function normalActionText(card, phase) {
+        const name = card.dataset.name || "The player";
+        return {
+            "build-up": name + " takes responsibility in possession and moves the attack forward.",
+            breakthrough: name + " attacks the next line and tries to open the defence.",
+            chance: name + " gets the chance to finish the move."
+        }[phase] || name + " takes the next action.";
+    }
+
+    function successTransition(phase) {
+        return {
+            "build-up": "The move survives and reaches the next line.",
+            breakthrough: "The defence is opened. The ball goes into the danger area.",
+            chance: "GOAL!"
+        }[phase] || "Success."
+    }
+
+    function failureTransition(phase) {
+        return phase === "chance"
+            ? "The chance is stopped. The attack is over."
+            : "Possession is lost. The attack is over.";
+    }
+
+    function renderMatchScoreboard() {
+        if (matchAttacks) {
+            matchAttacks.textContent = matchAttackCount + " / " + MATCH_ATTACK_LIMIT;
+        }
+        if (matchGoals) {
+            matchGoals.textContent = String(matchGoalCount);
+        }
+        if (matchSignatures) {
+            matchSignatures.textContent = String(matchUsedSignatures.size);
+        }
+    }
+
+    function renderMatchPhaseStrip() {
+        if (!matchPhaseStrip) return;
+
+        const currentPhase = MATCH_PHASES[matchCurrentPhaseIndex];
+        Array.from(matchPhaseStrip.querySelectorAll("[data-match-phase]")).forEach(function (item) {
+            const phase = item.dataset.matchPhase;
+            const phaseIndex = MATCH_PHASES.indexOf(phase);
+            item.classList.toggle("is-current", phase === currentPhase && matchAttackActive);
+            item.classList.toggle(
+                "is-complete",
+                matchAttackActive && phaseIndex >= 0 && phaseIndex < matchCurrentPhaseIndex
+            );
+        });
+    }
+
+    function finishMatchAttack(message, scored) {
+        matchAttackActive = false;
+        matchAttackCount += 1;
+        if (scored) matchGoalCount += 1;
+
+        renderMatchScoreboard();
+        renderMatchPhaseStrip();
+
+        if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
+        if (matchChoiceHeading) matchChoiceHeading.hidden = true;
+
+        if (matchNarrative) {
+            matchNarrative.insertAdjacentHTML(
+                "beforeend",
+                '<div class="game-match-outcome ' + (scored ? 'is-goal' : 'is-ended') + '">' +
+                    '<strong>' + message + '</strong>' +
+                '</div>'
+            );
+        }
+
+        if (startMatchAttackButton) {
+            if (matchAttackCount >= MATCH_ATTACK_LIMIT) {
+                startMatchAttackButton.disabled = true;
+                startMatchAttackButton.textContent = "Playtest complete";
+                if (matchNarrative) {
+                    matchNarrative.insertAdjacentHTML(
+                        "beforeend",
+                        '<div class="game-match-final"><strong>Final playtest score: ' +
+                        matchGoalCount + ' goal' + (matchGoalCount === 1 ? '' : 's') +
+                        ' from ' + MATCH_ATTACK_LIMIT + ' attacks.</strong></div>'
+                    );
+                }
+            } else {
+                startMatchAttackButton.disabled = false;
+                startMatchAttackButton.textContent = "Start next attack";
+            }
+        }
+    }
+
+    function resolveMatchAction(card, phase, signature) {
+        if (!matchAttackActive) return;
+
+        const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
+        if (matchAttackUsedPlayers.has(slug)) return;
+
+        const baseChance = phaseBaseChance(card, phase);
+        let bonus = 0;
+        let buzz = { bonus: 0, label: "" };
+        let actionText = normalActionText(card, phase);
+        let signatureLine = "";
+
+        if (signature) {
+            bonus += 10;
+            buzz = signatureBuzz(signature.views);
+            bonus += buzz.bonus;
+            matchUsedSignatures.add(signature.id);
+            actionText = signature.description;
+            signatureLine =
+                '<span class="game-match-signature-used">Signature: ' +
+                signature.title + ' · ' + buzz.label + '</span>';
+        }
+
+        const chance = clamp(baseChance + bonus, 5, 95);
+        const roll = Math.floor(Math.random() * 100) + 1;
+        const success = roll <= chance;
+
+        matchAttackUsedPlayers.add(slug);
+        renderMatchScoreboard();
+
+        if (matchNarrative) {
+            matchNarrative.insertAdjacentHTML(
+                "beforeend",
+                '<div class="game-match-play">' +
+                    '<div class="game-match-play-head"><strong>' +
+                        phaseDisplayName(phase) + ' · ' + (card.dataset.name || "Player") +
+                    '</strong><span>' + roll + ' / ' + chance + '%</span></div>' +
+                    '<p>' + actionText + '</p>' +
+                    signatureLine +
+                    '<p class="game-match-transition">' +
+                        (success ? successTransition(phase) : failureTransition(phase)) +
+                    '</p>' +
+                '</div>'
+            );
+        }
+
+        if (!success) {
+            finishMatchAttack("Attack ended.", false);
+            return;
+        }
+
+        if (phase === "chance") {
+            finishMatchAttack("Goal scored.", true);
+            return;
+        }
+
+        matchCurrentPhaseIndex += 1;
+        renderMatchPhase();
+    }
+
+    function renderMatchChoice(card, phase) {
+        const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
+        const used = matchAttackUsedPlayers.has(slug);
+        const className = card.dataset.cardClass || "Controller";
+        const baseChance = phaseBaseChance(card, phase);
+        const signatures = signaturesForPlayer(slug, phase);
+
+        const article = document.createElement("article");
+        article.className = "game-match-choice" + (used ? " is-used" : "");
+
+        const heading = document.createElement("div");
+        heading.className = "game-match-choice-top";
+        heading.innerHTML =
+            '<div><strong>' + (card.dataset.name || "Player") + '</strong>' +
+            '<span>' + className + ' · ' + (card.dataset.positionFull || card.dataset.primaryPosition || "") + '</span></div>' +
+            '<b>' + baseChance + '%</b>';
+        article.appendChild(heading);
+
+        const normalButton = document.createElement("button");
+        normalButton.type = "button";
+        normalButton.className = "game-match-play-button";
+        normalButton.disabled = used;
+        normalButton.textContent = used ? "Already used this attack" : "Play normal action";
+        normalButton.addEventListener("click", function () {
+            resolveMatchAction(card, phase, null);
+        });
+        article.appendChild(normalButton);
+
+        signatures.forEach(function (signature) {
+            const buzz = signatureBuzz(signature.views);
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "game-match-signature-button";
+            button.disabled = used;
+            button.innerHTML =
+                '<span>★ ' + signature.title + '</span>' +
+                '<small>' + signature.event_category + ' · ' + buzz.label + '</small>';
+            button.addEventListener("click", function () {
+                resolveMatchAction(card, phase, signature);
+            });
+            article.appendChild(button);
+
+            const description = document.createElement("p");
+            description.className = "game-match-signature-preview";
+            description.textContent = signature.description;
+            article.appendChild(description);
+        });
+
+        if (!signatures.length) {
+            const noSignature = document.createElement("p");
+            noSignature.className = "game-match-no-signature";
+            noSignature.textContent = "No unused linked Short ability for this phase.";
+            article.appendChild(noSignature);
+        }
+
+        return article;
+    }
+
+    function renderMatchPhase() {
+        if (!matchAttackActive) return;
+
+        const phase = MATCH_PHASES[matchCurrentPhaseIndex];
+        renderMatchPhaseStrip();
+
+        if (matchChoiceHeading) matchChoiceHeading.hidden = false;
+        if (matchPhaseTitle) matchPhaseTitle.textContent = phaseDisplayName(phase) + " · choose one player";
+        if (matchPhaseHelp) matchPhaseHelp.textContent = phaseHelpText(phase);
+        if (matchChoiceGrid) {
+            matchChoiceGrid.innerHTML = "";
+            matchDemoCards().forEach(function (card) {
+                matchChoiceGrid.appendChild(renderMatchChoice(card, phase));
+            });
+        }
+    }
+
+    function startMatchAttack() {
+        if (matchAttackActive || matchAttackCount >= MATCH_ATTACK_LIMIT) return;
+
+        matchAttackActive = true;
+        matchCurrentPhaseIndex = 0;
+        matchAttackUsedPlayers = new Set();
+
+        if (startMatchAttackButton) {
+            startMatchAttackButton.disabled = true;
+            startMatchAttackButton.textContent = "Attack in progress";
+        }
+
+        if (matchNarrative) {
+            matchNarrative.innerHTML =
+                '<strong>Attack ' + (matchAttackCount + 1) + ' begins.</strong>' +
+                '<p>Build the move one phase at a time. Save a signature for the moment it matters.</p>';
+        }
+
+        renderMatchPhase();
+    }
+
+    function resetMatchLab() {
+        matchAttackCount = 0;
+        matchGoalCount = 0;
+        matchCurrentPhaseIndex = -1;
+        matchAttackUsedPlayers = new Set();
+        matchUsedSignatures = new Set();
+        matchAttackActive = false;
+
+        renderMatchScoreboard();
+        renderMatchPhaseStrip();
+
+        if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
+        if (matchChoiceHeading) matchChoiceHeading.hidden = true;
+        if (matchNarrative) {
+            matchNarrative.innerHTML =
+                '<strong>Ready for the first attack.</strong>' +
+                '<p>Start the playtest, then choose which player handles each phase.</p>';
+        }
+        if (startMatchAttackButton) {
+            startMatchAttackButton.disabled = false;
+            startMatchAttackButton.textContent = "Start first attack";
+        }
+    }
+
+    async function loadSignatureEvents() {
+        if (signatureDataLoaded) return;
+
+        try {
+            const response = await fetch("/assets/data/game-signature-events.json", {
+                cache: "no-store"
+            });
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            const payload = await response.json();
+            signatureEvents = Array.isArray(payload.events) ? payload.events : [];
+        } catch (error) {
+            signatureEvents = [];
+        }
+
+        signatureDataLoaded = true;
+    }
+
+    async function enterMatchLabMode() {
+        hideGameAreas();
+
+        if (landing) landing.hidden = true;
+        if (playBar) playBar.hidden = true;
+        if (libraryBar) libraryBar.hidden = true;
+        if (labBar) labBar.hidden = true;
+        if (matchBar) matchBar.hidden = false;
+        if (cardPool) cardPool.hidden = true;
+        if (cardLab) cardLab.hidden = true;
+        if (matchLab) matchLab.hidden = false;
+
+        await loadSignatureEvents();
+        resetMatchLab();
+
+        if (matchBar) {
+            matchBar.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
 
@@ -1176,6 +1593,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (leaveLabButton) {
         leaveLabButton.addEventListener("click", showLanding);
+    }
+
+    if (openMatchLabButton) {
+        openMatchLabButton.addEventListener("click", enterMatchLabMode);
+    }
+
+    if (leaveMatchLabButton) {
+        leaveMatchLabButton.addEventListener("click", showLanding);
+    }
+
+    if (startMatchAttackButton) {
+        startMatchAttackButton.addEventListener("click", startMatchAttack);
+    }
+
+    if (resetMatchLabButton) {
+        resetMatchLabButton.addEventListener("click", resetMatchLab);
     }
 
     if (labPlayerA) {
