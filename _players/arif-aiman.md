@@ -10,7 +10,7 @@ site_added: "22.07.2026"
 position: Right Winger / Left Winger
 nationalities:
   - Malaysia
-birth_date:
+birth_date: "2002-05-04"
 height_cm: 171
 preferred_foot: "Both"
 positions:
