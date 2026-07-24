@@ -12,7 +12,7 @@ site_added: "23.07.2026"
 position: Left Winger
 nationalities:
   - Sweden
-birth_date:
+birth_date: "2003-01-19"
 height_cm: 172
 preferred_foot:
 positions:
@@ -22,13 +22,10 @@ positions:
 
 summary: |
   🇸🇪 Isak Bjerkebo | LW
-  📏 172 cm
   ⚡ Good pace and intelligent movement without the ball
   🏃 Times his runs into space well
   🎯 Composed finisher who places his shots with control
   🇸🇪 Former Sweden U16 international
-  🎥 Two SkyrScout videos from his 2024 Superettan season
-
 report: |
   Bjerkebo shows good pace and particularly interesting movement without the ball. His goals highlight an ability to time runs into space, arrive in dangerous positions and finish with composure.
 
