@@ -43,3 +43,5 @@ defaults:
       layout: updates
 
 google_analytics: "G-JR894EKXF4"
+exclude:
+  - development/
