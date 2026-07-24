@@ -10,17 +10,21 @@ site_added: "23.07.2026"
 position: Right Back
 nationalities:
   - Sweden
-birth_date:
+  - Sri Lanka
+birth_date: "2003-11-27"
 height_cm: 180
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Right Back"
     side: "right"
     rank: 1
+  - role: "Left Back"
+    side: "left"
+    rank: 2
 
 summary: |
-  🇸🇪 Jonathan Karlsson | 21 y/o RB
-  ⚡ 180 cm quick, attack-minded modern full-back
+  🇸🇪 Jonathan Karlsson | 21 y/o RB / LB
+  ⚡ Quick, attack-minded modern full-back
   🪄 Confident dribbler — willing to take on defenders
   🎯 Accurate delivery from wide areas
   🚀 Thrives when pushing high up the right flank
