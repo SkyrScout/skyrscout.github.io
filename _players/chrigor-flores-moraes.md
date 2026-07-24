@@ -8,7 +8,7 @@ site_added: "23.07.2026"
 position: Centre-Forward
 nationalities:
   - Brazil
-birth_date:
+birth_date: "2000-11-13"
 height_cm: 183
 preferred_foot: "Right"
 positions:
