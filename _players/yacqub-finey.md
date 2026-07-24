@@ -13,16 +13,18 @@ position: "Attacking Midfielder / Centre-Forward / Right Winger"
 
 summary: |
   🇸🇪🇸🇴 Yacqub Finey | AM / CF / RW
-  💪 201 cm physically strong attacker with a good engine and decent top speed
-  🧠 Reads the game well and spots teammates making runs in behind
-  🎯 Accurate passer and finisher with direct free-kick threat
-  🔄 Can operate in midfield or attack
+  🗼 Rare 201 cm technician with vision, mobility & excellent ball striking
+  💪 Physically strong with a good engine and decent top speed
+  🎯 Dangerous direct free-kick taker and accurate passer & finisher
+  ✈️ Major threat attacking crosses despite not being a traditional target man
   🔝 SkyrScout sees his highest potential as a No.9 or No.10
 
 report: |
-  Finey is a 201 cm, physically strong player with decent top speed and a good engine. He has good ball control, reads the game well and spots teammates making runs in behind.
+  Finey is a rare 201 cm technical attacker. He is physically strong without being heavy, has decent top speed and a good engine. He has good ball control, reads the game well and spots teammates making runs in behind.
 
-  He has an accurate foot both for passing and finishing, and can operate either as a midfielder or as a forward.
+  His ball striking is a major weapon: he passes and finishes accurately, is dangerous from direct free kicks and can attack crosses in the box. Despite his size, he is not a traditional target man; his game is built as much around technique, vision and combination play as physical presence.
+
+  He can operate either as a midfielder or as a forward, with SkyrScout seeing his highest potential as a No.9 or No.10.
 
 additional_videos:
   - youtube: "https://www.youtube.com/watch?v=yqoEWuLHM1I"
