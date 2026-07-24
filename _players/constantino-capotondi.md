@@ -12,11 +12,11 @@ site_added: "23.07.2026"
 position: Midfielder / Attacking Midfielder
 nationalities:
   - Sweden
-birth_date:
+birth_date: "2000-10-07"
 height_cm: 170
-preferred_foot:
+preferred_foot: "Right"
 positions:
-  - role: "Midfielder"
+  - role: "Central Midfielder"
     side: "centre"
     rank: 1
   - role: "Attacking Midfielder"
