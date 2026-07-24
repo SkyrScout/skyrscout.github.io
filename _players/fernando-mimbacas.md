@@ -14,7 +14,7 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Uruguay
-birth_date:
+birth_date: "2002-03-26"
 height_cm: 195
 preferred_foot: "Left"
 positions:
