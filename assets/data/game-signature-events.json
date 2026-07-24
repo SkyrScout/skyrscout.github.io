@@ -2,7 +2,7 @@
   "_meta": {
     "status": "prototype",
     "updated": "2026-07-24",
-    "note": "Match Lab v0.7 demo bridge. Future generation should come from SkyrScout _shorts + player_slug + stored YouTube snapshots. Missing YouTube metrics remain null. Signature abilities are player-linked events, not drawable cards."
+    "note": "Match Lab v0.8 prototype bridge. Future generation should come from SkyrScout _shorts + player_slug + stored YouTube snapshots. Missing metrics remain null and give no effect. All current Shorts are created by Bon Scout."
   },
   "events": [
     {
@@ -20,7 +20,8 @@
       "description": "Sander Alamaa beats two defenders with close control, a sharp body feint and a perfectly timed nutmeg before accelerating away.",
       "youtube": "https://www.youtube.com/shorts/BqeREyGMjag",
       "views": null,
-      "views_snapshot_at": null
+      "views_snapshot_at": null,
+      "created_by": "Bon Scout"
     },
     {
       "id": "erbol-atabaev-touch-of-genius",
@@ -38,7 +39,8 @@
       "description": "Erbol Atabaev cushions the ball on his foot, pops it over his marker's head without letting it hit the ground, then buries the volley into the far corner.",
       "youtube": "https://www.youtube.com/shorts/Q5wLixizoqk",
       "views": null,
-      "views_snapshot_at": null
+      "views_snapshot_at": null,
+      "created_by": "Bon Scout"
     },
     {
       "id": "yacqub-finey-top-corner",
@@ -56,7 +58,8 @@
       "youtube": "https://www.youtube.com/shorts/ByYgpdN-FxU",
       "views": 18100,
       "views_snapshot_at": "2026-07-24",
-      "views_source": "manual user-observed prototype snapshot"
+      "views_source": "manual user-observed prototype snapshot",
+      "created_by": "Bon Scout"
     }
   ]
 }

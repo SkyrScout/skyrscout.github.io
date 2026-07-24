@@ -1320,8 +1320,8 @@
 
 
 /* =========================
-   Match Lab v0.7
-   Flow prototype only
+   Match Lab v0.8
+   Match-loop prototype
    ========================= */
 
 .game-match-lab {
@@ -1653,5 +1653,82 @@
 
     .game-match-phase-strip span {
         text-align: left;
+    }
+}
+
+/* =========================
+   Match Lab v0.8 additions
+   ========================= */
+
+.game-draft-slot-badge {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    margin: 0 13px 13px;
+    padding: 4px 8px;
+    color: #dff7ff;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(83, 200, 238, 0.10);
+    border: 1px solid rgba(83, 200, 238, 0.28);
+    border-radius: 999px;
+}
+
+.game-match-opponent {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: -8px 0 18px;
+    padding: 14px 16px;
+    color: #d9e1e5;
+    background: rgba(247, 207, 88, 0.055);
+    border: 1px solid rgba(247, 207, 88, 0.22);
+    border-radius: 10px;
+}
+
+.game-match-opponent strong {
+    color: #f7df8a;
+}
+
+.game-match-opponent span {
+    color: #9da8ae;
+    font-size: 0.86rem;
+}
+
+.game-match-scoreboard {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.game-match-data-line,
+.game-match-modifiers {
+    margin: 0;
+    color: #7f9099;
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+.game-match-opponent-play {
+    margin-top: 14px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+.game-match-opponent-play.is-goal {
+    border-color: rgba(220, 95, 100, 0.26);
+    background: rgba(220, 95, 100, 0.055);
+}
+
+.game-match-opponent-play.is-stopped {
+    border-color: rgba(80, 210, 128, 0.22);
+    background: rgba(80, 210, 128, 0.045);
+}
+
+@media (max-width: 720px) {
+    .game-match-scoreboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

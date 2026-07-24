@@ -1,0 +1,61 @@
+{
+  "_meta": {
+    "status": "prototype",
+    "updated": "2026-07-24",
+    "note": "Temporary computer-team pool for Match Lab v0.8. Opponents are auto-drawn. Names and balance are test data, not settled game design."
+  },
+  "teams": [
+    {
+      "id": "high-press-xi",
+      "name": "High Press XI",
+      "style": "High Press",
+      "description": "Makes it hardest to play through the first line.",
+      "attack": 45,
+      "attack_type": "counter",
+      "phase_penalties": {
+        "build-up": 9,
+        "breakthrough": 3,
+        "chance": 0
+      }
+    },
+    {
+      "id": "low-block-xi",
+      "name": "Low Block XI",
+      "style": "Low Block",
+      "description": "Lets you build, then crowds the dangerous areas.",
+      "attack": 39,
+      "attack_type": "balanced",
+      "phase_penalties": {
+        "build-up": 0,
+        "breakthrough": 6,
+        "chance": 9
+      }
+    },
+    {
+      "id": "counter-xi",
+      "name": "Counter XI",
+      "style": "Counter Attack",
+      "description": "Offers fewer phase penalties but carries the biggest scoring threat on the reply.",
+      "attack": 53,
+      "attack_type": "counter",
+      "phase_penalties": {
+        "build-up": 1,
+        "breakthrough": 2,
+        "chance": 2
+      }
+    },
+    {
+      "id": "aerial-xi",
+      "name": "Aerial XI",
+      "style": "Crosses & Aerial Threat",
+      "description": "Attacks the box from wide areas. Defender height can matter here when known.",
+      "attack": 48,
+      "attack_type": "aerial",
+      "phase_penalties": {
+        "build-up": 0,
+        "breakthrough": 3,
+        "chance": 4
+      }
+    }
+  ]
+}

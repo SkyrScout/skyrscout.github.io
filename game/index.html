@@ -75,9 +75,9 @@ robots: "noindex, nofollow"
 
         <section class="game-mode-bar" id="game-match-bar" hidden>
             <div>
-                <p class="game-beta-kicker">Match Lab · v0.7</p>
+                <p class="game-beta-kicker">Match Lab · v0.8</p>
                 <strong>Build-up → Breakthrough → Chance</strong>
-                <span>Flow prototype: player choices and linked Short signature abilities.</span>
+                <span>Structured draft, auto-drawn opponent, football context, YouTube Momentum and linked Short abilities.</span>
             </div>
             <button type="button" class="game-secondary-button" id="leave-match-lab">← Back to game menu</button>
         </section>
@@ -126,8 +126,8 @@ robots: "noindex, nofollow"
 
             <div class="game-instruction">
                 <strong>How the draft works</strong>
-                Three random players are drawn. Click <em>Add to my team</em> on ONE card.
-                The other two are discarded, then three new players are drawn. Repeat until your five-player test team is complete.
+                Your five slots are <strong>Defender → Midfielder → Attacker → Wildcard → Wildcard</strong>.
+                For each slot, three eligible players are drawn. Choose one; the other two are discarded.
             </div>
 
             <div class="game-card-grid game-draw-grid" id="draw-grid"></div>
@@ -290,27 +290,32 @@ robots: "noindex, nofollow"
         <section class="game-match-lab" id="game-match-lab" hidden>
             <div class="game-section-heading">
                 <div>
-                    <p class="game-beta-kicker">First attack-sequence prototype</p>
+                    <p class="game-beta-kicker">v0.8 match-loop prototype</p>
                     <h2>Match Lab</h2>
                 </div>
-                <p>Five attacks. Choose one player in each phase. A player cannot be reused in the same attack.</p>
+                <p>Five rounds. You attack, then the computer team replies. A player cannot be reused within the same attack.</p>
             </div>
 
             <div class="game-instruction">
                 <strong>What are we testing?</strong>
-                This mode deliberately does <em>not</em> use the unfinished long-form Match Index yet.
-                It tests the football flow: choose the right player for BUILD-UP, BREAKTHROUGH and CHANCE.
-                A linked Short can become a one-use signature ability for that player instead of a separate card.
+                Football context is the base: position/class fit, opponent style and situational facts such as defender height against aerial attacks.
+                Available long-form YouTube data adds a capped <strong>Momentum</strong> modifier; missing data gives <strong>no effect</strong>.
+                Linked Shorts remain one-use player signature abilities with their own Short Buzz.
             </div>
 
             <div class="game-match-lineup" id="match-lineup-status">
                 <strong>Lineup:</strong> No drafted team loaded.
             </div>
 
+            <div class="game-match-opponent" id="match-opponent-status">
+                <strong>Opponent:</strong> will be drawn automatically.
+            </div>
+
             <div class="game-match-scoreboard" aria-label="Match Lab score">
-                <div><span>Attacks</span><strong id="match-attacks">0 / 5</strong></div>
-                <div><span>Goals</span><strong id="match-goals">0</strong></div>
-                <div><span>Signatures used</span><strong id="match-signatures">0</strong></div>
+                <div><span>Rounds</span><strong id="match-attacks">0 / 5</strong></div>
+                <div><span>You</span><strong id="match-goals">0</strong></div>
+                <div><span>Opponent</span><strong id="match-opponent-goals">0</strong></div>
+                <div><span>Signatures</span><strong id="match-signatures">0</strong></div>
             </div>
 
             <div class="game-match-phase-strip" id="match-phase-strip" aria-label="Attack phases">
@@ -339,9 +344,11 @@ robots: "noindex, nofollow"
 
             <details class="game-match-rules">
                 <summary>What is provisional in this playtest?</summary>
-                <p><strong>Phase odds:</strong> derived only from the existing class affinity table. They are placeholders for testing decisions, not football ratings.</p>
-                <p><strong>Signature abilities:</strong> currently get a small one-use prototype bonus. When a Short view count is known, a separate capped Buzz bonus can be added. Shorts and long-form videos remain on different popularity scales.</p>
-                <p><strong>Future connection:</strong> the demo event file is shaped so it can later be generated from <code>_shorts</code>, <code>player_slug</code> and YouTube snapshots without changing the match flow.</p>
+                <p><strong>Football base:</strong> position/class fit remains provisional. Height only has a situational effect here: defenders can gain extra resistance against an aerial opponent. Missing facts give no effect.</p>
+                <p><strong>YouTube:</strong> available long-form video data becomes a capped Momentum modifier. Missing metrics stay missing and produce no effect. Short views use a separate Buzz scale.</p>
+                <p><strong>Defence:</strong> every computer-team attack is reduced by your drafted defenders. A defender used in your preceding attack contributes only half resistance on the immediate reply.</p>
+                <p><strong>Scout:</strong> tiny prototype bonuses come from real <code>report_by</code> distribution. Bon Scout also gets a Short-creator bonus because all current Shorts are created by Bon Scout.</p>
+                <p><strong>Data bridge:</strong> structured player facts can later be read from <code>positions</code>, <code>height_cm</code>, <code>nationalities</code> and <code>game_traits</code>. If a field is absent, the engine does nothing with it.</p>
             </details>
         </section>
 
@@ -448,6 +455,12 @@ robots: "noindex, nofollow"
                         data-name="{{ player_name | escape }}"
                         data-primary-position="{{ primary_position | escape }}"
                         data-position-full="{{ player.position | escape }}"
+                        data-positions-json="{{ player.positions | jsonify | escape }}"
+                        data-height-cm="{{ player.height_cm | default: player.height | escape }}"
+                        data-nationalities-json="{{ player.nationalities | jsonify | escape }}"
+                        data-game-traits-json="{{ player.game_traits | jsonify | escape }}"
+                        data-birth-date="{{ player.birth_date | escape }}"
+                        data-preferred-foot="{{ player.preferred_foot | escape }}"
                         data-card-class="{{ card_class | escape }}"
                         data-scout="{{ player.report_by | escape }}"
                         data-slug="{{ player.slug | default: player_name | slugify }}"

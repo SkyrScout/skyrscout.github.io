@@ -41,19 +41,21 @@
  * - Future Scout Influence can combine visible Scout stats with damped video reach.
  *
  * MATCH LAB / SIGNATURE ABILITIES:
- * - v0.7 adds a flow-only attack prototype: BUILD-UP -> BREAKTHROUGH -> CHANCE.
+ * - v0.8 turns the flow prototype into a tiny match loop: structured draft -> auto opponent -> attacks + opponent replies.
  * - Signature abilities are linked player events sourced from Shorts, NOT drawable cards.
  * - One player may accumulate multiple linked Shorts / abilities over time.
  * - game-signature-events.json is a temporary bridge shaped like future generated data.
  * - Missing Short metrics remain missing. Known Short views may add a small capped Buzz modifier.
  * - Shorts stay separate from long-form base rarity and need their own popularity scale.
- * - Long-form Match Index is intentionally NOT wired into Match Lab v0.7; this first tests flow and choices.
+ * - Football data supplies the base/context. Long-form YouTube Match Index is a capped Momentum modifier. Missing data = no effect.
+ * - Defenders reduce the opponent scoring chance; situational height only matters against aerial opponents.
+ * - Opponents are auto-drawn from game-opponents.json.
  *
  * CURRENT BETA:
  * Landing menu -> PLAY, CARD LIBRARY or CARD LAB.
- * PLAY: Choose Scout -> Draw 3 -> Choose 1 -> Build a five-player test team.
+ * PLAY: Choose Scout -> Defender -> Midfielder -> Attacker -> 2 Wildcards -> auto opponent -> match.
  * CARD LIBRARY: browse the full player-card pool outside the active game.
- * Scout choice has no bonus yet. Match play is not implemented yet.
+ * Scout influence is deliberately small and data-driven: own reports / dominant category, plus Bon Scout signature authorship.
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -98,6 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const matchAttacks = document.getElementById("match-attacks");
     const matchGoals = document.getElementById("match-goals");
+    const matchOpponentGoals = document.getElementById("match-opponent-goals");
     const matchSignatures = document.getElementById("match-signatures");
     const matchPhaseStrip = document.getElementById("match-phase-strip");
     const matchNarrative = document.getElementById("match-narrative");
@@ -108,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const matchPhaseHelp = document.getElementById("match-phase-help");
     const matchChoiceGrid = document.getElementById("match-choice-grid");
     const matchLineupStatus = document.getElementById("match-lineup-status");
+    const matchOpponentStatus = document.getElementById("match-opponent-status");
 
     if (!cardGrid) {
         return;
@@ -115,11 +119,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const cards = Array.from(cardGrid.querySelectorAll("[data-card]"));
     const TEAM_SIZE = 5;
+    const DRAFT_SLOTS = ["defender", "midfielder", "attacker", "wildcard", "wildcard"];
 
     let selectedScout = "";
     let team = [];
     let availableCards = [];
     let currentDraw = [];
+    let draftSlotIndex = 0;
 
     let gameVideoStats = {};
     let gameVideoStatsMeta = {};
@@ -138,8 +144,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let signatureEvents = [];
     let signatureDataLoaded = false;
+    let opponentTeams = [];
+    let opponentDataLoaded = false;
+    let currentOpponent = null;
     let matchAttackCount = 0;
     let matchGoalCount = 0;
+    let matchOpponentGoalCount = 0;
     let matchCurrentPhaseIndex = -1;
     let matchAttackUsedPlayers = new Set();
     let matchUsedSignatures = new Set();
@@ -377,11 +387,55 @@ document.addEventListener("DOMContentLoaded", function () {
         return null;
     }
 
-    function eligibleClasses(card) {
+    function parseJsonDataset(value, fallback) {
+        if (!value) return fallback;
+        try {
+            const parsed = JSON.parse(value);
+            return parsed === null || parsed === undefined ? fallback : parsed;
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    function structuredPositions(card) {
+        const structured = parseJsonDataset(card.dataset.positionsJson, []);
+        if (Array.isArray(structured) && structured.length) {
+            return structured.map(function (entry) {
+                if (typeof entry === "string") return entry;
+                if (entry && entry.role) return String(entry.role);
+                return "";
+            }).filter(Boolean);
+        }
+
         const raw = card.dataset.positionFull || card.dataset.primaryPosition || "";
-        const positions = raw.split("/").map(function (position) {
+        return raw.split("/").map(function (position) {
             return position.trim();
-        });
+        }).filter(Boolean);
+    }
+
+    function cardHeightCm(card) {
+        const raw = card.dataset.heightCm;
+        if (raw === null || raw === undefined || raw === "") return null;
+        const match = String(raw).replace(",", ".").match(/\d+(?:\.\d+)?/);
+        if (!match) return null;
+        const value = Number(match[0]);
+        return Number.isFinite(value) ? Math.round(value) : null;
+    }
+
+    function cardTraits(card) {
+        const traits = parseJsonDataset(card.dataset.gameTraitsJson, []);
+        return Array.isArray(traits) ? traits : [];
+    }
+
+    function cardDraftCategory(card) {
+        if (card.dataset.group === "defender") return "defender";
+        if (card.dataset.group === "midfielder") return "midfielder";
+        if (card.dataset.group === "winger" || card.dataset.group === "striker") return "attacker";
+        return "wildcard";
+    }
+
+    function eligibleClasses(card) {
+        const positions = structuredPositions(card);
 
         const result = [];
 
@@ -1035,6 +1089,106 @@ document.addEventListener("DOMContentLoaded", function () {
             .filter(Boolean);
     }
 
+    function scoutProfiles() {
+        const profiles = {};
+        const global = { total: 0, defender: 0, midfielder: 0, attacker: 0 };
+
+        cards.forEach(function (card) {
+            const scout = card.dataset.scout || "SkyrScout";
+            const category = cardDraftCategory(card);
+            if (!profiles[scout]) {
+                profiles[scout] = {
+                    total: 0,
+                    defender: 0,
+                    midfielder: 0,
+                    attacker: 0
+                };
+            }
+            profiles[scout].total += 1;
+            global.total += 1;
+            if (category !== "wildcard") {
+                profiles[scout][category] += 1;
+                global[category] += 1;
+            }
+        });
+
+        // Raw counts are attack-heavy across SkyrScout. A useful Scout identity therefore
+        // comes from relative specialisation: how over-represented a category is for that
+        // Scout compared with the whole player pool.
+        Object.keys(profiles).forEach(function (scout) {
+            const profile = profiles[scout];
+            let bestCategory = null;
+            let bestRatio = -Infinity;
+
+            ["defender", "midfielder", "attacker"].forEach(function (category) {
+                if (!profile.total || !global.total || !global[category]) return;
+                const scoutShare = profile[category] / profile.total;
+                const globalShare = global[category] / global.total;
+                const ratio = scoutShare / globalShare;
+                if (ratio > bestRatio) {
+                    bestRatio = ratio;
+                    bestCategory = category;
+                }
+            });
+
+            profile.dominant = bestCategory;
+            profile.specialityRatio = Number.isFinite(bestRatio) ? bestRatio : null;
+        });
+
+        return profiles;
+    }
+
+    function renderScoutStats() {
+        const profiles = scoutProfiles();
+
+        scoutButtons.forEach(function (button) {
+            const scout = button.dataset.scout;
+            const profile = profiles[scout];
+            const detail = button.querySelector("span:last-child");
+            if (!detail || !profile) return;
+
+            const base =
+                profile.total + " profiles · " +
+                profile.defender + " DEF · " +
+                profile.midfielder + " MID · " +
+                profile.attacker + " ATT" +
+                (profile.dominant ? " · speciality " + profile.dominant.toUpperCase() : "");
+
+            detail.textContent = scout === "Bon Scout"
+                ? base + " · Short creator"
+                : base;
+        });
+    }
+
+    function scoutInfluence(card, signature) {
+        if (!selectedScout) {
+            return { bonus: 0, labels: [] };
+        }
+
+        let bonus = 0;
+        const labels = [];
+        const profiles = scoutProfiles();
+        const profile = profiles[selectedScout];
+        const category = cardDraftCategory(card);
+
+        if (card.dataset.scout === selectedScout) {
+            bonus += 1;
+            labels.push("+1 own report");
+        }
+
+        if (profile && profile.dominant === category) {
+            bonus += 1;
+            labels.push("+1 scout tendency");
+        }
+
+        if (signature && selectedScout === "Bon Scout" && signature.created_by === "Bon Scout") {
+            bonus += 3;
+            labels.push("+3 Short creator");
+        }
+
+        return { bonus: bonus, labels: labels };
+    }
+
     function renderMatchLineupStatus() {
         if (!matchLineupStatus) return;
 
@@ -1042,16 +1196,49 @@ document.addEventListener("DOMContentLoaded", function () {
         const names = lineup.map(function (card) {
             return card.dataset.name || "Unknown player";
         });
+        const scoutInfo = selectedScout ? scoutProfiles()[selectedScout] : null;
+        const tendency = scoutInfo && scoutInfo.dominant
+            ? " · speciality: " + scoutInfo.dominant
+            : "";
 
         if (team.length === TEAM_SIZE) {
             matchLineupStatus.innerHTML =
                 '<strong>Your drafted team:</strong> ' + names.join(' · ') +
-                (selectedScout ? '<br><span>Scout: ' + selectedScout + '</span>' : '');
+                (selectedScout ? '<br><span>Scout: ' + selectedScout + tendency + '</span>' : '');
         } else {
             matchLineupStatus.innerHTML =
                 '<strong>Demo lineup:</strong> ' + names.join(' · ') +
                 '<br><span>Build a five-player team in PLAY to test your own draft here.</span>';
         }
+    }
+
+    function drawOpponent() {
+        if (!opponentTeams.length) {
+            currentOpponent = {
+                id: "fallback",
+                name: "Prototype XI",
+                style: "Balanced",
+                description: "Fallback opponent while opponent data is unavailable.",
+                attack: 44,
+                attack_type: "balanced",
+                phase_penalties: { "build-up": 0, breakthrough: 0, chance: 0 }
+            };
+            return;
+        }
+
+        currentOpponent = opponentTeams[Math.floor(Math.random() * opponentTeams.length)];
+    }
+
+    function renderOpponentStatus() {
+        if (!matchOpponentStatus) return;
+        if (!currentOpponent) {
+            matchOpponentStatus.innerHTML = '<strong>Opponent:</strong> pending';
+            return;
+        }
+
+        matchOpponentStatus.innerHTML =
+            '<strong>Auto-drawn opponent: ' + currentOpponent.name + '</strong>' +
+            '<span>' + currentOpponent.style + ' · ' + currentOpponent.description + '</span>';
     }
 
     function signaturesForPlayer(slug, phase) {
@@ -1064,24 +1251,73 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function signatureBuzz(views) {
         if (!Number.isFinite(Number(views))) {
-            return { bonus: 0, label: "Views pending" };
+            return { bonus: 0, label: "Views pending · no effect" };
         }
 
         const value = Number(views);
-        if (value >= 50000) return { bonus: 8, label: "+8 Buzz" };
-        if (value >= 15000) return { bonus: 6, label: "+6 Buzz" };
-        if (value >= 5000) return { bonus: 4, label: "+4 Buzz" };
-        if (value >= 1000) return { bonus: 2, label: "+2 Buzz" };
-        return { bonus: 0, label: "No Buzz bonus" };
+        if (value >= 50000) return { bonus: 8, label: "+8 Short Buzz" };
+        if (value >= 15000) return { bonus: 6, label: "+6 Short Buzz" };
+        if (value >= 5000) return { bonus: 4, label: "+4 Short Buzz" };
+        if (value >= 1000) return { bonus: 2, label: "+2 Short Buzz" };
+        return { bonus: 0, label: "No Short Buzz bonus" };
+    }
+
+    function youtubeMomentum(card) {
+        const data = Object.assign({}, cardSeedData(card), getStoredStats(card));
+        const engine = calculateCardEngine(card, data);
+
+        if (!Number.isFinite(engine.matchIndex)) {
+            return { bonus: 0, score: null, label: "YouTube data missing · no effect" };
+        }
+
+        // Long-form video performance is important, but it modifies football context
+        // rather than replacing it. 0-8 is intentionally capped for this playtest.
+        const bonus = clamp(Math.round((engine.matchIndex - 20) / 10), 0, 8);
+        return {
+            bonus: bonus,
+            score: engine.matchIndex,
+            label: "+" + bonus + " YouTube Momentum"
+        };
+    }
+
+    function opponentPhasePenalty(phase) {
+        if (!currentOpponent || !currentOpponent.phase_penalties) return 0;
+        const value = Number(currentOpponent.phase_penalties[phase]);
+        return Number.isFinite(value) ? value : 0;
     }
 
     function phaseBaseChance(card, phase) {
         const className = card.dataset.cardClass || "Controller";
         const affinity = (phaseAffinity[phase] && phaseAffinity[phase][className]) || 1;
+        return clamp(Math.round(58 + (affinity - 1) * 100), 42, 76);
+    }
 
-        // Flow test only: neutral base + existing class affinity.
-        // Long-form Match Index will replace/modify this later.
-        return clamp(Math.round(62 + (affinity - 1) * 100), 45, 78);
+    function phaseChanceParts(card, phase, signature) {
+        const base = phaseBaseChance(card, phase);
+        const momentum = youtubeMomentum(card);
+        const scout = scoutInfluence(card, signature);
+        const opponentPenalty = opponentPhasePenalty(phase);
+        let signatureBonus = 0;
+        let buzz = { bonus: 0, label: "" };
+
+        if (signature) {
+            signatureBonus = 10;
+            buzz = signatureBuzz(signature.views);
+        }
+
+        return {
+            base: base,
+            momentum: momentum,
+            scout: scout,
+            opponentPenalty: opponentPenalty,
+            signatureBonus: signatureBonus,
+            buzz: buzz,
+            total: clamp(
+                base + momentum.bonus + scout.bonus + signatureBonus + buzz.bonus - opponentPenalty,
+                5,
+                95
+            )
+        };
     }
 
     function phaseDisplayName(phase) {
@@ -1093,11 +1329,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function phaseHelpText(phase) {
-        return {
+        const opponentText = currentOpponent
+            ? " Opponent: " + currentOpponent.style + "."
+            : "";
+
+        return ({
             "build-up": "Controllers and Engines are natural fits. Get the move started without losing possession.",
             breakthrough: "Raiders are strongest here. Beat the next line and create danger.",
             chance: "Strikers are natural finishers, but a matching signature ability can create a special route to goal."
-        }[phase] || "Choose the player who fits this phase best.";
+        }[phase] || "Choose the player who fits this phase best.") + opponentText;
     }
 
     function normalActionText(card, phase) {
@@ -1114,7 +1354,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "build-up": "The move survives and reaches the next line.",
             breakthrough: "The defence is opened. The ball goes into the danger area.",
             chance: "GOAL!"
-        }[phase] || "Success."
+        }[phase] || "Success.";
     }
 
     function failureTransition(phase) {
@@ -1129,6 +1369,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (matchGoals) {
             matchGoals.textContent = String(matchGoalCount);
+        }
+        if (matchOpponentGoals) {
+            matchOpponentGoals.textContent = String(matchOpponentGoalCount);
         }
         if (matchSignatures) {
             matchSignatures.textContent = String(matchUsedSignatures.size);
@@ -1150,13 +1393,108 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function defenderContribution(card, attackType) {
+        if (cardDraftCategory(card) !== "defender") {
+            return null;
+        }
+
+        const className = card.dataset.cardClass || "Controller";
+        const height = cardHeightCm(card);
+        const momentum = youtubeMomentum(card);
+        const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
+        const usedInAttack = matchAttackUsedPlayers.has(slug);
+
+        let football = 7;
+        const reasons = ["7 defender"];
+
+        if (className === "Tank") {
+            football += 4;
+            reasons.push("+4 Tank");
+        } else if (className === "Engine") {
+            football += 3;
+            reasons.push("+3 Engine");
+        }
+
+        // Height is contextual, never a blanket football rating.
+        if (attackType === "aerial" && Number.isFinite(height)) {
+            let heightBonus = 0;
+            if (height >= 195) heightBonus = 5;
+            else if (height >= 188) heightBonus = 3;
+            else if (height >= 183) heightBonus = 1;
+            if (heightBonus) {
+                football += heightBonus;
+                reasons.push("+" + heightBonus + " height vs aerial");
+            }
+        }
+
+        let total = football + Math.round(momentum.bonus * 0.5);
+        if (momentum.bonus) reasons.push("+" + Math.round(momentum.bonus * 0.5) + " momentum");
+        else if (momentum.score === null) reasons.push("YouTube: no effect");
+
+        if (usedInAttack) {
+            total = Math.round(total * 0.5);
+            reasons.push("×0.5 used in attack");
+        }
+
+        return {
+            name: card.dataset.name || "Defender",
+            total: total,
+            reasons: reasons,
+            height: height,
+            momentum: momentum
+        };
+    }
+
+    function teamDefensiveEffect() {
+        const attackType = currentOpponent ? currentOpponent.attack_type : "balanced";
+        const contributions = matchDemoCards()
+            .map(function (card) { return defenderContribution(card, attackType); })
+            .filter(Boolean);
+
+        return {
+            total: contributions.reduce(function (sum, item) { return sum + item.total; }, 0),
+            contributions: contributions
+        };
+    }
+
+    function resolveOpponentAttack() {
+        if (!currentOpponent) return;
+
+        const defence = teamDefensiveEffect();
+        const baseAttack = Number.isFinite(Number(currentOpponent.attack))
+            ? Number(currentOpponent.attack)
+            : 44;
+        const chance = clamp(baseAttack - defence.total, 8, 78);
+        const roll = Math.floor(Math.random() * 100) + 1;
+        const scored = roll <= chance;
+
+        if (scored) matchOpponentGoalCount += 1;
+
+        if (matchNarrative) {
+            const defenderLines = defence.contributions.length
+                ? defence.contributions.map(function (item) {
+                    return item.name + " −" + item.total + " (" + item.reasons.join(", ") + ")";
+                }).join(" · ")
+                : "No defender effect";
+
+            matchNarrative.insertAdjacentHTML(
+                "beforeend",
+                '<div class="game-match-opponent-play ' + (scored ? 'is-goal' : 'is-stopped') + '">' +
+                    '<div class="game-match-play-head"><strong>' + currentOpponent.name + ' attack</strong>' +
+                    '<span>' + roll + ' / ' + chance + '%</span></div>' +
+                    '<p>' + currentOpponent.style + '. Defensive resistance: ' + defenderLines + '.</p>' +
+                    '<p class="game-match-transition"><strong>' +
+                        (scored ? 'Opponent scores.' : 'Your defence stops the attack.') +
+                    '</strong></p>' +
+                '</div>'
+            );
+        }
+    }
+
     function finishMatchAttack(message, scored) {
         matchAttackActive = false;
         matchAttackCount += 1;
         if (scored) matchGoalCount += 1;
-
-        renderMatchScoreboard();
-        renderMatchPhaseStrip();
 
         if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
         if (matchChoiceHeading) matchChoiceHeading.hidden = true;
@@ -1170,6 +1508,12 @@ document.addEventListener("DOMContentLoaded", function () {
             );
         }
 
+        // Every player attack is followed by one automatic computer-team attack.
+        // Defenders counter that scoring chance.
+        resolveOpponentAttack();
+        renderMatchScoreboard();
+        renderMatchPhaseStrip();
+
         if (startMatchAttackButton) {
             if (matchAttackCount >= MATCH_ATTACK_LIMIT) {
                 startMatchAttackButton.disabled = true;
@@ -1177,9 +1521,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (matchNarrative) {
                     matchNarrative.insertAdjacentHTML(
                         "beforeend",
-                        '<div class="game-match-final"><strong>Final playtest score: ' +
-                        matchGoalCount + ' goal' + (matchGoalCount === 1 ? '' : 's') +
-                        ' from ' + MATCH_ATTACK_LIMIT + ' attacks.</strong></div>'
+                        '<div class="game-match-final"><strong>Final score: ' +
+                        matchGoalCount + '–' + matchOpponentGoalCount +
+                        ' vs ' + (currentOpponent ? currentOpponent.name : 'Opponent') +
+                        '.</strong></div>'
                     );
                 }
             } else {
@@ -1195,39 +1540,42 @@ document.addEventListener("DOMContentLoaded", function () {
         const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
         if (matchAttackUsedPlayers.has(slug)) return;
 
-        const baseChance = phaseBaseChance(card, phase);
-        let bonus = 0;
-        let buzz = { bonus: 0, label: "" };
+        const parts = phaseChanceParts(card, phase, signature);
         let actionText = normalActionText(card, phase);
         let signatureLine = "";
 
         if (signature) {
-            bonus += 10;
-            buzz = signatureBuzz(signature.views);
-            bonus += buzz.bonus;
             matchUsedSignatures.add(signature.id);
             actionText = signature.description;
             signatureLine =
                 '<span class="game-match-signature-used">Signature: ' +
-                signature.title + ' · ' + buzz.label + '</span>';
+                signature.title + ' · ' + parts.buzz.label + '</span>';
         }
 
-        const chance = clamp(baseChance + bonus, 5, 95);
         const roll = Math.floor(Math.random() * 100) + 1;
-        const success = roll <= chance;
+        const success = roll <= parts.total;
 
         matchAttackUsedPlayers.add(slug);
         renderMatchScoreboard();
 
         if (matchNarrative) {
+            const modifiers = [
+                "Football " + parts.base,
+                parts.momentum.label,
+                parts.scout.labels.length ? parts.scout.labels.join(" + ") : "Scout: no effect",
+                parts.opponentPenalty ? "Opponent −" + parts.opponentPenalty : "Opponent: no phase penalty"
+            ];
+            if (signature) modifiers.push("Signature +" + parts.signatureBonus + " · " + parts.buzz.label);
+
             matchNarrative.insertAdjacentHTML(
                 "beforeend",
                 '<div class="game-match-play">' +
                     '<div class="game-match-play-head"><strong>' +
                         phaseDisplayName(phase) + ' · ' + (card.dataset.name || "Player") +
-                    '</strong><span>' + roll + ' / ' + chance + '%</span></div>' +
+                    '</strong><span>' + roll + ' / ' + parts.total + '%</span></div>' +
                     '<p>' + actionText + '</p>' +
                     signatureLine +
+                    '<p class="game-match-modifiers">' + modifiers.join(' · ') + '</p>' +
                     '<p class="game-match-transition">' +
                         (success ? successTransition(phase) : failureTransition(phase)) +
                     '</p>' +
@@ -1253,7 +1601,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const slug = card.dataset.slug || normaliseSlug(card.dataset.name);
         const used = matchAttackUsedPlayers.has(slug);
         const className = card.dataset.cardClass || "Controller";
-        const baseChance = phaseBaseChance(card, phase);
+        const normalParts = phaseChanceParts(card, phase, null);
         const signatures = signaturesForPlayer(slug, phase);
 
         const article = document.createElement("article");
@@ -1264,8 +1612,17 @@ document.addEventListener("DOMContentLoaded", function () {
         heading.innerHTML =
             '<div><strong>' + (card.dataset.name || "Player") + '</strong>' +
             '<span>' + className + ' · ' + (card.dataset.positionFull || card.dataset.primaryPosition || "") + '</span></div>' +
-            '<b>' + baseChance + '%</b>';
+            '<b>' + normalParts.total + '%</b>';
         article.appendChild(heading);
+
+        const dataLine = document.createElement("p");
+        dataLine.className = "game-match-data-line";
+        dataLine.textContent =
+            "Football " + normalParts.base +
+            " · " + normalParts.momentum.label +
+            (normalParts.opponentPenalty ? " · opponent −" + normalParts.opponentPenalty : "") +
+            (normalParts.scout.bonus ? " · scout +" + normalParts.scout.bonus : "");
+        article.appendChild(dataLine);
 
         const normalButton = document.createElement("button");
         normalButton.type = "button";
@@ -1278,14 +1635,14 @@ document.addEventListener("DOMContentLoaded", function () {
         article.appendChild(normalButton);
 
         signatures.forEach(function (signature) {
-            const buzz = signatureBuzz(signature.views);
+            const parts = phaseChanceParts(card, phase, signature);
             const button = document.createElement("button");
             button.type = "button";
             button.className = "game-match-signature-button";
             button.disabled = used;
             button.innerHTML =
                 '<span>★ ' + signature.title + '</span>' +
-                '<small>' + signature.event_category + ' · ' + buzz.label + '</small>';
+                '<small>' + signature.event_category + ' · ' + parts.total + '% · ' + parts.buzz.label + '</small>';
             button.addEventListener("click", function () {
                 resolveMatchAction(card, phase, signature);
             });
@@ -1339,7 +1696,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (matchNarrative) {
             matchNarrative.innerHTML =
                 '<strong>Attack ' + (matchAttackCount + 1) + ' begins.</strong>' +
-                '<p>Build the move one phase at a time. Save a signature for the moment it matters.</p>';
+                '<p>Build the move one phase at a time. A defender used in your attack only gives half resistance on the opponent reply.</p>';
         }
 
         renderMatchPhase();
@@ -1348,20 +1705,23 @@ document.addEventListener("DOMContentLoaded", function () {
     function resetMatchLab() {
         matchAttackCount = 0;
         matchGoalCount = 0;
+        matchOpponentGoalCount = 0;
         matchCurrentPhaseIndex = -1;
         matchAttackUsedPlayers = new Set();
         matchUsedSignatures = new Set();
         matchAttackActive = false;
+        drawOpponent();
 
         renderMatchScoreboard();
         renderMatchPhaseStrip();
+        renderOpponentStatus();
 
         if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
         if (matchChoiceHeading) matchChoiceHeading.hidden = true;
         if (matchNarrative) {
             matchNarrative.innerHTML =
                 '<strong>Ready for the first attack.</strong>' +
-                '<p>Start the playtest, then choose which player handles each phase.</p>';
+                '<p>The opponent was drawn automatically. Missing player facts or YouTube data give no effect.</p>';
         }
         if (startMatchAttackButton) {
             startMatchAttackButton.disabled = false;
@@ -1386,6 +1746,23 @@ document.addEventListener("DOMContentLoaded", function () {
         signatureDataLoaded = true;
     }
 
+    async function loadOpponentTeams() {
+        if (opponentDataLoaded) return;
+
+        try {
+            const response = await fetch("/assets/data/game-opponents.json", {
+                cache: "no-store"
+            });
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            const payload = await response.json();
+            opponentTeams = Array.isArray(payload.teams) ? payload.teams : [];
+        } catch (error) {
+            opponentTeams = [];
+        }
+
+        opponentDataLoaded = true;
+    }
+
     async function enterMatchLabMode() {
         hideGameAreas();
 
@@ -1398,7 +1775,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cardLab) cardLab.hidden = true;
         if (matchLab) matchLab.hidden = false;
 
-        await loadSignatureEvents();
+        await Promise.all([loadSignatureEvents(), loadOpponentTeams(), loadGameVideoStats()]);
         renderMatchLineupStatus();
         resetMatchLab();
 
@@ -1407,11 +1784,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function draftSlotLabel(slot) {
+        return {
+            defender: "DEFENDER",
+            midfielder: "MIDFIELDER",
+            attacker: "ATTACKER",
+            wildcard: "WILDCARD"
+        }[slot] || String(slot || "").toUpperCase();
+    }
+
     function resetDraft() {
         selectedScout = "";
         team = [];
         availableCards = shuffle(cards);
         currentDraw = [];
+        draftSlotIndex = 0;
 
         scoutButtons.forEach(function (button) {
             button.classList.remove("is-selected");
@@ -1421,7 +1808,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (teamGrid) teamGrid.innerHTML = "";
         if (teamHeading) teamHeading.textContent = "0 / " + TEAM_SIZE + " players";
         if (chosenScoutText) chosenScoutText.textContent = "";
-        if (draftProgress) draftProgress.textContent = "Pick one player to add to your team.";
+        if (draftProgress) draftProgress.textContent = "First slot: DEFENDER.";
         if (draftComplete) draftComplete.hidden = true;
         if (drawZone) drawZone.hidden = true;
         if (teamZone) teamZone.hidden = true;
@@ -1436,13 +1823,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderTeam() {
         teamGrid.innerHTML = "";
 
-        team.forEach(function (card) {
+        team.forEach(function (card, index) {
             const clone = card.cloneNode(true);
             clone.hidden = false;
             delete clone.dataset.tiltReady;
 
             const choiceButton = clone.querySelector(".game-draft-choice");
             if (choiceButton) choiceButton.remove();
+
+            const slot = DRAFT_SLOTS[index] || "wildcard";
+            const badge = document.createElement("span");
+            badge.className = "game-draft-slot-badge";
+            badge.textContent = draftSlotLabel(slot);
+            clone.querySelector(".skyr-card-frame").appendChild(badge);
 
             teamGrid.appendChild(clone);
         });
@@ -1472,6 +1865,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
+        draftSlotIndex += 1;
         renderTeam();
 
         if (team.length >= TEAM_SIZE) {
@@ -1482,16 +1876,29 @@ document.addEventListener("DOMContentLoaded", function () {
         drawThree();
     }
 
-    function drawThree() {
-        if (availableCards.length < 3) {
-            availableCards = shuffle(
-                cards.filter(function (card) {
-                    return !team.includes(card);
-                })
-            );
-        }
+    function cardMatchesDraftSlot(card, slot) {
+        if (slot === "wildcard") return true;
+        return cardDraftCategory(card) === slot;
+    }
 
-        currentDraw = availableCards.slice(0, 3);
+    function draftCandidates(slot) {
+        const available = availableCards.filter(function (card) {
+            return !team.includes(card) && cardMatchesDraftSlot(card, slot);
+        });
+
+        if (available.length >= 3) return shuffle(available);
+
+        // Rebuild the category pool from every unpicked card if two rejected cards
+        // exhausted the current shuffled list. Drafted players never return.
+        return shuffle(cards.filter(function (card) {
+            return !team.includes(card) && cardMatchesDraftSlot(card, slot);
+        }));
+    }
+
+    function drawThree() {
+        const slot = DRAFT_SLOTS[draftSlotIndex] || "wildcard";
+        const candidates = draftCandidates(slot);
+        currentDraw = candidates.slice(0, 3);
         drawGrid.innerHTML = "";
 
         currentDraw.forEach(function (card) {
@@ -1502,7 +1909,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const choice = document.createElement("button");
             choice.type = "button";
             choice.className = "game-draft-choice";
-            choice.textContent = "Add to my team";
+            choice.textContent = "Add as " + draftSlotLabel(slot).toLowerCase();
 
             clone.setAttribute("role", "button");
             clone.setAttribute("tabindex", "0");
@@ -1565,7 +1972,9 @@ document.addEventListener("DOMContentLoaded", function () {
         enableTiltWithin(drawGrid);
 
         draftProgress.textContent =
-            "Pick 1 player. " + (TEAM_SIZE - team.length) + " team spot" +
+            "Slot " + (draftSlotIndex + 1) + " / " + TEAM_SIZE +
+            ": choose 1 " + draftSlotLabel(slot) +
+            ". " + (TEAM_SIZE - team.length) + " team spot" +
             ((TEAM_SIZE - team.length) === 1 ? "" : "s") + " remaining.";
 
         drawZone.hidden = false;
@@ -1672,5 +2081,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     populateLabSelectors();
+    renderScoutStats();
     showLanding();
 });
