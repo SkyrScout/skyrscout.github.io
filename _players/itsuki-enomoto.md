@@ -8,9 +8,9 @@ site_added: "22.07.2026"
 position: Centre-Forward
 nationalities:
   - Japan
-birth_date:
+birth_date: "2000-06-04"
 height_cm: 186
-preferred_foot:
+preferred_foot: "Both"
 positions:
   - role: "Centre-Forward"
     side: "centre"
