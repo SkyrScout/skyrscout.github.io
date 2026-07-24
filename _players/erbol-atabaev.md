@@ -8,16 +8,19 @@ site_added: "16.07.2026"
 position: Attacking Midfielder
 nationalities:
   - Kyrgyzstan
-birth_date:
+birth_date: "2001-08-15"
 height_cm: 178
-preferred_foot:
+preferred_foot: "Both"
 positions:
   - role: "Attacking Midfielder"
     side: "centre"
     rank: 1
+  - role: "Central Midfielder"
+    side: "centre"
+    rank: 2
 
 summary: |
-  🇰🇬 Erbol Atabaev | 24 y/o AM
+  🇰🇬 Erbol Atabaev | AM / CM
   🎯 Elite playmaker with outstanding vision, technique & two-footed passing
   ⚽ Goal-scoring No.10 — 13 goals & 7 assists in 14 league games
   ⚡ Excellent dribbler, thrives between the lines & creates at high tempo
