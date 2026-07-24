@@ -3,7 +3,7 @@ layout: player
 profile_type: "video"
 
 title: "Yacqub Finey (2003) – GIF Sundsvall | Superettan, Sweden (2nd Tier)"
-youtube: "https://www.youtube.com/watch?v=yqoEWuLHM1I"
+youtube: "https://www.youtube.com/watch?v=ec7Aj3xMM64"
 
 report_by: "Scouty Pippen"
 report_date: "06.12.2024"
@@ -25,11 +25,11 @@ report: |
   He has an accurate foot both for passing and finishing, and can operate either as a midfielder or as a forward.
 
 additional_videos:
+  - youtube: "https://www.youtube.com/watch?v=yqoEWuLHM1I"
+    date: "06.12.2024"
+
   - youtube: "https://www.youtube.com/watch?v=e2y2Fo8esjA"
     date: "25.01.2025"
-
-  - youtube: "https://www.youtube.com/watch?v=ec7Aj3xMM64"
-    date: "01.07.2025"
 
 transfermarkt: "https://www.transfermarkt.com/yacqub-finey/profil/spieler/1235199"
 sofascore: "https://www.sofascore.com/football/player/finey-yaqub/1186307#tab:season"

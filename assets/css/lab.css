@@ -274,3 +274,9 @@
         align-items: stretch;
     }
 }
+
+.lab-featured-video-meta {
+    margin: 0.55rem 0 0;
+    font-size: 0.92rem;
+    opacity: 0.8;
+}

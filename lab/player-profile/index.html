@@ -30,22 +30,23 @@ sitemap: false
         <section class="player-video">
             <div class="video-wrapper">
                 <iframe
-                    src="https://www.youtube.com/embed/yqoEWuLHM1I"
-                    title="Yacqub Finey – 2024 highlights, part one"
+                    src="https://www.youtube.com/embed/ec7Aj3xMM64"
+                    title="Yacqub Finey video published 1 July 2025"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen>
                 </iframe>
             </div>
+            <p class="lab-featured-video-meta"><strong>Featured video</strong> · Published 01.07.2025</p>
         </section>
 
         <section class="player-section player-summary">
             <h2>Summary</h2>
             <div class="summary-content">
                 🇸🇪🇸🇴 Yacqub Finey | AM / CF / RW<br>
-                💪 201 cm powerful attacker with good ball control, mobility &amp; engine<br>
-                🧠 Reads the game well and spots runs in behind<br>
+                💪 201 cm physically strong attacker with a good engine and decent top speed<br>
+                🧠 Reads the game well and spots teammates making runs in behind<br>
                 🎯 Accurate passer and finisher with direct free-kick threat<br>
-                🔄 Can operate as an attacking midfielder or forward<br>
+                🔄 Can operate in midfield or attack<br>
                 🔝 SkyrScout sees his highest potential as a No.9 or No.10
             </div>
         </section>
@@ -56,14 +57,13 @@ sitemap: false
             <div class="additional-videos-grid">
                 <article class="additional-video-card">
                     <div class="additional-video-heading">
-                        <h3>Yacqub Finey – 2024 highlights, part two</h3>
-                        <span class="additional-video-date">25.01.2025</span>
+                        <span class="additional-video-date">06.12.2024</span>
                     </div>
 
                     <div class="additional-video-wrapper">
                         <iframe
-                            src="https://www.youtube.com/embed/e2y2Fo8esjA"
-                            title="Yacqub Finey – 2024 highlights, part two"
+                            src="https://www.youtube.com/embed/yqoEWuLHM1I"
+                            title="Yacqub Finey video published 6 December 2024"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen
                             loading="lazy">
@@ -73,14 +73,13 @@ sitemap: false
 
                 <article class="additional-video-card">
                     <div class="additional-video-heading">
-                        <h3>Yacqub Finey – 2025 highlights</h3>
-                        <span class="additional-video-date">01.07.2025</span>
+                        <span class="additional-video-date">25.01.2025</span>
                     </div>
 
                     <div class="additional-video-wrapper">
                         <iframe
-                            src="https://www.youtube.com/embed/ec7Aj3xMM64"
-                            title="Yacqub Finey – 2025 highlights"
+                            src="https://www.youtube.com/embed/e2y2Fo8esjA"
+                            title="Yacqub Finey video published 25 January 2025"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen
                             loading="lazy">
@@ -93,7 +92,7 @@ sitemap: false
         <section class="player-section player-report">
             <h2>Video Scout Profile</h2>
             <div class="report-content">
-                <p>Finey is a big, physically strong player with decent top speed and a good engine. He has good ball control, reads the game well and spots teammates making runs in behind.</p>
+                <p>Finey is a 201 cm, physically strong player with decent top speed and a good engine. He has good ball control, reads the game well and spots teammates making runs in behind.</p>
                 <p>He has an accurate foot both for passing and finishing, and can operate either as a midfielder or as a forward.</p>
             </div>
         </section>
@@ -138,17 +137,31 @@ sitemap: false
             <h2>Scout of This World</h2>
             <p class="podcast-time">Segment starts at: <strong>25:27</strong></p>
 
-            <iframe
-                class="lab-spotify-embed"
-                src="https://open.spotify.com/embed/episode/3Ky4w7GAOIrYhc0YkzWgia"
-                title="Scout of This World podcast"
-                width="100%"
-                height="152"
-                frameborder="0"
-                allowfullscreen=""
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy">
-            </iframe>
+            <div id="spotify-embed"></div>
+            <script>
+            window.onSpotifyIframeApiReady = (IFrameAPI) => {
+                const element = document.getElementById('spotify-embed');
+                const parts = "25:27".split(':').map(Number);
+                let startSeconds = 0;
+
+                if (parts.length === 3) {
+                    startSeconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+                } else if (parts.length === 2) {
+                    startSeconds = parts[0] * 60 + parts[1];
+                }
+
+                const options = {
+                    width: '100%',
+                    height: '152',
+                    url: "https://open.spotify.com/episode/3Ky4w7GAOIrYhc0YkzWgia"
+                };
+
+                IFrameAPI.createController(element, options, (EmbedController) => {
+                    EmbedController.loadEntity("https://open.spotify.com/episode/3Ky4w7GAOIrYhc0YkzWgia", false, startSeconds);
+                });
+            };
+            </script>
+            <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
         </section>
 
         <section class="player-section player-sources">
