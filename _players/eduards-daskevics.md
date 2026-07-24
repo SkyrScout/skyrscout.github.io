@@ -14,7 +14,7 @@ site_added: "17.07.2026"
 position: Right Winger
 nationalities:
   - Latvia
-birth_date:
+birth_date: "2002-07-12"
 height_cm: 171
 preferred_foot: "Left"
 positions:
