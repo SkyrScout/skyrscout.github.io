@@ -5,16 +5,19 @@ youtube: "https://www.youtube.com/watch?v=QwzRN6S31Q8"
 report_by: "Scout Pilgrim"
 report_date: "20.02.2026"
 site_added: "16.07.2026"
-position: Left Winger
+position: "Right Winger / Left Winger"
 nationalities:
   - France
-birth_date:
+birth_date: "2005-11-30"
 height_cm: 183
-preferred_foot:
+preferred_foot: "Right"
 positions:
+  - role: "Right Winger"
+    side: "right"
+    rank: 1
   - role: "Left Winger"
     side: "left"
-    rank: 1
+    rank: 2
 
 summary: |
   🇫🇷 Aaron Malouda | 20 y/o RW/LW
