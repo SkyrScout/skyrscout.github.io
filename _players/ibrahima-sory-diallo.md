@@ -8,7 +8,7 @@ site_added: "22.07.2026"
 position: Left Winger / Right Winger
 nationalities:
   - Senegal
-birth_date:
+birth_date: "2003-06-04"
 height_cm: 173
 preferred_foot: "Right"
 positions:
