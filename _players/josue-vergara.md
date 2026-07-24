@@ -14,9 +14,9 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Panama
-birth_date:
+birth_date: "2007-07-25"
 height_cm: 196
-preferred_foot: "Right"
+preferred_foot: "Both"
 positions:
   - role: "Centre-Forward"
     side: "centre"
