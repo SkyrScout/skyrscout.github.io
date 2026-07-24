@@ -15,6 +15,9 @@ positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
+  - role: "Right Winger"
+    side: "right"
+    rank: 2
 
 summary: |
   🇯🇵 Itsuki Enomoto | 25 y/o CF
