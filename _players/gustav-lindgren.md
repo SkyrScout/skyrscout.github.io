@@ -14,18 +14,11 @@ nationalities:
   - Sweden
 birth_date: "2001-08-16"
 height_cm: 180
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
-
-summary: |
-  🇸🇪 Gustav Lindgren | 23 y/o CF
-  📅 Born 16 August 2001
-  📏 180 cm
-  🔴 Degerfors IF
-  🇸🇪 Swedish centre-forward featured in Superettan
 
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
@@ -34,5 +27,4 @@ transfermarkt: "https://www.transfermarkt.com/gustav-lindgren/profil/spieler/900
 sofascore: "https://www.sofascore.com/no/football/player/lindgren-gustav/1175710#tab:season"
 
 podcast:
-podcast_timestamp:
----
+podcast_timestamp:---
