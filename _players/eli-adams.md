@@ -8,7 +8,7 @@ site_added: "22.07.2026"
 position: Right Winger
 nationalities:
   - Australia
-birth_date:
+birth_date: "2002-03-12"
 height_cm: 183
 preferred_foot: "Left"
 positions:
