@@ -7,7 +7,16 @@ youtube: "https://www.youtube.com/watch?v=--bAb8ThOpQ"
 report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
-position: "Right-Back"
+position: Right Back
+nationalities:
+  - Sweden
+birth_date:
+height_cm: 180
+preferred_foot:
+positions:
+  - role: "Right Back"
+    side: "right"
+    rank: 1
 
 summary: |
   🇸🇪 Jonathan Karlsson | 21 y/o RB

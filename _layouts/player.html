@@ -58,6 +58,17 @@ layout: default
             </span>
         {% endif %}
 
+        {% if page.birth_date and page.report_date %}
+            <span
+                class="player-report-age"
+                data-birth-date="{{ page.birth_date }}"
+                data-report-date="{{ page.report_date }}"
+                hidden
+            >
+                &nbsp;•&nbsp;Age at report: <strong></strong>
+            </span>
+        {% endif %}
+
     </p>
 
 {% endif %}
@@ -313,6 +324,86 @@ layout: default
 
         {% endif %}
 
+        {% assign has_player_facts = false %}
+        {% if page.nationalities and page.nationalities.size > 0 %}
+            {% assign has_player_facts = true %}
+        {% endif %}
+        {% if page.birth_date or page.height_cm or page.preferred_foot %}
+            {% assign has_player_facts = true %}
+        {% endif %}
+        {% if page.positions and page.positions.size > 0 %}
+            {% assign has_player_facts = true %}
+        {% endif %}
+
+        {% if has_player_facts %}
+
+            <section class="player-section player-facts"{% if page.birth_date %} data-birth-date="{{ page.birth_date }}"{% endif %}>
+
+                <div class="player-facts-heading">
+                    <p class="player-facts-kicker">Structured player data</p>
+                    <h2>Player facts</h2>
+                </div>
+
+                <dl class="player-compact-facts">
+
+                    {% if page.nationalities and page.nationalities.size > 0 %}
+                        <div class="player-compact-fact">
+                            <dt>Nationality</dt>
+                            <dd>
+                                {% for nationality in page.nationalities %}
+                                    {% assign nationality_flag = site.data.nationality_flags[nationality] %}
+                                    {% if nationality_flag %}{{ nationality_flag }} {% endif %}{{ nationality }}{% unless forloop.last %}<span class="player-fact-separator"> · </span>{% endunless %}
+                                {% endfor %}
+                            </dd>
+                        </div>
+                    {% endif %}
+
+                    {% if page.birth_date %}
+                        <div class="player-compact-fact">
+                            <dt>Date of birth</dt>
+                            <dd>
+                                {{ page.birth_date | date: "%d/%m/%Y" }}
+                                <span class="player-current-age" data-birth-date="{{ page.birth_date }}" hidden>(<span></span>)</span>
+                            </dd>
+                        </div>
+                    {% endif %}
+
+                    {% if page.height_cm %}
+                        <div class="player-compact-fact">
+                            <dt>Height</dt>
+                            <dd>{{ page.height_cm }} cm</dd>
+                        </div>
+                    {% endif %}
+
+                    {% if page.preferred_foot %}
+                        <div class="player-compact-fact">
+                            <dt>Preferred foot</dt>
+                            <dd>{% if page.preferred_foot == "Both" %}Both feet{% else %}{{ page.preferred_foot }}{% endif %}</dd>
+                        </div>
+                    {% endif %}
+
+                    {% if page.positions and page.positions.size > 0 %}
+                        <div class="player-compact-fact player-compact-positions">
+                            <dt>Positions</dt>
+                            <dd class="player-position-chips">
+                                {% assign sorted_positions = page.positions | sort: "rank" %}
+                                {% for player_position in sorted_positions %}
+                                    <span>
+                                        {% if player_position.rank %}<b>{{ player_position.rank }}</b>{% endif %}
+                                        {{ player_position.role }}
+                                        {% if player_position.side %}<small>{{ player_position.side | capitalize }}</small>{% endif %}
+                                    </span>
+                                {% endfor %}
+                            </dd>
+                        </div>
+                    {% endif %}
+
+                </dl>
+
+            </section>
+
+        {% endif %}
+
         {% if page.podcast %}
 
             {% assign spotify_embed = page.podcast
@@ -421,6 +512,49 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
+        const parsePlayerDate = (value) => {
+            if (!value) return null;
+
+            let match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (match) {
+                return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+            }
+
+            match = value.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+            if (match) {
+                return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+            }
+
+            return null;
+        };
+
+        const ageOnDate = (birthDate, targetDate) => {
+            let age = targetDate.getFullYear() - birthDate.getFullYear();
+            const beforeBirthday =
+                targetDate.getMonth() < birthDate.getMonth() ||
+                (targetDate.getMonth() === birthDate.getMonth() && targetDate.getDate() < birthDate.getDate());
+
+            if (beforeBirthday) age -= 1;
+            return age;
+        };
+
+        document.querySelectorAll(".player-current-age").forEach((element) => {
+            const birthDate = parsePlayerDate(element.dataset.birthDate);
+            if (!birthDate) return;
+
+            element.querySelector("span").textContent = ageOnDate(birthDate, new Date());
+            element.hidden = false;
+        });
+
+        document.querySelectorAll(".player-report-age").forEach((element) => {
+            const birthDate = parsePlayerDate(element.dataset.birthDate);
+            const reportDate = parsePlayerDate(element.dataset.reportDate);
+            if (!birthDate || !reportDate) return;
+
+            element.querySelector("strong").textContent = ageOnDate(birthDate, reportDate);
+            element.hidden = false;
+        });
 
         twemoji.parse(document.body, {
             folder: "svg",

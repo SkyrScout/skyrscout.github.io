@@ -11,7 +11,16 @@ report_date: "09.07.2026"
 
 site_added: "16.07.2026"
 
-position: "Left Winger"
+position: Left Winger
+nationalities:
+  - Estonia
+birth_date:
+height_cm: 183
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
 
 summary: |
   🇪🇪 Sander Alamaa | 18 y/o LW

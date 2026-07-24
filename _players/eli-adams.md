@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=eKQ4ipQPz78"
 report_by: "Scout Pilgrim"
 report_date: "12.02.2026"
 site_added: "22.07.2026"
-position: "Right Winger"
+position: Right Winger
+nationalities:
+  - Australia
+birth_date:
+height_cm: 183
+preferred_foot: "Left"
+positions:
+  - role: "Right Winger"
+    side: "right"
+    rank: 1
 
 summary: |
   🇦🇺 Eli Adams | 23 y/o RW

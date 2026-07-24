@@ -1,50 +1,43 @@
 ---
 ###############################################################################
-# PLAYER VIDEO PROFILE TEMPLATE
+# PLAYER VIDEO PROFILE TEMPLATE — LITTLE OR NO WRITTEN SCOUTING TEXT
 #
-# Use for SkyrScout player videos where no full written scouting report
-# is available.
+# Default scout: Scouty Pippen.
+# If another scout made the profile, change report_by (and the generic report
+# sentence below if desired).
+#
+# Do NOT invent a Summary merely to fill the section. Leave summary empty when
+# there is no real scouting/video content worth summarising.
 ###############################################################################
 
 layout: player
 profile_type: "video"
 
-# Full YouTube title.
 title: ""
-
-# Full YouTube link.
 youtube: ""
 
-# Video scout.
 report_by: "Scouty Pippen"
-
-# Leave empty when no written scouting report exists.
 report_date: ""
-
-# Date the player profile was added to the SkyrScout website.
-# Format: DD.MM.YYYY
 site_added: ""
 
-# Write the position in full.
 position: ""
 
-# Short factual introduction to the player and the video profile.
-summary: |
-  PASTE PLAYER INTRODUCTION HERE
+nationalities: []
+birth_date:
+height_cm:
+preferred_foot:
+positions: []
+# Unknown value = leave empty = NO EFFECT in Game.
+# preferred_foot should only be filled when reliable evidence exists.
 
-# Explain that this is a video scouting profile rather than a full written report.
+summary:
+
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
 
-# Full Transfermarkt URL.
 transfermarkt: ""
-
-# Full Sofascore URL.
 sofascore: ""
 
-# Full Spotify episode URL.
 podcast: ""
-
-# Timestamp of the player segment.
 podcast_timestamp: ""
 ---

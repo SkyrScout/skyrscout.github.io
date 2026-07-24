@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=kwcRJaMAbZw"
 report_by: "Scout Pilgrim"
 report_date: "28.02.2026"
 site_added: "22.07.2026"
-position: "Left Winger"
+position: Left Winger
+nationalities:
+  - Armenia
+birth_date:
+height_cm: 172
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
 
 summary: |
   🇦🇲 Narek Hovhannisyan | 19 y/o LW

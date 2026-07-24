@@ -11,7 +11,16 @@ report_date: "27.06.2026"
 
 site_added: "17.07.2026"
 
-position: "Right Winger"
+position: Right Winger
+nationalities:
+  - Latvia
+birth_date:
+height_cm: 171
+preferred_foot: "Left"
+positions:
+  - role: "Right Winger"
+    side: "right"
+    rank: 1
 
 summary: |
   🇱🇻 Eduards Daškevičs | 23 y/o RW

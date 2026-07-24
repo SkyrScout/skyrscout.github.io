@@ -8,7 +8,16 @@ report_by: "Scout Pilgrim"
 report_date: "23.07.2026"
 site_added: "23.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Kyrgyzstan
+birth_date:
+height_cm: 183
+preferred_foot: "Right"
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇰🇬 Umar Talantbekov | 17 y/o CF

@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=G6gEsxijm7g"
 report_by: "Scout Pilgrim"
 report_date: "13.12.2025"
 site_added: "23.07.2026"
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Ghana
+birth_date:
+height_cm: 181
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇬🇭 Kwame Peprah | 25 y/o CF

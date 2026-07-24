@@ -9,7 +9,22 @@ report_by: "Scout Pilgrim"
 report_date: "19.03.2025"
 site_added: "23.07.2026"
 
-position: "Right Winger / Left Winger / Attacking Midfielder"
+position: Right Winger / Left Winger / Attacking Midfielder
+nationalities:
+  - Brazil
+birth_date:
+height_cm: 165
+preferred_foot: "Left"
+positions:
+  - role: "Right Winger"
+    side: "right"
+    rank: 1
+  - role: "Left Winger"
+    side: "left"
+    rank: 2
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 3
 
 summary: |
   🇧🇷 Lucas Ronier | RW / LW / AM

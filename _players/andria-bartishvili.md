@@ -11,7 +11,19 @@ report_date: "06.03.2026"
 
 site_added: "20.07.2026"
 
-position: "Left Winger / Attacking midfielder"
+position: Left Winger / Attacking Midfielder
+nationalities:
+  - Georgia
+birth_date:
+height_cm: 180
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 2
 
 summary: |
   🇬🇪 Andria Bartishvili | 16 y/o AM/LW

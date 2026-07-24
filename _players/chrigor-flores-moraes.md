@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=mHigneq4r54"
 report_by: "Scout Pilgrim"
 report_date: "02.01.2026"
 site_added: "23.07.2026"
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Brazil
+birth_date:
+height_cm: 183
+preferred_foot: "Right"
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇧🇷 Chrigor Flores Moraes | 25 y/o CF

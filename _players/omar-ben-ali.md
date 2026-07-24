@@ -12,7 +12,16 @@ report_date: "20.04.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Tunisia
+birth_date:
+height_cm: 187
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇹🇳 Omar Ben Ali is a Tunisian centre-forward born in 2005, playing for CS Sfaxien.

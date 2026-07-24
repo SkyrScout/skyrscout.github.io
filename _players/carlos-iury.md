@@ -7,7 +7,16 @@ report_by: "Scout Pilgrim"
 report_date: "17.01.2026"
 site_added: "23.07.2026"
 
-position: "Left Winger"
+position: Left Winger
+nationalities:
+  - Brazil
+birth_date:
+height_cm: 176
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
 
 summary: |
   🇧🇷 Carlos Iury | 24 y/o LW

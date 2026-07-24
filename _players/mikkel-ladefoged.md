@@ -11,7 +11,16 @@ report_date: "20.11.2025"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Denmark
+birth_date:
+height_cm: 201
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇩🇰 Mikkel Ladefoged | 22 y/o CF

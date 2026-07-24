@@ -11,7 +11,16 @@ report_date: "20.06.2026"
 
 site_added: "17.07.2026"
 
-position: "Left Back"
+position: Left Back
+nationalities:
+  - Slovenia
+birth_date:
+height_cm: 178
+preferred_foot:
+positions:
+  - role: "Left Back"
+    side: "left"
+    rank: 1
 
 summary: |
   🇸🇮 Kevin Benkič | 20 y/o LB

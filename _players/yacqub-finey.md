@@ -9,7 +9,23 @@ report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
 
-position: "Attacking Midfielder / Centre-Forward / Right Winger"
+position: Attacking Midfielder / Centre-Forward / Right Winger
+nationalities:
+  - Sweden
+  - Somalia
+birth_date: "2003-09-24"
+height_cm: 201
+preferred_foot:
+positions:
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 1
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 2
+  - role: "Right Winger"
+    side: "right"
+    rank: 3
 
 summary: |
   🇸🇪🇸🇴 Yacqub Finey | AM / CF / RW

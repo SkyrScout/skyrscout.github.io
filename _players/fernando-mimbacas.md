@@ -11,7 +11,16 @@ report_date: "13.06.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Uruguay
+birth_date:
+height_cm: 195
+preferred_foot: "Left"
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇺🇾 Fernando Mimbacas | 24 y/o CF

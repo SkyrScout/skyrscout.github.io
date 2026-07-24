@@ -5,7 +5,19 @@ youtube: "https://www.youtube.com/watch?v=EV9_tGrRcn8"
 report_by: "Scout Pilgrim"
 report_date: "15.02.2026"
 site_added: "22.07.2026"
-position: "Attacking Midfielder / Left Winger"
+position: Attacking Midfielder / Left Winger
+nationalities:
+  - Serbia
+birth_date:
+height_cm: 169
+preferred_foot: "Right"
+positions:
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 1
+  - role: "Left Winger"
+    side: "left"
+    rank: 2
 
 summary: |
   🇷🇸 Filip Halabrin | 19 y/o AM / LW

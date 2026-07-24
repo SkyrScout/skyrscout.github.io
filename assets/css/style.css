@@ -3205,3 +3205,139 @@ img.emoji {
 .update-article-content .report-button {
     margin-top: 0.75rem;
 }
+
+/* =========================
+   Structured player facts
+   ========================= */
+
+.player-report-age {
+    color: #9daab1;
+}
+
+.player-facts {
+    padding: clamp(24px, 3.5vw, 34px);
+}
+
+.player-facts-heading {
+    margin-bottom: 18px;
+}
+
+.player-facts-kicker {
+    margin: 0 0 5px;
+    color: #67d3f3;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.player-facts .player-facts-heading h2 {
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+}
+
+.player-compact-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    margin: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 11px;
+}
+
+.player-compact-fact {
+    min-width: 0;
+    padding: 16px 18px;
+    background: #12171b;
+}
+
+.player-compact-fact dt {
+    margin-bottom: 5px;
+    color: #8f9ca3;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.player-compact-fact dd {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.player-fact-separator,
+.player-current-age {
+    color: #9daab1;
+}
+
+.player-compact-positions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    align-items: center;
+    gap: 16px;
+}
+
+.player-compact-positions dt {
+    margin-bottom: 0;
+}
+
+.player-position-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.player-position-chips > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    color: #e9f1f4;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.player-position-chips b {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    color: #061016;
+    background: #67d3f3;
+    border-radius: 50%;
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.player-position-chips small {
+    color: #8f9ca3;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+@media (max-width: 720px) {
+    .player-compact-facts {
+        grid-template-columns: 1fr;
+    }
+
+    .player-compact-positions {
+        grid-column: auto;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .player-position-chips {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=_PsHxcgDo4Q"
 report_by: "Scout Pilgrim"
 report_date: "24.01.2026"
 site_added: "22.07.2026"
-position: "Left Winger"
+position: Left Winger
+nationalities:
+  - Malaysia
+birth_date:
+height_cm: 179
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
 
 summary: |
   🇲🇾 Ramadhan Saifullah | 25 y/o LW

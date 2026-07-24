@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=-DNOurkV1WU"
 report_by: "Scout Pilgrim"
 report_date: "13.01.2026"
 site_added: "22.07.2026"
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Japan
+birth_date:
+height_cm: 186
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇯🇵 Itsuki Enomoto | 25 y/o CF

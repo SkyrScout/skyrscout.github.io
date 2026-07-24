@@ -11,7 +11,16 @@ report_date: "06.05.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Panama
+birth_date:
+height_cm: 196
+preferred_foot: "Right"
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇵🇦 Josué Vergara | 18 y/o CF

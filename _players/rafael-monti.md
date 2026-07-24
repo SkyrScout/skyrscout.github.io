@@ -7,7 +7,16 @@ youtube: "https://www.youtube.com/watch?v=YDw7-rWohhM"
 report_by: "Bon Scout"
 report_date: "01.04.2025"
 site_added: "23.07.2026"
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Argentina
+birth_date:
+height_cm: 182
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇦🇷 Rafael Monti | 26 y/o CF

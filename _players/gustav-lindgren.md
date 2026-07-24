@@ -9,7 +9,16 @@ report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Sweden
+birth_date: "2001-08-16"
+height_cm: 180
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇸🇪 Gustav Lindgren | 23 y/o CF

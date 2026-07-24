@@ -11,7 +11,16 @@ report_date: "04.07.2026"
 
 site_added: "17.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Kazakhstan
+birth_date: "2006-12-26"
+height_cm: 183
+preferred_foot: "Both"
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇰🇿 Zhasulan Amir | 19 y/o CF

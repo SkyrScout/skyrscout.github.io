@@ -7,7 +7,19 @@ youtube: "https://www.youtube.com/watch?v=PK05OCHIaBk"
 report_by: "Bon Scout"
 report_date: "16.09.2025"
 site_added: "22.07.2026"
-position: "Right Winger / Left Winger"
+position: Right Winger / Left Winger
+nationalities:
+  - Malaysia
+birth_date:
+height_cm: 171
+preferred_foot: "Both"
+positions:
+  - role: "Right Winger"
+    side: "right"
+    rank: 1
+  - role: "Left Winger"
+    side: "left"
+    rank: 2
 
 summary: |
   🇲🇾 Arif Aiman | 23 y/o RW/LW

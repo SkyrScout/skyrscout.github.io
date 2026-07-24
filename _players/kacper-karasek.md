@@ -9,7 +9,21 @@ report_by: "Scouty Pippen"
 report_date: "08.12.2024"
 site_added: "23.07.2026"
 
-position: "Attacking Midfielder / Winger / Centre-Forward"
+position: Attacking Midfielder / Winger / Centre-Forward
+nationalities:
+  - Poland
+birth_date:
+height_cm: 183
+preferred_foot:
+positions:
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 1
+  - role: "Winger"
+    rank: 2
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 3
 
 summary: |
   🇵🇱 Kacper Karasek | AM / W / CF

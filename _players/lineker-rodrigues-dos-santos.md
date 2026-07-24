@@ -11,7 +11,16 @@ report_date: "23.05.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Brazil
+birth_date:
+height_cm: 182
+preferred_foot: "Left"
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇧🇷 Lineker Rodrigues Dos Santos | 24 y/o CF

@@ -5,7 +5,19 @@ youtube: "https://www.youtube.com/watch?v=udKyE4Js7DY"
 report_by: "Scout Pilgrim"
 report_date: "09.11.2025"
 site_added: "22.07.2026"
-position: "Left Winger / Right Winger"
+position: Left Winger / Right Winger
+nationalities:
+  - Senegal
+birth_date:
+height_cm: 173
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
+  - role: "Right Winger"
+    side: "right"
+    rank: 2
 
 summary: |
   🇸🇳 Ibrahima Sory Diallo | 22 y/o LW/RW | AF Elbasani 🇦🇱

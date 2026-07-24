@@ -9,7 +9,19 @@ report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
 
-position: "Midfielder / Attacking Midfielder"
+position: Midfielder / Attacking Midfielder
+nationalities:
+  - Sweden
+birth_date:
+height_cm: 170
+preferred_foot:
+positions:
+  - role: "Midfielder"
+    side: "centre"
+    rank: 1
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 2
 
 summary: |
   🇸🇪 Constantino Capotondi | CM / AM

@@ -9,7 +9,16 @@ report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
 
-position: "Left Winger"
+position: Left Winger
+nationalities:
+  - Sweden
+birth_date: "2002-05-31"
+height_cm: 171
+preferred_foot:
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
 
 summary: |
   🇸🇪 Kofi Fosuhene Asare | LW

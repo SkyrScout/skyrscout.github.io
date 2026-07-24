@@ -12,7 +12,16 @@ report_date: "06.08.2025"
 
 site_added: "21.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Guinea
+birth_date: "2004-06-10"
+height_cm: 183
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇬🇳 Mohamed Saliou Bangoura is a Guinean centre-forward born in 2004, playing for MC Alger.

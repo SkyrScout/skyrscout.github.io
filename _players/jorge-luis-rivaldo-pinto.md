@@ -11,7 +11,16 @@ report_date: "20.03.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Colombia
+birth_date:
+height_cm: 189
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇨🇴 Jorge Rivaldo | 22 y/o CF

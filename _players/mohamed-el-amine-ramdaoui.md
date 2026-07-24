@@ -12,7 +12,16 @@ report_date: "11.05.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Algeria
+birth_date:
+height_cm: 190
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇩🇿 Mohamed El Amine Ramdaoui is an Algerian centre-forward born in 2005, playing for Paradou AC.

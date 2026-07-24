@@ -11,7 +11,16 @@ report_date: "16.05.2026"
 
 site_added: "20.07.2026"
 
-position: "Centre-Forward"
+position: Centre-Forward
+nationalities:
+  - Honduras
+birth_date:
+height_cm: 188
+preferred_foot:
+positions:
+  - role: "Centre-Forward"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇭🇳 David Flores | 18 y/o CF

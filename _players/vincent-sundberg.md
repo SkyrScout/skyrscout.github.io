@@ -9,7 +9,19 @@ report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
 
-position: "Right Back / Right Winger"
+position: Right Back / Right Winger
+nationalities:
+  - Sweden
+birth_date: "2004-01-28"
+height_cm: 167
+preferred_foot:
+positions:
+  - role: "Right Back"
+    side: "right"
+    rank: 1
+  - role: "Right Winger"
+    side: "right"
+    rank: 2
 
 summary: |
   🇸🇪 Vincent Sundberg | RB / RW

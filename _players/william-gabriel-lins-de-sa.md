@@ -11,7 +11,16 @@ report_date: "08.03.2026"
 
 site_added: "20.07.2026"
 
-position: "Left Winger"
+position: Left Winger
+nationalities:
+  - Brazil
+birth_date:
+height_cm: 178
+preferred_foot: "Right"
+positions:
+  - role: "Left Winger"
+    side: "left"
+    rank: 1
 
 summary: |
   🇧🇷 William Gabriel Lins de Sá | 21 y/o LW

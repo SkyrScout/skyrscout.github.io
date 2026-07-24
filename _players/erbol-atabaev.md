@@ -5,7 +5,16 @@ youtube: "https://www.youtube.com/watch?v=W4bdnkYu6CA"
 report_by: "Scout Pilgrim"
 report_date: "16.07.2026"
 site_added: "16.07.2026"
-position: "Attacking Midfielder"
+position: Attacking Midfielder
+nationalities:
+  - Kyrgyzstan
+birth_date:
+height_cm: 178
+preferred_foot:
+positions:
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 1
 
 summary: |
   🇰🇬 Erbol Atabaev | 24 y/o AM

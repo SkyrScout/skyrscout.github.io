@@ -9,7 +9,19 @@ report_by: "Scouty Pippen"
 report_date: "06.12.2024"
 site_added: "23.07.2026"
 
-position: "Central Midfielder / Left Winger"
+position: Central Midfielder / Left Winger
+nationalities:
+  - Denmark
+birth_date:
+height_cm: 185
+preferred_foot:
+positions:
+  - role: "Central Midfielder"
+    side: "centre"
+    rank: 1
+  - role: "Left Winger"
+    side: "left"
+    rank: 2
 
 summary: |
   🇩🇰 Andreas Lausen | CM / LW
