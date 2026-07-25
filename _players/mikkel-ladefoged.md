@@ -14,9 +14,9 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Denmark
-birth_date:
+birth_date: "2003-06-09"
 height_cm: 201
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Centre-Forward"
     side: "centre"
