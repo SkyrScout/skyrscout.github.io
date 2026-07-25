@@ -17,14 +17,22 @@ nationalities:
   - Guinea
 birth_date: "2004-06-10"
 height_cm: 183
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
 
 summary: |
-  🇬🇳 Mohamed Saliou Bangoura is a Guinean centre-forward born in 2004, playing for MC Alger.
+  🇬🇳 Mohamed Saliou Bangoura | CF
+  💪 Physically strong 183 cm centre-forward with excellent pace
+  🧠 Good technique to complement his strength and speed
+  🎯 Outstanding finisher with a strong goalscoring record
+  ⚽ 20 goals + 14 assists in 27 matches for Hafia FC in 2023/24
+  📈 7 goals in 13 appearances after joining MC Alger
+  🩹 Serious ankle fracture in July 2025 interrupted a rapid upward trajectory
+report: |
+  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
 
   The video scouting profile shows the following selected actions in chronological order:
 
@@ -38,9 +46,6 @@ summary: |
 
   vs Mostaganem, 12 June 2025: Two goals, including one from the penalty spot.
 
-report: |
-  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
-
   Additional context from Scout of This World
 
   Mohamed Saliou Bangoura, born 10 June 2004 in Guinea, enjoyed a prolific 2023/24 season with Hafia FC, recording 20 goals and 14 assists in 27 matches.
@@ -52,7 +57,6 @@ report: |
   In the Christmas episode of Scout of This World, published on 17 December 2025, Scout Pilgrim highlighted Bangoura as an extra player recommendation — a "Christmas gift" to the listeners. He described him as a physically strong 183 cm centre-forward with excellent pace, good technique and outstanding finishing ability.
 
   His recovery from the ankle injury remained an important factor, but his pre-injury trajectory and goalscoring ability made him one of SkyrScout's most exciting striker prospects.
-
 transfermarkt: "https://www.transfermarkt.com/mohamed-saliou-bangoura/profil/spieler/1187190"
 
 sofascore: "https://www.sofascore.com/football/player/mohamed-bangoura/1926654#tab:season"
