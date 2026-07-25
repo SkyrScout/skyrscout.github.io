@@ -14,6 +14,12 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
             grid-template-columns: minmax(0, 1fr) 230px 230px;
         }
     }
+
+    #player-position option.position-group-heading {
+        background: #ffffff;
+        color: #111111;
+        font-weight: 700;
+    }
 </style>
 
 <main class="page-background">
@@ -399,13 +405,16 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                 return;
             }
 
-            const optgroup = document.createElement("optgroup");
-            optgroup.label = group.label;
+            const heading = document.createElement("option");
+            heading.disabled = true;
+            heading.textContent = group.label;
+            heading.className = "position-group-heading";
+            positionSelect.appendChild(heading);
 
             const allOption = document.createElement("option");
             allOption.value = "category:" + group.key;
             allOption.textContent = group.allLabel;
-            optgroup.appendChild(allOption);
+            positionSelect.appendChild(allOption);
 
             sideOrder.forEach(function (side) {
                 if (!available[group.key].has(side.key)) {
@@ -416,10 +425,8 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                 option.value =
                     "category-side:" + group.key + ":" + side.key;
                 option.textContent = side.label;
-                optgroup.appendChild(option);
+                positionSelect.appendChild(option);
             });
-
-            positionSelect.appendChild(optgroup);
         });
     }
 
