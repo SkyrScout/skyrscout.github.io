@@ -137,7 +137,7 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                     data-name="{{ title_parts[0] | downcase | escape }}"
                     data-date="{{ player.report_date | escape }}"
                     data-search="{{ player.title | append: ' ' | append: player.position | downcase | escape }}"
-                    data-positions="{% if player.positions and player.positions.size > 0 %}{% for player_position in player.positions %}{{ player_position.role | escape }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% elsif player.position %}{{ player.position | escape }}{% endif %}"
+                    data-positions="{% if player.positions and player.positions.size > 0 %}{% for player_position in player.positions %}{{ player_position.role | escape }}::{{ player_position.side | default: 'centre' | escape }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% elsif player.position %}{{ player.position | escape }}::centre{% endif %}"
                 >
 
                     <a
@@ -312,32 +312,115 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
         });
     }
 
+    function getPositionEntries(card) {
+        return (card.dataset.positions || "")
+            .split("|")
+            .map(function (entry) {
+                const parts = entry.split("::");
+
+                return {
+                    role: (parts[0] || "").trim(),
+                    side: (parts[1] || "centre").trim().toLowerCase()
+                };
+            })
+            .filter(function (entry) {
+                return entry.role;
+            });
+    }
+
+    function getPositionCategory(role) {
+        const roleName = role.toLowerCase();
+
+        if (
+            roleName.includes("back") ||
+            roleName.includes("defender")
+        ) {
+            return "defenders";
+        }
+
+        if (roleName.includes("midfielder")) {
+            return "midfielders";
+        }
+
+        if (
+            roleName.includes("winger") ||
+            roleName.includes("forward") ||
+            roleName.includes("striker")
+        ) {
+            return "attackers";
+        }
+
+        return "";
+    }
+
     function populatePositionFilter() {
-        const positions = new Set();
+        const groups = [
+            {
+                key: "defenders",
+                label: "DEFENDERS",
+                allLabel: "All defenders"
+            },
+            {
+                key: "midfielders",
+                label: "MIDFIELDERS",
+                allLabel: "All midfielders"
+            },
+            {
+                key: "attackers",
+                label: "ATTACKERS",
+                allLabel: "All attackers"
+            }
+        ];
+
+        const sideOrder = [
+            { key: "centre", label: "Centre" },
+            { key: "right", label: "Right" },
+            { key: "left", label: "Left" }
+        ];
+
+        const available = {
+            defenders: new Set(),
+            midfielders: new Set(),
+            attackers: new Set()
+        };
 
         getPlayerCards().forEach(function (card) {
-            const playerPositions = (card.dataset.positions || "")
-                .split("|")
-                .map(function (position) {
-                    return position.trim();
-                })
-                .filter(Boolean);
+            getPositionEntries(card).forEach(function (entry) {
+                const category = getPositionCategory(entry.role);
 
-            playerPositions.forEach(function (position) {
-                positions.add(position);
+                if (category && available[category]) {
+                    available[category].add(entry.side);
+                }
             });
         });
 
-        Array.from(positions)
-            .sort(function (a, b) {
-                return a.localeCompare(b);
-            })
-            .forEach(function (position) {
+        groups.forEach(function (group) {
+            if (available[group.key].size === 0) {
+                return;
+            }
+
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = group.label;
+
+            const allOption = document.createElement("option");
+            allOption.value = "category:" + group.key;
+            allOption.textContent = group.allLabel;
+            optgroup.appendChild(allOption);
+
+            sideOrder.forEach(function (side) {
+                if (!available[group.key].has(side.key)) {
+                    return;
+                }
+
                 const option = document.createElement("option");
-                option.value = position.toLowerCase();
-                option.textContent = position;
-                positionSelect.appendChild(option);
+                option.value =
+                    "category-side:" + group.key + ":" + side.key;
+                option.textContent = side.label;
+                optgroup.appendChild(option);
             });
+
+            positionSelect.appendChild(optgroup);
+        });
     }
 
     function filterPlayers() {
@@ -351,18 +434,33 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
 
         getPlayerCards().forEach(function (card) {
             const playerText = card.dataset.search;
-
-            const playerPositions = (card.dataset.positions || "")
-                .split("|")
-                .map(function (position) {
-                    return position.trim().toLowerCase();
-                })
-                .filter(Boolean);
+            const playerPositions = getPositionEntries(card);
 
             const matchesSearch = playerText.includes(searchTerm);
-            const matchesPosition =
-                !selectedPosition ||
-                playerPositions.includes(selectedPosition);
+
+            let matchesPosition = !selectedPosition;
+
+            if (selectedPosition.startsWith("category:")) {
+                const selectedCategory =
+                    selectedPosition.replace("category:", "");
+
+                matchesPosition = playerPositions.some(function (entry) {
+                    return getPositionCategory(entry.role) === selectedCategory;
+                });
+            }
+
+            if (selectedPosition.startsWith("category-side:")) {
+                const parts = selectedPosition.split(":");
+                const selectedCategory = parts[1];
+                const selectedSide = parts[2];
+
+                matchesPosition = playerPositions.some(function (entry) {
+                    return (
+                        getPositionCategory(entry.role) === selectedCategory &&
+                        entry.side === selectedSide
+                    );
+                });
+            }
 
             const isVisible = matchesSearch && matchesPosition;
 
