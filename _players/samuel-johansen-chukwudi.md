@@ -28,7 +28,6 @@ summary: |
   💪 197 cm centre-back — powerful, strong & dominant in duels
   🛡️ Excellent at stepping in and breaking up play
   🎯 Composed passer with good distribution from the back
-  🚀 Comfortable carrying the ball forward to progress attacks
   ⚡ Not explosive off the mark, but moves well once up to speed
 report: |
   This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
