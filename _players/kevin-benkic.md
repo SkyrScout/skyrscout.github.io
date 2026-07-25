@@ -14,9 +14,9 @@ site_added: "17.07.2026"
 position: Left Back
 nationalities:
   - Slovenia
-birth_date:
+birth_date: "2005-09-07"
 height_cm: 178
-preferred_foot:
+preferred_foot: "Left"
 positions:
   - role: "Left Back"
     side: "left"
