@@ -15,8 +15,8 @@ nationalities:
   - Somalia
 birth_date: "2003-09-24"
 height_cm: 201
-dominant_foot: 
-two_footed_ability: 
+dominant_foot: "Left"
+two_footed_ability: "Strong"
 positions:
   - role: "Attacking Midfielder"
     side: "centre"
