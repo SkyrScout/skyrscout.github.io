@@ -28,8 +28,9 @@ summary: |
   🦊 Natural penalty-area instincts — constant threat around goal
 
 report: |
-  This player profile is based on video scouting by Bon Scout. A full written scouting report is not currently available.
+  Rafael Monti is a traditional Argentinian number 9. A physical and intelligent striker with a sharp eye for goal.
 
+  He excels at positioning himself in the box, timing his runs, and finishing chances with both feet and head. Monti is strong in duels, holds off defenders well, and is equally capable of linking up with teammates as he is of scoring himself. His movement and instincts make him a constant threat inside the penalty area.
 transfermarkt: "https://www.transfermarkt.com/rafael-monti/profil/spieler/732443"
 sofascore: "https://www.sofascore.com/football/player/rafael-monti/2024892#tab:season"
 
