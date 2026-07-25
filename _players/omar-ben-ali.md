@@ -15,16 +15,18 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Tunisia
-birth_date:
+birth_date: "2005-04-22"
 height_cm: 187
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: 
 positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
 
-summary: |
+report: |
+  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
+
   🇹🇳 Omar Ben Ali is a Tunisian centre-forward born in 2005, playing for CS Sfaxien.
 
   The video scouting profile shows the following selected actions in chronological order:
@@ -46,10 +48,6 @@ summary: |
   vs Kairouanaise, 5 April 2026: Three finishes. Backheel pass to a teammate. Leaves the ball to a teammate with his heel and finishes.
 
   vs Soliman, 12 April 2026: Two finishes. Combines with a teammate and finishes. Two duels with the goalkeeper. Disallowed goal.
-
-report: |
-  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
-
 transfermarkt: "https://www.transfermarkt.com/omar-ben-ali/profil/spieler/1244036"
 
 sofascore: "https://www.sofascore.com/football/player/omar-ben-ali/1996692#tab:season"
