@@ -23,8 +23,12 @@ position: ""
 nationalities: []
 birth_date:
 height_cm:
-preferred_foot:
+dominant_foot:
+two_footed_ability:
 positions: []
+# dominant_foot: Right / Left / Both. Use Both only when there is genuinely
+# no meaningful dominant foot. Leave empty when unknown.
+# two_footed_ability: Reliable / Strong / Genuine. Only fill from scouting evidence.
 
 summary:
 

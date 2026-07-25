@@ -25,10 +25,13 @@ position: ""
 nationalities: []
 birth_date:
 height_cm:
-preferred_foot:
+dominant_foot:
+two_footed_ability:
 positions: []
-# Unknown value = leave empty = NO EFFECT in Game.
-# preferred_foot should only be filled when reliable evidence exists.
+# Unknown value = leave empty = NO EFFECT.
+# dominant_foot: Right / Left / Both. Use Both only when there is genuinely
+# no meaningful dominant foot.
+# two_footed_ability: Reliable / Strong / Genuine. Only fill from scouting evidence.
 
 summary:
 

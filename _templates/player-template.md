@@ -34,7 +34,8 @@ position: ""
 nationalities: []
 birth_date:
 height_cm:
-preferred_foot:
+dominant_foot:
+two_footed_ability:
 positions: []
 # Example:
 # positions:
@@ -45,7 +46,10 @@ positions: []
 #     side: "centre"
 #     rank: 2
 #
-# preferred_foot should only be filled when reliable evidence exists.
+# dominant_foot: Right / Left / Both. Use Both only when there is genuinely
+# no meaningful dominant foot. Leave empty when unknown.
+# two_footed_ability: Reliable / Strong / Genuine. Leave empty unless
+# SkyrScout scouting evidence supports meaningful use of both feet.
 # SkyrScout scouting text / first-party information takes precedence over
 # external databases when sources conflict.
 

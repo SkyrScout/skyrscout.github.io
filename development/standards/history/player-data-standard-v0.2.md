@@ -1,4 +1,4 @@
-# SkyrScout Player Data Standard v0.3 — current draft
+# SkyrScout Player Data Standard v0.2 — current draft
 
 Goal: keep the player profile human-readable while giving Game structured facts it can safely consume.
 
@@ -10,8 +10,7 @@ The Game must never infer or invent a value just because a field is absent.
 
 Examples:
 - no `height_cm` → no height effect
-- no `dominant_foot` → no dominant-foot effect
-- no `two_footed_ability` → no two-footed effect
+- no `preferred_foot` → no foot-related effect
 - no structured trait → no trait effect
 - no YouTube metric → no Momentum/Buzz effect from that metric
 - no real scouting summary → no summary-derived Game effect
@@ -45,8 +44,7 @@ nationalities:
 
 birth_date: "2003-09-24"
 height_cm: 201
-dominant_foot: "Right"
-two_footed_ability: "Reliable"
+preferred_foot: "Right"
 
 positions:
   - role: "Attacking Midfielder"
@@ -78,42 +76,24 @@ Use centimetres as an integer in `height_cm`.
 
 When reliable evidence shows two measurements for a young player who has grown, use the newer/higher measurement rather than preserving an obviously outdated youth value.
 
-### Dominant foot
+### Preferred foot
 
 Allowed values:
 - `Right`
 - `Left`
 - `Both`
 
-This field describes the player's genuinely dominant/natural foot, not the quality of the other foot.
-
-Use `Both` only when direct scouting supports that there is no meaningful dominant foot. Being able to finish, pass or cross well with the other foot is not enough by itself.
-
-If the player uses both feet well but the dominant foot is not established, leave `dominant_foot` empty and use `two_footed_ability` instead.
+This field is deliberately optional.
 
 Source priority:
 1. explicit SkyrScout scouting observations / report text
 2. reliable first-party information (player, club, federation)
 3. external databases as supporting evidence
 
-Transfermarkt or similar databases must not automatically override direct scouting evidence. If sources conflict and the correct value is uncertain, leave `dominant_foot` empty until it is resolved.
+Transfermarkt or similar databases must not automatically override direct scouting evidence. If sources conflict and the correct value is uncertain, leave `preferred_foot` empty until it is resolved.
 
-### Two-footed ability
+Being able to finish or cross with both feet does **not** automatically mean `preferred_foot: "Both"`. Use `Both` only when the player is genuinely described/known as two-footed.
 
-Allowed values:
-- `Reliable`
-- `Strong`
-- `Genuine`
-
-This field is optional and only records meaningful use of both feet supported by scouting evidence.
-
-- `Reliable` — the other foot is explicitly described as dependable, functional, decent or reliable.
-- `Strong` — effective use of both feet is a notable part of the player's game, for example finishing, passing, crossing or shooting.
-- `Genuine` — the player is explicitly assessed as genuinely two-footed, with no meaningful weak side in the relevant scouting evidence.
-
-The field does not measure the absolute quality of the dominant foot. A player can have an exceptional dominant foot and still have `Reliable` or `Strong` two-footed ability.
-
-Exceptional foot qualities such as an elite left foot, set-piece delivery or unusual shot power remain scouting information and may later become separate structured traits.
 ## Position spelling
 
 Use normal football names consistently for the reader-facing `position` field:

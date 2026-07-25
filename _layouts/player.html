@@ -328,7 +328,7 @@ layout: default
         {% if page.nationalities and page.nationalities.size > 0 %}
             {% assign has_player_facts = true %}
         {% endif %}
-        {% if page.birth_date or page.height_cm or page.preferred_foot %}
+        {% if page.birth_date or page.height_cm or page.dominant_foot or page.two_footed_ability %}
             {% assign has_player_facts = true %}
         {% endif %}
         {% if page.positions and page.positions.size > 0 %}
@@ -375,10 +375,17 @@ layout: default
                         </div>
                     {% endif %}
 
-                    {% if page.preferred_foot %}
+                    {% if page.dominant_foot %}
                         <div class="player-compact-fact">
-                            <dt>Preferred foot</dt>
-                            <dd>{% if page.preferred_foot == "Both" %}Both feet{% else %}{{ page.preferred_foot }}{% endif %}</dd>
+                            <dt>Dominant foot</dt>
+                            <dd>{{ page.dominant_foot }}</dd>
+                        </div>
+                    {% endif %}
+
+                    {% if page.two_footed_ability %}
+                        <div class="player-compact-fact">
+                            <dt>Two-footed ability</dt>
+                            <dd>{{ page.two_footed_ability }}</dd>
                         </div>
                     {% endif %}
 
