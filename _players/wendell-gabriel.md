@@ -14,7 +14,7 @@ site_added: "20.07.2026"
 position: Centre-Forward
 nationalities:
   - Brazil
-birth_date:
+birth_date: "2004-02-17"
 height_cm: 180
 dominant_foot: "Left"
 two_footed_ability: "Strong"
@@ -22,7 +22,15 @@ positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
-
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 2
+  - role: "Winger"
+    side: null
+    rank: 3
+  - role: "Second Striker"
+    side: "centre"
+    rank: 4
 summary: |
   🇧🇷 Wendell Gabriel | 22 y/o CF
   ⚡ Mobile forward with strong link-up play & creativity
