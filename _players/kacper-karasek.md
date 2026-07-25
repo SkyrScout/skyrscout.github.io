@@ -20,7 +20,8 @@ positions:
   - role: "Attacking Midfielder"
     side: "centre"
     rank: 1
-  - role: "Winger"
+  - role: "Left Winger"
+    side: "left"
     rank: 2
   - role: "Centre-Forward"
     side: "centre"

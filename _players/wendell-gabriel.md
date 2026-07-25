@@ -25,8 +25,8 @@ positions:
   - role: "Attacking Midfielder"
     side: "centre"
     rank: 2
-  - role: "Winger"
-    side: null
+  - role: "Right Winger"
+    side: "right"
     rank: 3
   - role: "Second Striker"
     side: "centre"
