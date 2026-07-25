@@ -8,9 +8,9 @@ site_added: "23.07.2026"
 position: Centre-Forward
 nationalities:
   - Ghana
-birth_date:
+birth_date: "2000-12-16"
 height_cm: 181
-preferred_foot:
+preferred_foot: "Both"
 positions:
   - role: "Centre-Forward"
     side: "centre"
