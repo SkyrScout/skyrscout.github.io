@@ -22,15 +22,18 @@ positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
-  - role: "Attacking Midfielder"
-    side: "centre"
-    rank: 2
   - role: "Right Winger"
     side: "right"
     rank: 2
+  - role: "Left Winger"
+    side: "left"
+    rank: 3
+  - role: "Attacking Midfielder"
+    side: "centre"
+    rank: 4
   - role: "Second Striker"
     side: "centre"
-    rank: 2
+    rank: 5
 summary: |
   🇰🇿 Zhasulan Amir | 19 y/o CF
   ⚡ Explosive, two-footed attacker with elite pace & ball carrying
