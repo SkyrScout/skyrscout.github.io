@@ -14,7 +14,8 @@ nationalities:
   - Poland
 birth_date: "2002-03-20"
 height_cm: 183
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Attacking Midfielder"
     side: "centre"

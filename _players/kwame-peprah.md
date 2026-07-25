@@ -10,7 +10,8 @@ nationalities:
   - Ghana
 birth_date: "2000-12-16"
 height_cm: 181
-preferred_foot: "Both"
+dominant_foot: 
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

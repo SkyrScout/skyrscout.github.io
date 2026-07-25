@@ -10,7 +10,8 @@ nationalities:
   - Serbia
 birth_date: "2006-07-15"
 height_cm: 169
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Reliable"
 positions:
   - role: "Attacking Midfielder"
     side: "centre"

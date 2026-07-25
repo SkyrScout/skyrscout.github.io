@@ -16,7 +16,8 @@ nationalities:
   - Slovenia
 birth_date: "2005-09-07"
 height_cm: 178
-preferred_foot: "Left"
+dominant_foot: "Left"
+two_footed_ability: 
 positions:
   - role: "Left Back"
     side: "left"

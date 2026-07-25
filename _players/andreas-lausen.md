@@ -14,7 +14,8 @@ nationalities:
   - Denmark
 birth_date: "2002-10-15"
 height_cm: 185
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Central Midfielder"
     side: "centre"

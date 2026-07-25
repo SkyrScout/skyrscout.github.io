@@ -15,7 +15,8 @@ nationalities:
   - Ghana
 birth_date: "2002-05-31"
 height_cm: 171
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Left Winger"
     side: "left"

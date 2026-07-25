@@ -12,7 +12,8 @@ nationalities:
   - Argentina
 birth_date:
 height_cm: 182
-preferred_foot:
+dominant_foot: 
+two_footed_ability: "Reliable"
 positions:
   - role: "Centre-Forward"
     side: "centre"

@@ -14,7 +14,8 @@ nationalities:
   - Sweden
 birth_date: "2003-01-19"
 height_cm: 172
-preferred_foot:
+dominant_foot: 
+two_footed_ability: 
 positions:
   - role: "Left Winger"
     side: "left"

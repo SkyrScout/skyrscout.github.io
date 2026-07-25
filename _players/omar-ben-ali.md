@@ -17,7 +17,8 @@ nationalities:
   - Tunisia
 birth_date:
 height_cm: 187
-preferred_foot:
+dominant_foot: 
+two_footed_ability: 
 positions:
   - role: "Centre-Forward"
     side: "centre"

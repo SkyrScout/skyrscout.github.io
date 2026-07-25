@@ -13,7 +13,8 @@ nationalities:
   - Sri Lanka
 birth_date: "2003-11-27"
 height_cm: 180
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Right Back"
     side: "right"

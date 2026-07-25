@@ -10,7 +10,8 @@ nationalities:
   - Japan
 birth_date: "2000-06-04"
 height_cm: 186
-preferred_foot: "Both"
+dominant_foot: 
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

@@ -14,7 +14,8 @@ nationalities:
   - Sweden
 birth_date: "2000-10-07"
 height_cm: 170
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Central Midfielder"
     side: "centre"

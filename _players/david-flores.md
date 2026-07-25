@@ -16,7 +16,8 @@ nationalities:
   - Honduras
 birth_date: "2008-01-13"
 height_cm: 188
-preferred_foot: "Both"
+dominant_foot: 
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

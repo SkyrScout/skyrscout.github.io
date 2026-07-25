@@ -10,7 +10,8 @@ nationalities:
   - Senegal
 birth_date: "2003-06-04"
 height_cm: 173
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Left Winger"
     side: "left"

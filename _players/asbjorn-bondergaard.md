@@ -14,7 +14,8 @@ nationalities:
   - Denmark
 birth_date: "2004-05-05"
 height_cm: 184
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

@@ -10,7 +10,8 @@ nationalities:
   - Malaysia
 birth_date:
 height_cm: 179
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Reliable"
 positions:
   - role: "Left Winger"
     side: "left"

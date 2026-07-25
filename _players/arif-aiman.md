@@ -12,7 +12,8 @@ nationalities:
   - Malaysia
 birth_date: "2002-05-04"
 height_cm: 171
-preferred_foot: "Both"
+dominant_foot: "Both"
+two_footed_ability: "Genuine"
 positions:
   - role: "Right Winger"
     side: "right"

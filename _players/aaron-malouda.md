@@ -10,7 +10,8 @@ nationalities:
   - France
 birth_date: "2005-11-30"
 height_cm: 183
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Strong"
 positions:
   - role: "Right Winger"
     side: "right"

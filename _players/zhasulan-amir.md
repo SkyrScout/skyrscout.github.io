@@ -16,7 +16,8 @@ nationalities:
   - Kazakhstan
 birth_date: "2006-12-26"
 height_cm: 183
-preferred_foot: "Both"
+dominant_foot: "Both"
+two_footed_ability: "Genuine"
 positions:
   - role: "Centre-Forward"
     side: "centre"

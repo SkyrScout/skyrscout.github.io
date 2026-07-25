@@ -10,7 +10,8 @@ nationalities:
   - Australia
 birth_date: "2002-03-12"
 height_cm: 183
-preferred_foot: "Left"
+dominant_foot: "Left"
+two_footed_ability: "Reliable"
 positions:
   - role: "Right Winger"
     side: "right"

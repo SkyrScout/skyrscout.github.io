@@ -17,7 +17,8 @@ nationalities:
   - Algeria
 birth_date: "2005-07-23"
 height_cm: 190
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: 
 positions:
   - role: "Centre-Forward"
     side: "centre"

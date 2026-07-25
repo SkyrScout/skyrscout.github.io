@@ -10,7 +10,8 @@ nationalities:
   - Kyrgyzstan
 birth_date: "2001-08-15"
 height_cm: 178
-preferred_foot: "Both"
+dominant_foot: 
+two_footed_ability: "Strong"
 positions:
   - role: "Attacking Midfielder"
     side: "centre"

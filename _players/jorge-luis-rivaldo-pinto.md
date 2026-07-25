@@ -16,7 +16,8 @@ nationalities:
   - Colombia
 birth_date: "2003-09-28"
 height_cm: 189
-preferred_foot: "Both"
+dominant_foot: 
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

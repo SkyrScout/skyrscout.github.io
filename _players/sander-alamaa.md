@@ -16,7 +16,8 @@ nationalities:
   - Estonia
 birth_date:
 height_cm: 183
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Strong"
 positions:
   - role: "Left Winger"
     side: "left"

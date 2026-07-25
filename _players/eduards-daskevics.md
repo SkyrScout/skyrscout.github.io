@@ -16,7 +16,8 @@ nationalities:
   - Latvia
 birth_date: "2002-07-12"
 height_cm: 171
-preferred_foot: "Left"
+dominant_foot: "Left"
+two_footed_ability: "Reliable"
 positions:
   - role: "Right Winger"
     side: "right"

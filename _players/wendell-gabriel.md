@@ -16,7 +16,8 @@ nationalities:
   - Brazil
 birth_date:
 height_cm: 180
-preferred_foot: "Left"
+dominant_foot: "Left"
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

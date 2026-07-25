@@ -16,7 +16,8 @@ nationalities:
   - Georgia
 birth_date: "2009-03-30"
 height_cm: 170
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Strong"
 positions:
   - role: "Left Winger"
     side: "left"

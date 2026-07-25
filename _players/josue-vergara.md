@@ -16,7 +16,8 @@ nationalities:
   - Panama
 birth_date: "2007-07-25"
 height_cm: 196
-preferred_foot: "Both"
+dominant_foot: "Right"
+two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
     side: "centre"

@@ -16,7 +16,8 @@ nationalities:
   - Uruguay
 birth_date: "2002-03-26"
 height_cm: 195
-preferred_foot: "Left"
+dominant_foot: "Left"
+two_footed_ability: "Reliable"
 positions:
   - role: "Centre-Forward"
     side: "centre"

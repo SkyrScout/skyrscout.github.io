@@ -14,7 +14,8 @@ nationalities:
   - Sweden
 birth_date: "2004-01-28"
 height_cm: 167
-preferred_foot:
+dominant_foot: 
+two_footed_ability: 
 positions:
   - role: "Right Back"
     side: "right"

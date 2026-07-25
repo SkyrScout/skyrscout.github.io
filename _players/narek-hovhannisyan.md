@@ -8,9 +8,10 @@ site_added: "22.07.2026"
 position: Left Winger
 nationalities:
   - Armenia
-birth_date:
+birth_date: "2006-08-06"
 height_cm: 172
-preferred_foot: "Right"
+dominant_foot: "Right"
+two_footed_ability: "Reliable"
 positions:
   - role: "Left Winger"
     side: "left"
