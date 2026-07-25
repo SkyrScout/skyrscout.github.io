@@ -10,7 +10,7 @@ nationalities:
   - Kyrgyzstan
 birth_date: "2001-08-15"
 height_cm: 178
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: "Strong"
 positions:
   - role: "Attacking Midfielder"
@@ -85,5 +85,4 @@ transfermarkt: "https://www.transfermarkt.com/erbol-atabaev/profil/spieler/91499
 sofascore: "https://www.sofascore.com/no/football/player/erbol-atabaev/1218814#tab:season"
 
 podcast: ""
-podcast_timestamp: ""
----
+podcast_timestamp: ""---

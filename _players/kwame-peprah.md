@@ -10,8 +10,8 @@ nationalities:
   - Ghana
 birth_date: "2000-12-16"
 height_cm: 181
-dominant_foot: 
-two_footed_ability: "Strong"
+dominant_foot: "Both"
+two_footed_ability: "Genuine"
 positions:
   - role: "Centre-Forward"
     side: "centre"
@@ -46,5 +46,4 @@ transfermarkt: "https://www.transfermarkt.com/kwame-peprah/profil/spieler/734658
 sofascore: "https://www.sofascore.com/football/player/peprah-kwame/1143396#tab:season"
 
 podcast: "https://open.spotify.com/episode/1gDjNTwngP59WQDer8fqJd"
-podcast_timestamp: "24:34"
----
+podcast_timestamp: "24:34"---

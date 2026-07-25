@@ -16,7 +16,7 @@ nationalities:
   - Colombia
 birth_date: "2002-10-15"
 height_cm: 187
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
@@ -64,5 +64,4 @@ sofascore: "https://www.sofascore.com/no/football/player/kevin-quejada/1177557#t
 
 podcast: "https://open.spotify.com/episode/0bqO2XSsK9xcUKWfEh4cDe"
 
-podcast_timestamp: "27:47"
----
+podcast_timestamp: "27:47"---

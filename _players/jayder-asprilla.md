@@ -16,7 +16,7 @@ nationalities:
   - Colombia
 birth_date: "2003-03-20"
 height_cm: 185
-dominant_foot: 
+dominant_foot: "Left"
 two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
@@ -70,5 +70,4 @@ sofascore: "https://www.sofascore.com/no/football/player/jayder-asprilla/1185983
 
 podcast: "https://open.spotify.com/episode/0bqO2XSsK9xcUKWfEh4cDe"
 
-podcast_timestamp: "56:41"
----
+podcast_timestamp: "56:41"---

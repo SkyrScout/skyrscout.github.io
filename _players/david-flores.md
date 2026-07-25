@@ -16,7 +16,7 @@ nationalities:
   - Honduras
 birth_date: "2008-01-13"
 height_cm: 188
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
@@ -64,5 +64,4 @@ sofascore: "https://www.sofascore.com/no/football/player/david-flores/2049340#ta
 
 podcast: "https://open.spotify.com/episode/0bqO2XSsK9xcUKWfEh4cDe"
 
-podcast_timestamp: "37:21"
----
+podcast_timestamp: "37:21"---

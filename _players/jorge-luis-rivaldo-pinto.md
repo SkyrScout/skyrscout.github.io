@@ -16,7 +16,7 @@ nationalities:
   - Colombia
 birth_date: "2003-09-28"
 height_cm: 189
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
@@ -64,5 +64,4 @@ sofascore: "https://www.sofascore.com/football/player/jorge-rivaldo/1628441#tab:
 
 podcast: ""
 
-podcast_timestamp: ""
----
+podcast_timestamp: ""---

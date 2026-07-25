@@ -10,7 +10,7 @@ nationalities:
   - Japan
 birth_date: "2000-06-04"
 height_cm: 186
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: "Strong"
 positions:
   - role: "Centre-Forward"
@@ -53,5 +53,4 @@ transfermarkt: "https://www.transfermarkt.com/itsuki-enomoto/profil/spieler/6278
 sofascore: "https://www.sofascore.com/no/football/player/itsuki-enomoto/974288#tab:season"
 
 podcast: "https://open.spotify.com/episode/1mhTVCQbDPpPhHoXt3Q9hf"
-podcast_timestamp: "37:44"
----
+podcast_timestamp: "37:44"---

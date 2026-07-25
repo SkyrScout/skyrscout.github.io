@@ -49,5 +49,4 @@ transfermarkt: "https://www.transfermarkt.com/carlos-iury/profil/spieler/1286981
 sofascore: "https://www.sofascore.com/no/football/player/carlos-iury-bezerra-da-silva/1514484#tab:season"
 
 podcast: "https://open.spotify.com/episode/1mhTVCQbDPpPhHoXt3Q9hf"
-podcast_timestamp: "1:33:22"
----
+podcast_timestamp: "1:33:22"---
