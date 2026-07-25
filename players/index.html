@@ -8,6 +8,14 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
 {% assign pippen_count = site.players | where: "report_by", "Scouty Pippen" | size %}
 {% assign bon_count = site.players | where: "report_by", "Bon Scout" | size %}
 
+<style>
+    @media (min-width: 760px) {
+        .players-tools {
+            grid-template-columns: minmax(0, 1fr) 230px 230px;
+        }
+    }
+</style>
+
 <main class="page-background">
 
     <section class="players-page">
@@ -78,6 +86,14 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                 >
             </label>
 
+            <label class="player-sort" for="player-position">
+                <span>Position</span>
+
+                <select id="player-position">
+                    <option value="">All positions</option>
+                </select>
+            </label>
+
             <label class="player-sort" for="player-sort">
                 <span>Sort by</span>
 
@@ -121,6 +137,7 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                     data-name="{{ title_parts[0] | downcase | escape }}"
                     data-date="{{ player.report_date | escape }}"
                     data-search="{{ player.title | append: ' ' | append: player.position | downcase | escape }}"
+                    data-positions="{% if player.positions and player.positions.size > 0 %}{% for player_position in player.positions %}{{ player_position.role | escape }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% elsif player.position %}{{ player.position | escape }}{% endif %}"
                 >
 
                     <a
@@ -227,7 +244,7 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
             id="players-no-results"
             hidden
         >
-            No players match your search.
+            No players match your filters.
         </p>
 
     </section>
@@ -236,6 +253,7 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
 
 <script>
     const searchInput = document.querySelector("#player-search");
+    const positionSelect = document.querySelector("#player-position");
     const sortSelect = document.querySelector("#player-sort");
     const playersList = document.querySelector("#players-list");
     const noResults = document.querySelector("#players-no-results");
@@ -294,16 +312,59 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
         });
     }
 
+    function populatePositionFilter() {
+        const positions = new Set();
+
+        getPlayerCards().forEach(function (card) {
+            const playerPositions = (card.dataset.positions || "")
+                .split("|")
+                .map(function (position) {
+                    return position.trim();
+                })
+                .filter(Boolean);
+
+            playerPositions.forEach(function (position) {
+                positions.add(position);
+            });
+        });
+
+        Array.from(positions)
+            .sort(function (a, b) {
+                return a.localeCompare(b);
+            })
+            .forEach(function (position) {
+                const option = document.createElement("option");
+                option.value = position.toLowerCase();
+                option.textContent = position;
+                positionSelect.appendChild(option);
+            });
+    }
+
     function filterPlayers() {
         const searchTerm = searchInput.value
             .trim()
             .toLowerCase();
 
+        const selectedPosition = positionSelect.value;
+
         let visiblePlayers = 0;
 
         getPlayerCards().forEach(function (card) {
             const playerText = card.dataset.search;
-            const isVisible = playerText.includes(searchTerm);
+
+            const playerPositions = (card.dataset.positions || "")
+                .split("|")
+                .map(function (position) {
+                    return position.trim().toLowerCase();
+                })
+                .filter(Boolean);
+
+            const matchesSearch = playerText.includes(searchTerm);
+            const matchesPosition =
+                !selectedPosition ||
+                playerPositions.includes(selectedPosition);
+
+            const isVisible = matchesSearch && matchesPosition;
 
             card.hidden = !isVisible;
 
@@ -317,10 +378,13 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
 
     searchInput.addEventListener("input", filterPlayers);
 
+    positionSelect.addEventListener("change", filterPlayers);
+
     sortSelect.addEventListener("change", function () {
         sortPlayers(sortSelect.value);
     });
 
+    populatePositionFilter();
     sortPlayers("newest");
     filterPlayers();
 </script>
