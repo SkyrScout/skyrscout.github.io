@@ -14,7 +14,7 @@ site_added: "16.07.2026"
 position: Left Winger
 nationalities:
   - Estonia
-birth_date:
+birth_date: "2008-02-09"
 height_cm: 183
 dominant_foot: "Right"
 two_footed_ability: "Strong"
