@@ -14,8 +14,8 @@ nationalities:
   - Sweden
 birth_date: "2004-01-28"
 height_cm: 167
-dominant_foot: 
-two_footed_ability: 
+dominant_foot: "Right"
+two_footed_ability: "Reliable"
 positions:
   - role: "Right Back"
     side: "right"
@@ -26,11 +26,9 @@ positions:
 
 summary: |
   🇸🇪 Vincent Sundberg | RB / RW
-  📅 Born 28 January 2004
-  📏 167 cm
-  🔄 Used both at right-back and right wing
-  ⚽ Landskrona | Superettan, Sweden
-
+  🔄 Versatile right-sided player comfortable in both defensive and attacking roles
+  ⚽ Naturally right-footed, but comfortable finishing with his left
+  🎯 Two left-footed goals from close range show confidence using his weaker foot
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
 
