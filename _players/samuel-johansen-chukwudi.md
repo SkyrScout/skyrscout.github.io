@@ -14,7 +14,7 @@ position: Centre-Back
 nationalities:
   - Faroe Islands
   - Nigeria
-birth_date: "2003-06-26"
+birth_date: "2003-06-25"
 height_cm: 197
 dominant_foot: "Right"
 two_footed_ability:
