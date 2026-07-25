@@ -53,4 +53,5 @@ transfermarkt: "https://www.transfermarkt.com/itsuki-enomoto/profil/spieler/6278
 sofascore: "https://www.sofascore.com/no/football/player/itsuki-enomoto/974288#tab:season"
 
 podcast: "https://open.spotify.com/episode/1mhTVCQbDPpPhHoXt3Q9hf"
-podcast_timestamp: "37:44"---
+podcast_timestamp: "37:44"
+---

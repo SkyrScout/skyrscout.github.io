@@ -70,4 +70,5 @@ sofascore: "https://www.sofascore.com/no/football/player/jayder-asprilla/1185983
 
 podcast: "https://open.spotify.com/episode/0bqO2XSsK9xcUKWfEh4cDe"
 
-podcast_timestamp: "56:41"---
+podcast_timestamp: "56:41"
+---

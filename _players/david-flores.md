@@ -64,4 +64,5 @@ sofascore: "https://www.sofascore.com/no/football/player/david-flores/2049340#ta
 
 podcast: "https://open.spotify.com/episode/0bqO2XSsK9xcUKWfEh4cDe"
 
-podcast_timestamp: "37:21"---
+podcast_timestamp: "37:21"
+---

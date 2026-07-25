@@ -37,4 +37,5 @@ transfermarkt: "https://www.transfermarkt.com/arif-aiman/profil/spieler/803158"
 sofascore: "https://www.sofascore.com/no/football/player/arif-aiman-hanapi/1019304#tab:season"
 
 podcast: "https://open.spotify.com/episode/5CmgszNPCudqf8ap0EXXkO"
-podcast_timestamp: "57:08"---
+podcast_timestamp: "57:08"
+---

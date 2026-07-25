@@ -85,4 +85,5 @@ transfermarkt: "https://www.transfermarkt.com/erbol-atabaev/profil/spieler/91499
 sofascore: "https://www.sofascore.com/no/football/player/erbol-atabaev/1218814#tab:season"
 
 podcast: ""
-podcast_timestamp: ""---
+podcast_timestamp: ""
+---

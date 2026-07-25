@@ -64,4 +64,5 @@ sofascore: "https://www.sofascore.com/football/player/josue-vergara/1916618#tab:
 
 podcast: "https://open.spotify.com/episode/0bqO2XSsK9xcUKWfEh4cDe?si=AzNJ2HbnQdOiTxKZj8wkrg"
 
-podcast_timestamp: "1:16:03"---
+podcast_timestamp: "1:16:03"
+---
