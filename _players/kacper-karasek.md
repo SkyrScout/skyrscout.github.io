@@ -12,9 +12,9 @@ site_added: "23.07.2026"
 position: Attacking Midfielder / Winger / Centre-Forward
 nationalities:
   - Poland
-birth_date:
+birth_date: "2002-03-20"
 height_cm: 183
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Attacking Midfielder"
     side: "centre"
@@ -27,14 +27,12 @@ positions:
 
 summary: |
   🇵🇱 Kacper Karasek | AM / W / CF
-  📏 183 cm
   🎯 Accurate finisher with well-placed shots
   🧠 Creative passer with good game intelligence
   🎯 Set-piece specialist on corners, free kicks and penalties
   🔄 Versatile attacker used as striker, winger and midfielder
   📊 10 goals + 3 assists in 17 Betclic 1. Liga matches in 2024
   🇵🇱 Poland U20 and U21 international
-
 report: |
   Karasek is a versatile attacking player who contributes consistently with goals and assists. He combines well-placed finishing with creative passing and a good understanding of the game.
 
