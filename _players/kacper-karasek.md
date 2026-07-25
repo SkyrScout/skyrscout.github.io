@@ -28,11 +28,11 @@ positions:
     rank: 3
 
 summary: |
-  🇵🇱 Kacper Karasek | AM / W / CF
+  🇵🇱 Kacper Karasek | AM / LW / CF
   🎯 Accurate finisher with well-placed shots
   🧠 Creative passer with good game intelligence
   🎯 Set-piece specialist on corners, free kicks and penalties
-  🔄 Versatile attacker used as striker, winger and midfielder
+  🔄 Versatile attacker used as striker, left winger and midfielder
   📊 10 goals + 3 assists in 17 Betclic 1. Liga matches in 2024
   🇵🇱 Poland U20 and U21 international
 report: |
