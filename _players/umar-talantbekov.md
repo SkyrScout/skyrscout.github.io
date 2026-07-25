@@ -22,12 +22,12 @@ positions:
   - role: "Second Striker"
     side: "centre"
     rank: 2
-  - role: "Left Winger"
-    side: "left"
-    rank: 3
   - role: "Right Winger"
     side: "right"
     rank: 3
+  - role: "Left Winger"
+    side: "left"
+    rank: 4
 summary: |
   🇰🇬 Umar Talantbekov | 17 y/o CF
   ⚡ Lightning pace & acceleration, constantly attacking the space in behind
