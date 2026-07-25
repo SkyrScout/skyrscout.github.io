@@ -12,9 +12,10 @@ site_added: "23.07.2026"
 position: Left Winger
 nationalities:
   - Sweden
+  - Ghana
 birth_date: "2002-05-31"
 height_cm: 171
-preferred_foot:
+preferred_foot: "Right"
 positions:
   - role: "Left Winger"
     side: "left"
@@ -22,12 +23,8 @@ positions:
 
 summary: |
   🇸🇪 Kofi Fosuhene Asare | LW
-  📅 Born 31 May 2002
-  📏 171 cm
-  ⚡ Left winger for Landskrona
+  ⚡ Quick winger with pace as a standout quality
   🇸🇪 Former Sweden U17 international
-  🎥 Video scouting profile from the 2024 Superettan season
-
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
 
