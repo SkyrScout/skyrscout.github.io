@@ -11,7 +11,7 @@ site_added: "23.07.2026"
 position: Centre-Forward
 nationalities:
   - Kyrgyzstan
-birth_date:
+birth_date: "2008-08-27"
 height_cm: 183
 dominant_foot: "Right"
 two_footed_ability: "Strong"
@@ -19,7 +19,15 @@ positions:
   - role: "Centre-Forward"
     side: "centre"
     rank: 1
-
+  - role: "Second Striker"
+    side: "centre"
+    rank: 2
+  - role: "Left Winger"
+    side: "left"
+    rank: 3
+  - role: "Right Winger"
+    side: "right"
+    rank: 3
 summary: |
   🇰🇬 Umar Talantbekov | 17 y/o CF
   ⚡ Lightning pace & acceleration, constantly attacking the space in behind
