@@ -10,9 +10,9 @@ site_added: "23.07.2026"
 position: Centre-Forward
 nationalities:
   - Argentina
-birth_date:
+birth_date: "1999-12-08"
 height_cm: 182
-dominant_foot: 
+dominant_foot: "Right"
 two_footed_ability: "Reliable"
 positions:
   - role: "Centre-Forward"
