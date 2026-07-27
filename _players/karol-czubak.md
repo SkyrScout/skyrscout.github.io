@@ -34,6 +34,11 @@ summary: |
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
 
+  Karol Czubak is a highly effective goalscorer for Arka Gdynia in the Betclic 1. Liga, with 14 goals in 19 matches. He is consistent, clinical, and capable of dominating games with multiple goals.
+
+  His primary strength lies in finishing, and he is also a good header of the ball, making his 193 cm frame an additional threat in the penalty area. His dependency on service and limited involvement in build-up play suggest areas for improvement.
+
+  As a tall striker with room to grow, Czubak could develop into a more complete forward and excel at higher levels of competition.
 transfermarkt: "https://www.transfermarkt.com/karol-czubak/profil/spieler/622871"
 sofascore: "https://www.sofascore.com/football/player/karol-czubak/1006858#tab:season"
 
