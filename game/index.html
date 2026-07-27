@@ -75,9 +75,9 @@ robots: "noindex, nofollow"
 
         <section class="game-mode-bar" id="game-match-bar" hidden>
             <div>
-                <p class="game-beta-kicker">Match Lab · v0.8</p>
+                <p class="game-beta-kicker">Match Lab · v0.9</p>
                 <strong>Build-up → Breakthrough → Chance</strong>
-                <span>Structured draft, auto-drawn opponent, football context, YouTube Momentum and linked Short abilities.</span>
+                <span>Visible squads, player-vs-player duels, football context, YouTube Momentum and linked Short abilities.</span>
             </div>
             <button type="button" class="game-secondary-button" id="leave-match-lab">← Back to game menu</button>
         </section>
@@ -290,10 +290,10 @@ robots: "noindex, nofollow"
         <section class="game-match-lab" id="game-match-lab" hidden>
             <div class="game-section-heading">
                 <div>
-                    <p class="game-beta-kicker">v0.8 match-loop prototype</p>
+                    <p class="game-beta-kicker">v0.9 duel-presentation prototype</p>
                     <h2>Match Lab</h2>
                 </div>
-                <p>Five rounds. You attack, then the computer team replies. A player cannot be reused within the same attack.</p>
+                <p>Five rounds. You attack, then the computer team replies. Both squads stay visible and every phase resolves as a player-vs-player duel.</p>
             </div>
 
             <div class="game-instruction">
@@ -303,12 +303,33 @@ robots: "noindex, nofollow"
                 Linked Shorts remain one-use player signature abilities with their own Short Buzz.
             </div>
 
-            <div class="game-match-lineup" id="match-lineup-status">
-                <strong>Lineup:</strong> No drafted team loaded.
+            <div class="game-match-club-setup">
+                <label for="match-team-name-input">
+                    <span>Your club name</span>
+                    <input id="match-team-name-input" type="text" maxlength="36" placeholder="Type a club name">
+                </label>
+                <button type="button" class="game-secondary-button" id="match-generate-team-name">Generate name</button>
             </div>
 
-            <div class="game-match-opponent" id="match-opponent-status">
-                <strong>Opponent:</strong> will be drawn automatically.
+            <div class="game-match-squad-board" aria-label="Match squads">
+                <section class="game-match-squad game-match-squad-home">
+                    <div class="game-match-squad-head">
+                        <span>Your team</span>
+                        <strong id="match-home-team-name">Home XI</strong>
+                    </div>
+                    <div class="game-match-card-row" id="match-lineup-status"></div>
+                </section>
+
+                <div class="game-match-versus">VS</div>
+
+                <section class="game-match-squad game-match-squad-away">
+                    <div class="game-match-squad-head">
+                        <span>Computer team</span>
+                        <strong id="match-away-team-name">Opponent XI</strong>
+                    </div>
+                    <div class="game-match-card-row" id="match-opponent-status"></div>
+                    <p class="game-match-opponent-style" id="match-opponent-style">Opponent will be drawn automatically.</p>
+                </section>
             </div>
 
             <div class="game-match-scoreboard" aria-label="Match Lab score">
@@ -342,11 +363,32 @@ robots: "noindex, nofollow"
 
             <div class="game-match-choice-grid" id="match-choice-grid"></div>
 
+            <div class="game-duel-overlay" id="match-duel-overlay" hidden>
+                <div class="game-duel-shell" role="dialog" aria-modal="true" aria-labelledby="match-duel-title">
+                    <div class="game-duel-heading">
+                        <p class="game-beta-kicker" id="match-duel-phase">Player duel</p>
+                        <h3 id="match-duel-title">Match-up</h3>
+                    </div>
+
+                    <div class="game-duel-stage">
+                        <div class="game-duel-card-slot" id="match-duel-home"></div>
+                        <div class="game-duel-vs" aria-hidden="true">VS</div>
+                        <div class="game-duel-card-slot" id="match-duel-away"></div>
+                    </div>
+
+                    <div class="game-duel-event" id="match-duel-event"></div>
+                    <div class="game-duel-numbers" id="match-duel-numbers"></div>
+                    <div class="game-duel-result" id="match-duel-result"></div>
+
+                    <button type="button" id="match-duel-continue">Continue</button>
+                </div>
+            </div>
+
             <details class="game-match-rules">
                 <summary>What is provisional in this playtest?</summary>
-                <p><strong>Football base:</strong> position/class fit remains provisional. Height only has a situational effect here: defenders can gain extra resistance against an aerial opponent. Missing facts give no effect.</p>
+                <p><strong>Football base:</strong> position/class fit remains provisional. Each phase now assigns a visible opponent card, adding a small contextual resistance modifier. Height only has a situational effect where the current prototype explicitly recognises an aerial situation. Missing facts give no effect.</p>
                 <p><strong>YouTube:</strong> available long-form video data becomes a capped Momentum modifier. Missing metrics stay missing and produce no effect. Short views use a separate Buzz scale.</p>
-                <p><strong>Defence:</strong> every computer-team attack is reduced by your drafted defenders. A defender used in your preceding attack contributes only half resistance on the immediate reply.</p>
+                <p><strong>Defence:</strong> every computer-team attack shows a primary player-vs-player duel, while the full drafted defence still contributes resistance. A defender used in your preceding attack contributes only half resistance on the immediate reply.</p>
                 <p><strong>Scout:</strong> tiny prototype bonuses come from real <code>report_by</code> distribution. Bon Scout also gets a Short-creator bonus because all current Shorts are created by Bon Scout.</p>
                 <p><strong>Data bridge:</strong> structured player facts can later be read from <code>positions</code>, <code>height_cm</code>, <code>nationalities</code> and <code>game_traits</code>. If a field is absent, the engine does nothing with it.</p>
             </details>
@@ -461,6 +503,8 @@ robots: "noindex, nofollow"
                         data-game-traits-json="{{ player.game_traits | jsonify | escape }}"
                         data-birth-date="{{ player.birth_date | escape }}"
                         data-preferred-foot="{{ player.preferred_foot | escape }}"
+                        data-dominant-foot="{{ player.dominant_foot | escape }}"
+                        data-two-footed-ability="{{ player.two_footed_ability | escape }}"
                         data-card-class="{{ card_class | escape }}"
                         data-scout="{{ player.report_by | escape }}"
                         data-slug="{{ player.slug | default: player_name | slugify }}"

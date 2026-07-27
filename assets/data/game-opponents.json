@@ -1,8 +1,8 @@
 {
   "_meta": {
     "status": "prototype",
-    "updated": "2026-07-24",
-    "note": "Temporary computer-team pool for Match Lab v0.8. Opponents are auto-drawn. Names and balance are test data, not settled game design."
+    "updated": "2026-07-27",
+    "note": "Temporary tactical archetype pool for Match Lab v0.9. The computer club name and five-player squad are generated separately from the live SkyrScout card pool. Balance is provisional test data."
   },
   "teams": [
     {
