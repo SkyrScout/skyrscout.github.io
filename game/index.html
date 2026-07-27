@@ -16,8 +16,8 @@ robots: "noindex, nofollow"
             <h1>SkyrScout Card Game <span>Beta</span></h1>
             <p class="game-beta-intro">
                 Player cards are generated from SkyrScout profiles.
-                Game strength will be based on the performance and popularity of each
-                player's SkyrScout video — not our assessment of the player's football ability.
+                The experimental game engine combines structured scouting facts, supported profile traits
+                and SkyrScout video performance — with missing data always giving no effect.
             </p>
 
             <div class="game-beta-actions game-mode-actions">
@@ -42,7 +42,7 @@ robots: "noindex, nofollow"
                 <button type="button" class="game-secondary-button" id="open-match-lab">
                     <span class="game-action-label">Playtest</span>
                     <strong>Match Lab</strong>
-                    <small>Build an attack through football phases and trigger player signature abilities.</small>
+                    <small>Make football decisions with your five-player team and see the consequences.</small>
                 </button>
             </div>
         </header>
@@ -75,9 +75,9 @@ robots: "noindex, nofollow"
 
         <section class="game-mode-bar" id="game-match-bar" hidden>
             <div>
-                <p class="game-beta-kicker">Match Lab · v0.9</p>
-                <strong>Build-up → Breakthrough → Chance</strong>
-                <span>Visible squads, player-vs-player duels, football context, YouTube Momentum and linked Short abilities.</span>
+                <p class="game-beta-kicker">Match Lab · v0.10</p>
+                <strong>Football choices → player actions → consequences</strong>
+                <span>One-possession RPG playtest: make a football decision, choose the teammate, then live with the result.</span>
             </div>
             <button type="button" class="game-secondary-button" id="leave-match-lab">← Back to game menu</button>
         </section>
@@ -290,17 +290,15 @@ robots: "noindex, nofollow"
         <section class="game-match-lab" id="game-match-lab" hidden>
             <div class="game-section-heading">
                 <div>
-                    <p class="game-beta-kicker">v0.9 duel-presentation prototype</p>
+                    <p class="game-beta-kicker">v0.10 football-RPG playtest</p>
                     <h2>Match Lab</h2>
                 </div>
-                <p>Five rounds. You attack, then the computer team replies. Both squads stay visible and every phase resolves as a player-vs-player duel.</p>
+                <p>One possession at a time. Read the situation, choose what to do, choose who to involve, and see the cards resolve the football action.</p>
             </div>
 
-            <div class="game-instruction">
-                <strong>What are we testing?</strong>
-                Football context is the base: position/class fit, opponent style and situational facts such as defender height against aerial attacks.
-                Available long-form YouTube data adds a capped <strong>Momentum</strong> modifier; missing data gives <strong>no effect</strong>.
-                Linked Shorts remain one-use player signature abilities with their own Short Buzz.
+            <div class="game-instruction game-match-core-rule">
+                <strong>The only rule you need for this test</strong>
+                You have the ball. Choose a football action. If the action needs a teammate, choose who you are trying to find. Win the duel and the move continues. Lose it and the opponent can counter immediately.
             </div>
 
             <div class="game-match-club-setup">
@@ -332,41 +330,42 @@ robots: "noindex, nofollow"
                 </section>
             </div>
 
-            <div class="game-match-scoreboard" aria-label="Match Lab score">
-                <div><span>Rounds</span><strong id="match-attacks">0 / 5</strong></div>
+            <div class="game-match-scoreboard" aria-label="Playtest score">
+                <div><span>Possessions</span><strong id="match-attacks">0</strong></div>
                 <div><span>You</span><strong id="match-goals">0</strong></div>
                 <div><span>Opponent</span><strong id="match-opponent-goals">0</strong></div>
-                <div><span>Signatures</span><strong id="match-signatures">0</strong></div>
+                <div><span>Ball</span><strong id="match-signatures">Ready</strong></div>
             </div>
 
-            <div class="game-match-phase-strip" id="match-phase-strip" aria-label="Attack phases">
-                <span data-match-phase="build-up">1 · Build-up</span>
-                <span data-match-phase="breakthrough">2 · Breakthrough</span>
-                <span data-match-phase="chance">3 · Chance</span>
+            <div class="game-match-phase-strip game-match-field-strip" id="match-phase-strip" aria-label="Field position">
+                <span data-match-phase="own-half">OWN HALF</span>
+                <span data-match-phase="midfield">MIDFIELD</span>
+                <span data-match-phase="final-third">FINAL THIRD</span>
+                <span data-match-phase="box">BOX</span>
             </div>
 
             <div class="game-match-narrative" id="match-narrative">
-                <strong>Ready for the first attack.</strong>
-                <p>Start the playtest, then choose which player handles each phase.</p>
+                <strong>Ready to test one possession.</strong>
+                <p>Start the attack. The game will put the ball at the feet of a natural deep starter from your five-player team.</p>
             </div>
 
             <div class="game-match-actions">
-                <button type="button" id="start-match-attack">Start first attack</button>
-                <button type="button" class="game-secondary-button" id="reset-match-lab">Reset playtest</button>
+                <button type="button" id="start-match-attack">Start test attack</button>
+                <button type="button" class="game-secondary-button" id="reset-match-lab">Draw new opponent</button>
             </div>
 
             <div class="game-match-choice-heading" id="match-choice-heading" hidden>
                 <p class="game-beta-kicker">Your decision</p>
-                <h3 id="match-phase-title">Choose a player</h3>
+                <h3 id="match-phase-title">What do you do?</h3>
                 <p id="match-phase-help"></p>
             </div>
 
-            <div class="game-match-choice-grid" id="match-choice-grid"></div>
+            <div class="game-match-choice-grid game-match-rpg-choices" id="match-choice-grid"></div>
 
             <div class="game-duel-overlay" id="match-duel-overlay" hidden>
                 <div class="game-duel-shell" role="dialog" aria-modal="true" aria-labelledby="match-duel-title">
                     <div class="game-duel-heading">
-                        <p class="game-beta-kicker" id="match-duel-phase">Player duel</p>
+                        <p class="game-beta-kicker" id="match-duel-phase">Football duel</p>
                         <h3 id="match-duel-title">Match-up</h3>
                     </div>
 
@@ -385,12 +384,11 @@ robots: "noindex, nofollow"
             </div>
 
             <details class="game-match-rules">
-                <summary>What is provisional in this playtest?</summary>
-                <p><strong>Football base:</strong> position/class fit remains provisional. Each phase now assigns a visible opponent card, adding a small contextual resistance modifier. Height only has a situational effect where the current prototype explicitly recognises an aerial situation. Missing facts give no effect.</p>
-                <p><strong>YouTube:</strong> available long-form video data becomes a capped Momentum modifier. Missing metrics stay missing and produce no effect. Short views use a separate Buzz scale.</p>
-                <p><strong>Defence:</strong> every computer-team attack shows a primary player-vs-player duel, while the full drafted defence still contributes resistance. A defender used in your preceding attack contributes only half resistance on the immediate reply.</p>
-                <p><strong>Scout:</strong> tiny prototype bonuses come from real <code>report_by</code> distribution. Bon Scout also gets a Short-creator bonus because all current Shorts are created by Bon Scout.</p>
-                <p><strong>Data bridge:</strong> structured player facts can later be read from <code>positions</code>, <code>height_cm</code>, <code>nationalities</code> and <code>game_traits</code>. If a field is absent, the engine does nothing with it.</p>
+                <summary>What is this version actually testing?</summary>
+                <p><strong>Football first:</strong> the visible choice is the action — play through the centre, switch wide, go direct, combine, carry, cross, shoot, and so on. The old Build-up → Breakthrough → Chance buttons are gone.</p>
+                <p><strong>RPG underneath:</strong> the engine reads only traits it can support from the card data: position, height, dominant foot, two-footed ability, controlled phrases in the scouting summary, available YouTube Momentum and opponent context. Missing information gives no effect.</p>
+                <p><strong>Consequences:</strong> players can be involved more than once because they remain on the pitch. But their movement matters. A winger sent high before a turnover may suddenly have to sprint back and defend the counter.</p>
+                <p><strong>Still provisional:</strong> the numbers are deliberately lightweight. This version is meant to answer one question first: does making football decisions with these cards feel understandable and fun?</p>
             </details>
         </section>
 
@@ -501,6 +499,7 @@ robots: "noindex, nofollow"
                         data-height-cm="{{ player.height_cm | default: player.height | escape }}"
                         data-nationalities-json="{{ player.nationalities | jsonify | escape }}"
                         data-game-traits-json="{{ player.game_traits | jsonify | escape }}"
+                        data-summary="{{ player.summary | strip_newlines | escape }}"
                         data-birth-date="{{ player.birth_date | escape }}"
                         data-preferred-foot="{{ player.preferred_foot | escape }}"
                         data-dominant-foot="{{ player.dominant_foot | escape }}"

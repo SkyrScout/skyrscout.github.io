@@ -41,7 +41,7 @@
  * - Future Scout Influence can combine visible Scout stats with damped video reach.
  *
  * MATCH LAB / SIGNATURE ABILITIES:
- * - v0.9 keeps the tiny match loop but adds visible squads, direct card match-ups and a duel overlay: structured draft -> auto opponent -> attacks + opponent replies.
+ * - v0.10 replaces the abstract three-phase loop with a football-RPG possession test: situation -> football action -> teammate -> duel -> consequence.
  * - Signature abilities are linked player events sourced from Shorts, NOT drawable cards.
  * - One player may accumulate multiple linked Shorts / abilities over time.
  * - game-signature-events.json is a temporary bridge shaped like future generated data.
@@ -146,8 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let labDataLoaded = false;
     const labEdits = { a: {}, b: {} };
 
-    const MATCH_ATTACK_LIMIT = 5;
-    const MATCH_PHASES = ["build-up", "breakthrough", "chance"];
     const MATCH_DEMO_SLUGS = [
         "yacqub-finey",
         "sander-alamaa",
@@ -164,16 +162,20 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentOpponentLineup = [];
     let matchHomeClubName = "";
     let matchAwayClubName = "";
-    let matchCurrentOpponentCard = null;
-    let matchOpponentUsedPlayers = new Set();
     let matchOverlayContinueHandler = null;
     let matchAttackCount = 0;
     let matchGoalCount = 0;
     let matchOpponentGoalCount = 0;
-    let matchCurrentPhaseIndex = -1;
-    let matchAttackUsedPlayers = new Set();
-    let matchUsedSignatures = new Set();
     let matchAttackActive = false;
+
+    // v0.10 football-RPG possession state. Players remain on the pitch and may
+    // be involved repeatedly; their movement can affect the counter after a turnover.
+    let matchFieldZone = 0;
+    let matchBallCarrier = null;
+    let matchPendingAction = null;
+    let matchPendingTarget = null;
+    let matchPlayerStates = new Map();
+    let matchBallState = "Ready";
 
 
     const canTilt =
@@ -1377,264 +1379,312 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function signaturesForPlayer(slug, phase) {
-        return signatureEvents.filter(function (event) {
-            return event.player_slug === slug &&
-                event.phase === phase &&
-                !matchUsedSignatures.has(event.id);
-        });
-    }
-
-    function signatureBuzz(views) {
-        if (!Number.isFinite(Number(views))) {
-            return { bonus: 0, label: "Views pending · no effect" };
-        }
-
-        const value = Number(views);
-        if (value >= 50000) return { bonus: 8, label: "+8 Short Buzz" };
-        if (value >= 15000) return { bonus: 6, label: "+6 Short Buzz" };
-        if (value >= 5000) return { bonus: 4, label: "+4 Short Buzz" };
-        if (value >= 1000) return { bonus: 2, label: "+2 Short Buzz" };
-        return { bonus: 0, label: "No Short Buzz bonus" };
-    }
-
     function youtubeMomentum(card) {
         const data = Object.assign({}, cardSeedData(card), getStoredStats(card));
         const engine = calculateCardEngine(card, data);
 
         if (!Number.isFinite(engine.matchIndex)) {
-            return { bonus: 0, score: null, label: "YouTube data missing · no effect" };
+            return { bonus: 0, score: null, label: "YouTube: no effect" };
         }
 
         const bonus = clamp(Math.round((engine.matchIndex - 20) / 10), 0, 8);
         return {
             bonus: bonus,
             score: engine.matchIndex,
-            label: "+" + bonus + " YouTube Momentum"
+            label: bonus ? "+" + bonus + " Momentum" : "Momentum: no bonus"
         };
     }
 
-    function opponentPhasePenalty(phase) {
-        if (!currentOpponent || !currentOpponent.phase_penalties) return 0;
-        const value = Number(currentOpponent.phase_penalties[phase]);
-        return Number.isFinite(value) ? value : 0;
+    function cardSummaryText(card) {
+        return String(card && card.dataset.summary ? card.dataset.summary : "").toLowerCase();
     }
 
-    function phaseBaseChance(card, phase) {
-        const className = card.dataset.cardClass || "Controller";
-        const affinity = (phaseAffinity[phase] && phaseAffinity[phase][className]) || 1;
-        return clamp(Math.round(58 + (affinity - 1) * 100), 42, 76);
+    function traitHit(text, patterns, score) {
+        return patterns.some(function (pattern) { return text.includes(pattern); }) ? score : 0;
     }
 
-    function phaseOpponentFit(card, phase) {
+    function cardRpgTraits(card) {
+        const text = cardSummaryText(card);
+        const className = card ? (card.dataset.cardClass || "Controller") : "Controller";
+        const twoFooted = String(card && card.dataset.twoFootedAbility ? card.dataset.twoFootedAbility : "").toLowerCase();
+        const traits = {
+            pace: traitHit(text, ["quick", "fast", "pace", "acceleration", "speed"], 4),
+            power: traitHit(text, ["strong", "powerful", "physical", "strength"], 4),
+            passing: traitHit(text, ["passing", "passer", "distribution", "vision", "delivery", "crossing"], 4),
+            aerial: traitHit(text, ["aerial", "header", "heading", "in the air"], 4),
+            work: traitHit(text, ["pressing", "high press", "hardworking", "hard-working", "work rate", "relentless", "stamina", "engine"], 4),
+            dribble: traitHit(text, ["dribbl", "ball-carry", "ball carry", "1v1", "take players on", "close control"], 4),
+            finishing: traitHit(text, ["finishing", "goalscorer", "goal scorer", "goal threat", "clinical", "shooting", "strike"], 4),
+            technique: traitHit(text, ["technique", "technical", "composed", "control", "first touch"], 3)
+        };
+
+        if (className === "Controller") {
+            traits.passing += 2;
+            traits.technique += 1;
+        } else if (className === "Raider") {
+            traits.pace += 2;
+            traits.dribble += 2;
+        } else if (className === "Striker") {
+            traits.finishing += 3;
+            traits.power += 1;
+        } else if (className === "Engine") {
+            traits.work += 2;
+            traits.passing += 1;
+        } else if (className === "Tank") {
+            traits.power += 2;
+            traits.aerial += 2;
+        }
+
+        if (twoFooted === "reliable") traits.technique += 1;
+        if (twoFooted === "strong") traits.technique += 2;
+        if (twoFooted === "genuine") traits.technique += 3;
+
+        Object.keys(traits).forEach(function (key) {
+            traits[key] = clamp(traits[key], 0, 9);
+        });
+        return traits;
+    }
+
+    function cardSides(card) {
+        if (!card) return [];
+        try {
+            const parsed = JSON.parse(card.dataset.positionsJson || "[]");
+            if (!Array.isArray(parsed)) return [];
+            return parsed.map(function (item) { return String(item.side || "").toLowerCase(); }).filter(Boolean);
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function isWideCard(card) {
+        const position = cardDisplayPosition(card).toLowerCase();
+        const sides = cardSides(card);
+        return sides.includes("left") || sides.includes("right") || position.includes("wing") || position.includes("back");
+    }
+
+    function isCentralCard(card) {
+        const sides = cardSides(card);
+        return sides.includes("centre") || sides.includes("center") || !isWideCard(card);
+    }
+
+    function isAttackingCard(card) {
+        const position = cardDisplayPosition(card).toLowerCase();
         const category = cardDraftCategory(card);
-        const className = card.dataset.cardClass || "Controller";
-        const categoryFit = {
-            "build-up": { attacker: 3, midfielder: 3, defender: 1, wildcard: 1 },
-            breakthrough: { defender: 3, midfielder: 3, attacker: 1, wildcard: 1 },
-            chance: { defender: 4, midfielder: 2, attacker: 0, wildcard: 1 }
-        }[phase] || {};
+        return category === "attacker" || position.includes("forward") || position.includes("winger") || position.includes("striker");
+    }
 
-        let score = categoryFit[category] || 0;
-        if (phase === "build-up" && (className === "Raider" || className === "Striker" || className === "Controller")) score += 1;
-        if (phase === "breakthrough" && (className === "Engine" || className === "Controller" || className === "Tank")) score += 1;
-        if (phase === "chance" && (className === "Tank" || className === "Engine")) score += 2;
+    function isDefensiveCard(card) {
+        return cardDraftCategory(card) === "defender";
+    }
+
+    function fieldLabel(zone) {
+        return ["OWN HALF", "MIDFIELD", "FINAL THIRD", "BOX"][clamp(zone, 0, 3)];
+    }
+
+    function initialisePlayerStates() {
+        matchPlayerStates = new Map();
+        matchDemoCards().forEach(function (card) {
+            matchPlayerStates.set(cardSlug(card), "normal");
+        });
+    }
+
+    function setPlayerState(card, state) {
+        if (!card) return;
+        matchPlayerStates.set(cardSlug(card), state);
+    }
+
+    function getPlayerState(card) {
+        if (!card) return "normal";
+        return matchPlayerStates.get(cardSlug(card)) || "normal";
+    }
+
+    function naturalStarterScore(card) {
+        const traits = cardRpgTraits(card);
+        const category = cardDraftCategory(card);
+        let score = traits.passing + traits.technique;
+        if (category === "defender") score += 8;
+        else if (category === "midfielder") score += 5;
+        else score -= 2;
         return score;
     }
 
-    function selectOpponentForPhase(phase) {
-        if (!currentOpponentLineup.length) return null;
-        const unused = currentOpponentLineup.filter(function (card) {
-            return !matchOpponentUsedPlayers.has(cardSlug(card));
-        });
-        const pool = unused.length ? unused : currentOpponentLineup.slice();
-        let best = -Infinity;
-        pool.forEach(function (card) {
-            best = Math.max(best, phaseOpponentFit(card, phase));
-        });
-        const bestCards = pool.filter(function (card) {
-            return phaseOpponentFit(card, phase) === best;
-        });
-        const offset = Math.max(0, matchAttackCount + MATCH_PHASES.indexOf(phase));
-        return bestCards[offset % bestCards.length] || pool[0] || null;
+    function chooseNaturalStarter() {
+        const lineup = matchDemoCards().slice();
+        lineup.sort(function (a, b) { return naturalStarterScore(b) - naturalStarterScore(a); });
+        return lineup[0] || null;
     }
 
-    function signatureIsAerial(signature) {
-        if (!signature) return false;
-        const tags = Array.isArray(signature.event_tags) ? signature.event_tags : [];
-        return tags.some(function (tag) {
-            return ["header", "heading", "aerial", "cross"].includes(String(tag).toLowerCase());
-        });
+    function matchActionsForZone(zone) {
+        if (zone <= 0) {
+            return [
+                { id: "centre", title: "PLAY THROUGH THE CENTRE", description: "Keep it on the deck and find a central teammate.", needsTarget: true, target: "central", duel: "carrier", base: 58, advance: 1, actorTraits: ["passing", "technique"], targetTraits: ["technique", "passing"] },
+                { id: "wide", title: "SWITCH WIDE", description: "Move the defence and release a player on the flank.", needsTarget: true, target: "wide", duel: "carrier", base: 55, advance: 1, actorTraits: ["passing", "technique"], targetTraits: ["pace", "dribble"], targetState: "advanced" },
+                { id: "direct", title: "GO DIRECT", description: "Skip the press and hit a forward early.", needsTarget: true, target: "attacker", duel: "target", base: 48, advance: 2, actorTraits: ["passing", "power"], targetTraits: ["aerial", "power"], targetState: "advanced", aerial: true }
+            ];
+        }
+        if (zone === 1) {
+            return [
+                { id: "combine", title: "PLAY A ONE-TWO", description: "Use a teammate to combine through midfield.", needsTarget: true, target: "any", duel: "carrier", base: 60, advance: 1, actorTraits: ["passing", "technique"], targetTraits: ["passing", "technique"] },
+                { id: "release", title: "RELEASE THE WINGER", description: "Send a wide player into space behind the next line.", needsTarget: true, target: "wide", duel: "target", base: 54, advance: 1, actorTraits: ["passing", "technique"], targetTraits: ["pace", "dribble"], targetState: "advanced" },
+                { id: "carry", title: "DRIVE FORWARD", description: "Keep the ball and attack the space yourself.", needsTarget: false, duel: "carrier", base: 55, advance: 1, actorTraits: ["dribble", "pace", "power"], targetTraits: [], targetState: "advanced" }
+            ];
+        }
+        if (zone === 2) {
+            return [
+                { id: "through", title: "SLIP A THROUGH BALL", description: "Try to send a runner in behind the defence.", needsTarget: true, target: "attacker", duel: "target", base: 50, advance: 1, actorTraits: ["passing", "technique"], targetTraits: ["pace", "finishing"], targetState: "advanced" },
+                { id: "cross", title: "CROSS INTO THE BOX", description: "Deliver early and attack the aerial duel.", needsTarget: true, target: "attacker", duel: "target", base: 47, advance: 1, actorTraits: ["passing", "technique"], targetTraits: ["aerial", "power"], targetState: "advanced", aerial: true },
+                { id: "long-shot", title: "SHOOT FROM RANGE", description: "Back the player on the ball to beat the defence from distance.", needsTarget: false, duel: "carrier", base: 34, advance: 0, actorTraits: ["finishing", "power", "technique"], targetTraits: [], scoresOnSuccess: true }
+            ];
+        }
+        return [
+            { id: "finish", title: "TAKE THE SHOT", description: "The player on the ball takes responsibility.", needsTarget: false, duel: "carrier", base: 56, advance: 0, actorTraits: ["finishing", "technique"], targetTraits: [], scoresOnSuccess: true },
+            { id: "square", title: "SQUARE IT", description: "Pass across goal to a teammate arriving in the box.", needsTarget: true, target: "attacker", duel: "target", base: 58, advance: 0, actorTraits: ["passing", "technique"], targetTraits: ["finishing", "technique"], targetState: "advanced", scoresOnSuccess: true },
+            { id: "far-post", title: "CLIP TO THE FAR POST", description: "Put it in the air and trust the target to win the duel.", needsTarget: true, target: "attacker", duel: "target", base: 50, advance: 0, actorTraits: ["passing", "technique"], targetTraits: ["aerial", "power"], targetState: "advanced", aerial: true, scoresOnSuccess: true }
+        ];
     }
 
-    function opponentPlayerResistance(card, phase, signature) {
-        if (!card) return { bonus: 0, reasons: ["No direct opponent card"] };
+    function eligibleTargets(action) {
+        const lineup = matchDemoCards().filter(function (card) { return card !== matchBallCarrier; });
+        let filtered = lineup;
+        if (action.target === "wide") filtered = lineup.filter(isWideCard);
+        else if (action.target === "central") filtered = lineup.filter(isCentralCard);
+        else if (action.target === "attacker") filtered = lineup.filter(isAttackingCard);
+        if (!filtered.length) filtered = lineup;
+        return filtered;
+    }
 
-        const category = cardDraftCategory(card);
-        const className = card.dataset.cardClass || "Controller";
-        const baseByPhase = {
-            "build-up": { defender: 1, midfielder: 2, attacker: 2, wildcard: 1 },
-            breakthrough: { defender: 2, midfielder: 2, attacker: 1, wildcard: 1 },
-            chance: { defender: 3, midfielder: 1, attacker: 0, wildcard: 1 }
-        }[phase] || {};
-
-        let value = baseByPhase[category] || 0;
-        const reasons = value ? ["+" + value + " positional resistance"] : [];
-
-        if (phase === "chance" && className === "Tank") {
-            value += 2;
-            reasons.push("+2 Tank");
-        } else if ((phase === "breakthrough" || phase === "chance") && className === "Engine") {
-            value += 1;
-            reasons.push("+1 Engine");
-        } else if ((phase === "build-up" || phase === "breakthrough") && className === "Controller") {
-            value += 1;
-            reasons.push("+1 Controller");
-        } else if ((phase === "build-up" || phase === "breakthrough") && className === "Raider") {
-            value += 1;
-            reasons.push("+1 Raider");
-        } else if (phase === "build-up" && className === "Striker") {
-            value += 1;
-            reasons.push("+1 Striker press");
-        }
-
-        const momentum = youtubeMomentum(card);
-        const momentumResistance = Math.round(momentum.bonus * 0.25);
-        if (momentumResistance) {
-            value += momentumResistance;
-            reasons.push("+" + momentumResistance + " momentum");
-        } else if (momentum.score === null) {
-            reasons.push("YouTube: no effect");
-        }
-
-        if (phase === "chance" && signatureIsAerial(signature)) {
-            const height = cardHeightCm(card);
-            if (Number.isFinite(height)) {
-                if (height >= 195) {
-                    value += 2;
-                    reasons.push("+2 height vs aerial");
-                } else if (height >= 188) {
-                    value += 1;
-                    reasons.push("+1 height vs aerial");
-                }
+    function actionTraitBonus(card, keys, scale) {
+        const traits = cardRpgTraits(card);
+        const details = [];
+        let sum = 0;
+        (keys || []).forEach(function (key) {
+            const value = traits[key] || 0;
+            if (value > 0) {
+                const bonus = Math.max(1, Math.round(value * (scale || 0.65)));
+                sum += bonus;
+                details.push(key.charAt(0).toUpperCase() + key.slice(1) + " +" + bonus);
             }
-        }
-
-        return {
-            bonus: clamp(value, 0, 6),
-            reasons: reasons.length ? reasons : ["No extra card resistance"]
-        };
+        });
+        return { bonus: clamp(sum, 0, 12), details: details };
     }
 
-    function phaseChanceParts(card, phase, signature, opponentCard) {
-        const base = phaseBaseChance(card, phase);
-        const momentum = youtubeMomentum(card);
-        const scout = scoutInfluence(card, signature);
-        const opponentPenalty = opponentPhasePenalty(phase);
-        const opponentResistance = opponentPlayerResistance(opponentCard, phase, signature);
-        let signatureBonus = 0;
-        let buzz = { bonus: 0, label: "" };
+    function heightAerialBonus(card) {
+        const height = cardHeightCm(card);
+        if (!Number.isFinite(height)) return { bonus: 0, detail: "" };
+        if (height >= 198) return { bonus: 5, detail: height + " cm +5" };
+        if (height >= 193) return { bonus: 4, detail: height + " cm +4" };
+        if (height >= 188) return { bonus: 3, detail: height + " cm +3" };
+        if (height >= 183) return { bonus: 1, detail: height + " cm +1" };
+        return { bonus: 0, detail: height + " cm" };
+    }
 
-        if (signature) {
-            signatureBonus = 10;
-            buzz = signatureBuzz(signature.views);
+    function opponentCardScore(card, action) {
+        if (!card) return 0;
+        const traits = cardRpgTraits(card);
+        let score = 5;
+        if (action.aerial) {
+            score += traits.aerial + Math.round(traits.power * 0.5);
+            score += heightAerialBonus(card).bonus;
+        } else if (action.id === "long-shot" || action.id === "finish" || action.id === "square") {
+            score += isDefensiveCard(card) ? 5 : 1;
+            score += Math.round((traits.power + traits.aerial + traits.work) * 0.35);
+        } else {
+            score += Math.round((traits.work + traits.pace + traits.technique) * 0.4);
+            if (cardDraftCategory(card) === "midfielder") score += 2;
+            if (isDefensiveCard(card)) score += 1;
         }
+        const momentum = youtubeMomentum(card);
+        score += Math.round(momentum.bonus * 0.25);
+        return clamp(score, 3, 18);
+    }
 
+    function selectOpponentForAction(action) {
+        if (!currentOpponentLineup.length) return null;
+        let pool;
+        if (action.aerial || action.scoresOnSuccess || action.duel === "target") {
+            pool = currentOpponentLineup.filter(isDefensiveCard);
+        } else {
+            pool = currentOpponentLineup.filter(function (card) {
+                return cardDraftCategory(card) === "midfielder" || cardDraftCategory(card) === "attacker";
+            });
+        }
+        if (!pool.length) pool = currentOpponentLineup.slice();
+        return pool.slice().sort(function (a, b) {
+            return opponentCardScore(b, action) - opponentCardScore(a, action);
+        })[0] || null;
+    }
+
+    function actionResolution(action, target) {
+        const carrier = matchBallCarrier;
+        const actor = action.duel === "target" && target ? target : carrier;
+        const opponentCard = selectOpponentForAction(action);
+        const actorPart = actionTraitBonus(carrier, action.actorTraits, 0.55);
+        const targetPart = target ? actionTraitBonus(target, action.targetTraits, 0.45) : { bonus: 0, details: [] };
+        const momentum = youtubeMomentum(actor || carrier);
+        const scout = scoutInfluence(actor || carrier, null);
+        const height = action.aerial && target ? heightAerialBonus(target) : { bonus: 0, detail: "" };
+        const resistance = opponentCardScore(opponentCard, action);
+        const total = clamp(
+            action.base + actorPart.bonus + targetPart.bonus + height.bonus + Math.round(momentum.bonus * 0.6) + scout.bonus - resistance,
+            18,
+            88
+        );
         return {
-            base: base,
+            carrier: carrier,
+            actor: actor,
+            target: target,
+            opponent: opponentCard,
+            actorPart: actorPart,
+            targetPart: targetPart,
             momentum: momentum,
             scout: scout,
-            opponentPenalty: opponentPenalty,
-            opponentResistance: opponentResistance,
-            signatureBonus: signatureBonus,
-            buzz: buzz,
-            total: clamp(
-                base + momentum.bonus + scout.bonus + signatureBonus + buzz.bonus - opponentPenalty - opponentResistance.bonus,
-                5,
-                95
-            )
+            height: height,
+            resistance: resistance,
+            chance: total
         };
     }
 
-    function phaseDisplayName(phase) {
+    function actionEventText(action, resolution) {
+        const carrierName = resolution.carrier ? (resolution.carrier.dataset.name || "The player") : "The player";
+        const targetName = resolution.target ? (resolution.target.dataset.name || "a teammate") : "";
+        const opponentName = resolution.opponent ? (resolution.opponent.dataset.name || "the opponent") : "the opponent";
+        const lines = {
+            centre: carrierName + " tries to play through the middle towards " + targetName + ". " + opponentName + " steps up to press the pass.",
+            wide: carrierName + " looks across the pitch and tries to release " + targetName + " on the flank. " + opponentName + " reads the switch.",
+            direct: carrierName + " goes long towards " + targetName + ". " + targetName + " has to win the duel against " + opponentName + ".",
+            combine: carrierName + " tries to combine quickly with " + targetName + " through midfield. " + opponentName + " attacks the passing lane.",
+            release: carrierName + " releases " + targetName + " into the channel. " + opponentName + " turns to chase.",
+            carry: carrierName + " keeps the ball and drives straight at " + opponentName + ".",
+            through: carrierName + " slips the ball in behind for " + targetName + ". " + opponentName + " tries to track the run.",
+            cross: carrierName + " delivers into the box. " + targetName + " attacks the ball against " + opponentName + ".",
+            "long-shot": carrierName + " sees the opening and lets fly from distance. " + opponentName + " tries to close the shot.",
+            finish: carrierName + " is in the box and takes the shot. " + opponentName + " makes the last defensive move.",
+            square: carrierName + " squares the ball across goal for " + targetName + ". " + opponentName + " tries to cut it out.",
+            "far-post": carrierName + " clips the ball to the far post. " + targetName + " rises against " + opponentName + "."
+        };
+        return lines[action.id] || carrierName + " tries the next action.";
+    }
+
+    function actionSuccessText(action, resolution) {
+        const carrierName = resolution.carrier ? (resolution.carrier.dataset.name || "The player") : "The player";
+        const targetName = resolution.target ? (resolution.target.dataset.name || "The teammate") : carrierName;
+        if (action.scoresOnSuccess) return targetName + " FINDS THE NET!";
         return {
-            "build-up": "BUILD-UP",
-            breakthrough: "BREAKTHROUGH",
-            chance: "CHANCE"
-        }[phase] || String(phase || "").toUpperCase();
+            centre: targetName + " receives cleanly. The press is broken.",
+            wide: targetName + " controls on the flank and drives the move forward.",
+            direct: targetName + " wins it and brings the attack into the final third.",
+            combine: targetName + " completes the combination. Space opens ahead.",
+            release: targetName + " gets beyond the next line and attacks the final third.",
+            carry: carrierName + " beats the first challenge and keeps going.",
+            through: targetName + " gets in behind and reaches the box.",
+            cross: targetName + " wins the aerial duel and gets the ball under control in the box."
+        }[action.id] || "The move continues.";
     }
 
-    function phaseHelpText(phase, opponentCard) {
-        const opponentText = currentOpponent
-            ? " " + matchAwayClubName + " play " + currentOpponent.style + "."
-            : "";
-        const duelText = opponentCard
-            ? " Direct match-up: " + (opponentCard.dataset.name || "Opponent") + " (" +
-                (opponentCard.dataset.cardClass || "Controller") + " · " + cardDisplayPosition(opponentCard) + ")."
-            : "";
-
-        return ({
-            "build-up": "Controllers and Engines are natural fits. Get the move started without losing possession.",
-            breakthrough: "Raiders are strongest here. Beat the next line and create danger.",
-            chance: "Strikers are natural finishers, but a matching signature ability can create a special route to goal."
-        }[phase] || "Choose the player who fits this phase best.") + opponentText + duelText;
-    }
-
-    function normalActionText(card, phase, opponentCard) {
-        const name = card.dataset.name || "The player";
-        const opponentName = opponentCard ? (opponentCard.dataset.name || "the opponent") : "the opponent";
-        return {
-            "build-up": name + " takes the first touch and tries to play through " + opponentName + "'s pressure.",
-            breakthrough: name + " drives at the next line. " + opponentName + " steps across to close the route.",
-            chance: name + " gets the final action. " + opponentName + " makes the last defensive move."
-        }[phase] || name + " takes the next action against " + opponentName + ".";
-    }
-
-    function successTransition(phase, card, opponentCard, signature) {
-        const name = card.dataset.name || "The player";
-        const opponentName = opponentCard ? (opponentCard.dataset.name || "the opponent") : "the opponent";
-        if (signature) {
-            return phase === "chance"
-                ? name + " lands the signature move. GOAL!"
-                : name + " lands the signature move and wins the duel.";
-        }
-        return {
-            "build-up": name + " wins the first duel and plays through " + opponentName + ".",
-            breakthrough: name + " gets beyond " + opponentName + ". The defence is opening.",
-            chance: name + " wins the duel and FINDS THE NET!"
-        }[phase] || "Success.";
-    }
-
-    function failureTransition(phase, card, opponentCard) {
-        const name = card.dataset.name || "The player";
-        const opponentName = opponentCard ? (opponentCard.dataset.name || "The opponent") : "The opponent";
-        return {
-            "build-up": opponentName + " reads the move and forces " + name + " into the turnover.",
-            breakthrough: opponentName + " shuts the route. Possession is gone.",
-            chance: opponentName + " gets enough on it. The chance is stopped."
-        }[phase] || "Possession is lost.";
-    }
-
-    function renderMatchScoreboard() {
-        if (matchAttacks) matchAttacks.textContent = matchAttackCount + " / " + MATCH_ATTACK_LIMIT;
-        if (matchGoals) matchGoals.textContent = String(matchGoalCount);
-        if (matchOpponentGoals) matchOpponentGoals.textContent = String(matchOpponentGoalCount);
-        if (matchSignatures) matchSignatures.textContent = String(matchUsedSignatures.size);
-    }
-
-    function renderMatchPhaseStrip() {
-        if (!matchPhaseStrip) return;
-
-        const currentPhase = MATCH_PHASES[matchCurrentPhaseIndex];
-        Array.from(matchPhaseStrip.querySelectorAll("[data-match-phase]")).forEach(function (item) {
-            const phase = item.dataset.matchPhase;
-            const phaseIndex = MATCH_PHASES.indexOf(phase);
-            item.classList.toggle("is-current", phase === currentPhase && matchAttackActive);
-            item.classList.toggle(
-                "is-complete",
-                matchAttackActive && phaseIndex >= 0 && phaseIndex < matchCurrentPhaseIndex
-            );
-        });
+    function actionFailureText(action, resolution) {
+        const actorName = resolution.actor ? (resolution.actor.dataset.name || "The player") : "The player";
+        const opponentName = resolution.opponent ? (resolution.opponent.dataset.name || "The opponent") : "The opponent";
+        return opponentName + " wins it from " + actorName + ". TURNOVER!";
     }
 
     function renderDuelCard(container, card, labelText) {
@@ -1684,7 +1734,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         matchOverlayContinueHandler = onContinue;
-        if (matchDuelPhase) matchDuelPhase.textContent = config.phaseLabel || "PLAYER DUEL";
+        if (matchDuelPhase) matchDuelPhase.textContent = config.phaseLabel || "FOOTBALL DUEL";
         if (matchDuelTitle) matchDuelTitle.textContent = config.title || "Match-up";
         renderDuelCard(matchDuelHome, config.homeCard, config.homeLabel || matchHomeClubName || "YOUR TEAM");
         renderDuelCard(matchDuelAway, config.awayCard, config.awayLabel || matchAwayClubName || "OPPONENT");
@@ -1726,419 +1776,309 @@ document.addEventListener("DOMContentLoaded", function () {
         if (matchDuelContinueButton) matchDuelContinueButton.focus();
     }
 
-    function defenderContribution(card, attackType) {
-        if (cardDraftCategory(card) !== "defender") return null;
-
-        const className = card.dataset.cardClass || "Controller";
-        const height = cardHeightCm(card);
-        const momentum = youtubeMomentum(card);
-        const slug = cardSlug(card);
-        const usedInAttack = matchAttackUsedPlayers.has(slug);
-
-        let football = 7;
-        const reasons = ["7 defender"];
-
-        if (className === "Tank") {
-            football += 4;
-            reasons.push("+4 Tank");
-        } else if (className === "Engine") {
-            football += 3;
-            reasons.push("+3 Engine");
-        }
-
-        if (attackType === "aerial" && Number.isFinite(height)) {
-            let heightBonus = 0;
-            if (height >= 195) heightBonus = 5;
-            else if (height >= 188) heightBonus = 3;
-            else if (height >= 183) heightBonus = 1;
-            if (heightBonus) {
-                football += heightBonus;
-                reasons.push("+" + heightBonus + " height vs aerial");
-            }
-        }
-
-        let total = football + Math.round(momentum.bonus * 0.5);
-        if (momentum.bonus) reasons.push("+" + Math.round(momentum.bonus * 0.5) + " momentum");
-        else if (momentum.score === null) reasons.push("YouTube: no effect");
-
-        if (usedInAttack) {
-            total = Math.round(total * 0.5);
-            reasons.push("×0.5 used in attack");
-        }
-
-        return {
-            card: card,
-            name: card.dataset.name || "Defender",
-            total: total,
-            reasons: reasons,
-            height: height,
-            momentum: momentum
-        };
+    function renderMatchScoreboard() {
+        if (matchAttacks) matchAttacks.textContent = String(matchAttackCount);
+        if (matchGoals) matchGoals.textContent = String(matchGoalCount);
+        if (matchOpponentGoals) matchOpponentGoals.textContent = String(matchOpponentGoalCount);
+        if (matchSignatures) matchSignatures.textContent = matchBallState;
     }
 
-    function teamDefensiveEffect() {
-        const attackType = currentOpponent ? currentOpponent.attack_type : "balanced";
-        const contributions = matchDemoCards()
-            .map(function (card) { return defenderContribution(card, attackType); })
-            .filter(Boolean)
-            .sort(function (a, b) { return b.total - a.total; });
-
-        return {
-            total: contributions.reduce(function (sum, item) { return sum + item.total; }, 0),
-            contributions: contributions,
-            primary: contributions[0] || null
-        };
-    }
-
-    function opponentAttackCard() {
-        if (!currentOpponentLineup.length) return null;
-        const attackType = currentOpponent ? currentOpponent.attack_type : "balanced";
-        let pool = currentOpponentLineup.filter(function (card) {
-            return cardDraftCategory(card) === "attacker";
+    function renderMatchPhaseStrip() {
+        if (!matchPhaseStrip) return;
+        const zones = ["own-half", "midfield", "final-third", "box"];
+        Array.from(matchPhaseStrip.querySelectorAll("[data-match-phase]")).forEach(function (item) {
+            const index = zones.indexOf(item.dataset.matchPhase);
+            item.classList.toggle("is-current", matchAttackActive && index === matchFieldZone);
+            item.classList.toggle("is-complete", matchAttackActive && index >= 0 && index < matchFieldZone);
         });
-        if (!pool.length) {
-            pool = currentOpponentLineup.filter(function (card) {
-                return cardDraftCategory(card) === "midfielder";
+    }
+
+
+    function setDecisionHeading(title, help) {
+        if (matchChoiceHeading) matchChoiceHeading.hidden = false;
+        if (matchPhaseTitle) matchPhaseTitle.textContent = title;
+        if (matchPhaseHelp) matchPhaseHelp.textContent = help || "";
+    }
+
+    function renderActionChoices() {
+        if (!matchAttackActive || !matchBallCarrier || !matchChoiceGrid) return;
+        matchPendingAction = null;
+        matchPendingTarget = null;
+        matchChoiceGrid.innerHTML = "";
+        const carrierName = matchBallCarrier.dataset.name || "Your player";
+        setDecisionHeading(
+            carrierName + " has the ball · " + fieldLabel(matchFieldZone),
+            "Choose what " + carrierName + " should try next."
+        );
+
+        matchActionsForZone(matchFieldZone).forEach(function (action) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "game-match-rpg-action";
+            button.innerHTML = '<span class="game-match-action-label">' + action.title + '</span>' +
+                '<strong>' + action.description + '</strong>' +
+                '<small>Uses: ' + action.actorTraits.concat(action.targetTraits).map(function (item) {
+                    return item.charAt(0).toUpperCase() + item.slice(1);
+                }).filter(function (item, index, all) { return all.indexOf(item) === index; }).join(" · ") + '</small>';
+            button.addEventListener("click", function () {
+                matchPendingAction = action;
+                if (action.needsTarget) renderTargetChoices(action);
+                else resolveFootballAction(action, null);
+            });
+            matchChoiceGrid.appendChild(button);
+        });
+    }
+
+    function targetHint(card, action) {
+        const traits = cardRpgTraits(card);
+        const hints = [];
+        if (action.aerial) {
+            const height = cardHeightCm(card);
+            if (Number.isFinite(height)) hints.push(height + " cm");
+            if (traits.aerial) hints.push("Aerial +" + traits.aerial);
+        } else {
+            action.targetTraits.forEach(function (key) {
+                if (traits[key]) hints.push(key.charAt(0).toUpperCase() + key.slice(1) + " +" + traits[key]);
             });
         }
-        if (!pool.length) pool = currentOpponentLineup.slice();
-
-        if (attackType === "aerial") {
-            return pool.slice().sort(function (a, b) {
-                return (cardHeightCm(b) || 0) - (cardHeightCm(a) || 0);
-            })[0];
-        }
-
-        return pool[(matchAttackCount - 1 + pool.length) % pool.length] || pool[0];
+        if (!hints.length) hints.push(cardDisplayPosition(card) || "No extra trait data");
+        return hints.slice(0, 3).join(" · ");
     }
 
-    function finishRoundControls() {
+    function renderTargetChoices(action) {
+        if (!matchChoiceGrid || !matchBallCarrier) return;
+        const targets = eligibleTargets(action);
+        matchChoiceGrid.innerHTML = "";
+        setDecisionHeading(
+            action.title + " · who are you trying to find?",
+            (matchBallCarrier.dataset.name || "The player") + " has the ball. Choose the teammate for this action."
+        );
+
+        const back = document.createElement("button");
+        back.type = "button";
+        back.className = "game-match-rpg-back";
+        back.textContent = "← Choose a different action";
+        back.addEventListener("click", renderActionChoices);
+        matchChoiceGrid.appendChild(back);
+
+        targets.forEach(function (card) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "game-match-rpg-target";
+            const image = cardThumbnail(card);
+            button.innerHTML = (image ? '<img src="' + image + '" alt="">' : '') +
+                '<span><strong>' + (card.dataset.name || "Player") + '</strong>' +
+                '<small>' + targetHint(card, action) + '</small></span>';
+            button.addEventListener("click", function () {
+                matchPendingTarget = card;
+                if (action.targetState) setPlayerState(card, action.targetState);
+                resolveFootballAction(action, card);
+            });
+            matchChoiceGrid.appendChild(button);
+        });
+    }
+
+    function appendMatchEvent(title, text, className) {
+        if (!matchNarrative) return;
+        matchNarrative.insertAdjacentHTML(
+            "beforeend",
+            '<div class="game-match-rpg-log ' + (className || "") + '"><strong>' + title + '</strong><p>' + text + '</p></div>'
+        );
+    }
+
+    function finishPossession(message) {
+        matchAttackActive = false;
+        matchBallCarrier = null;
+        matchPendingAction = null;
+        matchPendingTarget = null;
+        matchBallState = "Dead";
         renderMatchScoreboard();
         renderMatchPhaseStrip();
-        matchCurrentOpponentCard = null;
-        renderOpponentStatus();
         renderMatchLineupStatus();
-
-        if (!startMatchAttackButton) return;
-        if (matchAttackCount >= MATCH_ATTACK_LIMIT) {
-            startMatchAttackButton.disabled = true;
-            startMatchAttackButton.textContent = "Playtest complete";
-            if (matchNarrative) {
-                matchNarrative.insertAdjacentHTML(
-                    "beforeend",
-                    '<div class="game-match-final"><strong>Final score: ' +
-                    matchGoalCount + '–' + matchOpponentGoalCount +
-                    ' vs ' + (matchAwayClubName || 'Opponent') +
-                    '.</strong></div>'
-                );
-            }
-        } else {
+        renderOpponentStatus();
+        if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
+        if (matchChoiceHeading) matchChoiceHeading.hidden = true;
+        if (message) appendMatchEvent("POSSESSION OVER", message, "is-ended");
+        if (startMatchAttackButton) {
             startMatchAttackButton.disabled = false;
-            startMatchAttackButton.textContent = "Start next attack";
+            startMatchAttackButton.textContent = "Run another attack";
         }
     }
 
-    function resolveOpponentAttack(onComplete) {
-        if (!currentOpponent) {
-            onComplete();
-            return;
+    function recoveryScore(card) {
+        const traits = cardRpgTraits(card);
+        let score = traits.pace + traits.work + Math.round(traits.power * 0.5);
+        if (isDefensiveCard(card)) score += 6;
+        else if (cardDraftCategory(card) === "midfielder") score += 2;
+        if (getPlayerState(card) === "advanced") score -= 3;
+        return score;
+    }
+
+    function opponentCounterAttacker() {
+        const pool = currentOpponentLineup.filter(function (card) {
+            return cardDraftCategory(card) === "attacker" || cardDraftCategory(card) === "midfielder";
+        });
+        const list = pool.length ? pool : currentOpponentLineup;
+        return list.slice().sort(function (a, b) {
+            const at = cardRpgTraits(a); const bt = cardRpgTraits(b);
+            return (bt.pace + bt.finishing + bt.dribble) - (at.pace + at.finishing + at.dribble);
+        })[0] || null;
+    }
+
+    function resolveCounter(turnoverTarget) {
+        const lineup = matchDemoCards();
+        const attacker = opponentCounterAttacker();
+        let defender = turnoverTarget || null;
+        if (!defender) {
+            defender = lineup.slice().sort(function (a, b) { return recoveryScore(b) - recoveryScore(a); })[0] || null;
         }
 
-        const defence = teamDefensiveEffect();
-        const baseAttack = Number.isFinite(Number(currentOpponent.attack)) ? Number(currentOpponent.attack) : 44;
-        const chance = clamp(baseAttack - defence.total, 8, 78);
+        const attackerTraits = cardRpgTraits(attacker);
+        const defenderTraits = cardRpgTraits(defender);
+        const attackerScore = 8 + attackerTraits.pace + attackerTraits.dribble + Math.round(attackerTraits.finishing * 0.5);
+        let defenderScore = 8 + recoveryScore(defender);
+        const caughtHigh = defender && getPlayerState(defender) === "advanced";
+        const stopChance = clamp(52 + defenderScore - attackerScore, 20, 82);
         const roll = Math.floor(Math.random() * 100) + 1;
-        const scored = roll <= chance;
-        const attackingCard = opponentAttackCard();
-        const homeLineup = matchDemoCards();
-        const primaryCard = defence.primary ? defence.primary.card : (homeLineup[0] || null);
-        const attackerName = attackingCard ? (attackingCard.dataset.name || "Opponent attacker") : matchAwayClubName;
-        const defenderName = primaryCard ? (primaryCard.dataset.name || "Your defender") : "Your defence";
-        const eventText = attackerName + " leads the reply. " + defenderName + " is the first player into the defensive duel.";
-        const resultText = scored
-            ? attackerName + " breaks through. " + matchAwayClubName + " score."
-            : defenderName + " and the defensive unit kill the attack.";
+        const stopped = roll <= stopChance;
+        const attackerName = attacker ? (attacker.dataset.name || "Opponent attacker") : matchAwayClubName;
+        const defenderName = defender ? (defender.dataset.name || "Your player") : "Your defence";
+        const eventText = caughtHigh
+            ? defenderName + " had already pushed forward for the move and now has to sprint back as " + attackerName + " breaks into the space."
+            : attackerName + " breaks immediately after the turnover. " + defenderName + " is the first player able to engage.";
 
-        if (startMatchAttackButton) {
-            startMatchAttackButton.disabled = true;
-            startMatchAttackButton.textContent = "Opponent reply in progress";
-        }
+        matchBallState = matchAwayClubName;
+        renderMatchScoreboard();
+        renderMatchLineupStatus(defender ? cardSlug(defender) : "");
+        renderOpponentStatus(attacker ? cardSlug(attacker) : "");
 
         showMatchDuel({
-            phaseLabel: "OPPONENT REPLY · " + (currentOpponent.style || "ATTACK"),
-            title: attackerName + " vs " + defenderName,
-            homeCard: primaryCard,
-            awayCard: attackingCard,
+            phaseLabel: "TURNOVER · COUNTER ATTACK",
+            title: defenderName + " vs " + attackerName,
+            homeCard: defender,
+            awayCard: attacker,
             homeLabel: matchHomeClubName,
             awayLabel: matchAwayClubName,
             eventText: eventText,
-            success: !scored,
-            resultText: resultText,
+            success: stopped,
+            resultText: stopped ? defenderName + " RECOVERS AND STOPS THE COUNTER!" : attackerName + " BREAKS THROUGH AND SCORES!",
             numbers: [
-                { label: "Opponent attack", value: String(baseAttack), detail: currentOpponent.style },
-                { label: "Team resistance", value: "−" + defence.total, detail: defence.contributions.length ? defence.contributions.map(function (item) { return item.name + " −" + item.total; }).join(" · ") : "No defender effect" },
-                { label: "Scoring chance", value: chance + "%", emphasis: true },
-                { label: "Roll", value: String(roll), detail: roll + (scored ? " ≤ " : " > ") + chance }
+                { label: "Recovery", value: String(defenderScore), detail: caughtHigh ? "Caught high −3 · pace/work can recover" : "Position + pace + work rate" },
+                { label: "Counter threat", value: String(attackerScore), detail: "Pace · dribbling · finishing" },
+                { label: "Stop chance", value: stopChance + "%", emphasis: true },
+                { label: "Roll", value: String(roll), detail: roll + (stopped ? " ≤ " : " > ") + stopChance }
             ]
         }, function () {
             closeMatchDuel();
-            if (scored) matchOpponentGoalCount += 1;
-
-            if (matchNarrative) {
-                const defenderLines = defence.contributions.length
-                    ? defence.contributions.map(function (item) {
-                        return item.name + " −" + item.total + " (" + item.reasons.join(", ") + ")";
-                    }).join(" · ")
-                    : "No defender effect";
-
-                matchNarrative.insertAdjacentHTML(
-                    "beforeend",
-                    '<div class="game-match-opponent-play ' + (scored ? 'is-goal' : 'is-stopped') + '">' +
-                        '<div class="game-match-play-head"><strong>' + matchAwayClubName + ' · ' + attackerName + '</strong>' +
-                        '<span>' + roll + ' / ' + chance + '%</span></div>' +
-                        '<p>' + currentOpponent.style + '. Defensive resistance: ' + defenderLines + '.</p>' +
-                        '<p class="game-match-transition"><strong>' +
-                            (scored ? 'Opponent scores.' : 'Your defence stops the attack.') +
-                        '</strong></p>' +
-                    '</div>'
-                );
-            }
-
-            renderMatchScoreboard();
-            onComplete();
+            if (!stopped) matchOpponentGoalCount += 1;
+            appendMatchEvent(
+                stopped ? "COUNTER STOPPED" : "GOAL · " + matchAwayClubName,
+                stopped ? defenderName + " gets back and kills the break." : attackerName + " punishes the turnover.",
+                stopped ? "is-success" : "is-failure"
+            );
+            finishPossession(stopped ? "The counter is over." : "The turnover ends in an opponent goal.");
         });
     }
 
-    function finishMatchAttack(message, scored) {
-        matchAttackActive = false;
-        matchAttackCount += 1;
-        if (scored) matchGoalCount += 1;
-
-        if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
-        if (matchChoiceHeading) matchChoiceHeading.hidden = true;
-
-        if (matchNarrative) {
-            matchNarrative.insertAdjacentHTML(
-                "beforeend",
-                '<div class="game-match-outcome ' + (scored ? 'is-goal' : 'is-ended') + '">' +
-                    '<strong>' + message + '</strong>' +
-                '</div>'
-            );
-        }
-
-        renderMatchScoreboard();
-        renderMatchPhaseStrip();
-        resolveOpponentAttack(finishRoundControls);
-    }
-
-    function resolveMatchAction(card, phase, signature) {
-        if (!matchAttackActive) return;
-
-        const slug = cardSlug(card);
-        if (matchAttackUsedPlayers.has(slug)) return;
-
-        const opponentCard = matchCurrentOpponentCard || selectOpponentForPhase(phase);
-        const parts = phaseChanceParts(card, phase, signature, opponentCard);
+    function resolveFootballAction(action, target) {
+        if (!matchAttackActive || !matchBallCarrier) return;
+        const resolution = actionResolution(action, target);
         const roll = Math.floor(Math.random() * 100) + 1;
-        const success = roll <= parts.total;
-        const actionText = signature ? signature.description : normalActionText(card, phase, opponentCard);
-        const resultText = success
-            ? successTransition(phase, card, opponentCard, signature)
-            : failureTransition(phase, card, opponentCard);
-        const opponentName = opponentCard ? (opponentCard.dataset.name || "Opponent") : "Opponent";
-        const numbers = [
-            { label: "Football base", value: String(parts.base), detail: (card.dataset.cardClass || "Controller") + " phase fit" },
-            { label: "Momentum", value: "+" + parts.momentum.bonus, detail: parts.momentum.label },
-            { label: "Scout", value: "+" + parts.scout.bonus, detail: parts.scout.labels.length ? parts.scout.labels.join(" · ") : "No scout effect" }
-        ];
+        const success = roll <= resolution.chance;
+        const duelHome = resolution.actor || matchBallCarrier;
+        const duelHomeName = duelHome ? (duelHome.dataset.name || "Your player") : "Your player";
+        const opponentName = resolution.opponent ? (resolution.opponent.dataset.name || "Opponent") : "Opponent";
+        const modifiers = resolution.actorPart.details.concat(resolution.targetPart.details);
+        if (resolution.height.detail) modifiers.push("Height " + resolution.height.detail);
+        if (resolution.momentum.bonus) modifiers.push(resolution.momentum.label);
+        if (resolution.scout.bonus) modifiers.push("Scout +" + resolution.scout.bonus);
 
-        if (signature) {
-            numbers.push({ label: "Signature", value: "+" + (parts.signatureBonus + parts.buzz.bonus), detail: "+" + parts.signatureBonus + " ability · " + parts.buzz.label });
-        }
-        numbers.push(
-            { label: "Team style", value: "−" + parts.opponentPenalty, detail: currentOpponent ? currentOpponent.style : "No phase penalty" },
-            { label: opponentName, value: "−" + parts.opponentResistance.bonus, detail: parts.opponentResistance.reasons.join(" · ") },
-            { label: "Success chance", value: parts.total + "%", emphasis: true },
-            { label: "Roll", value: String(roll), detail: roll + (success ? " ≤ " : " > ") + parts.total }
-        );
+        renderMatchLineupStatus(duelHome ? cardSlug(duelHome) : "");
+        renderOpponentStatus(resolution.opponent ? cardSlug(resolution.opponent) : "");
 
         showMatchDuel({
-            phaseLabel: phaseDisplayName(phase),
-            title: (card.dataset.name || "Player") + " vs " + opponentName,
-            homeCard: card,
-            awayCard: opponentCard,
+            phaseLabel: fieldLabel(matchFieldZone) + " · " + action.title,
+            title: duelHomeName + " vs " + opponentName,
+            homeCard: duelHome,
+            awayCard: resolution.opponent,
             homeLabel: matchHomeClubName,
             awayLabel: matchAwayClubName,
-            eventText: actionText,
-            numbers: numbers,
+            eventText: actionEventText(action, resolution),
             success: success,
-            resultText: resultText
+            resultText: success ? actionSuccessText(action, resolution) : actionFailureText(action, resolution),
+            numbers: [
+                { label: "Action base", value: String(action.base), detail: action.title },
+                { label: "Your modifiers", value: modifiers.length ? "+" + (resolution.actorPart.bonus + resolution.targetPart.bonus + resolution.height.bonus + Math.round(resolution.momentum.bonus * 0.6) + resolution.scout.bonus) : "+0", detail: modifiers.length ? modifiers.join(" · ") : "No supported extra trait data" },
+                { label: "Opponent resistance", value: "−" + resolution.resistance, detail: opponentName },
+                { label: "Success chance", value: resolution.chance + "%", emphasis: true },
+                { label: "Roll", value: String(roll), detail: roll + (success ? " ≤ " : " > ") + resolution.chance }
+            ]
         }, function () {
             closeMatchDuel();
-            matchAttackUsedPlayers.add(slug);
-            if (opponentCard) matchOpponentUsedPlayers.add(cardSlug(opponentCard));
-            if (signature) matchUsedSignatures.add(signature.id);
-            renderMatchScoreboard();
-            renderMatchLineupStatus(slug);
-            renderOpponentStatus(opponentCard ? cardSlug(opponentCard) : "");
-
-            if (matchNarrative) {
-                const modifiers = [
-                    "Football " + parts.base,
-                    parts.momentum.label,
-                    parts.scout.labels.length ? parts.scout.labels.join(" + ") : "Scout: no effect",
-                    parts.opponentPenalty ? "Team style −" + parts.opponentPenalty : "Team style: no phase penalty",
-                    opponentName + " −" + parts.opponentResistance.bonus
-                ];
-                if (signature) modifiers.push("Signature +" + parts.signatureBonus + " · " + parts.buzz.label);
-
-                matchNarrative.insertAdjacentHTML(
-                    "beforeend",
-                    '<div class="game-match-play">' +
-                        '<div class="game-match-play-head"><strong>' +
-                            phaseDisplayName(phase) + ' · ' + (card.dataset.name || "Player") + ' vs ' + opponentName +
-                        '</strong><span>' + roll + ' / ' + parts.total + '%</span></div>' +
-                        '<p>' + actionText + '</p>' +
-                        (signature ? '<span class="game-match-signature-used">Signature: ' + signature.title + ' · ' + parts.buzz.label + '</span>' : '') +
-                        '<p class="game-match-modifiers">' + modifiers.join(' · ') + '</p>' +
-                        '<p class="game-match-transition">' + resultText + '</p>' +
-                    '</div>'
-                );
-            }
+            appendMatchEvent(
+                action.title,
+                success ? actionSuccessText(action, resolution) : actionFailureText(action, resolution),
+                success ? "is-success" : "is-failure"
+            );
 
             if (!success) {
-                finishMatchAttack("Attack ended.", false);
+                matchBallState = matchAwayClubName;
+                renderMatchScoreboard();
+                resolveCounter(target || null);
                 return;
             }
 
-            if (phase === "chance") {
-                finishMatchAttack("Goal scored.", true);
+            if (action.scoresOnSuccess) {
+                matchGoalCount += 1;
+                matchBallState = "GOAL";
+                renderMatchScoreboard();
+                finishPossession(matchHomeClubName + " score.");
                 return;
             }
 
-            matchCurrentPhaseIndex += 1;
-            matchCurrentOpponentCard = null;
-            renderMatchPhase();
+            if (target) {
+                setPlayerState(matchBallCarrier, matchFieldZone === 0 ? "deep" : "normal");
+                matchBallCarrier = target;
+            } else if (action.targetState) {
+                setPlayerState(matchBallCarrier, action.targetState);
+            }
+
+            matchFieldZone = clamp(matchFieldZone + action.advance, 0, 3);
+            setPlayerState(matchBallCarrier, matchFieldZone >= 2 ? "advanced" : (matchFieldZone === 0 ? "deep" : "normal"));
+            matchBallState = matchHomeClubName;
+            renderMatchScoreboard();
+            renderMatchPhaseStrip();
+            renderMatchLineupStatus(matchBallCarrier ? cardSlug(matchBallCarrier) : "");
+            renderOpponentStatus();
+            renderActionChoices();
         });
-    }
-
-    function renderMatchChoice(card, phase) {
-        const slug = cardSlug(card);
-        const used = matchAttackUsedPlayers.has(slug);
-        const className = card.dataset.cardClass || "Controller";
-        const opponentCard = matchCurrentOpponentCard;
-        const normalParts = phaseChanceParts(card, phase, null, opponentCard);
-        const signatures = signaturesForPlayer(slug, phase);
-        const opponentName = opponentCard ? (opponentCard.dataset.name || "Opponent") : "Opponent";
-
-        const article = document.createElement("article");
-        article.className = "game-match-choice" + (used ? " is-used" : "");
-
-        const heading = document.createElement("div");
-        heading.className = "game-match-choice-top";
-        heading.innerHTML =
-            '<div><strong>' + (card.dataset.name || "Player") + '</strong>' +
-            '<span>' + className + ' · ' + cardDisplayPosition(card) + '</span></div>' +
-            '<b>' + normalParts.total + '%</b>';
-        article.appendChild(heading);
-
-        const dataLine = document.createElement("p");
-        dataLine.className = "game-match-data-line";
-        dataLine.textContent =
-            "Football " + normalParts.base +
-            " · " + normalParts.momentum.label +
-            " · vs " + opponentName + " −" + normalParts.opponentResistance.bonus +
-            (normalParts.opponentPenalty ? " · style −" + normalParts.opponentPenalty : "") +
-            (normalParts.scout.bonus ? " · scout +" + normalParts.scout.bonus : "");
-        article.appendChild(dataLine);
-
-        const normalButton = document.createElement("button");
-        normalButton.type = "button";
-        normalButton.className = "game-match-play-button";
-        normalButton.disabled = used;
-        normalButton.textContent = used ? "Already used this attack" : "Play action vs " + opponentName;
-        normalButton.addEventListener("click", function () {
-            resolveMatchAction(card, phase, null);
-        });
-        article.appendChild(normalButton);
-
-        signatures.forEach(function (signature) {
-            const parts = phaseChanceParts(card, phase, signature, opponentCard);
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "game-match-signature-button";
-            button.disabled = used;
-            button.innerHTML =
-                '<span>★ ' + signature.title + '</span>' +
-                '<small>' + signature.event_category + ' · ' + parts.total + '% · ' + parts.buzz.label + '</small>';
-            button.addEventListener("click", function () {
-                resolveMatchAction(card, phase, signature);
-            });
-            article.appendChild(button);
-
-            const description = document.createElement("p");
-            description.className = "game-match-signature-preview";
-            description.textContent = signature.description;
-            article.appendChild(description);
-        });
-
-        if (!signatures.length) {
-            const noSignature = document.createElement("p");
-            noSignature.className = "game-match-no-signature";
-            noSignature.textContent = "No unused linked Short ability for this phase.";
-            article.appendChild(noSignature);
-        }
-
-        return article;
-    }
-
-    function renderMatchPhase() {
-        if (!matchAttackActive) return;
-
-        const phase = MATCH_PHASES[matchCurrentPhaseIndex];
-        if (!matchCurrentOpponentCard) {
-            matchCurrentOpponentCard = selectOpponentForPhase(phase);
-        }
-        const opponentName = matchCurrentOpponentCard
-            ? (matchCurrentOpponentCard.dataset.name || "Opponent")
-            : "Opponent";
-
-        renderMatchPhaseStrip();
-        renderOpponentStatus(matchCurrentOpponentCard ? cardSlug(matchCurrentOpponentCard) : "");
-        renderMatchLineupStatus();
-
-        if (matchChoiceHeading) matchChoiceHeading.hidden = false;
-        if (matchPhaseTitle) matchPhaseTitle.textContent = phaseDisplayName(phase) + " · choose one player vs " + opponentName;
-        if (matchPhaseHelp) matchPhaseHelp.textContent = phaseHelpText(phase, matchCurrentOpponentCard);
-        if (matchChoiceGrid) {
-            matchChoiceGrid.innerHTML = "";
-            matchDemoCards().forEach(function (card) {
-                matchChoiceGrid.appendChild(renderMatchChoice(card, phase));
-            });
-        }
     }
 
     function startMatchAttack() {
-        if (matchAttackActive || matchAttackCount >= MATCH_ATTACK_LIMIT) return;
-
+        if (matchAttackActive) return;
+        matchAttackCount += 1;
         matchAttackActive = true;
-        matchCurrentPhaseIndex = 0;
-        matchAttackUsedPlayers = new Set();
-        matchOpponentUsedPlayers = new Set();
-        matchCurrentOpponentCard = null;
+        matchFieldZone = 0;
+        matchPendingAction = null;
+        matchPendingTarget = null;
+        initialisePlayerStates();
+        matchBallCarrier = chooseNaturalStarter();
+        setPlayerState(matchBallCarrier, "deep");
+        matchBallState = matchHomeClubName;
 
         if (startMatchAttackButton) {
             startMatchAttackButton.disabled = true;
             startMatchAttackButton.textContent = "Attack in progress";
         }
-
         if (matchNarrative) {
-            matchNarrative.innerHTML =
-                '<strong>Attack ' + (matchAttackCount + 1) + ' begins against ' + matchAwayClubName + '.</strong>' +
-                '<p>Build the move one phase at a time. The computer assigns a direct opponent for each phase. A defender used in your attack only gives half resistance on the opponent reply.</p>';
+            matchNarrative.innerHTML = '<strong>POSSESSION ' + matchAttackCount + ' · ' + matchHomeClubName + ' have the ball.</strong>' +
+                '<p>' + (matchBallCarrier ? (matchBallCarrier.dataset.name || "Your player") : "Your team") + ' starts the move in your own half. Choose what to do with the ball.</p>';
         }
-
-        renderMatchPhase();
+        renderMatchScoreboard();
+        renderMatchPhaseStrip();
+        renderMatchLineupStatus(matchBallCarrier ? cardSlug(matchBallCarrier) : "");
+        renderOpponentStatus();
+        renderActionChoices();
     }
 
     function resetMatchLab() {
@@ -2146,12 +2086,13 @@ document.addEventListener("DOMContentLoaded", function () {
         matchAttackCount = 0;
         matchGoalCount = 0;
         matchOpponentGoalCount = 0;
-        matchCurrentPhaseIndex = -1;
-        matchAttackUsedPlayers = new Set();
-        matchOpponentUsedPlayers = new Set();
-        matchUsedSignatures = new Set();
-        matchCurrentOpponentCard = null;
         matchAttackActive = false;
+        matchFieldZone = 0;
+        matchBallCarrier = null;
+        matchPendingAction = null;
+        matchPendingTarget = null;
+        matchBallState = "Ready";
+        initialisePlayerStates();
         ensureHomeClubName();
         drawOpponent();
 
@@ -2163,13 +2104,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (matchChoiceGrid) matchChoiceGrid.innerHTML = "";
         if (matchChoiceHeading) matchChoiceHeading.hidden = true;
         if (matchNarrative) {
-            matchNarrative.innerHTML =
-                '<strong>Ready for the first attack.</strong>' +
-                '<p>' + matchAwayClubName + ' were drawn automatically. Both five-player squads are visible above. Missing player facts or YouTube data give no effect.</p>';
+            matchNarrative.innerHTML = '<strong>Ready to test one possession.</strong>' +
+                '<p>' + matchAwayClubName + ' have been drawn. Start the attack, then make football choices with the player who has the ball.</p>';
         }
         if (startMatchAttackButton) {
             startMatchAttackButton.disabled = false;
-            startMatchAttackButton.textContent = "Start first attack";
+            startMatchAttackButton.textContent = "Start test attack";
         }
     }
 
@@ -2219,7 +2159,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cardLab) cardLab.hidden = true;
         if (matchLab) matchLab.hidden = false;
 
-        await Promise.all([loadSignatureEvents(), loadOpponentTeams(), loadGameVideoStats()]);
+        await Promise.all([loadOpponentTeams(), loadGameVideoStats()]);
         resetMatchLab();
 
         if (matchBar) {

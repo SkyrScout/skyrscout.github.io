@@ -2169,3 +2169,164 @@ body.game-duel-open {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* =========================
+   Match Lab v0.10
+   Football choice + RPG consequence prototype
+   ========================= */
+
+.game-match-core-rule {
+    margin-bottom: 18px;
+    border-left: 4px solid #53c8ee;
+}
+
+.game-match-field-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.game-match-rpg-choices {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+.game-match-rpg-action,
+.game-match-rpg-target,
+.game-match-rpg-back {
+    min-width: 0;
+    color: #eaf1f4;
+    font: inherit;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.game-match-rpg-action {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    min-height: 150px;
+    padding: 17px;
+}
+
+.game-match-rpg-action:hover,
+.game-match-rpg-target:hover {
+    transform: translateY(-3px);
+    border-color: rgba(83, 200, 238, 0.55);
+    background: rgba(83, 200, 238, 0.065);
+}
+
+.game-match-rpg-action .game-match-action-label {
+    color: #53c8ee;
+    font-size: 0.76rem;
+    font-weight: 950;
+    letter-spacing: 0.06em;
+}
+
+.game-match-rpg-action strong {
+    color: #f6f9fa;
+    font-size: 0.96rem;
+    line-height: 1.45;
+}
+
+.game-match-rpg-action small {
+    align-self: end;
+    color: #7f9099;
+    font-size: 0.69rem;
+    line-height: 1.45;
+}
+
+.game-match-rpg-target {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px;
+}
+
+.game-match-rpg-target img {
+    flex: 0 0 82px;
+    width: 82px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.game-match-rpg-target span,
+.game-match-rpg-target strong,
+.game-match-rpg-target small {
+    display: block;
+    min-width: 0;
+}
+
+.game-match-rpg-target strong {
+    color: #f3f8fa;
+    font-size: 0.9rem;
+}
+
+.game-match-rpg-target small {
+    margin-top: 5px;
+    color: #84949d;
+    font-size: 0.68rem;
+    line-height: 1.4;
+}
+
+.game-match-rpg-back {
+    grid-column: 1 / -1;
+    padding: 10px 13px;
+    color: #9fb0b8;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.game-match-rpg-log {
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.game-match-rpg-log strong {
+    color: #f1f6f8;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.game-match-rpg-log.is-success strong {
+    color: #aeeec4;
+}
+
+.game-match-rpg-log.is-failure strong,
+.game-match-rpg-log.is-ended strong {
+    color: #efb8bb;
+}
+
+.game-match-rpg-log p {
+    margin: 4px 0 0;
+    color: #aab8bf;
+}
+
+@media (max-width: 850px) {
+    .game-match-rpg-choices {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .game-match-field-strip {
+        grid-template-columns: repeat(4, minmax(74px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .game-match-field-strip span {
+        padding: 9px 7px;
+        font-size: 0.62rem;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .game-match-rpg-action {
+        min-height: 0;
+    }
+}
