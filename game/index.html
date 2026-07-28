@@ -75,11 +75,11 @@ robots: "noindex, nofollow"
 
         <section class="game-mode-bar" id="game-match-bar" hidden>
             <div>
-                <p class="game-beta-kicker">Match Lab · v0.10</p>
-                <strong>Football choices → player actions → consequences</strong>
-                <span>One-possession RPG playtest: make a football decision, choose the teammate, then live with the result.</span>
+                <p class="game-beta-kicker">Match Lab · v0.11</p>
+                <strong>Team combinations → football actions → RPG outcomes</strong>
+                <span>Full-screen playtest: one match, one clock, one live decision area.</span>
             </div>
-            <button type="button" class="game-secondary-button" id="leave-match-lab">← Back to game menu</button>
+            <button type="button" class="game-secondary-button" id="leave-match-lab-bar">← Back to game menu</button>
         </section>
 
         <section class="game-draw-zone game-scout-zone" id="scout-zone" hidden>
@@ -287,85 +287,83 @@ robots: "noindex, nofollow"
             </section>
         </section>
 
-        <section class="game-match-lab" id="game-match-lab" hidden>
-            <div class="game-section-heading">
-                <div>
-                    <p class="game-beta-kicker">v0.10 football-RPG playtest</p>
-                    <h2>Match Lab</h2>
+        <section class="game-match-lab game-match-window" id="game-match-lab" hidden>
+            <header class="game-match-window-top">
+                <button type="button" class="game-match-window-back" id="leave-match-lab">← Menu</button>
+
+                <div class="game-match-scoreline" aria-label="Match score">
+                    <span class="game-match-club game-match-club-home" id="match-home-team-name">Home XI</span>
+                    <strong id="match-goals">0</strong>
+                    <span class="game-match-clock" id="match-minute">R1/5</span>
+                    <strong id="match-opponent-goals">0</strong>
+                    <span class="game-match-club game-match-club-away" id="match-away-team-name">Opponent XI</span>
                 </div>
-                <p>One possession at a time. Read the situation, choose what to do, choose who to involve, and see the cards resolve the football action.</p>
-            </div>
 
-            <div class="game-instruction game-match-core-rule">
-                <strong>The only rule you need for this test</strong>
-                You have the ball. Choose a football action. If the action needs a teammate, choose who you are trying to find. Win the duel and the move continues. Lose it and the opponent can counter immediately.
-            </div>
+                <div class="game-match-window-tools">
+                    <button type="button" class="game-match-window-engine" id="match-engine-open">Engine</button>
+                    <button type="button" class="game-match-window-reset" id="reset-match-lab">New match</button>
+                </div>
+            </header>
 
-            <div class="game-match-club-setup">
-                <label for="match-team-name-input">
-                    <span>Your club name</span>
-                    <input id="match-team-name-input" type="text" maxlength="36" placeholder="Type a club name">
-                </label>
-                <button type="button" class="game-secondary-button" id="match-generate-team-name">Generate name</button>
-            </div>
+            <section class="game-match-line game-match-line-away" aria-label="Opponent team">
+                <div class="game-match-line-label">
+                    <span>COMPUTER</span>
+                    <strong id="match-opponent-style">Opponent will be drawn automatically.</strong>
+                </div>
+                <div class="game-match-card-row" id="match-opponent-status"></div>
+            </section>
 
-            <div class="game-match-squad-board" aria-label="Match squads">
-                <section class="game-match-squad game-match-squad-home">
-                    <div class="game-match-squad-head">
-                        <span>Your team</span>
-                        <strong id="match-home-team-name">Home XI</strong>
+            <main class="game-match-live" id="match-live-panel">
+                <div class="game-match-turn-banner" id="match-turn-banner">
+                    <span id="match-round-label">ROUND 1 / 5</span>
+                    <strong id="match-turn-label">YOUR ATTACK</strong>
+                </div>
+
+                <div class="game-match-field-strip" id="match-phase-strip" aria-label="Field position">
+                    <span data-match-phase="own-half">OWN HALF</span>
+                    <span data-match-phase="midfield">MIDFIELD</span>
+                    <span data-match-phase="final-third">FINAL THIRD</span>
+                    <span data-match-phase="box">BOX</span>
+                </div>
+
+                <div class="game-match-current" id="match-narrative" aria-live="polite">
+                    <span class="game-match-now">NOW</span>
+                    <strong>Ready for kick-off.</strong>
+                    <p>Start the match. Your five cards stay on the pitch; their traits, combinations and YouTube strength shape the actions you can use.</p>
+                </div>
+
+                <div class="game-match-choice-heading" id="match-choice-heading" hidden>
+                    <p class="game-beta-kicker">Your decision</p>
+                    <h3 id="match-phase-title">What do you do?</h3>
+                    <p id="match-phase-help"></p>
+                </div>
+
+                <div class="game-match-choice-grid game-match-rpg-choices" id="match-choice-grid"></div>
+
+                <div class="game-match-actions game-match-start-actions" id="match-start-actions">
+                    <button type="button" id="start-match-attack">Kick off</button>
+                    <div class="game-match-club-setup">
+                        <label for="match-team-name-input">
+                            <span>Your club</span>
+                            <input id="match-team-name-input" type="text" maxlength="36" placeholder="Club name">
+                        </label>
+                        <button type="button" class="game-secondary-button" id="match-generate-team-name">Generate</button>
                     </div>
-                    <div class="game-match-card-row" id="match-lineup-status"></div>
-                </section>
+                </div>
+            </main>
 
-                <div class="game-match-versus">VS</div>
-
-                <section class="game-match-squad game-match-squad-away">
-                    <div class="game-match-squad-head">
-                        <span>Computer team</span>
-                        <strong id="match-away-team-name">Opponent XI</strong>
-                    </div>
-                    <div class="game-match-card-row" id="match-opponent-status"></div>
-                    <p class="game-match-opponent-style" id="match-opponent-style">Opponent will be drawn automatically.</p>
-                </section>
-            </div>
-
-            <div class="game-match-scoreboard" aria-label="Playtest score">
-                <div><span>Possessions</span><strong id="match-attacks">0</strong></div>
-                <div><span>You</span><strong id="match-goals">0</strong></div>
-                <div><span>Opponent</span><strong id="match-opponent-goals">0</strong></div>
-                <div><span>Ball</span><strong id="match-signatures">Ready</strong></div>
-            </div>
-
-            <div class="game-match-phase-strip game-match-field-strip" id="match-phase-strip" aria-label="Field position">
-                <span data-match-phase="own-half">OWN HALF</span>
-                <span data-match-phase="midfield">MIDFIELD</span>
-                <span data-match-phase="final-third">FINAL THIRD</span>
-                <span data-match-phase="box">BOX</span>
-            </div>
-
-            <div class="game-match-narrative" id="match-narrative">
-                <strong>Ready to test one possession.</strong>
-                <p>Start the attack. The game will put the ball at the feet of a natural deep starter from your five-player team.</p>
-            </div>
-
-            <div class="game-match-actions">
-                <button type="button" id="start-match-attack">Start test attack</button>
-                <button type="button" class="game-secondary-button" id="reset-match-lab">Draw new opponent</button>
-            </div>
-
-            <div class="game-match-choice-heading" id="match-choice-heading" hidden>
-                <p class="game-beta-kicker">Your decision</p>
-                <h3 id="match-phase-title">What do you do?</h3>
-                <p id="match-phase-help"></p>
-            </div>
-
-            <div class="game-match-choice-grid game-match-rpg-choices" id="match-choice-grid"></div>
+            <section class="game-match-line game-match-line-home" aria-label="Your team">
+                <div class="game-match-line-label">
+                    <span>YOUR TEAM</span>
+                    <strong id="match-signatures">KICK-OFF</strong>
+                </div>
+                <div class="game-match-card-row" id="match-lineup-status"></div>
+            </section>
 
             <div class="game-duel-overlay" id="match-duel-overlay" hidden>
                 <div class="game-duel-shell" role="dialog" aria-modal="true" aria-labelledby="match-duel-title">
                     <div class="game-duel-heading">
-                        <p class="game-beta-kicker" id="match-duel-phase">Football duel</p>
+                        <p class="game-beta-kicker" id="match-duel-phase">Football action</p>
                         <h3 id="match-duel-title">Match-up</h3>
                     </div>
 
@@ -383,13 +381,37 @@ robots: "noindex, nofollow"
                 </div>
             </div>
 
-            <details class="game-match-rules">
-                <summary>What is this version actually testing?</summary>
-                <p><strong>Football first:</strong> the visible choice is the action — play through the centre, switch wide, go direct, combine, carry, cross, shoot, and so on. The old Build-up → Breakthrough → Chance buttons are gone.</p>
-                <p><strong>RPG underneath:</strong> the engine reads only traits it can support from the card data: position, height, dominant foot, two-footed ability, controlled phrases in the scouting summary, available YouTube Momentum and opponent context. Missing information gives no effect.</p>
-                <p><strong>Consequences:</strong> players can be involved more than once because they remain on the pitch. But their movement matters. A winger sent high before a turnover may suddenly have to sprint back and defend the counter.</p>
-                <p><strong>Still provisional:</strong> the numbers are deliberately lightweight. This version is meant to answer one question first: does making football decisions with these cards feel understandable and fun?</p>
-            </details>
+            <div class="game-engine-overlay" id="match-engine-overlay" hidden>
+                <section class="game-engine-shell" role="dialog" aria-modal="true" aria-labelledby="match-engine-title">
+                    <header class="game-engine-head">
+                        <div>
+                            <p class="game-beta-kicker">DEV / TEST WINDOW</p>
+                            <h3 id="match-engine-title">Under the hood</h3>
+                            <p>Raw YouTube inputs, derived card power and the exact calculation used for the latest event.</p>
+                        </div>
+                        <button type="button" id="match-engine-close">Close</button>
+                    </header>
+                    <div class="game-engine-meta" id="match-engine-meta"></div>
+                    <section class="game-engine-current">
+                        <h4>Latest outcome calculation</h4>
+                        <div id="match-engine-current">No match event has been resolved yet.</div>
+                    </section>
+                    <section class="game-engine-rosters">
+                        <div>
+                            <h4>Your cards</h4>
+                            <div id="match-engine-home"></div>
+                        </div>
+                        <div>
+                            <h4>Opponent cards</h4>
+                            <div id="match-engine-away"></div>
+                        </div>
+                    </section>
+                    <section class="game-engine-shorts">
+                        <h4>Signature Shorts in this match</h4>
+                        <div id="match-engine-signatures"></div>
+                    </section>
+                </section>
+            </div>
         </section>
 
         <section class="game-card-pool" id="game-card-pool" hidden>

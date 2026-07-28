@@ -2330,3 +2330,608 @@ body.game-duel-open {
         min-height: 0;
     }
 }
+
+
+/* ============================================================
+   Match Lab v0.11 — single-window football / RPG playtest
+   ============================================================ */
+body.game-match-mode {
+    overflow: hidden !important;
+}
+body.game-match-mode .site-header,
+body.game-match-mode .site-footer {
+    visibility: hidden;
+    pointer-events: none;
+}
+.game-match-window[hidden] { display: none !important; }
+.game-match-window {
+    position: fixed;
+    z-index: 5000;
+    inset: 0;
+    display: grid;
+    grid-template-rows: auto minmax(86px, 16vh) minmax(0, 1fr) minmax(86px, 16vh);
+    width: 100vw;
+    height: 100dvh;
+    margin: 0;
+    padding: 10px;
+    overflow: hidden;
+    color: #edf5f7;
+    background:
+        radial-gradient(circle at 50% 45%, rgba(28, 91, 72, 0.28), transparent 35%),
+        linear-gradient(180deg, #071016, #04080b);
+    border: 0;
+    border-radius: 0;
+}
+.game-match-window-top {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) 90px;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 5px 8px 8px;
+}
+.game-match-window-back,
+.game-match-window-reset {
+    min-height: 38px;
+    padding: 0 10px;
+    color: #dfeaec;
+    font: inherit;
+    font-size: .76rem;
+    font-weight: 900;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 8px;
+    cursor: pointer;
+}
+.game-match-scoreline {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 44px 58px 44px minmax(0,1fr);
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    text-align: center;
+}
+.game-match-scoreline > strong {
+    font-size: clamp(1.45rem, 4vw, 2.2rem);
+    line-height: 1;
+}
+.game-match-club {
+    overflow: hidden;
+    font-size: clamp(.7rem, 1.5vw, 1rem);
+    font-weight: 950;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.game-match-club-home { text-align: right; }
+.game-match-club-away { text-align: left; }
+.game-match-clock {
+    padding: 6px 5px;
+    color: #071015;
+    font-size: .82rem;
+    font-weight: 950;
+    background: #73d7f2;
+    border-radius: 999px;
+}
+.game-match-line {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    padding: 7px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(83,200,238,.13);
+    border-radius: 12px;
+}
+.game-match-line-away { align-items: end; }
+.game-match-line-home { align-items: start; }
+.game-match-line-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+.game-match-line-label span {
+    color: #6ecfee;
+    font-size: .58rem;
+    font-weight: 950;
+    letter-spacing: .11em;
+}
+.game-match-line-label strong {
+    overflow: hidden;
+    margin-top: 4px;
+    color: #9eabb1;
+    font-size: .64rem;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+}
+.game-match-window .game-match-card-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 7px;
+    min-width: 0;
+    min-height: 0;
+}
+.game-match-window .game-match-mini-card {
+    display: grid;
+    grid-template-columns: minmax(38px, 46%) minmax(0, 1fr);
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 70px;
+    padding: 5px;
+    background: rgba(10,18,24,.92);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 9px;
+    transition: .18s ease;
+}
+.game-match-window .game-match-mini-card.is-active-matchup {
+    transform: translateY(-3px) scale(1.02);
+    border-color: #72d8f4;
+    box-shadow: 0 0 0 2px rgba(114,216,244,.14), 0 0 20px rgba(83,200,238,.18);
+}
+.game-match-window .game-match-squad-away .game-match-mini-card.is-active-matchup,
+.game-match-line-away .game-match-mini-card.is-active-matchup {
+    border-color: #ffb66f;
+    box-shadow: 0 0 0 2px rgba(255,182,111,.12), 0 0 20px rgba(255,146,77,.16);
+}
+.game-match-window .game-match-mini-card img {
+    width: 100%;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.game-match-window .game-match-mini-card > div { min-width: 0; }
+.game-match-window .game-match-mini-card strong,
+.game-match-window .game-match-mini-card span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.game-match-window .game-match-mini-card strong { font-size: clamp(.56rem, 1vw, .78rem); }
+.game-match-window .game-match-mini-card span { margin-top: 3px; color: #8d9ba1; font-size: .55rem; }
+.game-match-live {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    gap: 8px;
+    min-height: 0;
+    margin: 7px 0;
+    padding: 10px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(16,32,32,.94), rgba(7,14,18,.98));
+    border: 1px solid rgba(100,216,166,.24);
+    border-radius: 14px;
+    box-shadow: inset 0 0 80px rgba(22,108,71,.06);
+}
+.game-match-live.is-live-now::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid rgba(112,233,184,.58);
+    border-radius: 14px;
+    animation: game-live-pulse .7s ease-out;
+}
+@keyframes game-live-pulse {
+    0% { opacity: 1; box-shadow: inset 0 0 28px rgba(112,233,184,.20); }
+    100% { opacity: 0; box-shadow: inset 0 0 0 rgba(112,233,184,0); }
+}
+.game-match-window .game-match-field-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin: 0;
+}
+.game-match-window .game-match-field-strip span {
+    padding: 4px 3px;
+    color: #64757b;
+    font-size: .54rem;
+    font-weight: 950;
+    text-align: center;
+    letter-spacing: .05em;
+    background: rgba(255,255,255,.035);
+    border-radius: 5px;
+}
+.game-match-window .game-match-field-strip span.is-current {
+    color: #07120d;
+    background: #70e9b8;
+}
+.game-match-window .game-match-field-strip span.is-complete {
+    color: #a7d8c7;
+    background: rgba(112,233,184,.10);
+}
+.game-match-current {
+    position: relative;
+    min-height: 72px;
+    padding: 8px 10px 8px 64px;
+    background: rgba(0,0,0,.20);
+    border-left: 3px solid #70e9b8;
+    border-radius: 8px;
+}
+.game-match-now {
+    position: absolute;
+    left: 8px;
+    top: 9px;
+    max-width: 48px;
+    color: #70e9b8;
+    font-size: .55rem;
+    font-weight: 950;
+    line-height: 1.15;
+    letter-spacing: .07em;
+}
+.game-match-current strong { display: block; font-size: clamp(.9rem, 1.8vw, 1.12rem); }
+.game-match-current p { margin: 4px 0 0; color: #b8c4c8; font-size: clamp(.68rem, 1.15vw, .82rem); line-height: 1.35; }
+.game-match-window .game-match-choice-heading { margin: 0; }
+.game-match-window .game-match-choice-heading .game-beta-kicker { display: none; }
+.game-match-window .game-match-choice-heading h3 { margin: 0; font-size: clamp(.9rem, 1.7vw, 1.1rem); }
+.game-match-window .game-match-choice-heading p { margin: 2px 0 0; color: #7f9096; font-size: .68rem; }
+.game-match-window .game-match-rpg-choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.game-match-window .game-match-rpg-action {
+    min-height: 66px;
+    padding: 8px 10px;
+    text-align: left;
+    background: rgba(16,29,35,.96);
+    border: 1px solid rgba(83,200,238,.20);
+    border-radius: 9px;
+}
+.game-match-window .game-match-rpg-action:hover {
+    border-color: #70e9b8;
+    background: rgba(21,45,42,.96);
+}
+.game-match-window .game-match-rpg-action.is-signature {
+    background: linear-gradient(135deg, rgba(80,40,110,.95), rgba(20,28,40,.98));
+    border-color: rgba(224,156,255,.75);
+    box-shadow: 0 0 18px rgba(196,111,255,.12);
+}
+.game-match-window .game-match-rpg-action .game-match-action-label {
+    color: #70e9b8;
+    font-size: .62rem;
+}
+.game-match-window .game-match-rpg-action.is-signature .game-match-action-label { color: #e5a7ff; }
+.game-match-window .game-match-rpg-action strong { margin-top: 3px; font-size: .72rem; line-height: 1.25; }
+.game-match-window .game-match-rpg-action small { margin-top: 5px; color: #809198; font-size: .58rem; }
+.game-match-start-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 44px;
+}
+.game-match-start-actions[hidden] { display: none !important; }
+.game-match-start-actions > button:first-child {
+    min-height: 42px;
+    padding: 0 22px;
+    color: #06110d;
+    font-weight: 950;
+    background: #70e9b8;
+    border: 0;
+    border-radius: 8px;
+}
+.game-match-window .game-match-club-setup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+}
+.game-match-window .game-match-club-setup label { display: flex; align-items: center; gap: 5px; }
+.game-match-window .game-match-club-setup label span { font-size: .6rem; }
+.game-match-window .game-match-club-setup input {
+    width: min(180px, 24vw);
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: .7rem;
+}
+.game-match-window .game-match-club-setup button { min-height: 34px; padding: 0 8px; font-size: .65rem; }
+
+/* Duel stays inside the same game window and keeps the squads visible behind it. */
+.game-match-window .game-duel-overlay {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 10px;
+    background: rgba(0,0,0,.76);
+    backdrop-filter: blur(5px);
+}
+.game-match-window .game-duel-overlay[hidden] { display: none !important; }
+.game-match-window .game-duel-shell {
+    width: min(960px, 96vw);
+    max-height: 92dvh;
+    overflow: auto;
+    padding: 14px;
+}
+.game-match-window .game-duel-stage {
+    grid-template-columns: minmax(0, 1fr) 50px minmax(0, 1fr);
+    gap: 8px;
+}
+.game-match-window .game-duel-card-clone .skyr-card-frame { padding: 8px; }
+.game-match-window .game-duel-card-clone .skyr-card-heading { min-height: 48px; }
+.game-match-window .game-duel-card-clone .skyr-card-image { max-height: 190px; }
+.game-match-window .game-duel-numbers {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 6px;
+}
+.game-match-window .game-duel-numbers > div { padding: 7px; }
+
+@media (max-width: 760px) {
+    .game-match-window {
+        grid-template-rows: auto 78px minmax(0, 1fr) 78px;
+        padding: 5px;
+    }
+    .game-match-window-top {
+        grid-template-columns: 54px minmax(0,1fr) 54px;
+        gap: 4px;
+        min-height: 44px;
+        padding: 2px 0 4px;
+    }
+    .game-match-window-back,
+    .game-match-window-reset { min-height: 32px; padding: 0 4px; font-size: .58rem; }
+    .game-match-scoreline { grid-template-columns: minmax(0,1fr) 26px 38px 26px minmax(0,1fr); gap: 2px; }
+    .game-match-scoreline > strong { font-size: 1.25rem; }
+    .game-match-club { font-size: .55rem; }
+    .game-match-clock { padding: 5px 2px; font-size: .64rem; }
+    .game-match-line { grid-template-columns: 54px minmax(0,1fr); gap: 4px; padding: 4px; }
+    .game-match-line-label strong { display: none; }
+    .game-match-window .game-match-card-row { gap: 3px; }
+    .game-match-window .game-match-mini-card {
+        display: block;
+        min-height: 62px;
+        padding: 3px;
+        text-align: center;
+    }
+    .game-match-window .game-match-mini-card img { width: 100%; height: 42px; }
+    .game-match-window .game-match-mini-card strong { margin-top: 2px; font-size: .48rem; }
+    .game-match-window .game-match-mini-card span { display: none; }
+    .game-match-live { gap: 5px; margin: 4px 0; padding: 6px; }
+    .game-match-current { min-height: 58px; padding: 6px 7px 6px 48px; }
+    .game-match-now { left: 6px; top: 7px; font-size: .47rem; }
+    .game-match-current strong { font-size: .76rem; }
+    .game-match-current p { font-size: .59rem; }
+    .game-match-window .game-match-choice-heading h3 { font-size: .72rem; }
+    .game-match-window .game-match-choice-heading p { display: none; }
+    .game-match-window .game-match-rpg-choices { grid-template-columns: 1fr; gap: 4px; }
+    .game-match-window .game-match-rpg-action { min-height: 52px; padding: 6px 8px; }
+    .game-match-window .game-match-rpg-action strong { font-size: .64rem; }
+    .game-match-window .game-match-rpg-action small { font-size: .51rem; }
+    .game-match-start-actions { flex-wrap: wrap; gap: 5px; }
+    .game-match-start-actions > button:first-child { min-height: 34px; padding: 0 13px; font-size: .7rem; }
+    .game-match-window .game-match-club-setup input { width: 110px; min-height: 30px; }
+    .game-match-window .game-match-club-setup button { min-height: 30px; }
+    .game-match-window .game-duel-shell { width: 98vw; padding: 8px; }
+    .game-match-window .game-duel-stage { grid-template-columns: minmax(0,1fr) 30px minmax(0,1fr); }
+    .game-match-window .game-duel-card-clone .skyr-card-heading { min-height: 36px; }
+    .game-match-window .game-duel-card-clone .skyr-card-heading h3 { font-size: .78rem; }
+    .game-match-window .game-duel-card-clone .skyr-card-heading p,
+    .game-match-window .game-duel-card-clone .skyr-card-gamebar,
+    .game-match-window .game-duel-card-clone .skyr-card-traits,
+    .game-match-window .game-duel-card-clone .skyr-card-data { display: none; }
+    .game-match-window .game-duel-card-clone .skyr-card-image { max-height: 120px; }
+    .game-match-window .game-duel-event p { font-size: .65rem; }
+    .game-match-window .game-duel-numbers { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   Match Lab v0.12 — turn-based match + transparent engine room
+   ============================================================ */
+.game-match-window-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+.game-match-window-engine {
+    min-height: 34px;
+    border: 1px solid rgba(104, 190, 255, .5);
+    border-radius: 8px;
+    padding: 0 10px;
+    background: rgba(15, 35, 47, .92);
+    color: #9bd9ff;
+    font: inherit;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.game-match-window-engine:hover { border-color: #9bd9ff; }
+.game-match-turn-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 30px;
+    margin-bottom: 5px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    background: rgba(6, 14, 18, .72);
+    font-size: .66rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.game-match-turn-banner span { color: #82959d; }
+.game-match-turn-banner strong { color: #e8f6fb; }
+.game-match-turn-banner.is-defending strong { color: #ffb4a7; }
+.game-match-turn-banner.is-counter strong { color: #ffe18a; }
+
+.game-engine-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10020;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, .82);
+    backdrop-filter: blur(7px);
+}
+.game-engine-overlay[hidden] { display: none !important; }
+.game-engine-shell {
+    width: min(1180px, 97vw);
+    max-height: 92vh;
+    overflow: auto;
+    border: 1px solid rgba(104, 190, 255, .45);
+    border-radius: 14px;
+    padding: 14px;
+    background: #071116;
+    box-shadow: 0 24px 90px rgba(0,0,0,.7);
+    color: #dfe9ec;
+}
+.game-engine-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: -14px;
+    z-index: 2;
+    margin: -14px -14px 12px;
+    padding: 14px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: rgba(7,17,22,.97);
+}
+.game-engine-head h3 { margin: 2px 0 4px; }
+.game-engine-head p { margin: 0; color: #8799a0; font-size: .72rem; }
+.game-engine-head button {
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: #101d23;
+    color: #fff;
+    cursor: pointer;
+}
+.game-engine-meta,
+.game-engine-current,
+.game-engine-rosters > div,
+.game-engine-shorts {
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    background: rgba(255,255,255,.025);
+    padding: 10px;
+}
+.game-engine-meta { margin-bottom: 10px; color: #9cb0b7; font-size: .68rem; line-height: 1.5; }
+.game-engine-current { margin-bottom: 10px; }
+.game-engine-current h4,
+.game-engine-rosters h4,
+.game-engine-shorts h4 { margin: 0 0 8px; font-size: .8rem; }
+.game-engine-rosters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.game-engine-card {
+    margin-top: 7px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 8px;
+    padding: 8px;
+    background: rgba(0,0,0,.18);
+}
+.game-engine-card:first-child { margin-top: 0; }
+.game-engine-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: .7rem;
+}
+.game-engine-card-head span { color: #81949b; }
+.game-engine-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .62rem;
+}
+.game-engine-table th,
+.game-engine-table td {
+    border-top: 1px solid rgba(255,255,255,.055);
+    padding: 4px 5px;
+    text-align: left;
+    vertical-align: top;
+}
+.game-engine-table th { width: 24%; color: #82959d; font-weight: 600; }
+.game-engine-table td strong { color: #f5fbfd; }
+.game-engine-calc {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    gap: 6px;
+}
+.game-engine-calc > div {
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 7px;
+    padding: 7px;
+    background: rgba(255,255,255,.025);
+}
+.game-engine-calc span { display: block; color: #81949b; font-size: .58rem; text-transform: uppercase; letter-spacing: .05em; }
+.game-engine-calc strong { display: block; margin-top: 2px; font-size: .82rem; }
+.game-engine-calc small { display: block; margin-top: 3px; color: #8da0a7; font-size: .56rem; line-height: 1.35; }
+.game-engine-formula {
+    margin: 7px 0 0;
+    padding: 7px;
+    border-left: 3px solid #66bff1;
+    background: rgba(102,191,241,.06);
+    color: #bcd1d8;
+    font: 600 .62rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.game-engine-short {
+    margin-top: 6px;
+    padding: 7px;
+    border: 1px solid rgba(229,167,255,.16);
+    border-radius: 8px;
+    font-size: .62rem;
+}
+.game-engine-empty { color: #788b92; font-size: .65rem; }
+.game-match-defence-note {
+    color: #ffb4a7 !important;
+}
+.game-match-rpg-action.is-defence {
+    border-color: rgba(255, 141, 122, .35);
+}
+.game-match-rpg-action.is-counter {
+    border-color: rgba(255, 220, 110, .42);
+    background: rgba(91, 67, 9, .16);
+}
+
+@media (max-width: 720px) {
+    .game-match-window-tools { gap: 3px; }
+    .game-match-window-engine,
+    .game-match-window-reset { min-height: 30px; padding: 0 6px; font-size: .55rem; }
+    .game-match-turn-banner { min-height: 24px; gap: 6px; font-size: .54rem; }
+    .game-engine-overlay { padding: 5px; }
+    .game-engine-shell { width: 99vw; max-height: 96vh; padding: 8px; }
+    .game-engine-head { top: -8px; margin: -8px -8px 8px; padding: 8px; }
+    .game-engine-head p { display: none; }
+    .game-engine-rosters { grid-template-columns: 1fr; }
+    .game-engine-table { font-size: .56rem; }
+}
+.game-match-window-top {
+    grid-template-columns: 90px minmax(0, 1fr) 150px;
+}
+.game-match-window-tools > button { flex: 1 1 0; white-space: nowrap; }
+@media (max-width: 760px) {
+    .game-match-window-top { grid-template-columns: 50px minmax(0, 1fr) 96px; }
+    .game-match-window-tools > button { min-width: 0; padding-left: 2px; padding-right: 2px; }
+}
+.game-match-live {
+    grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+}
+@media (max-width: 760px) {
+    .game-match-window .game-match-rpg-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .game-match-window .game-match-rpg-action { min-height: 48px; padding: 5px 6px; }
+    .game-match-window .game-match-rpg-action .game-match-action-label { font-size: .54rem; }
+    .game-match-window .game-match-rpg-action strong { font-size: .58rem; }
+    .game-match-window .game-match-rpg-action small { margin-top: 2px; font-size: .48rem; }
+}
+@media (max-width: 420px) {
+    .game-match-window .game-match-rpg-choices { grid-template-columns: 1fr; }
+}
