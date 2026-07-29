@@ -39,13 +39,13 @@ report: |
 
   His technical level is still developing, but he shows enough ball control and coordination to suggest further growth. The raw tools — athleticism, mobility, aerial strength and shooting power — are clearly there.
 
-  ### Areas for improvement
+  Areas for improvement
 
   Seka remains a raw profile who needs refinement across all aspects of his game: decision-making, consistency, movement timing, and overall tactical awareness.
 
   However, the underlying potential is evident, and his physical and athletic base gives him a strong platform for development.
 
-  ### Career trajectory and current form
+  Career trajectory and current form
 
   Reliable information on Seka is limited, and available sources conflict on both registration and club history.
 
@@ -53,7 +53,7 @@ report: |
 
   Transfermarkt, meanwhile, lists him as a player of Réal du Faso in Burkina Faso, and the club themselves included him in their 2023 squad photo under the name Appiaha Seka Ghislain.
 
-  ### Transfer outlook
+  Transfer outlook
 
   Overall, Seka profiles as a physically gifted, raw-but-promising forward whose career path needs clarifying — but who is worth monitoring closely given his attributes and age.
 
