@@ -13,7 +13,7 @@ position: Centre-Forward
 nationalities:
   - Ivory Coast
 birth_date: "2003-12-07"
-height_cm: 184
+height_cm: 185
 dominant_foot: "Right"
 positions:
   - role: "Centre-Forward"
@@ -25,7 +25,7 @@ positions:
 
 summary: |
   🇨🇮 Ismaël Diomandé | 21 y/o CF
-  💪 184 cm No.9 combining power, pace & good technique
+  💪 185 cm No.9 combining power, pace & good technique
   ⚡ Intelligent runs in behind & strong dribbling ability
   🔗 Composed in hold-up play and difficult to dispossess
   🪂 Solid in the air with a strong physical presence
@@ -34,7 +34,7 @@ summary: |
 report: |
   Ismaël Diomandé | 21-year-old centre-forward | Ivory Coast
 
-  A classic No.9 profile combining power and pace with good technique. Standing 184 cm tall, Diomandé is physically strong and composed under pressure, with good hold-up play and the ability to link attacks effectively.
+  A classic No.9 profile combining power and pace with good technique. Standing 185 cm tall, Diomandé is physically strong and composed under pressure, with good hold-up play and the ability to link attacks effectively.
 
   He makes intelligent, well-timed runs in behind defences and demonstrates strong dribbling ability in and around the box. Solid in the air and difficult to dispossess, he combines athleticism with confidence in the final third.
 
