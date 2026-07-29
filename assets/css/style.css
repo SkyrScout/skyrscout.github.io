@@ -3425,14 +3425,30 @@ img.emoji {
     --signature-tilt-y: 0deg;
     --signature-shine-x: 50%;
     --signature-shine-y: 50%;
+    position: relative;
     min-width: 0;
     perspective: 1000px;
     transform-style: preserve-3d;
 }
 
+.signature-short-card-link {
+    position: absolute;
+    z-index: 50;
+    inset: 0;
+    border-radius: 18px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.signature-short-card-link:focus-visible {
+    outline: 2px solid #78daf5;
+    outline-offset: 4px;
+}
+
 .signature-short-card-frame {
     position: relative;
     display: flex;
+    pointer-events: none;
     overflow: hidden;
     height: 100%;
     min-height: 430px;
@@ -3480,11 +3496,6 @@ img.emoji {
         rotateY(var(--signature-tilt-y))
         translateY(-6px)
         scale(1.012);
-}
-
-.signature-short-card-frame:focus-visible {
-    outline: 2px solid #78daf5;
-    outline-offset: 4px;
 }
 
 .signature-short-card-shine {

@@ -448,11 +448,13 @@ layout: default
                             data-publish-date="{{ short.publish_date }}"
                         >
                             <a
-                                class="signature-short-card-frame"
-                                href="{{ short.url }}"
+                                class="signature-short-card-link"
+                                href="{{ short.url | relative_url }}"
                                 aria-label="Watch {{ short.title }}"
-                            >
-                                <span class="signature-short-card-shine" aria-hidden="true"></span>
+                            ></a>
+
+                            <div class="signature-short-card-frame" aria-hidden="true">
+                                <span class="signature-short-card-shine"></span>
 
                                 <div class="signature-short-card-topline">
                                     <span>Signature Short</span>
@@ -465,7 +467,7 @@ layout: default
                                     {% if short.youtube %}
                                         <img
                                             src="https://img.youtube.com/vi/{{ short_youtube_id }}/hqdefault.jpg"
-                                            alt="{{ short.title }}"
+                                            alt=""
                                             loading="lazy"
                                         >
                                     {% endif %}
@@ -481,7 +483,7 @@ layout: default
                                     <span>SkyrScout</span>
                                     <strong>Watch →</strong>
                                 </div>
-                            </a>
+                            </div>
                         </article>
 
                     {% endfor %}
