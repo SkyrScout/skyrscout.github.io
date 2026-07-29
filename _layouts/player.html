@@ -411,6 +411,140 @@ layout: default
 
         {% endif %}
 
+        {% assign signature_player_slug = page.slug %}
+        {% if signature_player_slug == nil or signature_player_slug == "" %}
+            {% assign signature_player_slug = page.url
+                | remove_first: '/players/'
+                | remove: '/'
+            %}
+        {% endif %}
+
+        {% assign player_signature_shorts = site.shorts
+            | where: "player_slug", signature_player_slug
+        %}
+
+        {% if player_signature_shorts.size > 0 %}
+
+            <section class="player-section player-signature-shorts">
+
+                <h2>Signature Shorts</h2>
+
+                <div class="signature-short-grid" data-signature-short-grid>
+
+                    {% for short in player_signature_shorts %}
+
+                        {% assign short_youtube_id = short.youtube
+                            | split: 'shorts/'
+                            | last
+                            | split: '?'
+                            | first
+                            | split: '&'
+                            | first
+                        %}
+
+                        <article
+                            class="signature-short-card"
+                            data-signature-short-card
+                            data-publish-date="{{ short.publish_date }}"
+                        >
+                            <a
+                                class="signature-short-card-frame"
+                                href="{{ short.url }}"
+                                aria-label="Watch {{ short.title }}"
+                            >
+                                <span class="signature-short-card-shine" aria-hidden="true"></span>
+
+                                <div class="signature-short-card-topline">
+                                    <span>Signature Short</span>
+                                    {% if short.publish_date %}
+                                        <time>{{ short.publish_date }}</time>
+                                    {% endif %}
+                                </div>
+
+                                <div class="signature-short-card-image">
+                                    {% if short.youtube %}
+                                        <img
+                                            src="https://img.youtube.com/vi/{{ short_youtube_id }}/hqdefault.jpg"
+                                            alt="{{ short.title }}"
+                                            loading="lazy"
+                                        >
+                                    {% endif %}
+
+                                    <span class="signature-short-card-badge">Short</span>
+                                </div>
+
+                                <div class="signature-short-card-copy">
+                                    <h3>{{ short.title }}</h3>
+                                </div>
+
+                                <div class="signature-short-card-footer">
+                                    <span>SkyrScout</span>
+                                    <strong>Watch →</strong>
+                                </div>
+                            </a>
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <script>
+            (function () {
+                const grid = document.querySelector('[data-signature-short-grid]');
+                if (!grid) return;
+
+                const cards = Array.from(grid.querySelectorAll('[data-signature-short-card]'));
+
+                function dateValue(value) {
+                    const parts = String(value || '').split('.').map(Number);
+                    if (parts.length !== 3 || parts.some(Number.isNaN)) return 0;
+                    return new Date(parts[2], parts[1] - 1, parts[0]).getTime();
+                }
+
+                cards
+                    .sort(function (a, b) {
+                        return dateValue(b.dataset.publishDate) - dateValue(a.dataset.publishDate);
+                    })
+                    .forEach(function (card) {
+                        grid.appendChild(card);
+                    });
+
+                const canTilt =
+                    window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+                    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (!canTilt) return;
+
+                cards.forEach(function (card) {
+                    card.addEventListener('pointermove', function (event) {
+                        const rect = card.getBoundingClientRect();
+                        const x = (event.clientX - rect.left) / rect.width;
+                        const y = (event.clientY - rect.top) / rect.height;
+                        const rotateY = (x - 0.5) * 10;
+                        const rotateX = (0.5 - y) * 8;
+
+                        card.classList.add('is-tilting');
+                        card.style.setProperty('--signature-tilt-x', rotateX.toFixed(2) + 'deg');
+                        card.style.setProperty('--signature-tilt-y', rotateY.toFixed(2) + 'deg');
+                        card.style.setProperty('--signature-shine-x', (x * 100).toFixed(1) + '%');
+                        card.style.setProperty('--signature-shine-y', (y * 100).toFixed(1) + '%');
+                    });
+
+                    card.addEventListener('pointerleave', function () {
+                        card.classList.remove('is-tilting');
+                        card.style.setProperty('--signature-tilt-x', '0deg');
+                        card.style.setProperty('--signature-tilt-y', '0deg');
+                        card.style.setProperty('--signature-shine-x', '50%');
+                        card.style.setProperty('--signature-shine-y', '50%');
+                    });
+                });
+            }());
+            </script>
+
+        {% endif %}
+
         {% if page.podcast %}
 
             {% assign spotify_embed = page.podcast

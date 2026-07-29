@@ -3403,3 +3403,262 @@ img.emoji {
         align-items: stretch;
     }
 }
+
+/* =========================
+   Player profile: Signature Shorts
+   Card feel mirrors the SkyrScout Game without game-only mechanics.
+   ========================= */
+
+.player-signature-shorts {
+    overflow: hidden;
+}
+
+.signature-short-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 240px));
+    gap: clamp(16px, 2.4vw, 22px);
+    align-items: stretch;
+}
+
+.signature-short-card {
+    --signature-tilt-x: 0deg;
+    --signature-tilt-y: 0deg;
+    --signature-shine-x: 50%;
+    --signature-shine-y: 50%;
+    min-width: 0;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.signature-short-card-frame {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    height: 100%;
+    min-height: 430px;
+    padding: 12px;
+    flex-direction: column;
+    color: #f7fafb;
+    text-decoration: none;
+    background:
+        radial-gradient(circle at 15% 0%, rgba(83, 200, 238, 0.11), transparent 28%),
+        linear-gradient(155deg, rgba(25, 34, 42, 0.98), rgba(7, 11, 15, 0.99) 58%),
+        #0a0e12;
+    border: 1px solid rgba(130, 220, 245, 0.34);
+    border-radius: 18px;
+    box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+    transform:
+        perspective(900px)
+        rotateX(var(--signature-tilt-x))
+        rotateY(var(--signature-tilt-y));
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition:
+        transform 0.16s ease-out,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.signature-short-card-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.028) 48%, transparent 60%);
+}
+
+.signature-short-card:hover .signature-short-card-frame {
+    border-color: rgba(120, 218, 245, 0.72);
+    box-shadow:
+        0 24px 45px rgba(0, 0, 0, 0.46),
+        0 0 24px rgba(83, 200, 238, 0.10);
+    transform:
+        perspective(900px)
+        rotateX(var(--signature-tilt-x))
+        rotateY(var(--signature-tilt-y))
+        translateY(-6px)
+        scale(1.012);
+}
+
+.signature-short-card-frame:focus-visible {
+    outline: 2px solid #78daf5;
+    outline-offset: 4px;
+}
+
+.signature-short-card-shine {
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            circle at var(--signature-shine-x) var(--signature-shine-y),
+            rgba(255, 255, 255, 0.17) 0%,
+            rgba(120, 218, 245, 0.065) 18%,
+            transparent 46%
+        );
+    mix-blend-mode: screen;
+    transition: opacity 0.18s ease;
+}
+
+.signature-short-card.is-tilting .signature-short-card-shine {
+    opacity: 0.8;
+}
+
+.signature-short-card-topline,
+.signature-short-card-copy,
+.signature-short-card-footer {
+    position: relative;
+    z-index: 2;
+    transform: translateZ(9px);
+}
+
+.signature-short-card-topline {
+    display: flex;
+    min-height: 24px;
+    margin-bottom: 9px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.signature-short-card-topline span {
+    color: #75d8f3;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.signature-short-card-topline time {
+    color: #98a8b0;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.signature-short-card-image {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background: #030507;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 11px;
+    transform: translateZ(15px);
+}
+
+.signature-short-card-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.signature-short-card-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(2, 5, 7, 0.72), transparent 38%);
+}
+
+.signature-short-card-badge {
+    position: absolute;
+    z-index: 3;
+    left: 10px;
+    bottom: 9px;
+    padding: 6px 9px;
+    color: #071015;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    background: #67d3f3;
+    border-radius: 5px;
+    transform: translateZ(22px);
+}
+
+.signature-short-card-copy {
+    flex: 1;
+    padding: 13px 3px 10px;
+}
+
+.signature-short-card-copy h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.27;
+    letter-spacing: -0.015em;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.signature-short-card-footer {
+    display: flex;
+    padding: 9px 3px 1px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #819099;
+    font-size: 0.69rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.signature-short-card-footer strong {
+    color: #67d3f3;
+    font-size: 0.72rem;
+    font-weight: 850;
+}
+
+@media (max-width: 700px) {
+    .player-signature-shorts {
+        overflow: visible;
+    }
+
+    .signature-short-grid {
+        display: flex;
+        overflow-x: auto;
+        padding: 2px 2px 10px;
+        gap: 16px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(83, 200, 238, 0.35) transparent;
+    }
+
+    .signature-short-card {
+        width: min(74vw, 235px);
+        flex: 0 0 min(74vw, 235px);
+        scroll-snap-align: start;
+    }
+
+    .signature-short-card-frame {
+        min-height: 0;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .signature-short-card-frame,
+    .signature-short-card:hover .signature-short-card-frame {
+        transform: none;
+    }
+
+    .signature-short-card-shine {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .signature-short-card-frame,
+    .signature-short-card-shine {
+        transition: none !important;
+        transform: none !important;
+    }
+}
+
