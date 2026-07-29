@@ -17,7 +17,6 @@ layout: default
     %}
 
 {% endif %}
-
 {% if page.player %}
     {% assign update_player_url = '/players/'
         | append: page.player
@@ -39,7 +38,6 @@ layout: default
         | where: "url", update_player_path
         | first
     %}
-
     {% if update_player_doc and update_player_doc.youtube %}
 
         {% assign update_youtube_id = update_player_doc.youtube
@@ -58,7 +56,6 @@ layout: default
         {% assign update_article_image = update_article_image | strip %}
 
     {% endif %}
-
 {% endif %}
 <script type="application/ld+json">
 {
@@ -73,7 +70,6 @@ layout: default
 {% if update_article_image %}
 "image": {{ update_article_image | jsonify }},
 {% endif %}
-
 "author": {
         "@type": "Organization",
         "name": "SkyrScout",
@@ -98,7 +94,6 @@ layout: default
     {% if page.source_url or page.source_via_url %}
     ,
     "citation": [
-
         {% if page.source_url %}
         {
             "@type": "WebPage",
@@ -110,7 +105,6 @@ layout: default
         {% if page.source_url and page.source_via_url %}
         ,
         {% endif %}
-
         {% if page.source_via_url %}
         {
             "@type": "WebPage",
@@ -129,7 +123,6 @@ layout: default
     <article class="update-article">
 
         <header class="update-article-header">
-
             <p class="update-article-date">
                 {{ page.date | date: "%d.%m.%Y" }}
             </p>
@@ -146,7 +139,6 @@ layout: default
             {% endif %}
 
         </header>
-
         <section class="update-article-content">
             {{ content }}
         </section>
@@ -158,7 +150,6 @@ layout: default
                 <span>Sources</span>
 
                 <p class="update-source-links">
-
                     {% if page.source_url %}
                         <a
                             href="{{ page.source_url }}"
@@ -168,7 +159,6 @@ layout: default
                             {{ page.source | default: "Original source" }}
                         </a>
                     {% endif %}
-
                     {% if page.source_via_url %}
                         <br>
                         Via:
@@ -184,7 +174,70 @@ layout: default
                 </p>
 
             </section>
+        {% endif %}
 
+        {% assign sorted_related_updates = site.update_posts
+            | sort: "published_at"
+            | reverse
+        %}
+
+        {% capture related_updates_markup %}
+            {% for update in sorted_related_updates %}
+                {% if update.url != page.url %}
+                    {% assign is_related_update = false %}
+
+                    {% if page.player %}
+                        {% if update.player == page.player %}
+                            {% assign is_related_update = true %}
+                        {% elsif update.players %}
+                            {% assign update_player_slugs = update.players | map: "slug" %}
+                            {% if update_player_slugs contains page.player %}
+                                {% assign is_related_update = true %}
+                            {% endif %}
+                        {% endif %}
+                    {% elsif page.players %}
+                        {% if update.players %}
+                            {% assign update_player_slugs = update.players | map: "slug" %}
+                        {% else %}
+                            {% assign update_player_slugs = nil %}
+                        {% endif %}
+
+                        {% for current_player in page.players %}
+                            {% if update.player == current_player.slug %}
+                                {% assign is_related_update = true %}
+                            {% elsif update_player_slugs and update_player_slugs contains current_player.slug %}
+                                {% assign is_related_update = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if is_related_update %}
+                        {% assign related_update_date = update.published_at | default: update.date %}
+                        <a class="update-related-news-item" href="{{ update.url }}">
+                            <span class="update-related-news-date">
+                                {{ related_update_date | date: "%d.%m.%Y" }}
+                            </span>
+                            <strong>{{ update.title }}</strong>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endcapture %}
+
+        {% assign related_updates_markup = related_updates_markup | strip %}
+
+        {% if related_updates_markup != "" %}
+            <section class="update-related-news">
+                {% if page.player_name %}
+                    <h2>More updates on {{ page.player_name }}</h2>
+                {% else %}
+                    <h2>Related updates</h2>
+                {% endif %}
+
+                <div class="update-related-news-list">
+                    {{ related_updates_markup }}
+                </div>
+            </section>
         {% endif %}
 
         {% if page.player and page.show_related_player %}

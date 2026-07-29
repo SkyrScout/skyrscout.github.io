@@ -1,5 +1,10 @@
 ---
 title: "Itsuki Enomoto and Carlos Iury move on from Singha Chiangrai United"
+players:
+  - slug: "itsuki-enomoto"
+    name: "Itsuki Enomoto"
+  - slug: "carlos-iury"
+    name: "Carlos Iury"
 published_at: 2026-07-23 10:23:57 +0200
 ---
 
