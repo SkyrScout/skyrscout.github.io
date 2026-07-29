@@ -511,6 +511,60 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
 
         {% endif %}
 
+        {% assign current_player_slug = page.slug %}
+        {% if current_player_slug == nil or current_player_slug == "" %}
+            {% assign current_player_slug = page.url
+                | remove_first: '/players/'
+                | remove: '/'
+            %}
+        {% endif %}
+
+        {% assign sorted_player_updates = site.update_posts
+            | sort: "published_at"
+            | reverse
+        %}
+        {% assign player_update_count = 0 %}
+
+        {% capture player_updates_markup %}
+            {% for update in sorted_player_updates %}
+                {% if player_update_count < 4 %}
+                    {% assign is_player_update = false %}
+
+                    {% if update.player == current_player_slug %}
+                        {% assign is_player_update = true %}
+                    {% elsif update.players %}
+                        {% assign update_player_slugs = update.players | map: "slug" %}
+                        {% if update_player_slugs contains current_player_slug %}
+                            {% assign is_player_update = true %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if is_player_update %}
+                        {% assign player_update_date = update.published_at | default: update.date %}
+                        <a class="update-related-news-item" href="{{ update.url }}">
+                            <span class="update-related-news-date">
+                                {{ player_update_date | date: "%d.%m.%Y" }}
+                            </span>
+                            <strong>{{ update.title }}</strong>
+                        </a>
+                        {% assign player_update_count = player_update_count | plus: 1 %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endcapture %}
+
+        {% assign player_updates_markup = player_updates_markup | strip %}
+
+        {% if player_updates_markup != "" %}
+            <section class="player-section player-updates">
+                <h2>Latest updates on {{ title_parts[0] }}</h2>
+
+                <div class="update-related-news-list">
+                    {{ player_updates_markup }}
+                </div>
+            </section>
+        {% endif %}
+
     </article>
 
 </main>
