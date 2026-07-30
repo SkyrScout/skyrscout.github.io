@@ -2,14 +2,14 @@
 title: "Eduards Daskevics assists as FK Auda eliminate FCSB"
 player: "eduards-daskevics"
 player_name: "Eduards Daskevics"
-source: "Sofascore"
-source_url: "https://www.sofascore.com/football/match/fk-auda-fcsb/bqbsWgc#id:16351429"
+source: "ProSport"
+source_url: "https://www.prosport.ro/fotbal-extern/conference-league/fk-auda-fcsb-live-text-online-mansa-secunda-tur-2-preliminar-conference-league-20493788"
 published_at: 2026-07-30 20:23:33 +0200
 ---
 
 FK Auda completed a sensational UEFA Conference League upset by beating FCSB 4–1 in Riga and advancing 7–3 on aggregate.
 
-Eduards Daskevics assisted Barthelemy Diedhiou for the opening goal in first-half stoppage time, building on his goal in Auda's 3–2 victory in the first leg in Bucharest.
+Eduards Daskevics delivered the cross from the right for Barthelemy Diedhiou to open the scoring in first-half stoppage time. The assist followed Daskevics' goal in Auda's 3–2 first-leg victory in Bucharest.
 
 FCSB equalised shortly after the break, but Auda responded with three more goals to secure an emphatic victory and a place in the third qualifying round.
 
