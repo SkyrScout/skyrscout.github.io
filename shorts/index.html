@@ -11,6 +11,27 @@ description: "Quick scouting clips, individual actions and standout moments from
         grid-template-columns: minmax(0, 360px);
     }
 
+    .short-list-signature-card {
+        display: flex;
+        width: 240px;
+        padding: 12px;
+        flex: 0 0 240px;
+        align-items: center;
+        align-self: stretch;
+    }
+
+    .short-list-signature-card .signature-short-card {
+        width: 100%;
+    }
+
+    @media (max-width: 760px) {
+        .short-list-signature-card {
+            width: min(100%, 240px);
+            margin: 0 auto;
+            flex: none;
+        }
+    }
+
     @media (min-width: 760px) {
         .shorts-tools {
             display: flex;
@@ -115,19 +136,49 @@ description: "Quick scouting clips, individual actions and standout moments from
                     data-site-added="{{ short.site_added | escape }}"
                 >
 
-                    <a
-                        class="player-list-image short-list-image"
-                        href="{{ short.url }}"
-                        aria-label="Watch {{ short.title }}"
-                    >
-                        {% if short.youtube %}
-                            <img
-                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                alt="{{ short.title }}"
-                                loading="lazy"
-                            >
-                        {% endif %}
-                    </a>
+                    <div class="short-list-signature-card">
+
+                        <div class="signature-short-card">
+                            <a
+                                class="signature-short-card-link"
+                                href="{{ short.url | relative_url }}"
+                                aria-label="Watch {{ short.title }}"
+                            ></a>
+
+                            <div class="signature-short-card-frame" aria-hidden="true">
+                                <span class="signature-short-card-shine"></span>
+
+                                <div class="signature-short-card-topline">
+                                    <span>Signature Short</span>
+                                    {% if short.publish_date %}
+                                        <time>{{ short.publish_date }}</time>
+                                    {% endif %}
+                                </div>
+
+                                <div class="signature-short-card-image">
+                                    {% if short.youtube %}
+                                        <img
+                                            src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                            alt=""
+                                            loading="lazy"
+                                        >
+                                    {% endif %}
+
+                                    <span class="signature-short-card-badge">Short</span>
+                                </div>
+
+                                <div class="signature-short-card-copy">
+                                    <h3>{{ short.title }}</h3>
+                                </div>
+
+                                <div class="signature-short-card-footer">
+                                    <span>SkyrScout</span>
+                                    <strong>Watch →</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
 
                     <div class="player-list-content">
 
