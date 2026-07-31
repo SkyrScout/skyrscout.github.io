@@ -175,7 +175,7 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
     <div class="yard-report-grid">
 
         {% assign latest_shorts = site.shorts
-            | sort: "publish_date"
+            | sort: "site_added"
             | reverse
         %}
 
@@ -200,8 +200,8 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
                     <div class="signature-short-card-topline">
                         <span>Signature Short</span>
-                        {% if short.publish_date %}
-                            <time>{{ short.publish_date }}</time>
+                        {% if short.report_date %}
+                            <time>{{ short.report_date }}</time>
                         {% endif %}
                     </div>
 
