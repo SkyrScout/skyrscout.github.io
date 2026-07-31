@@ -295,3 +295,14 @@ description: "Quick scouting clips, individual actions and standout moments from
 
     sortShorts("newest-added");
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        twemoji.parse(document.body, {
+            folder: "svg",
+            ext: ".svg"
+        });
+    });
+</script>
