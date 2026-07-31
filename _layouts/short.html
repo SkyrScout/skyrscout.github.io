@@ -6,11 +6,12 @@ layout: default
     | where: "slug", page.player_slug
     | first
 %}
+
 {% assign short_upload_date = nil %}
 
-{% if page.publish_date %}
+{% if page.report_date %}
 
-    {% assign short_date_parts = page.publish_date | split: '.' %}
+    {% assign short_date_parts = page.report_date | split: '.' %}
 
     {% if short_date_parts.size == 3 %}
 
@@ -121,44 +122,44 @@ layout: default
     </script>
 
 {% endif %}
+
 <main class="page-background">
 
-        <article class="player-page short-page">
+    <article class="player-page short-page">
 
-            <header class="player-header">
+        <header class="player-header">
 
-                <h1>{{ page.title }}</h1>
+            <h1>{{ page.title }}</h1>
 
-                {% if player %}
+            {% if player %}
 
-                    {% assign player_title_parts = player.title | split: ' – ' %}
+                {% assign player_title_parts = player.title | split: ' – ' %}
 
-                    <p class="player-subtitle">
-                        {{ player_title_parts[0] }}
+                <p class="player-subtitle">
+                    {{ player_title_parts[0] }}
 
-                        {% if player.position %}
-                            • {{ player.position }}
-                        {% endif %}
-                    </p>
+                    {% if player.position %}
+                        • {{ player.position }}
+                    {% endif %}
+                </p>
 
-                {% endif %}
+            {% endif %}
 
-                {% if page.publish_date %}
-                    <p class="report-byline">
-                        Published {{ page.publish_date }}
-                    </p>
-                {% endif %}
+            {% if page.report_date %}
+                <p class="report-byline">
+                    Published {{ page.report_date }}
+                </p>
+            {% endif %}
 
-            </header>
+        </header>
 
-            {% if page.youtube %}
+        {% if page.youtube %}
 
-               
-               <section class="player-section short-video-section">
+            <section class="player-section short-video-section">
 
-    <div class="short-video-frame">
+                <div class="short-video-frame">
 
-        <div class="short-video-wrapper">
+                    <div class="short-video-wrapper">
 
                         <iframe
                             src="https://www.youtube.com/embed/{{ youtube_id }}"
@@ -173,79 +174,79 @@ layout: default
                             allowfullscreen>
                         </iframe>
 
-                           </div>
-
-    </div>
-
-</section>
-
-            {% endif %}
-
-            {% if page.description %}
-
-                <section class="player-section">
-
-                    <h2>About this Short</h2>
-
-                    <div class="report-content">
-                        {{ page.description | newline_to_br }}
                     </div>
 
-                </section>
+                </div>
 
-            {% endif %}
+            </section>
 
-            {% if player %}
+        {% endif %}
 
-                <section class="player-section">
+        {% if page.description %}
 
-                    <h2>Player Report</h2>
+            <section class="player-section">
 
-                    {% assign player_title_parts = player.title | split: ' – ' %}
+                <h2>About this Short</h2>
 
-                    <p>
-                        Learn more about
-                        <strong>{{ player_title_parts[0] }}</strong>
-                        in the complete SkyrScout player profile.
-                    </p>
+                <div class="report-content">
+                    {{ page.description | newline_to_br }}
+                </div>
 
-                    <p>
-                        <a
-    href="{{ player.url }}"
-    class="report-button"
->
-    Read Full Scouting Report →
-</a>
-                    </p>
+            </section>
 
-                </section>
+        {% endif %}
 
-            {% else %}
+        {% if player %}
 
-                <section class="player-section">
+            <section class="player-section">
 
-                    <h2>Player Report</h2>
+                <h2>Player Report</h2>
 
-                    <p>
-                        No matching player profile was found for:
-                        <strong>{{ page.player_slug }}</strong>
-                    </p>
+                {% assign player_title_parts = player.title | split: ' – ' %}
 
-                </section>
+                <p>
+                    Learn more about
+                    <strong>{{ player_title_parts[0] }}</strong>
+                    in the complete SkyrScout player profile.
+                </p>
 
-            {% endif %}
+                <p>
+                    <a
+                        href="{{ player.url }}"
+                        class="report-button"
+                    >
+                        Read Full Scouting Report →
+                    </a>
+                </p>
 
-        </article>
+            </section>
 
-    </main>
+        {% else %}
 
-    <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+            <section class="player-section">
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            twemoji.parse(document.body, {
-                folder: "svg",
-                ext: ".svg"
-            });
+                <h2>Player Report</h2>
+
+                <p>
+                    No matching player profile was found for:
+                    <strong>{{ page.player_slug }}</strong>
+                </p>
+
+            </section>
+
+        {% endif %}
+
+    </article>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        twemoji.parse(document.body, {
+            folder: "svg",
+            ext: ".svg"
         });
-    </script>
+    });
+</script>
