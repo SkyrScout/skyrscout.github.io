@@ -7,7 +7,9 @@ player_slug: ""
 
 youtube: ""
 
-publish_date: ""
+report_date: ""
+
+site_added: ""
 
 description: |
 
