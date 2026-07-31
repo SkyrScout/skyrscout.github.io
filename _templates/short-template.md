@@ -1,6 +1,8 @@
 ---
 layout: short
 
+short_by: "Bon Scout"
+
 title: ""
 
 player_slug: ""

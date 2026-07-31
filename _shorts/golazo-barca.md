@@ -1,5 +1,6 @@
 ---
 layout: short
+short_by: "Bon Scout"
 title: "GOLAZO from former Barca Youth!"
 player_slug: "erbol-atabaev"
 youtube: "https://www.youtube.com/shorts/Q5wLixizoqk"

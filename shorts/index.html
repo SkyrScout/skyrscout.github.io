@@ -4,123 +4,294 @@ title: "Shorts"
 description: "Quick scouting clips, individual actions and standout moments from players featured by SkyrScout."
 ---
 
+{% assign bon_short_count = site.shorts | where: "short_by", "Bon Scout" | size %}
+
+<style>
+    .shorts-creator-counts-list {
+        grid-template-columns: minmax(0, 360px);
+    }
+
+    @media (min-width: 760px) {
+        .shorts-tools {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .shorts-tools .player-sort {
+            width: 230px;
+        }
+    }
+</style>
+
 <main class="page-background">
 
-        <section class="players-page">
+    <section class="players-page">
 
-            <header class="players-page-header">
+        <header class="players-page-header">
 
-                <div>
-                    <h1>Shorts</h1>
+            <div>
+                <h1>Shorts</h1>
 
-                    <p>
-                        Quick scouting clips, individual actions and standout moments
-                        from players featured by SkyrScout.
-                    </p>
-                </div>
+                <p>
+                    Quick scouting clips, individual actions and standout moments
+                    from players featured by SkyrScout.
+                </p>
+            </div>
 
-                <div class="players-count">
-                    <strong>{{ site.shorts | size }}</strong>
-                    <span>Shorts</span>
-                </div>
+            <div class="players-count">
+                <strong>{{ site.shorts | size }}</strong>
+                <span>Shorts</span>
+            </div>
 
-            </header>
+        </header>
 
-            <div class="players-list">
+        <div class="players-scout-counts">
 
-                {% assign sorted_shorts = site.shorts | sort: "publish_date" | reverse %}
+            <span class="players-scout-counts-label">
+                Shorts by creator
+            </span>
 
-                {% for short in sorted_shorts %}
+            <div class="players-scout-counts-list shorts-creator-counts-list">
 
-                    {% assign player = site.players
-                        | where: "slug", short.player_slug
-                        | first
-                    %}
-
-                    {% assign youtube_id = short.youtube
-                        | split: 'shorts/'
-                        | last
-                        | split: '?'
-                        | first
-                        | split: '&'
-                        | first
-                    %}
-
-                    <article class="player-list-card short-list-card">
-
-                        <a
-                            class="player-list-image short-list-image"
-                            href="{{ short.url }}"
-                            aria-label="Watch {{ short.title }}"
-                        >
-                            {% if short.youtube %}
-                                <img
-                                    src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                    alt="{{ short.title }}"
-                                    loading="lazy"
-                                >
-                            {% endif %}
-                        </a>
-
-                        <div class="player-list-content">
-
-                            <div class="player-list-heading">
-
-                                <div>
-                                    <h2>
-                                        <a href="{{ short.url }}">
-                                            {{ short.title }}
-                                        </a>
-                                    </h2>
-
-                                    {% if player %}
-                                        {% assign player_title_parts = player.title | split: ' – ' %}
-
-                                        <p class="player-list-details">
-                                            {{ player_title_parts[0] }}
-
-                                            {% if player.position %}
-                                                • {{ player.position }}
-                                            {% endif %}
-                                        </p>
-                                    {% endif %}
-                                </div>
-
-                                <a
-                                    class="player-list-action"
-                                    href="{{ short.url }}"
-                                >
-                                    Watch Short
-                                </a>
-
-                            </div>
-
-                            {% if short.description %}
-                                <p class="player-list-summary">
-                                    {{ short.description | strip_newlines | strip }}
-                                </p>
-                            {% endif %}
-
-                            {% if short.publish_date %}
-                                <p class="player-list-byline">
-                                    Published {{ short.publish_date }}
-                                </p>
-                            {% endif %}
-
-                        </div>
-
-                    </article>
-
-                {% else %}
-
-                    <div class="players-empty">
-                        <p>No Shorts have been published yet.</p>
-                    </div>
-
-                {% endfor %}
+                <a
+                    class="players-scout-count"
+                    href="/about/#bon-scout"
+                >
+                    <strong>{{ bon_short_count }}</strong>
+                    <span>Bon Scout</span>
+                </a>
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
+        <div class="players-tools shorts-tools">
+
+            <label class="player-sort" for="short-sort">
+                <span>Sort by</span>
+
+                <select id="short-sort">
+                    <option value="newest-added">Newest added</option>
+                    <option value="oldest-added">Oldest added</option>
+                    <option value="newest-youtube">Newest on YouTube</option>
+                    <option value="oldest-youtube">Oldest on YouTube</option>
+                    <option value="player-az">Player A–Z</option>
+                </select>
+            </label>
+
+        </div>
+
+        <div class="players-list" id="shorts-list">
+
+            {% assign sorted_shorts = site.shorts | sort: "site_added" | reverse %}
+
+            {% for short in sorted_shorts %}
+
+                {% assign player = site.players
+                    | where: "slug", short.player_slug
+                    | first
+                %}
+
+                {% if player %}
+                    {% assign player_title_parts = player.title | split: ' – ' %}
+                    {% assign short_player_sort_name = player_title_parts[0] %}
+                {% else %}
+                    {% assign short_player_sort_name = short.title %}
+                {% endif %}
+
+                {% assign youtube_id = short.youtube
+                    | split: 'shorts/'
+                    | last
+                    | split: '?'
+                    | first
+                    | split: '&'
+                    | first
+                %}
+
+                <article
+                    class="player-list-card short-list-card"
+                    data-player="{{ short_player_sort_name | downcase | escape }}"
+                    data-report-date="{{ short.report_date | escape }}"
+                    data-site-added="{{ short.site_added | escape }}"
+                >
+
+                    <a
+                        class="player-list-image short-list-image"
+                        href="{{ short.url }}"
+                        aria-label="Watch {{ short.title }}"
+                    >
+                        {% if short.youtube %}
+                            <img
+                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                alt="{{ short.title }}"
+                                loading="lazy"
+                            >
+                        {% endif %}
+                    </a>
+
+                    <div class="player-list-content">
+
+                        <div class="player-list-heading">
+
+                            <div>
+                                <h2>
+                                    <a href="{{ short.url }}">
+                                        {{ short.title }}
+                                    </a>
+                                </h2>
+
+                                {% if player %}
+                                    <p class="player-list-details">
+                                        {{ player_title_parts[0] }}
+
+                                        {% if player.position %}
+                                            • {{ player.position }}
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <a
+                                class="player-list-action"
+                                href="{{ short.url }}"
+                            >
+                                Watch Short
+                            </a>
+
+                        </div>
+
+                        {% if short.description %}
+                            <p class="player-list-summary">
+                                {{ short.description | strip_newlines | strip }}
+                            </p>
+                        {% endif %}
+
+                        {% if short.short_by or short.report_date %}
+                            <p class="player-list-byline">
+
+                                {% if short.short_by %}
+                                    Short by
+                                    <a
+                                        class="player-list-author-link"
+                                        href="/about/#bon-scout"
+                                    >
+                                        {{ short.short_by }}
+                                    </a>
+                                {% endif %}
+
+                                {% if short.short_by and short.report_date %}
+                                    •
+                                {% endif %}
+
+                                {% if short.report_date %}
+                                    YouTube: {{ short.report_date }}
+                                {% endif %}
+
+                            </p>
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% else %}
+
+                <div class="players-empty">
+                    <p>No Shorts have been published yet.</p>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+    const shortSortSelect = document.querySelector("#short-sort");
+    const shortsList = document.querySelector("#shorts-list");
+
+    function getShortCards() {
+        return Array.from(
+            document.querySelectorAll(".short-list-card")
+        );
+    }
+
+    function convertNorwegianDate(dateText) {
+        if (!dateText) {
+            return 0;
+        }
+
+        const parts = dateText.split(".");
+
+        if (parts.length !== 3) {
+            return 0;
+        }
+
+        const day = Number(parts[0]);
+        const month = Number(parts[1]) - 1;
+        const year = Number(parts[2]);
+
+        return new Date(year, month, day).getTime();
+    }
+
+    function compareNames(a, b) {
+        return a.dataset.player.localeCompare(b.dataset.player);
+    }
+
+    function sortShorts(sortType) {
+        const cards = getShortCards();
+
+        cards.sort(function (a, b) {
+            const siteAddedA = convertNorwegianDate(a.dataset.siteAdded);
+            const siteAddedB = convertNorwegianDate(b.dataset.siteAdded);
+            const reportDateA = convertNorwegianDate(a.dataset.reportDate);
+            const reportDateB = convertNorwegianDate(b.dataset.reportDate);
+
+            if (sortType === "oldest-added") {
+                return (
+                    siteAddedA - siteAddedB ||
+                    reportDateA - reportDateB ||
+                    compareNames(a, b)
+                );
+            }
+
+            if (sortType === "newest-youtube") {
+                return (
+                    reportDateB - reportDateA ||
+                    siteAddedB - siteAddedA ||
+                    compareNames(a, b)
+                );
+            }
+
+            if (sortType === "oldest-youtube") {
+                return (
+                    reportDateA - reportDateB ||
+                    siteAddedA - siteAddedB ||
+                    compareNames(a, b)
+                );
+            }
+
+            if (sortType === "player-az") {
+                return compareNames(a, b);
+            }
+
+            return (
+                siteAddedB - siteAddedA ||
+                reportDateB - reportDateA ||
+                compareNames(a, b)
+            );
+        });
+
+        cards.forEach(function (card) {
+            shortsList.appendChild(card);
+        });
+    }
+
+    shortSortSelect.addEventListener("change", function () {
+        sortShorts(shortSortSelect.value);
+    });
+
+    sortShorts("newest-added");
+</script>
