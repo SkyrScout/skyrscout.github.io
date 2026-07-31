@@ -145,9 +145,19 @@ layout: default
 
             {% endif %}
 
-            {% if page.report_date %}
+            {% if page.report_date or page.site_added %}
                 <p class="report-byline">
-                    Published {{ page.report_date }}
+                    {% if page.report_date %}
+                        YouTube: {{ page.report_date }}
+                    {% endif %}
+
+                    {% if page.report_date and page.site_added %}
+                        •
+                    {% endif %}
+
+                    {% if page.site_added %}
+                        Added to SkyrScout: {{ page.site_added }}
+                    {% endif %}
                 </p>
             {% endif %}
 

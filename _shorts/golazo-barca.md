@@ -1,6 +1,6 @@
 ---
 layout: short
-title: "GOLAZO from former Barca Youth"
+title: "GOLAZO from former Barca Youth!"
 player_slug: "erbol-atabaev"
 youtube: "https://www.youtube.com/shorts/Q5wLixizoqk"
 report_date: "17.07.2026"
