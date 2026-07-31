@@ -1,359 +1,694 @@
 ---
 layout: "default"
-title: "Shorts"
-description: "Quick scouting clips, individual actions and standout moments from players featured by SkyrScout."
+title: "Scoutland Yard"
+description: "Scoutland Yard is the SkyrScout control room, featuring the latest scouting reports, player updates, podcast episodes and original music."
 ---
-
-{% assign bon_short_count = site.shorts | where: "short_by", "Bon Scout" | size %}
-
-<style>
-    .shorts-creator-counts-list {
-        grid-template-columns: minmax(0, 360px);
-    }
-
-    .short-list-signature-card {
-        display: flex;
-        width: 240px;
-        padding: 12px;
-        flex: 0 0 240px;
-        align-items: center;
-        align-self: stretch;
-    }
-
-    .short-list-signature-card .signature-short-card {
-        width: 100%;
-    }
-
-    @media (max-width: 760px) {
-        .short-list-signature-card {
-            width: min(100%, 240px);
-            margin: 0 auto;
-            flex: none;
-        }
-    }
-
-    @media (min-width: 760px) {
-        .shorts-tools {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .shorts-tools .player-sort {
-            width: 230px;
-        }
-    }
-</style>
 
 <main class="page-background">
 
-    <section class="players-page">
+        <section class="yard-page">
 
-        <header class="players-page-header">
+            <header class="yard-header">
 
-            <div>
-                <h1>Shorts</h1>
-
-                <p>
-                    Quick scouting clips, individual actions and standout moments
-                    from players featured by SkyrScout.
+                <p class="yard-label">
+                    The SkyrScout control room
                 </p>
-            </div>
 
-            <div class="players-count">
-                <strong>{{ site.shorts | size }}</strong>
-                <span>Shorts</span>
-            </div>
+                <h1>Scoutland Yard</h1>
 
-        </header>
+                <p class="yard-intro">
+                    The front desk for SkyrScout. Find our latest scouting
+                    reports, player updates and episodes of Scout of This World.
+                </p>
 
-        <div class="players-scout-counts">
+            </header>
 
-            <span class="players-scout-counts-label">
-                Shorts by creator
-            </span>
+           {% assign latest_updates = site.update_posts
+    | sort: "published_at"
+    | reverse
+%}
 
-            <div class="players-scout-counts-list shorts-creator-counts-list">
+<section class="yard-marquee">
 
-                <a
-                    class="players-scout-count"
-                    href="/about/#bon-scout"
-                >
-                    <strong>{{ bon_short_count }}</strong>
-                    <span>Bon Scout</span>
-                </a>
+    <div class="yard-marquee-label">
+        LATEST UPDATES
+    </div>
 
-            </div>
+    <div class="yard-marquee-items">
 
-        </div>
+        {% for update in latest_updates limit: 3 %}
 
-        <div class="players-tools shorts-tools">
+            <a
+                class="yard-marquee-item"
+                href="{{ update.url }}"
+            >
+                {{ update.title }}
+            </a>
 
-            <label class="player-sort" for="short-sort">
-                <span>Sort by</span>
+        {% endfor %}
 
-                <select id="short-sort">
-                    <option value="newest-added">Newest added</option>
-                    <option value="oldest-added">Oldest added</option>
-                    <option value="newest-youtube">Newest on YouTube</option>
-                    <option value="oldest-youtube">Oldest on YouTube</option>
-                    <option value="player-az">Player A–Z</option>
-                </select>
-            </label>
+    </div>
 
-        </div>
+</section>
+            <section class="yard-section">
 
-        <div class="players-list" id="shorts-list">
+                <div class="yard-section-heading">
 
-            {% assign sorted_shorts = site.shorts | sort: "site_added" | reverse %}
+                    <div>
+                        <p class="yard-section-label">
+                            Scouting
+                        </p>
 
-            {% for short in sorted_shorts %}
+                        <h2>Latest reports added</h2>
 
-                {% assign player = site.players
-                    | where: "slug", short.player_slug
-                    | first
-                %}
-
-                {% if player %}
-                    {% assign player_title_parts = player.title | split: ' – ' %}
-                    {% assign short_player_sort_name = player_title_parts[0] %}
-                {% else %}
-                    {% assign short_player_sort_name = short.title %}
-                {% endif %}
-
-                {% assign youtube_id = short.youtube
-                    | split: 'shorts/'
-                    | last
-                    | split: '?'
-                    | first
-                    | split: '&'
-                    | first
-                %}
-
-                <article
-                    class="player-list-card short-list-card"
-                    data-player="{{ short_player_sort_name | downcase | escape }}"
-                    data-report-date="{{ short.report_date | escape }}"
-                    data-site-added="{{ short.site_added | escape }}"
-                >
-
-                    <div class="short-list-signature-card">
-
-                        <div class="signature-short-card">
-                            <a
-                                class="signature-short-card-link"
-                                href="{{ short.url | relative_url }}"
-                                aria-label="Watch {{ short.title }}"
-                            ></a>
-
-                            <div class="signature-short-card-frame" aria-hidden="true">
-                                <span class="signature-short-card-shine"></span>
-
-                                <div class="signature-short-card-topline">
-                                    <span>Signature Short</span>
-                                    {% if short.publish_date %}
-                                        <time>{{ short.publish_date }}</time>
-                                    {% endif %}
-                                </div>
-
-                                <div class="signature-short-card-image">
-                                    {% if short.youtube %}
-                                        <img
-                                            src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                            alt=""
-                                            loading="lazy"
-                                        >
-                                    {% endif %}
-
-                                    <span class="signature-short-card-badge">Short</span>
-                                </div>
-
-                                <div class="signature-short-card-copy">
-                                    <h3>{{ short.title }}</h3>
-                                </div>
-
-                                <div class="signature-short-card-footer">
-                                    <span>SkyrScout</span>
-                                    <strong>Watch →</strong>
-                                </div>
-                            </div>
-                        </div>
-
+                        <p>
+                            The most recently added scouting reports. The report
+                            date shown on each profile tells you when the
+                            assessment was originally written.
+                        </p>
                     </div>
 
-                    <div class="player-list-content">
+                    <a href="/players/">
+                        View all players
+                    </a>
 
-                        <div class="player-list-heading">
-
-                            <div>
-                                <h2>
-                                    <a href="{{ short.url }}">
-                                        {{ short.title }}
-                                    </a>
-                                </h2>
-
-                                {% if player %}
-                                    <p class="player-list-details">
-                                        {{ player_title_parts[0] }}
-
-                                        {% if player.position %}
-                                            • {{ player.position }}
-                                        {% endif %}
-                                    </p>
-                                {% endif %}
-                            </div>
-
-                            <a
-                                class="player-list-action"
-                                href="{{ short.url }}"
-                            >
-                                Watch Short
-                            </a>
-
-                        </div>
-
-                        {% if short.description %}
-                            <p class="player-list-summary">
-                                {{ short.description | strip_newlines | strip }}
-                            </p>
-                        {% endif %}
-
-                        {% if short.short_by or short.report_date %}
-                            <p class="player-list-byline">
-
-                                {% if short.short_by %}
-                                    Short by
-                                    <a
-                                        class="player-list-author-link"
-                                        href="/about/#bon-scout"
-                                    >
-                                        {{ short.short_by }}
-                                    </a>
-                                {% endif %}
-
-                                {% if short.short_by and short.report_date %}
-                                    •
-                                {% endif %}
-
-                                {% if short.report_date %}
-                                    YouTube: {{ short.report_date }}
-                                {% endif %}
-
-                            </p>
-                        {% endif %}
-
-                    </div>
-
-                </article>
-
-            {% else %}
-
-                <div class="players-empty">
-                    <p>No Shorts have been published yet.</p>
                 </div>
 
-            {% endfor %}
+                <div
+                    class="yard-report-grid"
+                    id="yard-report-grid"
+                >
 
+                    {% for player in site.players %}
+
+                        {% assign title_parts = player.title | split: ' – ' %}
+
+                        {% assign youtube_id = player.youtube
+                            | split: 'v='
+                            | last
+                            | split: '&'
+                            | first
+                            | split: '/'
+                            | last
+                        %}
+
+                        <article
+    class="yard-report-card"
+    data-site-added="{{ player.site_added | escape }}"
+    data-report-date="{{ player.report_date | escape }}"
+>
+
+                            <a
+                                class="yard-report-image"
+                                href="{{ player.url }}"
+                                aria-label="View {{ title_parts[0] }}"
+                            >
+                                {% if player.youtube %}
+                                    <img
+                                        src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                        alt="{{ title_parts[0] }}"
+                                        loading="lazy"
+                                    >
+                                {% endif %}
+                            </a>
+
+                            <div class="yard-report-content">
+
+                                <p class="yard-report-added">
+                                    Added {{ player.site_added }}
+                                </p>
+
+                                <h3>
+                                    <a href="{{ player.url }}">
+                                        {{ title_parts[0] }}
+                                    </a>
+                                </h3>
+
+                                <p class="yard-report-details">
+                                    {% if player.position %}
+                                        {{ player.position }}
+                                    {% endif %}
+
+                                    {% if player.position and title_parts[1] %}
+                                        •
+                                    {% endif %}
+
+                                    {% if title_parts[1] %}
+                                        {{ title_parts[1] }}
+                                    {% endif %}
+                                </p>
+
+                                {% if player.report_date %}
+                                    <p class="yard-report-date">
+                                        Report date: {{ player.report_date }}
+                                    </p>
+                                {% endif %}
+
+                                <a
+                                    class="yard-card-action"
+                                    href="{{ player.url }}"
+                                >
+                                    View report
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+<section class="yard-section">
+
+    <div class="yard-section-heading">
+        <div>
+            <p class="yard-section-label">Video</p>
+            <h2>Latest Shorts</h2>
+            <p>Quick scouting clips and standout individual actions.</p>
         </div>
 
-    </section>
+        <a href="/shorts/">View all Shorts</a>
+    </div>
 
-</main>
+    <div class="yard-report-grid">
 
-<script>
-    const shortSortSelect = document.querySelector("#short-sort");
-    const shortsList = document.querySelector("#shorts-list");
+        {% assign latest_shorts = site.shorts
+            | sort: "publish_date"
+            | reverse
+        %}
 
-    function getShortCards() {
-        return Array.from(
-            document.querySelectorAll(".short-list-card")
-        );
-    }
+        {% for short in latest_shorts limit: 3 %}
 
-    function convertNorwegianDate(dateText) {
-        if (!dateText) {
-            return 0;
+            {% assign youtube_id = short.youtube
+                | split: "shorts/"
+                | last
+                | split: "?"
+                | first
+            %}
+
+            <article class="signature-short-card">
+                <a
+                    class="signature-short-card-link"
+                    href="{{ short.url | relative_url }}"
+                    aria-label="Watch {{ short.title }}"
+                ></a>
+
+                <div class="signature-short-card-frame" aria-hidden="true">
+                    <span class="signature-short-card-shine"></span>
+
+                    <div class="signature-short-card-topline">
+                        <span>Signature Short</span>
+                        {% if short.publish_date %}
+                            <time>{{ short.publish_date }}</time>
+                        {% endif %}
+                    </div>
+
+                    <div class="signature-short-card-image">
+                        {% if short.youtube %}
+                            <img
+                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                alt=""
+                                loading="lazy"
+                            >
+                        {% endif %}
+
+                        <span class="signature-short-card-badge">Short</span>
+                    </div>
+
+                    <div class="signature-short-card-copy">
+                        <h3>{{ short.title }}</h3>
+                    </div>
+
+                    <div class="signature-short-card-footer">
+                        <span>SkyrScout</span>
+                        <strong>Watch →</strong>
+                    </div>
+                </div>
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+            <section class="yard-section">
+
+                <div class="yard-section-heading">
+
+                    <div>
+                        <p class="yard-section-label">
+                            Newsroom
+                        </p>
+
+                        <h2>Latest updates</h2>
+
+                        <p>
+                            News, rumours and confirmed developments involving
+                            players featured by SkyrScout.
+                        </p>
+                    </div>
+
+                    <a href="/updates/">
+                        View all updates
+                    </a>
+
+                </div>
+
+                <div class="yard-update-list">
+
+                    {% assign sorted_updates = latest_updates %}
+
+                    {% for update in sorted_updates limit: 3 %}
+
+                        {% assign update_filename = update.path
+                            | split: "/"
+                            | last
+                        %}
+
+                        {% assign update_date = update_filename
+                            | slice: 0, 10
+                            | split: "-"
+                        %}
+
+                        <article class="yard-update-card">
+
+                            <p class="yard-update-date">
+                                {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
+                            </p>
+
+                            <h3>
+                                <a href="{{ update.url }}">
+                                    {{ update.title }}
+                                </a>
+                            </h3>
+
+                            <p>
+                                {{ update.content
+                                    | strip_html
+                                    | truncatewords: 28
+                                }}
+                            </p>
+
+                            <a
+                                class="yard-text-link"
+                                href="{{ update.url }}"
+                            >
+                                Read update
+                            </a>
+
+                        </article>
+
+                    {% else %}
+
+                        <p class="yard-empty">
+                            No updates have been published yet.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <section class="yard-section">
+
+                <div class="yard-section-heading">
+
+                    <div>
+                        <p class="yard-section-label">
+                            Podcast
+                        </p>
+
+                        <h2>Latest episode</h2>
+
+                        <p>
+                            The latest episode of our Norwegian-language
+                            scouting podcast, Scout of This World.
+                        </p>
+                    </div>
+
+                    <a href="/podcast/">
+                        Explore the podcast
+                    </a>
+
+                </div>
+
+                <div
+                    class="yard-podcast"
+                    id="yard-latest-podcast"
+                >
+                    <p class="yard-loading">
+                        Loading latest episode...
+                    </p>
+                </div>
+
+            </section>
+
+            <aside class="yard-music">
+
+                <div
+                    class="yard-music-image"
+                    id="yard-music-image"
+                ></div>
+
+                <div class="yard-music-content">
+
+                    <p class="yard-section-label">
+                        From 404 Bon Blondes
+                    </p>
+
+                    <h2 id="yard-music-title">
+                        Original music from the SkyrScout universe
+                    </h2>
+
+                    <p>
+                        404 Bon Blondes provides most of the original music
+                        featured in SkyrScout videos.
+                    </p>
+
+                    <div class="yard-music-actions">
+
+                        <a
+                            class="yard-card-action"
+                            id="yard-music-video-link"
+                            href="/music/"
+                        >
+                            Latest release
+                        </a>
+
+                        <a
+                            class="yard-text-link"
+                            href="/music/"
+                        >
+                            Explore Music
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    <script>
+        function convertNorwegianDate(dateText) {
+            if (!dateText) {
+                return 0;
+            }
+
+            const parts = dateText.split(".");
+
+            if (parts.length !== 3) {
+                return 0;
+            }
+
+            const day = Number(parts[0]);
+            const month = Number(parts[1]) - 1;
+            const year = Number(parts[2]);
+
+            return new Date(year, month, day).getTime();
         }
 
-        const parts = dateText.split(".");
+       function sortLatestReports() {
+    const reportGrid = document.querySelector("#yard-report-grid");
 
-        if (parts.length !== 3) {
-            return 0;
-        }
-
-        const day = Number(parts[0]);
-        const month = Number(parts[1]) - 1;
-        const year = Number(parts[2]);
-
-        return new Date(year, month, day).getTime();
+    if (!reportGrid) {
+        return;
     }
 
-    function compareNames(a, b) {
-        return a.dataset.player.localeCompare(b.dataset.player);
-    }
+    const cards = Array.from(
+        reportGrid.querySelectorAll(".yard-report-card")
+    );
 
-    function sortShorts(sortType) {
-        const cards = getShortCards();
-
-        cards.sort(function (a, b) {
-            const siteAddedA = convertNorwegianDate(a.dataset.siteAdded);
-            const siteAddedB = convertNorwegianDate(b.dataset.siteAdded);
-            const reportDateA = convertNorwegianDate(a.dataset.reportDate);
-            const reportDateB = convertNorwegianDate(b.dataset.reportDate);
-
-            if (sortType === "oldest-added") {
-                return (
-                    siteAddedA - siteAddedB ||
-                    reportDateA - reportDateB ||
-                    compareNames(a, b)
-                );
-            }
-
-            if (sortType === "newest-youtube") {
-                return (
-                    reportDateB - reportDateA ||
-                    siteAddedB - siteAddedA ||
-                    compareNames(a, b)
-                );
-            }
-
-            if (sortType === "oldest-youtube") {
-                return (
-                    reportDateA - reportDateB ||
-                    siteAddedA - siteAddedB ||
-                    compareNames(a, b)
-                );
-            }
-
-            if (sortType === "player-az") {
-                return compareNames(a, b);
-            }
-
+    const newestReports = [...cards]
+        .sort(function (a, b) {
             return (
-                siteAddedB - siteAddedA ||
-                reportDateB - reportDateA ||
-                compareNames(a, b)
+                convertNorwegianDate(b.dataset.reportDate) -
+                convertNorwegianDate(a.dataset.reportDate)
+            );
+        })
+        .slice(0, 3);
+
+    const remainingCards = cards
+        .filter(function (card) {
+            return !newestReports.includes(card);
+        })
+        .sort(function (a, b) {
+            return (
+                convertNorwegianDate(b.dataset.siteAdded) -
+                convertNorwegianDate(a.dataset.siteAdded)
             );
         });
 
-        cards.forEach(function (card) {
-            shortsList.appendChild(card);
-        });
-    }
+    const sortedCards = [
+        ...newestReports,
+        ...remainingCards
+    ];
 
-    shortSortSelect.addEventListener("change", function () {
-        sortShorts(shortSortSelect.value);
+    sortedCards.forEach(function (card, index) {
+        card.hidden = index >= 12;
+        reportGrid.appendChild(card);
     });
+}
 
-    sortShorts("newest-added");
-</script>
+        function stripHtml(html) {
+            const temporaryElement = document.createElement("div");
+            temporaryElement.innerHTML = html || "";
 
-<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+            return (
+                temporaryElement.textContent ||
+                temporaryElement.innerText ||
+                ""
+            )
+                .replace(/\s+/g, " ")
+                .trim();
+        }
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        twemoji.parse(document.body, {
-            folder: "svg",
-            ext: ".svg"
-        });
-    });
-</script>
+        function formatDuration(duration) {
+            if (!duration) {
+                return "";
+            }
+
+            const parts = duration.split(":").map(Number);
+
+            if (
+                parts.length === 3 &&
+                parts.every(Number.isFinite)
+            ) {
+                const hours = parts[0];
+                const minutes = parts[1];
+
+                if (hours > 0) {
+                    return `${hours} t ${minutes} min`;
+                }
+
+                return `${minutes} min`;
+            }
+
+            return duration;
+        }
+
+        async function loadLatestPodcast() {
+            const container = document.querySelector(
+                "#yard-latest-podcast"
+            );
+
+            try {
+                const response = await fetch(
+                    "/assets/data/podcast-episodes.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load podcast data.");
+                }
+
+                const data = await response.json();
+                const episode = data.episodes?.[0];
+
+                if (!episode) {
+                    throw new Error("No podcast episodes found.");
+                }
+
+                const episodeUrl =
+                    episode.link || episode.audio_url || "/podcast/";
+
+                const publishedDate = episode.published
+                    ? new Date(episode.published)
+                    : null;
+
+                const description = stripHtml(
+                    episode.description
+                );
+
+                const metadata = [];
+
+                if (episode.season_number) {
+                    metadata.push(
+                        `Season ${episode.season_number}`
+                    );
+                }
+
+                if (episode.episode_number) {
+                    metadata.push(
+                        `Episode ${episode.episode_number}`
+                    );
+                }
+
+                if (publishedDate) {
+                    metadata.push(
+                        publishedDate.toLocaleDateString(
+                            "nb-NO",
+                            {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            }
+                        )
+                    );
+                }
+
+                const duration = formatDuration(
+                    episode.duration
+                );
+
+                if (duration) {
+                    metadata.push(duration);
+                }
+
+                container.innerHTML = `
+                    <a
+                        class="yard-podcast-image"
+                        href="${episodeUrl}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ${
+                            episode.image
+                                ? `
+                                    <img
+                                        src="${episode.image}"
+                                        alt="${episode.title || "Scout of This World"}"
+                                    >
+                                `
+                                : ""
+                        }
+                    </a>
+
+                    <div class="yard-podcast-content">
+
+                        <p class="yard-podcast-meta">
+                            ${metadata.join(" • ")}
+                        </p>
+
+                        <h3>
+                            <a
+                                href="${episodeUrl}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ${episode.title || "Scout of This World"}
+                            </a>
+                        </h3>
+
+                        ${
+                            description
+                                ? `
+                                    <p class="yard-podcast-description">
+                                        ${description}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                        <a
+                            class="yard-card-action"
+                            href="${episodeUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open on Spotify
+                        </a>
+
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error(error);
+
+                container.innerHTML = `
+                    <p class="yard-empty">
+                        The latest podcast episode could not be loaded.
+                    </p>
+                `;
+            }
+        }
+
+        async function loadLatestMusic() {
+            const imageContainer = document.querySelector(
+                "#yard-music-image"
+            );
+
+            const title = document.querySelector(
+                "#yard-music-title"
+            );
+
+            const videoLink = document.querySelector(
+                "#yard-music-video-link"
+            );
+
+            try {
+                const response = await fetch(
+                    "/assets/data/music-videos.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load music data.");
+                }
+
+                const data = await response.json();
+                const video = data.videos?.[0];
+
+                if (!video) {
+                    return;
+                }
+
+                title.textContent =
+                    video.title || "Latest release";
+
+                videoLink.href = video.url || "/music/";
+                videoLink.target = "_blank";
+                videoLink.rel = "noopener noreferrer";
+
+                if (video.thumbnail) {
+                    imageContainer.innerHTML = `
+                        <a
+                            href="${video.url || "/music/"}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img
+                                src="${video.thumbnail}"
+                                alt="${video.title || "404 Bon Blondes"}"
+                            >
+                        </a>
+                    `;
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+const marqueeItems = document.querySelector(".yard-marquee-items");
+
+if (marqueeItems) {
+    marqueeItems.innerHTML += marqueeItems.innerHTML;
+}
+        sortLatestReports();
+        loadLatestPodcast();
+        loadLatestMusic();
+    </script>
