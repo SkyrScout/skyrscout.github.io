@@ -2,6 +2,97 @@
 layout: default
 ---
 
+<style>
+.player-signature-shorts .signature-short-card--signature .signature-short-card-frame {
+    background:
+        radial-gradient(circle at 15% 0%, rgba(255, 211, 106, 0.16), transparent 30%),
+        linear-gradient(155deg, rgba(34, 28, 16, 0.98), rgba(11, 9, 6, 0.99) 58%),
+        #0a0e12;
+    border-color: rgba(232, 192, 92, 0.72);
+    box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(232, 192, 92, 0.12),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.player-signature-shorts .signature-short-card--signature:hover .signature-short-card-frame {
+    border-color: rgba(255, 214, 120, 0.92);
+    box-shadow:
+        0 24px 45px rgba(0, 0, 0, 0.46),
+        0 0 26px rgba(232, 192, 92, 0.22),
+        0 0 0 1px rgba(255, 214, 120, 0.18);
+}
+
+.player-signature-shorts .signature-short-card--featured .signature-short-card-frame {
+    background:
+        radial-gradient(circle at 15% 0%, rgba(201, 210, 224, 0.11), transparent 30%),
+        linear-gradient(155deg, rgba(23, 28, 34, 0.98), rgba(7, 10, 14, 0.99) 58%),
+        #0a0e12;
+    border-color: rgba(184, 194, 208, 0.58);
+    box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(184, 194, 208, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.player-signature-shorts .signature-short-card--featured:hover .signature-short-card-frame {
+    border-color: rgba(214, 223, 235, 0.82);
+    box-shadow:
+        0 24px 45px rgba(0, 0, 0, 0.46),
+        0 0 24px rgba(184, 194, 208, 0.15),
+        0 0 0 1px rgba(214, 223, 235, 0.14);
+}
+
+.player-signature-shorts .signature-short-card-role-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.46rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    line-height: 1;
+}
+
+.player-signature-shorts .signature-short-card--signature .signature-short-card-role-label {
+    color: #ffd978;
+    background: rgba(255, 217, 120, 0.12);
+    border-color: rgba(255, 217, 120, 0.28);
+}
+
+.player-signature-shorts .signature-short-card--featured .signature-short-card-role-label {
+    color: #d7e0ea;
+    background: rgba(215, 224, 234, 0.10);
+    border-color: rgba(215, 224, 234, 0.24);
+}
+
+.player-signature-shorts .signature-short-card--signature .signature-short-card-footer strong {
+    color: #ffd978;
+}
+
+.player-signature-shorts .signature-short-card--featured .signature-short-card-footer strong {
+    color: #d7e0ea;
+}
+
+.player-signature-shorts .signature-short-card--signature .signature-short-card-shine {
+    background:
+        radial-gradient(
+            circle at var(--signature-shine-x) var(--signature-shine-y),
+            rgba(255, 255, 255, 0.18) 0%,
+            rgba(255, 215, 115, 0.08) 18%,
+            transparent 46%
+        );
+}
+
+.player-signature-shorts .signature-short-card--featured .signature-short-card-shine {
+    background:
+        radial-gradient(
+            circle at var(--signature-shine-x) var(--signature-shine-y),
+            rgba(255, 255, 255, 0.16) 0%,
+            rgba(215, 224, 234, 0.06) 18%,
+            transparent 46%
+        );
+}
+</style>
+
 <main class="page-background">
 
     <article class="player-page">
@@ -472,8 +563,9 @@ layout: default
                             %}
 
                             <article
-                                class="signature-short-card"
+                                class="signature-short-card {% if is_primary_player_short %}signature-short-card--signature{% else %}signature-short-card--featured{% endif %}"
                                 data-signature-short-card
+                                data-short-role="{% if is_primary_player_short %}signature{% else %}featured{% endif %}"
                                 data-publish-date="{{ short.report_date }}"
                             >
                                 <a
@@ -487,9 +579,9 @@ layout: default
 
                                     <div class="signature-short-card-topline">
                                         {% if is_primary_player_short %}
-                                            <span>Signature Short</span>
+                                            <span class="signature-short-card-role-label">Signature Short</span>
                                         {% else %}
-                                            <span>Featured In</span>
+                                            <span class="signature-short-card-role-label">Featured In</span>
                                         {% endif %}
                                         {% if short.report_date %}
                                             <time>{{ short.report_date }}</time>
