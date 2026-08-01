@@ -20,6 +20,178 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
         color: #111111;
         font-weight: 700;
     }
+
+    .players-view-panel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border: 1px solid rgba(80, 205, 240, 0.28);
+        border-radius: 12px;
+        background: rgba(7, 15, 20, 0.9);
+    }
+
+    .players-view-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .players-view-label {
+        margin-right: 4px;
+        color: #aab5be;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .players-view-button,
+    .players-grid-suggestion-button {
+        appearance: none;
+        border: 1px solid rgba(80, 205, 240, 0.42);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #ffffff;
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1;
+        padding: 8px 12px;
+    }
+
+    .players-view-button:hover,
+    .players-view-button:focus-visible,
+    .players-grid-suggestion-button:hover,
+    .players-grid-suggestion-button:focus-visible {
+        border-color: #54d5f7;
+    }
+
+    .players-view-button.is-active {
+        border-color: #54d5f7;
+        background: #54d5f7;
+        color: #071016;
+    }
+
+    .players-grid-suggestion {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        color: #bac4cb;
+        font-size: 0.82rem;
+        text-align: right;
+    }
+
+    .players-grid-suggestion[hidden] {
+        display: none;
+    }
+
+    .players-list.is-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .players-list.is-grid .player-list-card {
+        display: flex;
+        min-width: 0;
+        height: 100%;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .players-list.is-grid .player-list-card[hidden] {
+        display: none;
+    }
+
+    .players-list.is-grid .player-list-image {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        min-height: 0;
+    }
+
+    .players-list.is-grid .player-list-image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .players-list.is-grid .player-list-content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-width: 0;
+        padding: 16px;
+    }
+
+    .players-list.is-grid .player-list-heading {
+        display: contents;
+    }
+
+    .players-list.is-grid .player-list-heading > div {
+        order: 1;
+    }
+
+    .players-list.is-grid .player-list-heading h2 {
+        margin-bottom: 8px;
+        font-size: 1.08rem;
+        line-height: 1.2;
+    }
+
+    .players-list.is-grid .player-list-details {
+        margin-bottom: 0;
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
+    .players-list.is-grid .player-list-summary {
+        display: none;
+    }
+
+    .players-list.is-grid .player-list-byline {
+        order: 2;
+        margin-top: 14px;
+        font-size: 0.75rem;
+        line-height: 1.45;
+    }
+
+    .players-list.is-grid .player-list-action {
+        order: 3;
+        align-self: flex-start;
+        margin-top: auto;
+    }
+
+    @media (max-width: 1050px) {
+        .players-list.is-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 759px) {
+        .players-view-panel {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .players-grid-suggestion {
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 620px) {
+        .players-list.is-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <main class="page-background">
@@ -76,6 +248,47 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                     <span>Bon Scout</span>
                 </a>
 
+            </div>
+
+        </div>
+
+        <div class="players-view-panel">
+
+            <div class="players-view-controls" aria-label="Player view">
+                <span class="players-view-label">View</span>
+
+                <button
+                    class="players-view-button is-active"
+                    id="players-view-list"
+                    type="button"
+                    aria-pressed="true"
+                >
+                    List
+                </button>
+
+                <button
+                    class="players-view-button"
+                    id="players-view-grid"
+                    type="button"
+                    aria-pressed="false"
+                >
+                    Grid
+                </button>
+            </div>
+
+            <div
+                class="players-grid-suggestion"
+                id="players-grid-suggestion"
+            >
+                <span>Want a quicker visual overview?</span>
+
+                <button
+                    class="players-grid-suggestion-button"
+                    id="players-grid-suggestion-button"
+                    type="button"
+                >
+                    Try grid view
+                </button>
             </div>
 
         </div>
@@ -263,6 +476,55 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
     const sortSelect = document.querySelector("#player-sort");
     const playersList = document.querySelector("#players-list");
     const noResults = document.querySelector("#players-no-results");
+    const listViewButton = document.querySelector("#players-view-list");
+    const gridViewButton = document.querySelector("#players-view-grid");
+    const gridSuggestion = document.querySelector("#players-grid-suggestion");
+    const gridSuggestionButton = document.querySelector(
+        "#players-grid-suggestion-button"
+    );
+
+    const playerViewStorageKey = "skyrscout-players-view";
+    const playerGridSeenStorageKey = "skyrscout-players-grid-seen";
+
+    function readStoredValue(key) {
+        try {
+            return window.localStorage.getItem(key);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function storeValue(key, value) {
+        try {
+            window.localStorage.setItem(key, value);
+        } catch (error) {
+            return;
+        }
+    }
+
+    function applyPlayerView(viewType, rememberChoice) {
+        const useGrid = viewType === "grid";
+
+        playersList.classList.toggle("is-grid", useGrid);
+        listViewButton.classList.toggle("is-active", !useGrid);
+        gridViewButton.classList.toggle("is-active", useGrid);
+        listViewButton.setAttribute("aria-pressed", String(!useGrid));
+        gridViewButton.setAttribute("aria-pressed", String(useGrid));
+
+        if (useGrid) {
+            storeValue(playerGridSeenStorageKey, "true");
+        }
+
+        const gridHasBeenSeen =
+            readStoredValue(playerGridSeenStorageKey) === "true";
+
+        gridSuggestion.hidden = useGrid || gridHasBeenSeen;
+
+        if (rememberChoice) {
+            storeValue(playerViewStorageKey, useGrid ? "grid" : "list");
+        }
+    }
+
 
     function getPlayerCards() {
         return Array.from(
@@ -488,6 +750,25 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
     sortSelect.addEventListener("change", function () {
         sortPlayers(sortSelect.value);
     });
+
+    listViewButton.addEventListener("click", function () {
+        applyPlayerView("list", true);
+    });
+
+    gridViewButton.addEventListener("click", function () {
+        applyPlayerView("grid", true);
+    });
+
+    gridSuggestionButton.addEventListener("click", function () {
+        applyPlayerView("grid", true);
+    });
+
+    const storedPlayerView = readStoredValue(playerViewStorageKey);
+
+    applyPlayerView(
+        storedPlayerView === "grid" ? "grid" : "list",
+        false
+    );
 
     populatePositionFilter();
     sortPlayers("newest");
