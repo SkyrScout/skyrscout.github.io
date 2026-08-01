@@ -33,7 +33,7 @@ positions:
     rank: 3
 
 summary: |
-  🇨🇦🇮🇹 Sean Rea | 23 y/o AM/W
+  🇨🇦🇮🇹 Sean Rea | 23 y/o AM/LW/RW
   🎩 Technically gifted playmaker — brilliant close control & vision
   ⚡ Excellent ball-carrier, creative spark with Modrić-like flair
   🎯 Two-footed passer, dangerous from set pieces
