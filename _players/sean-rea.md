@@ -39,7 +39,7 @@ summary: |
   🎯 Two-footed passer, dangerous from set pieces
   💪 Works hard off the ball, sharp in transitions
   📊 2 goals + 5 assists in 29 games — should produce even more
-  🔝 Considered ready for a move to a top-12 European league
+  🔝 Ready for a move to a top-12 European league
 
 report: |
   Sean Rea | 23-year-old Canadian–Italian playmaker
@@ -62,13 +62,13 @@ report: |
 
   After establishing himself in the Canadian Premier League, Rea earned a move to CF Montréal and featured in Major League Soccer during the 2023 season, with mixed success.
 
-  He later returned to the Canadian Premier League with HFX Wanderers, where he again demonstrated the technical quality, creativity and individual flair that had originally made him stand out.
+  Now back in the Canadian Premier League with HFX Wanderers, he is again showing the technical quality, creativity and individual flair that originally made him stand out.
 
   Transfer outlook
 
-  At the time of this report, Rea's contract with HFX Wanderers was due to expire at the end of 2025.
+  Rea's contract with HFX Wanderers expires at the end of 2025.
 
-  SkyrScout considered him capable of stepping into a top-12 European league. With his technical quality, genuine two-footedness, versatility and experience from both the CPL and MLS, he represented an interesting opportunity for European clubs seeking a creative player entering his prime years.
+  SkyrScout considers him capable of stepping into a top-12 European league. With his technical quality, genuine two-footedness, versatility and experience from both the CPL and MLS, he represents an interesting opportunity for European clubs seeking a creative player entering his prime years.
 
 transfermarkt: "https://www.transfermarkt.com/sean-rea/profil/spieler/718099"
 sofascore: "https://www.sofascore.com/football/player/sean-rea/1002401#tab:season"
