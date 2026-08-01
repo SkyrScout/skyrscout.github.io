@@ -633,6 +633,18 @@ layout: default
 
                 cards
                     .sort(function (a, b) {
+                        const roleOrder = {
+                            signature: 0,
+                            featured: 1
+                        };
+
+                        const aRole = roleOrder[a.dataset.shortRole] ?? 99;
+                        const bRole = roleOrder[b.dataset.shortRole] ?? 99;
+
+                        if (aRole !== bRole) {
+                            return aRole - bRole;
+                        }
+
                         return dateValue(b.dataset.publishDate) - dateValue(a.dataset.publishDate);
                     })
                     .forEach(function (card) {
