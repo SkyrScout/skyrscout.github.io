@@ -69,6 +69,21 @@ layout: default
 
 {% endif %}
 
+{% assign secondary_player_count = 0 %}
+
+{% if page.secondary_player_slugs %}
+    {% for secondary_player_slug in page.secondary_player_slugs %}
+        {% assign secondary_player = site.players
+            | where: "slug", secondary_player_slug
+            | first
+        %}
+
+        {% if secondary_player %}
+            {% assign secondary_player_count = secondary_player_count | plus: 1 %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
 
 {% if page.youtube and youtube_id and short_upload_date %}
 
@@ -117,6 +132,43 @@ layout: default
             "@id": {{ short_player_id | jsonify }},
             "name": {{ short_player_name | jsonify }}
         }
+        {% endif %}
+
+        {% if secondary_player_count > 0 %}
+        ,
+        "mentions": [
+            {% assign rendered_secondary_players = 0 %}
+            {% for secondary_player_slug in page.secondary_player_slugs %}
+                {% assign secondary_player = site.players
+                    | where: "slug", secondary_player_slug
+                    | first
+                %}
+
+                {% if secondary_player %}
+                    {% assign secondary_player_name = secondary_player.title
+                        | split: ' – '
+                        | first
+                        | split: ' ('
+                        | first
+                        | strip
+                    %}
+
+                    {% assign secondary_player_id = secondary_player.url
+                        | absolute_url
+                        | append: '#player'
+                    %}
+
+                    {% if rendered_secondary_players > 0 %},{% endif %}
+                    {
+                        "@type": "Person",
+                        "@id": {{ secondary_player_id | jsonify }},
+                        "name": {{ secondary_player_name | jsonify }}
+                    }
+
+                    {% assign rendered_secondary_players = rendered_secondary_players | plus: 1 %}
+                {% endif %}
+            {% endfor %}
+        ]
         {% endif %}
     }
     </script>
@@ -206,28 +258,66 @@ layout: default
 
         {% endif %}
 
-        {% if player %}
+        {% if player or secondary_player_count > 0 %}
 
             <section class="player-section">
 
-                <h2>Player Report</h2>
+                <h2>
+                    {% if secondary_player_count > 0 %}
+                        Player Reports
+                    {% else %}
+                        Player Report
+                    {% endif %}
+                </h2>
 
-                {% assign player_title_parts = player.title | split: ' – ' %}
+                {% if secondary_player_count > 0 %}
+                    <p>
+                        Learn more about the SkyrScout players involved in this Short.
+                    </p>
+                {% elsif player %}
+                    {% assign player_title_parts = player.title | split: ' – ' %}
 
-                <p>
-                    Learn more about
-                    <strong>{{ player_title_parts[0] }}</strong>
-                    in the complete SkyrScout player profile.
-                </p>
+                    <p>
+                        Learn more about
+                        <strong>{{ player_title_parts[0] }}</strong>
+                        in the complete SkyrScout player profile.
+                    </p>
+                {% endif %}
 
-                <p>
-                    <a
-                        href="{{ player.url }}"
-                        class="report-button"
-                    >
-                        Read Full Scouting Report →
-                    </a>
-                </p>
+                {% if player %}
+                    {% assign player_title_parts = player.title | split: ' – ' %}
+
+                    <p>
+                        <a
+                            href="{{ player.url }}"
+                            class="report-button"
+                        >
+                            Read {{ player_title_parts[0] }} Report →
+                        </a>
+                    </p>
+                {% endif %}
+
+                {% if page.secondary_player_slugs %}
+                    {% for secondary_player_slug in page.secondary_player_slugs %}
+                        {% assign secondary_player = site.players
+                            | where: "slug", secondary_player_slug
+                            | first
+                        %}
+
+                        {% if secondary_player %}
+                            {% assign secondary_player_title_parts = secondary_player.title | split: ' – ' %}
+
+                            <p>
+                                <a
+                                    href="{{ secondary_player.url }}"
+                                    class="report-button"
+                                >
+                                    Read {{ secondary_player_title_parts[0] }} Report →
+                                </a>
+                            </p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
 
             </section>
 

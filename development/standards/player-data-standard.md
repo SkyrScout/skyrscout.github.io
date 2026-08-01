@@ -151,7 +151,17 @@ An empty or absent `game_traits` list means no trait effect.
 
 Do **not** store a fixed list of Shorts in the player file.
 
-The relationship remains one-to-many through each Short's `player_slug`. The Game discovers all matching Shorts, so publishing a new Short can add a new signature ability without editing the player profile.
+Each Short keeps one primary player in `player_slug`. This is the player whose action makes the clip a Signature Short.
+
+When another scouted player has a meaningful positive involvement in the same sequence, add the optional list `secondary_player_slugs`:
+
+```yaml
+player_slug: "sean-rea"
+secondary_player_slugs:
+  - "tiago-coimbra"
+```
+
+The Short is then linked from both player profiles, while `player_slug` remains the primary owner of the signature action. A secondary link does not automatically define a Game bonus or synergy; that effect must be designed separately in the Game data.
 
 ## YouTube
 

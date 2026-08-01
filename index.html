@@ -172,14 +172,12 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
         <a href="/shorts/">View all Shorts</a>
     </div>
 
-    <div class="yard-report-grid">
+    <div
+        class="yard-report-grid"
+        id="yard-latest-shorts"
+    >
 
-        {% assign latest_shorts = site.shorts
-            | sort: "site_added"
-            | reverse
-        %}
-
-        {% for short in latest_shorts limit: 3 %}
+        {% for short in site.shorts %}
 
             {% assign youtube_id = short.youtube
                 | split: "shorts/"
@@ -188,7 +186,12 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                 | first
             %}
 
-            <article class="signature-short-card">
+            <article
+                class="signature-short-card"
+                data-site-added="{{ short.site_added | escape }}"
+                data-report-date="{{ short.report_date | escape }}"
+                data-short-title="{{ short.title | downcase | escape }}"
+            >
                 <a
                     class="signature-short-card-link"
                     href="{{ short.url | relative_url }}"
@@ -456,6 +459,35 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
     });
 }
 
+        function sortLatestShorts() {
+            const shortsGrid = document.querySelector("#yard-latest-shorts");
+
+            if (!shortsGrid) {
+                return;
+            }
+
+            const cards = Array.from(
+                shortsGrid.querySelectorAll(".signature-short-card")
+            );
+
+            cards
+                .sort(function (a, b) {
+                    return (
+                        convertNorwegianDate(b.dataset.siteAdded) -
+                            convertNorwegianDate(a.dataset.siteAdded) ||
+                        convertNorwegianDate(b.dataset.reportDate) -
+                            convertNorwegianDate(a.dataset.reportDate) ||
+                        a.dataset.shortTitle.localeCompare(
+                            b.dataset.shortTitle
+                        )
+                    );
+                })
+                .forEach(function (card, index) {
+                    card.hidden = index >= 3;
+                    shortsGrid.appendChild(card);
+                });
+        }
+
         function stripHtml(html) {
             const temporaryElement = document.createElement("div");
             temporaryElement.innerHTML = html || "";
@@ -689,6 +721,7 @@ if (marqueeItems) {
     marqueeItems.innerHTML += marqueeItems.innerHTML;
 }
         sortLatestReports();
+        sortLatestShorts();
         loadLatestPodcast();
         loadLatestMusic();
     </script>

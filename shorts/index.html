@@ -150,8 +150,8 @@ description: "Quick scouting clips, individual actions and standout moments from
 
                                 <div class="signature-short-card-topline">
                                     <span>Signature Short</span>
-                                    {% if short.publish_date %}
-                                        <time>{{ short.publish_date }}</time>
+                                    {% if short.report_date %}
+                                        <time>{{ short.report_date }}</time>
                                     {% endif %}
                                 </div>
 
@@ -197,6 +197,20 @@ description: "Quick scouting clips, individual actions and standout moments from
 
                                         {% if player.position %}
                                             • {{ player.position }}
+                                        {% endif %}
+
+                                        {% if short.secondary_player_slugs %}
+                                            {% for secondary_player_slug in short.secondary_player_slugs %}
+                                                {% assign secondary_player = site.players
+                                                    | where: "slug", secondary_player_slug
+                                                    | first
+                                                %}
+
+                                                {% if secondary_player %}
+                                                    {% assign secondary_player_title_parts = secondary_player.title | split: ' – ' %}
+                                                    <br>Also featuring: {{ secondary_player_title_parts[0] }}
+                                                {% endif %}
+                                            {% endfor %}
                                         {% endif %}
                                     </p>
                                 {% endif %}

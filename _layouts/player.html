@@ -419,11 +419,23 @@ layout: default
             %}
         {% endif %}
 
-        {% assign player_signature_shorts = site.shorts
-            | where: "player_slug", signature_player_slug
-        %}
+        {% assign player_signature_short_count = 0 %}
 
-        {% if player_signature_shorts.size > 0 %}
+        {% for short in site.shorts %}
+            {% assign is_player_signature_short = false %}
+
+            {% if short.player_slug == signature_player_slug %}
+                {% assign is_player_signature_short = true %}
+            {% elsif short.secondary_player_slugs and short.secondary_player_slugs contains signature_player_slug %}
+                {% assign is_player_signature_short = true %}
+            {% endif %}
+
+            {% if is_player_signature_short %}
+                {% assign player_signature_short_count = player_signature_short_count | plus: 1 %}
+            {% endif %}
+        {% endfor %}
+
+        {% if player_signature_short_count > 0 %}
 
             <section class="player-section player-signature-shorts">
 
@@ -431,61 +443,71 @@ layout: default
 
                 <div class="signature-short-grid" data-signature-short-grid>
 
-                    {% for short in player_signature_shorts %}
+                    {% for short in site.shorts %}
+                        {% assign is_player_signature_short = false %}
 
-                        {% assign short_youtube_id = short.youtube
-                            | split: 'shorts/'
-                            | last
-                            | split: '?'
-                            | first
-                            | split: '&'
-                            | first
-                        %}
+                        {% if short.player_slug == signature_player_slug %}
+                            {% assign is_player_signature_short = true %}
+                        {% elsif short.secondary_player_slugs and short.secondary_player_slugs contains signature_player_slug %}
+                            {% assign is_player_signature_short = true %}
+                        {% endif %}
 
-                        <article
-                            class="signature-short-card"
-                            data-signature-short-card
-                            data-publish-date="{{ short.publish_date }}"
-                        >
-                            <a
-                                class="signature-short-card-link"
-                                href="{{ short.url | relative_url }}"
-                                aria-label="Watch {{ short.title }}"
-                            ></a>
+                        {% if is_player_signature_short %}
 
-                            <div class="signature-short-card-frame" aria-hidden="true">
-                                <span class="signature-short-card-shine"></span>
+                            {% assign short_youtube_id = short.youtube
+                                | split: 'shorts/'
+                                | last
+                                | split: '?'
+                                | first
+                                | split: '&'
+                                | first
+                            %}
 
-                                <div class="signature-short-card-topline">
-                                    <span>Signature Short</span>
-                                    {% if short.publish_date %}
-                                        <time>{{ short.publish_date }}</time>
-                                    {% endif %}
+                            <article
+                                class="signature-short-card"
+                                data-signature-short-card
+                                data-publish-date="{{ short.report_date }}"
+                            >
+                                <a
+                                    class="signature-short-card-link"
+                                    href="{{ short.url | relative_url }}"
+                                    aria-label="Watch {{ short.title }}"
+                                ></a>
+
+                                <div class="signature-short-card-frame" aria-hidden="true">
+                                    <span class="signature-short-card-shine"></span>
+
+                                    <div class="signature-short-card-topline">
+                                        <span>Signature Short</span>
+                                        {% if short.report_date %}
+                                            <time>{{ short.report_date }}</time>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="signature-short-card-image">
+                                        {% if short.youtube %}
+                                            <img
+                                                src="https://img.youtube.com/vi/{{ short_youtube_id }}/hqdefault.jpg"
+                                                alt=""
+                                                loading="lazy"
+                                            >
+                                        {% endif %}
+
+                                        <span class="signature-short-card-badge">Short</span>
+                                    </div>
+
+                                    <div class="signature-short-card-copy">
+                                        <h3>{{ short.title }}</h3>
+                                    </div>
+
+                                    <div class="signature-short-card-footer">
+                                        <span>SkyrScout</span>
+                                        <strong>Watch →</strong>
+                                    </div>
                                 </div>
+                            </article>
 
-                                <div class="signature-short-card-image">
-                                    {% if short.youtube %}
-                                        <img
-                                            src="https://img.youtube.com/vi/{{ short_youtube_id }}/hqdefault.jpg"
-                                            alt=""
-                                            loading="lazy"
-                                        >
-                                    {% endif %}
-
-                                    <span class="signature-short-card-badge">Short</span>
-                                </div>
-
-                                <div class="signature-short-card-copy">
-                                    <h3>{{ short.title }}</h3>
-                                </div>
-
-                                <div class="signature-short-card-footer">
-                                    <span>SkyrScout</span>
-                                    <strong>Watch →</strong>
-                                </div>
-                            </div>
-                        </article>
-
+                        {% endif %}
                     {% endfor %}
 
                 </div>
@@ -546,6 +568,7 @@ layout: default
             </script>
 
         {% endif %}
+
 
         {% if page.podcast %}
 

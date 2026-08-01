@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "200 IQ move by this little Magician 🎩 | What Sorcery Is This?"
 
 player_slug: "sean-rea"
+secondary_player_slugs:
+  - "tiago-coimbra"
 
 youtube: "https://www.youtube.com/shorts/ao0maCx_nAM"
 
