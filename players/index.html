@@ -189,7 +189,37 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
 
     @media (max-width: 620px) {
         .players-list.is-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .players-list.is-grid .player-list-content {
+            padding: 10px;
+        }
+
+        .players-list.is-grid .player-list-heading h2 {
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+            line-height: 1.18;
+        }
+
+        .players-list.is-grid .player-list-details {
+            font-size: 0.68rem;
+            line-height: 1.35;
+        }
+
+        .players-list.is-grid .player-list-byline {
+            margin-top: 10px;
+            font-size: 0.62rem;
+            line-height: 1.35;
+        }
+
+        .players-list.is-grid .player-list-action {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px 6px;
+            font-size: 0.68rem;
+            text-align: center;
         }
     }
 </style>
