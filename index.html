@@ -4,6 +4,85 @@ title: "Scoutland Yard"
 description: "Scoutland Yard is the SkyrScout control room, featuring the latest scouting reports, player updates, podcast episodes and original music."
 ---
 
+<style>
+    @media (max-width: 759px) {
+        .yard-report-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 12px !important;
+        }
+
+        .yard-report-card,
+        #yard-latest-shorts .signature-short-card {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .yard-report-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .yard-report-image {
+            width: 100%;
+        }
+
+        .yard-report-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .yard-report-content {
+            padding: 12px;
+        }
+
+        .yard-report-added {
+            margin-bottom: 6px;
+            font-size: 0.72rem;
+        }
+
+        .yard-report-content h3 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+            line-height: 1.18;
+            overflow-wrap: anywhere;
+        }
+
+        .yard-report-details,
+        .yard-report-date {
+            font-size: 0.75rem;
+            line-height: 1.35;
+        }
+
+        .yard-card-action {
+            padding: 8px 10px;
+            font-size: 0.75rem;
+        }
+
+        #yard-latest-shorts .signature-short-card-frame {
+            height: 100%;
+        }
+
+        #yard-latest-shorts .signature-short-card-topline {
+            gap: 6px;
+            font-size: 0.62rem;
+        }
+
+        #yard-latest-shorts .signature-short-card-copy h3 {
+            font-size: 0.88rem;
+            line-height: 1.18;
+            overflow-wrap: anywhere;
+        }
+
+        #yard-latest-shorts .signature-short-card-footer {
+            font-size: 0.68rem;
+        }
+    }
+</style>
+
+
 <main class="page-background">
 
         <section class="yard-page">
