@@ -24,6 +24,139 @@ description: "Quick scouting clips, individual actions and standout moments from
         width: 100%;
     }
 
+    .short-grid-player {
+        display: none;
+        margin: 8px 0 0;
+        color: #9cabb3;
+        font-size: 0.78rem;
+        font-weight: 750;
+        line-height: 1.3;
+    }
+
+    .shorts-view-area {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .shorts-view-control > span {
+        display: block;
+        margin-bottom: 9px;
+        color: #dce4e8;
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+
+    .shorts-view-toggle {
+        display: inline-flex;
+        padding: 4px;
+        gap: 4px;
+        background: rgba(255, 255, 255, 0.055);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 9px;
+    }
+
+    .shorts-view-button {
+        min-width: 78px;
+        height: 38px;
+        padding: 0 14px;
+        color: #b8c3c9;
+        font: inherit;
+        font-size: 0.88rem;
+        font-weight: 800;
+        background: transparent;
+        border: 0;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .shorts-view-button:hover,
+    .shorts-view-button:focus-visible {
+        color: #ffffff;
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .shorts-view-button.is-active {
+        color: #071015;
+        background: #67d3f3;
+    }
+
+    .shorts-grid-suggestion {
+        margin: 0 0 4px;
+        padding: 0;
+        color: #86dff7;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 750;
+        line-height: 1.35;
+        text-align: left;
+        background: none;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .shorts-grid-suggestion:hover,
+    .shorts-grid-suggestion:focus-visible {
+        color: #ffffff;
+        text-decoration: underline;
+        outline: none;
+    }
+
+    .shorts-tools .player-sort {
+        margin-top: 18px;
+    }
+
+    #shorts-list.shorts-grid-view {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 240px));
+        justify-content: center;
+        align-items: stretch;
+        gap: clamp(18px, 2.6vw, 26px);
+    }
+
+    #shorts-list.shorts-grid-view .short-list-card {
+        display: block;
+        min-height: 0;
+        overflow: visible;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    #shorts-list.shorts-grid-view .short-list-card:hover {
+        transform: none;
+        border-color: transparent;
+        box-shadow: none;
+    }
+
+    #shorts-list.shorts-grid-view .short-list-signature-card {
+        width: 100%;
+        padding: 0;
+        flex: none;
+    }
+
+    #shorts-list.shorts-grid-view .signature-short-card {
+        width: 100%;
+        flex: none;
+    }
+
+    #shorts-list.shorts-grid-view .player-list-content {
+        display: none;
+    }
+
+    #shorts-list.shorts-grid-view .short-grid-player {
+        display: block;
+    }
+
+    @media (max-width: 900px) {
+        #shorts-list.shorts-grid-view {
+            grid-template-columns: repeat(2, minmax(0, 240px));
+        }
+    }
+
     @media (max-width: 760px) {
         .short-list-signature-card {
             width: min(100%, 240px);
@@ -32,14 +165,16 @@ description: "Quick scouting clips, individual actions and standout moments from
         }
     }
 
-    @media (min-width: 760px) {
-        .shorts-tools {
-            display: flex;
-            justify-content: flex-end;
+    @media (max-width: 560px) {
+        #shorts-list.shorts-grid-view {
+            grid-template-columns: minmax(0, 240px);
         }
+    }
 
+    @media (min-width: 760px) {
         .shorts-tools .player-sort {
             width: 230px;
+            margin-top: 0;
         }
     }
 </style>
@@ -87,6 +222,46 @@ description: "Quick scouting clips, individual actions and standout moments from
         </div>
 
         <div class="players-tools shorts-tools">
+
+            <div class="shorts-view-area">
+
+                <div class="shorts-view-control">
+                    <span>View</span>
+
+                    <div
+                        class="shorts-view-toggle"
+                        role="group"
+                        aria-label="Choose Shorts view"
+                    >
+                        <button
+                            class="shorts-view-button is-active"
+                            id="short-view-list"
+                            type="button"
+                            aria-pressed="true"
+                        >
+                            List
+                        </button>
+
+                        <button
+                            class="shorts-view-button"
+                            id="short-view-grid"
+                            type="button"
+                            aria-pressed="false"
+                        >
+                            Grid
+                        </button>
+                    </div>
+                </div>
+
+                <button
+                    class="shorts-grid-suggestion"
+                    id="short-grid-suggestion"
+                    type="button"
+                >
+                    Want a cleaner visual overview? Try grid view →
+                </button>
+
+            </div>
 
             <label class="player-sort" for="short-sort">
                 <span>Sort by</span>
@@ -169,6 +344,12 @@ description: "Quick scouting clips, individual actions and standout moments from
 
                                 <div class="signature-short-card-copy">
                                     <h3>{{ short.title }}</h3>
+
+                                    {% if player %}
+                                        <p class="short-grid-player">
+                                            {{ player_title_parts[0] }}
+                                        </p>
+                                    {% endif %}
                                 </div>
 
                                 <div class="signature-short-card-footer">
@@ -276,6 +457,56 @@ description: "Quick scouting clips, individual actions and standout moments from
 <script>
     const shortSortSelect = document.querySelector("#short-sort");
     const shortsList = document.querySelector("#shorts-list");
+    const shortListViewButton = document.querySelector("#short-view-list");
+    const shortGridViewButton = document.querySelector("#short-view-grid");
+    const shortGridSuggestion = document.querySelector("#short-grid-suggestion");
+    const shortViewStorageKey = "skyrscout-shorts-view";
+    const shortGridSeenStorageKey = "skyrscout-shorts-grid-seen";
+
+    function readStoredValue(key) {
+        try {
+            return window.localStorage.getItem(key);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function storeValue(key, value) {
+        try {
+            window.localStorage.setItem(key, value);
+        } catch (error) {
+            return;
+        }
+    }
+
+    function updateGridSuggestion(view) {
+        const gridHasBeenSeen = readStoredValue(shortGridSeenStorageKey) === "true";
+
+        shortGridSuggestion.hidden = view === "grid" || gridHasBeenSeen;
+    }
+
+    function setShortsView(view, rememberChoice) {
+        const useGrid = view === "grid";
+        const selectedView = useGrid ? "grid" : "list";
+
+        shortsList.classList.toggle("shorts-grid-view", useGrid);
+
+        shortListViewButton.classList.toggle("is-active", !useGrid);
+        shortGridViewButton.classList.toggle("is-active", useGrid);
+
+        shortListViewButton.setAttribute("aria-pressed", String(!useGrid));
+        shortGridViewButton.setAttribute("aria-pressed", String(useGrid));
+
+        if (rememberChoice) {
+            storeValue(shortViewStorageKey, selectedView);
+        }
+
+        if (useGrid) {
+            storeValue(shortGridSeenStorageKey, "true");
+        }
+
+        updateGridSuggestion(selectedView);
+    }
 
     function getShortCards() {
         return Array.from(
@@ -358,6 +589,22 @@ description: "Quick scouting clips, individual actions and standout moments from
         sortShorts(shortSortSelect.value);
     });
 
+    shortListViewButton.addEventListener("click", function () {
+        setShortsView("list", true);
+    });
+
+    shortGridViewButton.addEventListener("click", function () {
+        setShortsView("grid", true);
+    });
+
+    shortGridSuggestion.addEventListener("click", function () {
+        setShortsView("grid", true);
+    });
+
+    const storedShortsView = readStoredValue(shortViewStorageKey);
+    const initialShortsView = storedShortsView === "grid" ? "grid" : "list";
+
+    setShortsView(initialShortsView, false);
     sortShorts("newest-added");
 </script>
 
