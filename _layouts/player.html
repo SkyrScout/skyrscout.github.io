@@ -420,6 +420,7 @@ layout: default
         {% endif %}
 
         {% assign player_signature_short_count = 0 %}
+        {% assign player_featured_short_count = 0 %}
 
         {% for short in site.shorts %}
             {% assign is_player_signature_short = false %}
@@ -428,6 +429,7 @@ layout: default
                 {% assign is_player_signature_short = true %}
             {% elsif short.secondary_player_slugs and short.secondary_player_slugs contains signature_player_slug %}
                 {% assign is_player_signature_short = true %}
+                {% assign player_featured_short_count = player_featured_short_count | plus: 1 %}
             {% endif %}
 
             {% if is_player_signature_short %}
@@ -439,15 +441,21 @@ layout: default
 
             <section class="player-section player-signature-shorts">
 
-                <h2>Signature Shorts</h2>
+                {% if player_featured_short_count > 0 %}
+                    <h2>Player Shorts</h2>
+                {% else %}
+                    <h2>Signature Shorts</h2>
+                {% endif %}
 
                 <div class="signature-short-grid" data-signature-short-grid>
 
                     {% for short in site.shorts %}
                         {% assign is_player_signature_short = false %}
+                        {% assign is_primary_player_short = false %}
 
                         {% if short.player_slug == signature_player_slug %}
                             {% assign is_player_signature_short = true %}
+                            {% assign is_primary_player_short = true %}
                         {% elsif short.secondary_player_slugs and short.secondary_player_slugs contains signature_player_slug %}
                             {% assign is_player_signature_short = true %}
                         {% endif %}
@@ -478,7 +486,11 @@ layout: default
                                     <span class="signature-short-card-shine"></span>
 
                                     <div class="signature-short-card-topline">
-                                        <span>Signature Short</span>
+                                        {% if is_primary_player_short %}
+                                            <span>Signature Short</span>
+                                        {% else %}
+                                            <span>Featured In</span>
+                                        {% endif %}
                                         {% if short.report_date %}
                                             <time>{{ short.report_date }}</time>
                                         {% endif %}
