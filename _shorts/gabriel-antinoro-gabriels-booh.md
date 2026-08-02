@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "⭐ Brazilian Wingback scores amazing golazo after dazzling solo run!"
 
 player_slug: "gabriel-antinoro"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/YW8-GilJ0Io"
 

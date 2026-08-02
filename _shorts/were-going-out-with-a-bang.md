@@ -3,6 +3,8 @@ layout: short
 short_by: "Bon Scout"
 title: "🎆We're going out with a BANG!💥"
 player_slug: "kwame-peprah"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 youtube: "https://www.youtube.com/shorts/_k9TCkI-SE4"
 report_date: "18.12.2025"
 site_added: "31.07.2026"

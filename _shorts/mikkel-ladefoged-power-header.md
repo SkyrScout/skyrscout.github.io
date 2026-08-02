@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "201 cm tall striker with a power header!"
 
 player_slug: "mikkel-ladefoged"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/3iCNl4aL7v4"
 

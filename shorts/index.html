@@ -395,6 +395,20 @@ description: "Quick scouting clips, individual actions and standout moments from
                                     {% if player %}
                                         <p class="short-grid-player">
                                             {{ player_title_parts[0] }}
+
+                                            {% if short.co_signature_player_slugs %}
+                                                {% for co_signature_player_slug in short.co_signature_player_slugs %}
+                                                    {% assign co_signature_player = site.players
+                                                        | where: "slug", co_signature_player_slug
+                                                        | first
+                                                    %}
+
+                                                    {% if co_signature_player %}
+                                                        {% assign co_signature_player_title_parts = co_signature_player.title | split: ' – ' %}
+                                                        &amp; {{ co_signature_player_title_parts[0] }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
                                         </p>
                                     {% endif %}
                                 </div>
@@ -425,6 +439,20 @@ description: "Quick scouting clips, individual actions and standout moments from
 
                                         {% if player.position %}
                                             • {{ player.position }}
+                                        {% endif %}
+
+                                        {% if short.co_signature_player_slugs %}
+                                            {% for co_signature_player_slug in short.co_signature_player_slugs %}
+                                                {% assign co_signature_player = site.players
+                                                    | where: "slug", co_signature_player_slug
+                                                    | first
+                                                %}
+
+                                                {% if co_signature_player %}
+                                                    {% assign co_signature_player_title_parts = co_signature_player.title | split: ' – ' %}
+                                                    <br>Co-signature: {{ co_signature_player_title_parts[0] }}
+                                                {% endif %}
+                                            {% endfor %}
                                         {% endif %}
 
                                         {% if short.secondary_player_slugs %}

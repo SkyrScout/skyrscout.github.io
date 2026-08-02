@@ -151,9 +151,19 @@ An empty or absent `game_traits` list means no trait effect.
 
 Do **not** store a fixed list of Shorts in the player file.
 
-Each Short keeps one primary player in `player_slug`. This is the player whose action makes the clip a Signature Short.
+Each Short keeps one canonical primary player in `player_slug`. This is the original/main owner of the Short.
 
-When another scouted player has a meaningful positive involvement in the same sequence, add the optional list `secondary_player_slugs`:
+When another scouted player performs an equally Signature-worthy action in the same clip, add the optional list `co_signature_player_slugs`:
+
+```yaml
+player_slug: "eduards-daskevics"
+co_signature_player_slugs:
+  - "josue-vergara"
+```
+
+Both players then receive a gold **Signature Short** card on their profiles. `player_slug` remains the canonical primary field so existing links and sorting remain stable.
+
+When another scouted player has a meaningful positive involvement but is not an equal star of the Short, use `secondary_player_slugs`:
 
 ```yaml
 player_slug: "sean-rea"
@@ -161,7 +171,7 @@ secondary_player_slugs:
   - "tiago-coimbra"
 ```
 
-The Short is then linked from both player profiles, while `player_slug` remains the primary owner of the signature action. A secondary link does not automatically define a Game bonus or synergy; that effect must be designed separately in the Game data.
+The primary player receives a gold **Signature Short** card, while the secondary player receives a silver **Featured In** card. These links do not automatically define a Game bonus or synergy; those effects must be designed separately in the Game data.
 
 ## YouTube
 

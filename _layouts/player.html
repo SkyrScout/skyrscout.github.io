@@ -518,6 +518,8 @@ layout: default
 
             {% if short.player_slug == signature_player_slug %}
                 {% assign is_player_signature_short = true %}
+            {% elsif short.co_signature_player_slugs and short.co_signature_player_slugs contains signature_player_slug %}
+                {% assign is_player_signature_short = true %}
             {% elsif short.secondary_player_slugs and short.secondary_player_slugs contains signature_player_slug %}
                 {% assign is_player_signature_short = true %}
                 {% assign player_featured_short_count = player_featured_short_count | plus: 1 %}
@@ -542,11 +544,14 @@ layout: default
 
                     {% for short in site.shorts %}
                         {% assign is_player_signature_short = false %}
-                        {% assign is_primary_player_short = false %}
+                        {% assign is_gold_signature_short = false %}
 
                         {% if short.player_slug == signature_player_slug %}
                             {% assign is_player_signature_short = true %}
-                            {% assign is_primary_player_short = true %}
+                            {% assign is_gold_signature_short = true %}
+                        {% elsif short.co_signature_player_slugs and short.co_signature_player_slugs contains signature_player_slug %}
+                            {% assign is_player_signature_short = true %}
+                            {% assign is_gold_signature_short = true %}
                         {% elsif short.secondary_player_slugs and short.secondary_player_slugs contains signature_player_slug %}
                             {% assign is_player_signature_short = true %}
                         {% endif %}
@@ -563,9 +568,9 @@ layout: default
                             %}
 
                             <article
-                                class="signature-short-card {% if is_primary_player_short %}signature-short-card--signature{% else %}signature-short-card--featured{% endif %}"
+                                class="signature-short-card {% if is_gold_signature_short %}signature-short-card--signature{% else %}signature-short-card--featured{% endif %}"
                                 data-signature-short-card
-                                data-short-role="{% if is_primary_player_short %}signature{% else %}featured{% endif %}"
+                                data-short-role="{% if is_gold_signature_short %}signature{% else %}featured{% endif %}"
                                 data-publish-date="{{ short.report_date }}"
                             >
                                 <a
@@ -578,7 +583,7 @@ layout: default
                                     <span class="signature-short-card-shine"></span>
 
                                     <div class="signature-short-card-topline">
-                                        {% if is_primary_player_short %}
+                                        {% if is_gold_signature_short %}
                                             <span class="signature-short-card-role-label">Signature Short</span>
                                         {% else %}
                                             <span class="signature-short-card-role-label">Featured In</span>

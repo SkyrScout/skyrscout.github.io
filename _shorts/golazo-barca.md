@@ -3,6 +3,8 @@ layout: short
 short_by: "Bon Scout"
 title: "GOLAZO from former Barca Youth!"
 player_slug: "erbol-atabaev"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 youtube: "https://www.youtube.com/shorts/Q5wLixizoqk"
 report_date: "17.07.2026"
 site_added: "17.07.2026"

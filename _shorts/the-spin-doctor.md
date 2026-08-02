@@ -3,6 +3,8 @@ layout: short
 short_by: "Bon Scout"
 title: "The Spin Doctor | Sander Alamaa Leaves Defenders Dizzy"
 player_slug: "sander-alamaa"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 youtube: "https://www.youtube.com/shorts/BqeREyGMjag"
 report_date: "13.07.2026"
 site_added: "13.07.2026"

@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "🇺🇸 \"The Lone Star-adona\" ⭐️ dribbles everyone from the mid circle! 🇲🇽"
 
 player_slug: "david-rodriguez"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/HsyZD2LXFeg"
 

@@ -9,6 +9,7 @@ player_slug: "eduards-daskevics"
 
 co_signature_player_slugs:
   - "josue-vergara"
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/0-vyUJCCvpk"
 

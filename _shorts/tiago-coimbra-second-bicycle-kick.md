@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "Tiago Coimbra's 2nd bicycle kick - off the post!"
 
 player_slug: "tiago-coimbra"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/fuaETsduhQ4"
 

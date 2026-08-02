@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "Ethan Hoard - A Giant Overstep"
 
 player_slug: "ethan-hoard"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/1qAMC_LobqU"
 

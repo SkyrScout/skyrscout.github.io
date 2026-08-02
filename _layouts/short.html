@@ -69,6 +69,21 @@ layout: default
 
 {% endif %}
 
+{% assign co_signature_player_count = 0 %}
+
+{% if page.co_signature_player_slugs %}
+    {% for co_signature_player_slug in page.co_signature_player_slugs %}
+        {% assign co_signature_player = site.players
+            | where: "slug", co_signature_player_slug
+            | first
+        %}
+
+        {% if co_signature_player %}
+            {% assign co_signature_player_count = co_signature_player_count | plus: 1 %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
 {% assign secondary_player_count = 0 %}
 
 {% if page.secondary_player_slugs %}
@@ -134,40 +149,77 @@ layout: default
         }
         {% endif %}
 
-        {% if secondary_player_count > 0 %}
+        {% assign mentioned_player_count = co_signature_player_count | plus: secondary_player_count %}
+        {% if mentioned_player_count > 0 %}
         ,
         "mentions": [
-            {% assign rendered_secondary_players = 0 %}
-            {% for secondary_player_slug in page.secondary_player_slugs %}
-                {% assign secondary_player = site.players
-                    | where: "slug", secondary_player_slug
-                    | first
-                %}
+            {% assign rendered_mentioned_players = 0 %}
 
-                {% if secondary_player %}
-                    {% assign secondary_player_name = secondary_player.title
-                        | split: ' – '
+            {% if page.co_signature_player_slugs %}
+                {% for co_signature_player_slug in page.co_signature_player_slugs %}
+                    {% assign co_signature_player = site.players
+                        | where: "slug", co_signature_player_slug
                         | first
-                        | split: ' ('
-                        | first
-                        | strip
                     %}
 
-                    {% assign secondary_player_id = secondary_player.url
-                        | absolute_url
-                        | append: '#player'
+                    {% if co_signature_player %}
+                        {% assign co_signature_player_name = co_signature_player.title
+                            | split: ' – '
+                            | first
+                            | split: ' ('
+                            | first
+                            | strip
+                        %}
+
+                        {% assign co_signature_player_id = co_signature_player.url
+                            | absolute_url
+                            | append: '#player'
+                        %}
+
+                        {% if rendered_mentioned_players > 0 %},{% endif %}
+                        {
+                            "@type": "Person",
+                            "@id": {{ co_signature_player_id | jsonify }},
+                            "name": {{ co_signature_player_name | jsonify }}
+                        }
+
+                        {% assign rendered_mentioned_players = rendered_mentioned_players | plus: 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if page.secondary_player_slugs %}
+                {% for secondary_player_slug in page.secondary_player_slugs %}
+                    {% assign secondary_player = site.players
+                        | where: "slug", secondary_player_slug
+                        | first
                     %}
 
-                    {% if rendered_secondary_players > 0 %},{% endif %}
-                    {
-                        "@type": "Person",
-                        "@id": {{ secondary_player_id | jsonify }},
-                        "name": {{ secondary_player_name | jsonify }}
-                    }
+                    {% if secondary_player %}
+                        {% assign secondary_player_name = secondary_player.title
+                            | split: ' – '
+                            | first
+                            | split: ' ('
+                            | first
+                            | strip
+                        %}
 
-                    {% assign rendered_secondary_players = rendered_secondary_players | plus: 1 %}
-                {% endif %}
-            {% endfor %}
+                        {% assign secondary_player_id = secondary_player.url
+                            | absolute_url
+                            | append: '#player'
+                        %}
+
+                        {% if rendered_mentioned_players > 0 %},{% endif %}
+                        {
+                            "@type": "Person",
+                            "@id": {{ secondary_player_id | jsonify }},
+                            "name": {{ secondary_player_name | jsonify }}
+                        }
+
+                        {% assign rendered_mentioned_players = rendered_mentioned_players | plus: 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         ]
         {% endif %}
     }
@@ -190,7 +242,19 @@ layout: default
                 <p class="player-subtitle">
                     {{ player_title_parts[0] }}
 
-                    {% if player.position %}
+                    {% if co_signature_player_count > 0 %}
+                        {% for co_signature_player_slug in page.co_signature_player_slugs %}
+                            {% assign co_signature_player = site.players
+                                | where: "slug", co_signature_player_slug
+                                | first
+                            %}
+
+                            {% if co_signature_player %}
+                                {% assign co_signature_player_title_parts = co_signature_player.title | split: ' – ' %}
+                                &amp; {{ co_signature_player_title_parts[0] }}
+                            {% endif %}
+                        {% endfor %}
+                    {% elsif player.position %}
                         • {{ player.position }}
                     {% endif %}
                 </p>
@@ -258,19 +322,20 @@ layout: default
 
         {% endif %}
 
-        {% if player or secondary_player_count > 0 %}
+        {% if player or co_signature_player_count > 0 or secondary_player_count > 0 %}
 
             <section class="player-section">
 
                 <h2>
-                    {% if secondary_player_count > 0 %}
+                    {% assign additional_player_count = co_signature_player_count | plus: secondary_player_count %}
+                    {% if additional_player_count > 0 %}
                         Player Reports
                     {% else %}
                         Player Report
                     {% endif %}
                 </h2>
 
-                {% if secondary_player_count > 0 %}
+                {% if additional_player_count > 0 %}
                     <p>
                         Learn more about the SkyrScout players involved in this Short.
                     </p>
@@ -295,6 +360,28 @@ layout: default
                             Read {{ player_title_parts[0] }} Report →
                         </a>
                     </p>
+                {% endif %}
+
+                {% if page.co_signature_player_slugs %}
+                    {% for co_signature_player_slug in page.co_signature_player_slugs %}
+                        {% assign co_signature_player = site.players
+                            | where: "slug", co_signature_player_slug
+                            | first
+                        %}
+
+                        {% if co_signature_player %}
+                            {% assign co_signature_player_title_parts = co_signature_player.title | split: ' – ' %}
+
+                            <p>
+                                <a
+                                    href="{{ co_signature_player.url }}"
+                                    class="report-button"
+                                >
+                                    Read {{ co_signature_player_title_parts[0] }} Report →
+                                </a>
+                            </p>
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
 
                 {% if page.secondary_player_slugs %}

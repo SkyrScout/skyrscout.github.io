@@ -3,6 +3,8 @@ layout: short
 short_by: "Bon Scout"
 title: "17-Year-Old Umar Talantbekov BURNS the Defence & Scores!"
 player_slug: "umar-talantbekov"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 youtube: "https://www.youtube.com/shorts/7y2dKRm4jqw"
 report_date: "29.07.2026"
 site_added: "29.07.2026"

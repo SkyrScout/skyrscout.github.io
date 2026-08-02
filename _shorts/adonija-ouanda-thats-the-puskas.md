@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "🥇That's the Puskás!🏆🇨🇦😅"
 
 player_slug: "adonija-ouanda"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/VewZE5Kh3a4"
 

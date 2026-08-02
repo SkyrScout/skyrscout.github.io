@@ -6,6 +6,7 @@ short_by: "Bon Scout"
 title: "200 IQ move by this little Magician 🎩 | What Sorcery Is This?"
 
 player_slug: "sean-rea"
+co_signature_player_slugs: []
 secondary_player_slugs:
   - "tiago-coimbra"
 

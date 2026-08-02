@@ -6,6 +6,8 @@ short_by: "Bon Scout"
 title: "Sean Rea - Amazing chip over the defence (Modrić-style)!"
 
 player_slug: "sean-rea"
+co_signature_player_slugs: []
+secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/6vUbR3eyJsU"
 
