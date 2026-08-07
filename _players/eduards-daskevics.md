@@ -72,7 +72,7 @@ transfermarkt: "https://www.transfermarkt.com/eduards-daskevics/profil/spieler/5
 
 sofascore: "https://www.sofascore.com/football/player/eduards-daskevics/1064175#tab:season"
 
-podcast: ""
+podcast: "https://open.spotify.com/episode/3a2Amt5pMtWoElIvNuqf8b"
 
-podcast_timestamp: ""
+podcast_timestamp: "1:41:37"
 ---
