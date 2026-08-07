@@ -11,7 +11,7 @@ secondary_player_slugs: []
 
 youtube: "https://www.youtube.com/shorts/8CFlPp2if6w"
 
-report_date: "17.07.2005"
+report_date: "17.07.2025"
 site_added: "08.08.2026"
 
 description: |
