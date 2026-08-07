@@ -90,4 +90,6 @@ report: |
 
 transfermarkt: "https://www.transfermarkt.com/maksimilian-skvortsov/profil/spieler/999896"
 sofascore: "https://www.sofascore.com/no/football/player/skvortsov-maksimilian/1474806#tab:season"
+podcast: "https://open.spotify.com/episode/3a2Amt5pMtWoElIvNuqf8b"
+podcast_timestamp: "36:12"
 ---
