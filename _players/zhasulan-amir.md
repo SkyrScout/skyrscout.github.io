@@ -77,7 +77,7 @@ transfermarkt: "https://www.transfermarkt.com/zhasulan-amir/profil/spieler/12754
 
 sofascore: "https://www.sofascore.com/football/player/zhasulan-amir/2058613#tab:season"
 
-podcast: ""
+podcast: "https://open.spotify.com/episode/3a2Amt5pMtWoElIvNuqf8b"
 
-podcast_timestamp: ""
+podcast_timestamp: "48:30"
 ---
