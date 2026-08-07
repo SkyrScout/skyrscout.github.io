@@ -70,7 +70,7 @@ transfermarkt: "https://www.transfermarkt.com/sander-alamaa/profil/spieler/10443
 
 sofascore: "https://www.sofascore.com/no/football/player/sander-alamaa/1656702#tab:season"
 
-podcast: ""
+podcast: "https://open.spotify.com/episode/3a2Amt5pMtWoElIvNuqf8b"
 
-podcast_timestamp: ""
+podcast_timestamp: "1:17:08"
 ---
