@@ -72,7 +72,7 @@ transfermarkt: "https://www.transfermarkt.com/kevin-benkic/profil/spieler/940212
 
 sofascore: "https://www.sofascore.com/football/player/kevin-benkic/1148979#tab:season"
 
-podcast: ""
+podcast: "https://open.spotify.com/episode/3a2Amt5pMtWoElIvNuqf8b"
 
-podcast_timestamp: ""
+podcast_timestamp: "26:37"
 ---
