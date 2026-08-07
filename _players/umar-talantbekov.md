@@ -82,6 +82,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/umar-talantbekov/profil/spieler/1382426"
 sofascore: "https://www.sofascore.com/no/football/player/umar-talantbekov/2115306"
 
-podcast:
-podcast_timestamp:
+podcast: "https://open.spotify.com/episode/3a2Amt5pMtWoElIvNuqf8b"
+podcast_timestamp: "1:04:21"
 ---
