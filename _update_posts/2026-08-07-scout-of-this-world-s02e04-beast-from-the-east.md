@@ -5,6 +5,8 @@ published_at: 2026-08-07 07:19:03 +0200
 
 A new episode of Scout of This World is out now.
 
+The podcast is in Norwegian.
+
 In S02E04, **"Beast from the East"**, we once again head off the beaten scouting path, with Uzbekistan among the destinations as we look at players and football markets that deserve more attention.
 
 The episode is available both as a podcast on Spotify and in video format on YouTube.
