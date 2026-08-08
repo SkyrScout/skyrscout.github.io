@@ -24,6 +24,10 @@ collections:
     output: true
     permalink: /updates/:name/
 
+  podcast_guides:
+    output: true
+    permalink: /podcast/:name/
+
 defaults:
   - scope:
       path: ""
@@ -42,6 +46,12 @@ defaults:
       type: "update_posts"
     values:
       layout: updates
+
+  - scope:
+      path: ""
+      type: "podcast_guides"
+    values:
+      layout: podcast-guide
 
 google_analytics: "G-JR894EKXF4"
 exclude:

@@ -54,4 +54,11 @@ permalink: /sitemap-skyrscout.xml
     </url>
     {% endfor %}
 
+
+    {% for guide in site.podcast_guides %}
+    <url>
+        <loc>https://skyrscout.github.io{{ guide.url }}</loc>
+    </url>
+    {% endfor %}
+
 </urlset>

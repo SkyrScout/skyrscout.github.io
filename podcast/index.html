@@ -175,6 +175,15 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
 
     </main>
 <script>
+    const podcastGuides = {
+        {% for guide in site.podcast_guides %}
+            {{ guide.podcast_guid | jsonify }}: {
+                url: {{ guide.url | relative_url | jsonify }},
+                search: {{ guide.search_terms | default: '' | jsonify }}
+            }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    };
+
     function stripHtml(html) {
         const temporaryElement = document.createElement("div");
         temporaryElement.innerHTML = html || "";
@@ -263,11 +272,14 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
                 const card = document.createElement("article");
                 card.className = "podcast-episode-card";
 
+                const episodeGuide = podcastGuides[episode.guid];
+
                 card.dataset.search = [
                     episode.title,
                     descriptionText,
                     episode.episode_number,
-                    episode.season_number
+                    episode.season_number,
+                    episodeGuide ? episodeGuide.search : ""
                 ]
                     .filter(Boolean)
                     .join(" ")
@@ -356,6 +368,9 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
                     content.appendChild(description);
                 }
 
+                const actions = document.createElement("div");
+                actions.className = "podcast-episode-actions";
+
                 const action = document.createElement("a");
                 action.className = "podcast-episode-action";
                 action.href = episodeUrl;
@@ -381,8 +396,19 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
 
                 action.appendChild(spotifyIcon);
                 action.appendChild(actionText);
+                actions.appendChild(action);
 
-                content.appendChild(action);
+                if (episodeGuide && episodeGuide.url) {
+                    const guideAction = document.createElement("a");
+                    guideAction.className =
+                        "podcast-episode-action podcast-episode-action--guide";
+                    guideAction.href = episodeGuide.url;
+                    guideAction.textContent = "Les episodeguiden";
+
+                    actions.appendChild(guideAction);
+                }
+
+                content.appendChild(actions);
 
                 card.appendChild(imageLink);
                 card.appendChild(content);

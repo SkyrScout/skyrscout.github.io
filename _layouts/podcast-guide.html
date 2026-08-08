@@ -1,0 +1,79 @@
+---
+layout: default
+---
+
+<main class="page-background">
+    <article class="podcast-guide-page">
+        <header class="podcast-guide-header">
+            <a class="podcast-guide-back" href="/podcast/">← Tilbake til podcasten</a>
+
+            <p class="podcast-guide-label">Scout of This World</p>
+
+            <h1>{{ page.title }}</h1>
+
+            <p class="podcast-guide-meta">
+                {% if page.season_number and page.episode_number %}
+                    Sesong {{ page.season_number }}, episode {{ page.episode_number }}
+                {% elsif page.episode_number %}
+                    Episode {{ page.episode_number }}
+                {% endif %}
+
+                {% if page.published_display %}
+                    <span>•</span> {{ page.published_display }}
+                {% endif %}
+
+                {% if page.duration_display %}
+                    <span>•</span> {{ page.duration_display }}
+                {% endif %}
+            </p>
+
+            {% if page.intro %}
+                <div class="podcast-guide-intro">
+                    {{ page.intro | markdownify }}
+                </div>
+            {% endif %}
+        </header>
+
+        {% if page.youtube_id or page.spotify_episode_id %}
+            <section class="podcast-guide-embeds" aria-label="Se eller hør episoden">
+                {% if page.youtube_id %}
+                    <div class="podcast-guide-embed-block">
+                        <h2>Se episoden på YouTube</h2>
+
+                        <div class="podcast-guide-youtube">
+                            <iframe
+                                src="https://www.youtube.com/embed/{{ page.youtube_id }}"
+                                title="{{ page.title | escape }} – Scout of This World"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen
+                                loading="lazy"
+                            ></iframe>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if page.spotify_episode_id %}
+                    <div class="podcast-guide-embed-block">
+                        <h2>Hør eller se episoden på Spotify</h2>
+
+                        <iframe
+                            class="podcast-guide-spotify"
+                            src="https://open.spotify.com/embed/episode/{{ page.spotify_episode_id }}?utm_source=generator"
+                            title="{{ page.title | escape }} på Spotify"
+                            width="100%"
+                            height="352"
+                            frameborder="0"
+                            allowfullscreen=""
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"
+                        ></iframe>
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section class="podcast-guide-article">
+            {{ content }}
+        </section>
+    </article>
+</main>

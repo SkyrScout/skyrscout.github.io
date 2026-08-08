@@ -1,0 +1,50 @@
+{% assign player_target_url = '/players/' | append: include.slug | append: '/' %}
+{% assign podcast_player = site.players | where: 'url', player_target_url | first %}
+
+{% if podcast_player %}
+    {% assign podcast_player_title_parts = podcast_player.title | split: ' – ' %}
+    {% assign podcast_player_name = podcast_player_title_parts[0] | split: ' (' | first | strip %}
+    {% assign podcast_player_context = podcast_player_title_parts[1] | default: '' %}
+    {% assign podcast_player_context_parts = podcast_player_context | split: ' | ' %}
+    {% assign podcast_player_club = podcast_player_context_parts[0] | strip %}
+
+    {% if podcast_player.youtube %}
+        {% assign podcast_player_youtube_id = podcast_player.youtube
+            | split: 'v='
+            | last
+            | split: '&'
+            | first
+            | split: '/'
+            | last
+        %}
+    {% endif %}
+
+    <div class="podcast-guide-player-card-wrap">
+    <a class="podcast-guide-player-card" href="{{ podcast_player.url }}">
+        {% if podcast_player_youtube_id %}
+            <span class="podcast-guide-player-thumbnail">
+                <img
+                    src="https://img.youtube.com/vi/{{ podcast_player_youtube_id }}/mqdefault.jpg"
+                    alt="Video-thumbnail for {{ podcast_player_name }}"
+                    loading="lazy"
+                >
+            </span>
+        {% endif %}
+
+        <span class="podcast-guide-player-copy">
+            <span class="podcast-guide-player-label">SkyrScout spillerprofil</span>
+            <strong>{{ podcast_player_name }}</strong>
+
+            {% if podcast_player.position or podcast_player_club != '' %}
+                <span class="podcast-guide-player-meta">
+                    {% if podcast_player.position %}{{ podcast_player.position }}{% endif %}
+                    {% if podcast_player.position and podcast_player_club != '' %} • {% endif %}
+                    {% if podcast_player_club != '' %}{{ podcast_player_club }}{% endif %}
+                </span>
+            {% endif %}
+
+            <span class="podcast-guide-player-link">Se spillerprofil →</span>
+        </span>
+    </a>
+    </div>
+{% endif %}
