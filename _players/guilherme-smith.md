@@ -37,13 +37,13 @@ summary: |
   🔝 Ready for a stronger league after establishing himself in Estonia
 
 report: |
-  **League Assessment**
+  <h3>League Assessment</h3>
 
   Estonia ranks 45th in UEFA’s league ranking.
 
   The league consists of 10 teams playing each other three times. The capital city clubs Levadia and Flora Tallinn maintain a fairly good level. Mid-table teams such as Kalju, Paide, and Trans are inconsistent. The bottom five teams are outright poor.
 
-  **Strengths**
+  <h3>Strengths</h3>
 
   - Exceptional dribbling ability.
   - Fast with excellent acceleration.
@@ -53,24 +53,24 @@ report: |
   - Can shoot powerfully and accurately with both feet.
   - Well adapted to Europe, having lived for over a year in Estonia – the Baltic country most similar to the Nordic nations.
 
-  **Areas for Improvement**
+  <h3>Areas for Improvement</h3>
 
   - Better decision-making on when to shoot versus when to pass.
   - Few to no aerial involvements.
   - Passing accuracy could improve slightly.
   - Could be more effective in pressing play.
 
-  **Background**
+  <h3>Background</h3>
 
   Guilherme Smith is a product of Botafogo’s academy but also spent time with two of Rio’s other big clubs, Vasco da Gama and Fluminense, in his youth years.
 
   In June 2021, at just 18 years old, he was brought to Ukraine by Zorya Luhansk. He also had a short loan spell with Braga’s U23 team in Portugal from April 2022 to June 2023.
 
-  **Availability**
+  <h3>Availability</h3>
 
   Guilherme Smith was signed by Nõmme Kalju FC from Zorya Luhansk on 1 August 2024 for €100k and is under contract until 31 December 2026, with a 1-year club option. We believe Kalju could be willing to let him go for as little as €500k.
 
-  **Summary**
+  <h3>Summary</h3>
 
   We believe Guilherme Smith is ready to step up to a significantly stronger league after dominating the Estonian top division since his arrival. He has all the attacking attributes needed to play as a winger in a 4-3-3 system, and we believe his weaknesses can be improved quite easily. This is a player we think it would be unwise not to take a chance on now, while he can still be acquired for a relatively low fee.
 
