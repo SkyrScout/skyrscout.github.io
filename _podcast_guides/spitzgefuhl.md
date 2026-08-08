@@ -69,3 +69,12 @@ Det er alltid vanskelig å velge ut hvilke spillere som skal på Topp 3-lista, m
 Alt dette og mye mer i dagens episode av... Scout of This World var det, ja.
 
 God pod og god jul fra alle oss.
+
+## Oops, vi glemte julegaven.
+
+### Mohamed Saliou Bangoura - Årets julegave - [Video](https://www.youtube.com/watch?v=f7a1Pb6BhnE)
+
+{% include podcast-player-card.html slug="mohamed-saliou-bangoura" %}
+
+21 år gammel spiss fra Guinea i Vest-Afrika som ble hentet til MC Alger i Algerie i februar 2025, etter å ha bøttet inn mål og assist i hjemlandet. Endelig tilbake i spill etter å ha vært ut siden i juli med en stygg ankelskade. Vår desidert mest sette video på Skyrscout og vi skjønner hvorfor.
+
