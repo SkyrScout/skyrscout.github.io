@@ -70,7 +70,9 @@ Det er alltid vanskelig å velge ut hvilke spillere som skal på Topp 3-lista, m
 
 22 år gammel anvendelig angrepsspiller. Wendell kom opp gjennom akademiet til storklubben Palmeiras i Brasil, men ble lokket til Ukraina og SC Dnipro sin ungdomsavdeling allerede i august 2023. Etter å ha vært innom flere klubber på kortere opphold ble Wendell kjøpt for 100k EUR fra Polissya av Estlands beste klubb de siste årene, FCI Levadia, sommeren 2025. Sambaen er løs i Tallinn og Wendell har danset seg inn på vår liste over anbefalte spillere.
 
-Fant vi en spiss eller ble det bare røv? Se og hør på episoden for detaljerte beskrivelser av alle disse spillerne, hvordan vi vurderer dem og hva vi underbygger det med.
+## Fant vi en spiss eller ble det bare røv?
+
+Se og hør på episoden for detaljerte beskrivelser av alle disse spillerne, hvordan vi vurderer dem og hva vi underbygger det med.
 
 Ha en riktig pod sommer.
 
