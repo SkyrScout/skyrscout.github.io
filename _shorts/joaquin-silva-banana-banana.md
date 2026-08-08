@@ -19,7 +19,7 @@ description: |
 
   From around five metres left of centre, he opens up his body and curls a right-footed shot towards the far post.
 
-  The ball starts at mid-height before bending dramatically away from the goalkeeper and dipping sharply towards the bottom-right corner.
+  The ball starts at mid-height before bending dramatically away from the goalkeeper and dipping sharply into the bottom-right corner.
 
-  A beautifully controlled finish with the inside of his right foot and an outrageous amount of curl.
+  A beautifully controlled goal with the inside of his right foot and an outrageous amount of curl.
 ---
