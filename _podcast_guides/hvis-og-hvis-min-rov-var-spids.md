@@ -28,6 +28,8 @@ Men det podcasten vår handler om er scouting, eller fotballspeiding på godt no
 
 Vi pleier å presentere fire interessante spillere under "Scout's honorable mentions", men denne gangen ble toppanbefalingen vår meldt klar for en ny klubb bare en time før innspilling, så vi måtte rykke en spiller opp til Topp 3-lista og nøye oss med tre spillere totalt som fortjener "Scout's honorable mentions".
 
+## Scout's honorable mentions
+
 ### Lineker Rodrigues Dos Santos - Prolific sharpshooter - [Video](https://www.youtube.com/watch?v=Wps0ICXi0_M)
 
 {% include podcast-player-card.html slug="lineker-rodrigues-dos-santos" %}
@@ -45,6 +47,8 @@ Vi pleier å presentere fire interessante spillere under "Scout's honorable ment
 {% include podcast-player-card.html slug="david-flores" %}
 
 18 år gammel midtspiss fra Honduras. Flores ble hentet til Honduras' og Mellom-Amerikas største klubb, Club Deportivo Olimpia, sommeren 2023. Etter å ha imponert i U17-VM senhøsten 2025 har han fått en del spilletid for Olimpia denne sesongen. Vi har ikke nok data til å underbygge "løp og kjøp", men det vi har sett har imponert oss nok til å bli Episodens bublare.
+
+## Vår Topp 3
 
 Det er alltid vanskelig å velge ut hvilke spillere som skal på Topp 3-lista, men denne gangen falt valget på disse spillerne, som vi mener allerede burde vært hentet av større klubber.
 
