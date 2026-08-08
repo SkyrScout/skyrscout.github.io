@@ -22,25 +22,25 @@ Vi holder oss til det podcasten først og fremst handler om: scouting. Denne gan
 
 ## Scout's honorable mentions
 
-### Kevin Benkič
+### Kevin Benkič - Benkic - [Video](https://www.youtube.com/watch?v=2rJBgeNPEeo)
 
 {% include podcast-player-card.html slug="kevin-benkic" %}
 
 En offensiv venstreback fra Slovenia som har tatt store steg med NK Brinje Grosuplje. Benkič kombinerer fart, kreativitet og stor vilje til å bidra høyt i banen, og en sterk 2025/26-sesong ga både opprykk med klubben og plass på Slovenias U21-landslag.
 
-### Maksimilian Skvortsov
+### Maksimilian Skvortsov - Grønn stær - [Video](https://www.youtube.com/watch?v=2aTPioskyNI)
 
 {% include podcast-player-card.html slug="maksimilian-skvortsov" %}
 
 Den unge Levadia-midtbanespilleren har fått sitt virkelige gjennombrudd i 2026. Skvortsov har levert både mål og assists i ligaen, debutert for Estlands U21-landslag og markert seg i europacupen. Han er enda et eksempel på den spennende talentutviklingen i estisk fotball.
 
-### Zhasulan Amir
+### Zhasulan Amir - Den unge krigeren - [Video](https://www.youtube.com/watch?v=ZQy7PtupOt4)
 
 {% include podcast-player-card.html slug="zhasulan-amir" %}
 
 En anvendelig kasakhstansk angrepsspiller som kan bekle flere offensive roller. Amir har lenge gått mer under radaren enn enkelte jevnaldrende landsmenn, men prestasjonene hans i FC Ordabasy har gjort at interessen rundt ham har økt kraftig.
 
-### Umar Talantbekov
+### Umar Talantbekov - Episodens bublare - [Video](https://www.youtube.com/watch?v=r1KLiyfQ2qc)
 
 {% include podcast-player-card.html slug="umar-talantbekov" %}
 
@@ -50,19 +50,19 @@ Episodens yngste navn kommer fra Kirgisistan. Talantbekov har fått verdifulle s
 
 Det var flere sterke kandidater, men tre spillere skilte seg til slutt ut som våre fremste anbefalinger i episoden.
 
-### Sander Alamaa
+### Sander Alamaa - Alamaa til pumpene - [Video](https://www.youtube.com/watch?v=2xF-nZy76OI)
 
 {% include podcast-player-card.html slug="sander-alamaa" %}
 
 FC Flora-vingen har vært en av de store unge profilene i Estland denne sesongen. Alamaa er en direkte og svært produktiv ballfører, har levert målpoeng i ligaen og har allerede markert seg både på U21-landslaget og i Europa.
 
-### Erbol Atabaev
+### Erbol Atabaev - Erbole steroider - [Video](https://www.youtube.com/watch?v=W4bdnkYu6CA)
 
 {% include podcast-player-card.html slug="erbol-atabaev" %}
 
 Atabaev er playmakeren som fikk en tidlig fotballutdannelse i Barcelona-systemet og som nå dominerer i Kirgisistan. Den tekniske kvaliteten, blikket, avslutningene og evnen til å styre tempoet gjør ham til en spiller vi mener fortsatt kan ta et betydelig steg opp i nivå.
 
-### Eduards Daškevičs
+### Eduards Daškevičs - Kaptein Auda! - [Video](https://www.youtube.com/watch?v=Us_X9desHK4)
 
 {% include podcast-player-card.html slug="eduards-daskevics" %}
 
