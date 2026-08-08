@@ -4007,3 +4007,18 @@ img.emoji {
     background: #53c8ee;
     border-radius: 4px;
 }
+
+/* Podcast guide: inline player video links */
+.podcast-guide-article h3 a,
+.podcast-guide-article h3 a:visited {
+    color: #53c8ee;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(83, 200, 238, 0.38);
+    transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.podcast-guide-article h3 a:hover,
+.podcast-guide-article h3 a:focus-visible {
+    color: #8be0f7;
+    border-bottom-color: #8be0f7;
+}
