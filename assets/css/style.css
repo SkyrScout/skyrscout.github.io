@@ -3961,3 +3961,28 @@ img.emoji {
 .podcast-guide-player-card-wrap .podcast-guide-player-card {
     margin-bottom: 0;
 }
+
+/* Latest podcast: optional episode guide action */
+.yard-podcast-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.yard-podcast-actions .yard-card-action {
+    margin-top: 0;
+}
+
+.yard-card-action--guide {
+    color: #dff7ff;
+    background: rgba(83, 200, 238, 0.08);
+    border: 1px solid rgba(83, 200, 238, 0.55);
+}
+
+.yard-card-action--guide:hover {
+    color: #ffffff;
+    background: rgba(83, 200, 238, 0.16);
+    border-color: #53c8ee;
+}

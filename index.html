@@ -567,6 +567,14 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                 });
         }
 
+        const podcastGuides = {
+            {% for guide in site.podcast_guides %}
+                {{ guide.podcast_guid | jsonify }}: {
+                    url: {{ guide.url | relative_url | jsonify }}
+                }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+        };
+
         function stripHtml(html) {
             const temporaryElement = document.createElement("div");
             temporaryElement.innerHTML = html || "";
@@ -627,6 +635,11 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
                 const episodeUrl =
                     episode.link || episode.audio_url || "/podcast/";
+
+                const episodeGuide =
+                    episode.guid && podcastGuides[episode.guid]
+                        ? podcastGuides[episode.guid]
+                        : null;
 
                 const publishedDate = episode.published
                     ? new Date(episode.published)
@@ -716,14 +729,29 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                                 : ""
                         }
 
-                        <a
-                            class="yard-card-action"
-                            href="${episodeUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Open on Spotify
-                        </a>
+                        <div class="yard-podcast-actions">
+                            <a
+                                class="yard-card-action"
+                                href="${episodeUrl}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Open on Spotify
+                            </a>
+
+                            ${
+                                episodeGuide && episodeGuide.url
+                                    ? `
+                                        <a
+                                            class="yard-card-action yard-card-action--guide"
+                                            href="${episodeGuide.url}"
+                                        >
+                                            Les episodeguiden
+                                        </a>
+                                    `
+                                    : ""
+                            }
+                        </div>
 
                     </div>
                 `;
