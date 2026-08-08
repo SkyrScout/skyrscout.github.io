@@ -45,7 +45,7 @@ report: |
 
   He is comfortable on both wings, delivers dangerous crosses and shows flashes of vision beyond his age. His right foot is precise, while he also uses his left effectively for crosses, passes, shots and finishes.
 
-  Internal scouting notes describe Łyczko as a quick winger with very good dribbling ability and a precise right foot. He has also represented Poland at U17 and U18 level.
+  Łyczko is a quick winger with very good dribbling ability and a precise right foot. He has also represented Poland at U17 and U18 level.
 
   While still developing, he already possesses the raw tools needed to succeed at a higher level. Greater consistency in his decision-making and goal contributions would help him take the next step.
 
