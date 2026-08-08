@@ -29,7 +29,12 @@ positions:
     rank: 2
 
 summary: |
-  We believe Odisharia is ready to move to a significantly stronger league, although the jump to a league like Eliteserien would be considerable. It’s hard to find a winger better suited for a 4-3-3 system. With his outstanding ball control, excellent dribbling skills, and powerful crossing ability with both feet, this is a player we highly recommend.
+  🇬🇪 Lasha Odisharia | 22 y/o LW/RW
+  ⚡ Fast, highly skilled winger with excellent ball control & dribbling
+  🎯 Accurate crossing with both feet and a strong fit for a high-intensity 4-3-3
+  💪 Works hard defensively, tracks back and wins duels
+  📊 1 goal + 5 assists in 18 league games for RFS
+  🔝 Ready for a stronger league, with further upside if his end product improves
 
 report: |
   League evaluation
@@ -49,6 +54,10 @@ report: |
   Availability
 
   Odisharia was signed from Dinamo Tbilisi ahead of the 2024 season for €200k. He is under contract until 31.12.2027. We believe RFS would be willing to sell him for a fee between €500k and €1M.
+
+  Summary
+
+  We believe Odisharia is ready to move to a significantly stronger league, although the jump to a league like Eliteserien would be considerable. It’s hard to find a winger better suited for a 4-3-3 system. With his outstanding ball control, excellent dribbling skills, and powerful crossing ability with both feet, this is a player we highly recommend.
 
 transfermarkt: "https://www.transfermarkt.com/lasha-odisharia/profil/spieler/883299"
 sofascore: "https://www.sofascore.com/football/player/lasha-odisharia/1117380#tab:season"
