@@ -76,4 +76,6 @@ report: |
 
 transfermarkt: "https://www.transfermarkt.com/guilherme-smith/profil/spieler/949337"
 sofascore: "https://www.sofascore.com/football/player/guilherme-da-silva/1820381#tab:season"
+podcast: "https://open.spotify.com/episode/61MNYI8vQqkMKpXtL3oife"
+podcast_timestamp: "1:25:56"
 ---
