@@ -23,9 +23,6 @@ intro: |
 
   Mange får passet sitt påskrevet, som seg hør og bør. Det meste er sagt med glimt i øyet, men budskapet er ment seriøst.
 ---
-
-Når Scout & About, Rosenborg-nyheter og øvrige verbale sleivspark er unnagjort, går vi over til spillerne som er hovedtemaet for episoden.
-
 ## Scout's honorable mentions
 
 Vi ser på noen spillere som har interessante tall og ferdigheter, men som vi ikke har hovedfokus på i denne episoden.
@@ -62,14 +59,6 @@ Vi har kommet til indrefileten La Pièce de Résistance. PILEGRIMSLEDEN! Her dyk
 
 {% include podcast-player-card.html slug="arif-aiman" %}
 
-## Låserunden
+## P.S. Áki Debes Samuelsen
 
-Áki Debes Samuelsen er bekreftet klar for Ranheim etter mye fram og tilbake. Vi har ikke video av han og tør derfor ikke anbefale han sterkt, men gir han tittelen "One to watch for 2025".
-
-## Hese-Fredrik
-
-Bon Scout: Hva tar vi med oss videre, Scout Pilgrim?
-
-Scout Pilgrim: Ingen høres på oss. Their loss.
-
-"...og der låter Hese-Fredrik! Den som svingt pisken i dagens episode er Scout Pilgrim, akompagnert av deres vert Bon Scout: Over and Out!"
+Scout Pilgrim hadde også sett på dataene til Áki Debes Samuelsen, men før episoden ble spilt inn ble han klar for Ranheim. Vi hadde ikke video av ham og derfor heller ikke grunnlag for en full anbefaling, men Scout Pilgrim hadde tro på spilleren og ga ham tittelen "One to watch for 2025".
