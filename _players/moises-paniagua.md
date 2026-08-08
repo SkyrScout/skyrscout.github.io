@@ -59,7 +59,7 @@ report: |
   - Effective high pressing.
   - Precise and creative passing.
 
-  <h3>Areas for improvement</h3>
+  Areas for improvement
 
   - When playing as a left winger, could benefit from going wide more often to deliver crosses.
   - Physical strength is good, but could still improve to match the demands of the highest level.
@@ -80,4 +80,6 @@ report: |
 
 transfermarkt: "https://www.transfermarkt.com/moises-paniagua/profil/spieler/1072321"
 sofascore: "https://www.sofascore.com/football/player/paniagua-moises/1424737#tab:season"
+podcast: "https://open.spotify.com/episode/7iezBUgr0R28EE1FJU3THf"
+podcast_timestamp: "59:50"
 ---

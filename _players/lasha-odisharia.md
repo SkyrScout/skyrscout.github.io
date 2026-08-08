@@ -61,4 +61,6 @@ report: |
 
 transfermarkt: "https://www.transfermarkt.com/lasha-odisharia/profil/spieler/883299"
 sofascore: "https://www.sofascore.com/football/player/lasha-odisharia/1117380#tab:season"
+podcast: "https://open.spotify.com/episode/61MNYI8vQqkMKpXtL3oife"
+podcast_timestamp: "56:21"
 ---
