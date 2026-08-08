@@ -76,6 +76,8 @@ Se og hør på episoden for detaljerte beskrivelser av alle disse spillerne, hvo
 
 Ha en riktig pod sommer.
 
+## P.S. Men hvem var det vi egentlig skulle presentere som sistemann?
+
 {% include podcast-player-card.html slug="josue-vergara" %}
 
-P.S. Men hvem var det vi egentlig skulle presentere som sistemann? Navnet er Josué Vergara, kun 18 år, 196 cm på strømpelesten og ble hentet fra hjemlandet Panama til FK Auda i øverste liga i Latvia før sesongen. Der har han tatt hele Latvia på senga og dunket inn 14 mål og supplert med 3 assist på 19 kamper. Dette var nok til å få belgiske KAA Gent til å slenge 3 milloner Euro på bordet for å sikre seg spisstalentets tjenester. Det tror vi er en god overgang for alle parter og vi ønsker dem lykke til.
+Navnet er Josué Vergara, kun 18 år, 196 cm på strømpelesten og ble hentet fra hjemlandet Panama til FK Auda i øverste liga i Latvia før sesongen. Der har han tatt hele Latvia på senga og dunket inn 14 mål og supplert med 3 assist på 19 kamper. Dette var nok til å få belgiske KAA Gent til å slenge 3 milloner Euro på bordet for å sikre seg spisstalentets tjenester. Det tror vi er en god overgang for alle parter og vi ønsker dem lykke til.
