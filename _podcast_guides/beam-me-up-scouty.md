@@ -8,7 +8,7 @@ season_number: 1
 episode_number: 1
 published_display: "5. januar 2025"
 duration_display: "45 min"
-spotify_embed_url: "https://podcasters.spotify.com/pod/show/scout-of-this-world/embed/episodes/Beam-Me-Up--Scouty-e2t2p71"
+spotify_episode_id: "0IzdWxn3iMXGE1Q0eobVvH"
 youtube: "https://www.youtube.com/watch?v=i8MN9h8ajxg"
 youtube_id: "i8MN9h8ajxg"
 search_terms: "Alex Tamm Karol Czubak German Barkovskiy Reginaldo Ramires Abdoulie Ceesay Three Spisses Dino Islamovic Rosenborg RBK spiss scouting speiding spillerlogistikk"
