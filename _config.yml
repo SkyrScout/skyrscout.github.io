@@ -46,6 +46,7 @@ defaults:
       type: "update_posts"
     values:
       layout: updates
+      pinned: false
 
   - scope:
       path: ""

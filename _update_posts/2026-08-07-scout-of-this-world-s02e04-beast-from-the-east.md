@@ -1,6 +1,7 @@
 ---
 title: "New podcast episode: Beast from the East"
 published_at: 2026-08-07 07:19:03 +0200
+pinned: true
 ---
 
 A new episode of Scout of This World is out now.
@@ -10,6 +11,14 @@ The podcast is in Norwegian.
 In S02E04, **"Beast from the East"**, Bon Scout and Scout Pilgrim turn their attention east. The journey starts in more familiar territory in Slovenia and the Baltics before moving on to Central Asia. Uzbek football has made major strides in recent years, but what about its neighbours? We take a closer look at football in Kazakhstan and Kyrgyzstan, searching for interesting players from a part of the world that rarely receives much attention.
 
 The episode is available both as a podcast on Spotify and in video format on YouTube.
+
+## Episode guide
+
+We have also published a Norwegian-language episode guide with Scout Pilgrim's written notes and direct links to the SkyrScout player profiles featured in the episode.
+
+<a class="report-button" href="/podcast/beast-from-the-east/">
+    Read the episode guide
+</a>
 
 ## Listen on Spotify
 

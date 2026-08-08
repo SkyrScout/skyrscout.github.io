@@ -21,16 +21,22 @@ description: "News, rumours and confirmed developments involving players feature
 
                 {% if site.update_posts and site.update_posts.size > 0 %}
 
-                    {% assign sorted_updates = site.update_posts | sort: "published_at" | reverse %}
+                    {% assign chronological_updates = site.update_posts | sort: "published_at" | reverse %}
+                    {% assign pinned_updates = chronological_updates | where: "pinned", true %}
+                    {% assign regular_updates = chronological_updates | where: "pinned", false %}
+                    {% assign sorted_updates = pinned_updates | concat: regular_updates %}
 
                     {% for update in sorted_updates %}
 
                         {% assign update_filename = update.path | split: "/" | last %}
                         {% assign update_date = update_filename | slice: 0, 10 | split: "-" %}
 
-                        <article class="update-card">
+                        <article class="update-card{% if update.pinned %} update-card--pinned{% endif %}">
 
                             <p class="update-date">
+                                {% if update.pinned %}
+                                    <span class="update-pin-badge">PINNED</span>
+                                {% endif %}
                                 {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
                             </p>
 

@@ -102,10 +102,13 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
             </header>
 
-           {% assign latest_updates = site.update_posts
+           {% assign chronological_updates = site.update_posts
     | sort: "published_at"
     | reverse
 %}
+{% assign pinned_updates = chronological_updates | where: "pinned", true %}
+{% assign regular_updates = chronological_updates | where: "pinned", false %}
+{% assign latest_updates = pinned_updates | concat: regular_updates %}
 
 <section class="yard-marquee">
 
@@ -357,6 +360,9 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                         <article class="yard-update-card">
 
                             <p class="yard-update-date">
+                                {% if update.pinned %}
+                                    <span class="yard-update-pin-badge">PINNED</span>
+                                {% endif %}
                                 {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
                             </p>
 
