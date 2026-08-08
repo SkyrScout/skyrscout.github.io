@@ -42,11 +42,11 @@ Vi snakker varmt om:
 
 Deretter gjør vi en dypere analyse på:
 
-### Pyry Hannola - Den beste venstrefoten vi har sett? - [Video 1](https://www.youtube.com/watch?v=eQCAkFdRs2c) / [Video 2](https://www.youtube.com/watch?v=pY8ULdJeUsM)
+### Pyry Hannola - Den beste venstrefoten vi har sett? - [Ekstern video 1](https://www.youtube.com/watch?v=eQCAkFdRs2c) / [Ekstern video 2](https://www.youtube.com/watch?v=pY8ULdJeUsM)
 
 PS: Vi har ikke laget en egen video på Hannola, da det ikke var tilgjengelig, bortsett fra higlights han sel/agenten hadde laget.
 
-### Martin Novakovic - Sapara reinkarnert? - [Video](https://www.youtube.com/watch?v=SpEIZ-0kKz8)
+### Martin Novakovic - Sapara reinkarnert? - [Ekstern video](https://www.youtube.com/watch?v=SpEIZ-0kKz8)
 
 ### Kacper Karasek - Ekstraklasa Joker Nord neste sesong? - [Video](https://www.youtube.com/watch?v=STT0NZADZMI)
 
