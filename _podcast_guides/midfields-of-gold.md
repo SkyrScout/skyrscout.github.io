@@ -42,11 +42,35 @@ Vi snakker varmt om:
 
 Deretter gjør vi en dypere analyse på:
 
+*Pyry Hannola og Martin Novakovic er unntak: Vi har ikke laget egne SkyrScout-videoer eller spillerprofiler på dem. Videolenkene under er eksterne.*
+
 ### Pyry Hannola - Den beste venstrefoten vi har sett? - [Ekstern video 1](https://www.youtube.com/watch?v=eQCAkFdRs2c) / [Ekstern video 2](https://www.youtube.com/watch?v=pY8ULdJeUsM)
 
-PS: Vi har ikke laget en egen video på Hannola, da det ikke var tilgjengelig, bortsett fra higlights han sel/agenten hadde laget.
+<a class="podcast-guide-player-card" href="https://www.youtube.com/watch?v=eQCAkFdRs2c" target="_blank" rel="noopener noreferrer">
+  <span class="podcast-guide-player-thumbnail">
+    <img src="https://img.youtube.com/vi/eQCAkFdRs2c/hqdefault.jpg" alt="Thumbnail for external Pyry Hannola video" loading="lazy">
+  </span>
+  <span class="podcast-guide-player-copy">
+    <span class="podcast-guide-player-label">Ekstern video</span>
+    <strong>Pyry Hannola</strong>
+    <span class="podcast-guide-player-meta">Ikke en SkyrScout-video eller spillerprofil</span>
+    <span class="podcast-guide-player-link">Se ekstern video →</span>
+  </span>
+</a>
 
 ### Martin Novakovic - Sapara reinkarnert? - [Ekstern video](https://www.youtube.com/watch?v=SpEIZ-0kKz8)
+
+<a class="podcast-guide-player-card" href="https://www.youtube.com/watch?v=SpEIZ-0kKz8" target="_blank" rel="noopener noreferrer">
+  <span class="podcast-guide-player-thumbnail">
+    <img src="https://img.youtube.com/vi/SpEIZ-0kKz8/hqdefault.jpg" alt="Thumbnail for external Martin Novakovic video" loading="lazy">
+  </span>
+  <span class="podcast-guide-player-copy">
+    <span class="podcast-guide-player-label">Ekstern video</span>
+    <strong>Martin Novakovic</strong>
+    <span class="podcast-guide-player-meta">Ikke en SkyrScout-video eller spillerprofil</span>
+    <span class="podcast-guide-player-link">Se ekstern video →</span>
+  </span>
+</a>
 
 ### Kacper Karasek - Ekstraklasa Joker Nord neste sesong? - [Video](https://www.youtube.com/watch?v=STT0NZADZMI)
 
