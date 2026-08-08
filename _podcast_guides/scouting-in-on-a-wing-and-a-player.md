@@ -47,15 +47,15 @@ Født 20.03.2004. Spiller for HŠK Zrinjski Mostar på øverste nivå i Bosnia-H
 
 Vi har kommet til indrefileten La Pièce de Résistance. PILEGRIMSLEDEN! Her dykker vi ned i spillerne som har hatt hovedfokuset vårt denne episoden.
 
-### Drilon Hazrollaj - MVP of this podcast! Dribblekant/dribblefant nr. 3 - [Video](https://www.youtube.com/watch?v=ufVErpJra7c)
+### Drilon Hazrollaj - [Video](https://www.youtube.com/watch?v=ufVErpJra7c)
 
 {% include podcast-player-card.html slug="drilon-hazrollaj" %}
 
-### Isak Bjerkebo - Her har vel "Broren til Ove" full kontroll? - [Video 1](https://www.youtube.com/watch?v=pUs-ti52eIQ) / [Video 2](https://www.youtube.com/watch?v=sMDIY4t0rjo)
+### Isak Bjerkebo - [Video 1](https://www.youtube.com/watch?v=pUs-ti52eIQ) / [Video 2](https://www.youtube.com/watch?v=sMDIY4t0rjo)
 
 {% include podcast-player-card.html slug="isak-bjerkebo" %}
 
-### Arif Aiman - "We are scouting on thin ice here!" Dribblekant/dribblefant nr. 4 - [Video](https://www.youtube.com/watch?v=RSALwKOaPI4)
+### Arif Aiman - [Video](https://www.youtube.com/watch?v=RSALwKOaPI4)
 
 {% include podcast-player-card.html slug="arif-aiman" %}
 
