@@ -4,6 +4,8 @@ player: "mikkel-ladefoged"
 player_name: "Mikkel Ladefoged"
 source: "Fotbollskanalen"
 source_url: "https://www.fotbollskanalen.se/artiklar/allsvenskan/avslojar-ladefoged-traningsvagrar---vill-lamna-vsk"
+source_via: "Aftonbladet"
+source_via_url: "https://www.aftonbladet.se/sportbladet/fotboll/a/lnQ0Vk/avslojar-vasteras-sk-pa-vag-att-salja-mikkel-ladefoged"
 published_at: 2026-08-11 21:14:00 +0200
 ---
 
@@ -15,7 +17,7 @@ Ladefoged was left out of the squad for Monday's 1-0 victory over Djurgården. H
 
 The dispute comes shortly after reports of significant interest from England.
 
-[Aftonbladet](https://www.aftonbladet.se/sportbladet/fotboll/a/lnQ0Vk/avslojar-vasteras-sk-pa-vag-att-salja-mikkel-ladefoged) reported on August 1 that Championship club Lincoln City were in final negotiations with Västerås over a transfer worth around SEK 50 million including bonuses. If completed at that level, the deal would reportedly become the biggest sale in VSK history.
+Aftonbladet reported on August 1 that Championship club Lincoln City were in final negotiations with Västerås over a transfer worth around SEK 50 million including bonuses. If completed at that level, the deal would reportedly become the biggest sale in VSK history.
 
 Västerås have previously indicated that their intention was to keep Ladefoged for the full season. The striker remains under contract through 2028.
 
