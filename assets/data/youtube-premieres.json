@@ -1,8 +1,14 @@
 {
   "_meta": {
-    "status": "waiting-for-first-successful-update",
-    "updated_utc": null,
+    "status": "ok",
+    "updated_utc": "2026-08-11T20:41:48Z",
     "source": "YouTube Data API"
   },
-  "videos": {}
+  "videos": {
+    "cd5bLZiwA1Q": {
+      "status": "upcoming",
+      "scheduled_start": "2026-08-12T16:00:00Z",
+      "title": "Joel Yakubu (2006) – BFC Daugavpils | Virsliga, Latvia"
+    }
+  }
 }
