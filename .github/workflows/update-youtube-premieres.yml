@@ -1,0 +1,109 @@
+name: Update YouTube Premieres
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "_players/**"
+      - "scripts/update-youtube-premieres.py"
+      - ".github/workflows/update-youtube-premieres.yml"
+      - "assets/js/youtube-premieres.js"
+      - "assets/css/youtube-premieres.css"
+  schedule:
+    # Avoid the top of the hour, when GitHub says scheduled runs are more
+    # likely to be delayed under high load.
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: youtube-premieres
+  cancel-in-progress: true
+
+jobs:
+  update-youtube-premieres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check YouTube API secret
+        id: api-key
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          if [ -z "$YOUTUBE_API_KEY" ]; then
+            echo "::warning::YOUTUBE_API_KEY is not configured. No status file will be changed."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update premiere status safely
+        if: steps.api-key.outputs.available == 'true'
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          python3 scripts/update-youtube-premieres.py
+
+      - name: Commit status only when it changed
+        id: commit
+        if: steps.api-key.outputs.available == 'true'
+        run: |
+          if git diff --quiet -- assets/data/youtube-premieres.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No repository change required."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add assets/data/youtube-premieres.json
+          git commit -m "Update YouTube premiere status"
+
+          if git push origin HEAD:main; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Premiere status pushed successfully."
+          else
+            echo "::warning::Premiere status was generated, but the push was rejected. A later run will retry from the newest main branch."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Request GitHub Pages rebuild
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set +e
+
+          for attempt in 1 2 3; do
+            echo "Requesting GitHub Pages build, attempt $attempt/3..."
+
+            status="$(
+              curl                 -sS                 --connect-timeout 10                 --max-time 30                 -o /tmp/pages-build-response.json                 -w "%{http_code}"                 -X POST                 -H "Accept: application/vnd.github+json"                 -H "Authorization: Bearer $GH_TOKEN"                 -H "X-GitHub-Api-Version: 2026-03-10"                 "https://api.github.com/repos/$REPOSITORY/pages/builds"
+            )"
+
+            if [ "$status" = "201" ]; then
+              echo "GitHub Pages build requested successfully."
+              exit 0
+            fi
+
+            echo "Pages build request returned HTTP ${status:-curl-failed}."
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep 10
+            fi
+          done
+
+          echo "::warning::Could not request a Pages rebuild after 3 attempts. The website itself is unaffected; the next normal deploy or successful premiere run will publish the status change."
+          exit 0
