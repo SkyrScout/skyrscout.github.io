@@ -29,6 +29,8 @@ Vi ser på noen spillere som har interessante tall og ferdigheter, men som vi ik
 
 ### Szymon Łyczko - Dribblekant/dribblefant nr. 1 - [Video](https://www.youtube.com/watch?v=UY_J1ntCGJ0)
 
+{% include podcast-player-card.html slug="szymon-lyczko" %}
+
 Født 09.02.2006. Spiller for Stal Rzeszów på nivå 2 i Polen.
 
 ### Milan Kolarević - Dribblekant/dribblefant nr. 2 - [Video](https://www.youtube.com/watch?v=dZB20vbqHN8)
