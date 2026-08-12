@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "Vancouver Whitecaps in talks to sign Emrick Fotsing"
 player: "emrick-fotsing"
