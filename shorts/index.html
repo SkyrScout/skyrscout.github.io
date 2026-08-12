@@ -158,6 +158,10 @@ description: "Quick scouting clips, individual actions and standout moments from
     }
 
     @media (max-width: 760px) {
+        .shorts-view-area {
+            margin-top: 18px;
+        }
+
         .short-list-signature-card {
             width: min(100%, 240px);
             margin: 0 auto;
@@ -224,6 +228,56 @@ description: "Quick scouting clips, individual actions and standout moments from
             margin-top: 0;
         }
     }
+    .shorts-no-results {
+        margin-top: 18px;
+        padding: 26px;
+        color: #c2ccd1;
+        text-align: center;
+        background: rgba(7, 11, 15, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 12px;
+    }
+
+    .shorts-no-results[hidden],
+    #shorts-list.shorts-grid-view .short-list-card[hidden] {
+        display: none;
+    }
+
+    .catalog-load-more {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .catalog-load-more[hidden] {
+        display: none;
+    }
+
+    .catalog-load-more-button {
+        min-width: 180px;
+        padding: 12px 18px;
+        color: #081015;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 800;
+        background: #53c8ee;
+        border: 0;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+
+    .catalog-load-more-button:hover,
+    .catalog-load-more-button:focus-visible {
+        background: #78daf5;
+        outline: none;
+    }
+
+    @media (min-width: 760px) {
+        .shorts-tools {
+            grid-template-columns: minmax(0, 1fr) auto 230px;
+        }
+    }
+
 </style>
 
 <main class="page-background">
@@ -269,6 +323,16 @@ description: "Quick scouting clips, individual actions and standout moments from
         </div>
 
         <div class="players-tools shorts-tools">
+
+            <label class="player-search" for="short-search">
+                <span>Search Shorts</span>
+
+                <input
+                    type="search"
+                    id="short-search"
+                    placeholder="Search by player, title or description"
+                >
+            </label>
 
             <div class="shorts-view-area">
 
@@ -351,9 +415,40 @@ description: "Quick scouting clips, individual actions and standout moments from
                     | first
                 %}
 
+                {% capture short_search_text %}
+                    {{ short.title }}
+                    {{ short.description }}
+                    {{ short_player_sort_name }}
+                    {% if short.co_signature_player_slugs %}
+                        {% for co_signature_player_slug in short.co_signature_player_slugs %}
+                            {% assign search_co_signature_player = site.players
+                                | where: "slug", co_signature_player_slug
+                                | first
+                            %}
+                            {% if search_co_signature_player %}
+                                {% assign search_co_title_parts = search_co_signature_player.title | split: ' – ' %}
+                                {{ search_co_title_parts[0] }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% if short.secondary_player_slugs %}
+                        {% for secondary_player_slug in short.secondary_player_slugs %}
+                            {% assign search_secondary_player = site.players
+                                | where: "slug", secondary_player_slug
+                                | first
+                            %}
+                            {% if search_secondary_player %}
+                                {% assign search_secondary_title_parts = search_secondary_player.title | split: ' – ' %}
+                                {{ search_secondary_title_parts[0] }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endcapture %}
+
                 <article
                     class="player-list-card short-list-card"
                     data-player="{{ short_player_sort_name | downcase | escape }}"
+                    data-search="{{ short_search_text | strip_html | strip_newlines | downcase | escape }}"
                     data-report-date="{{ short.report_date | escape }}"
                     data-site-added="{{ short.site_added | escape }}"
                 >
@@ -525,18 +620,50 @@ description: "Quick scouting clips, individual actions and standout moments from
 
         </div>
 
+        <p
+            class="shorts-no-results"
+            id="shorts-no-results"
+            hidden
+        >
+            No Shorts match your search.
+        </p>
+
+        <div
+            class="catalog-load-more"
+            id="shorts-load-more-wrap"
+            hidden
+        >
+            <button
+                class="catalog-load-more-button"
+                id="shorts-load-more"
+                type="button"
+            >
+                Show 12 more
+            </button>
+        </div>
+
     </section>
 
 </main>
 
 <script>
+    const shortSearchInput = document.querySelector("#short-search");
     const shortSortSelect = document.querySelector("#short-sort");
     const shortsList = document.querySelector("#shorts-list");
+    const shortsNoResults = document.querySelector("#shorts-no-results");
+    const shortsLoadMoreWrap = document.querySelector(
+        "#shorts-load-more-wrap"
+    );
+    const shortsLoadMoreButton = document.querySelector(
+        "#shorts-load-more"
+    );
     const shortListViewButton = document.querySelector("#short-view-list");
     const shortGridViewButton = document.querySelector("#short-view-grid");
     const shortGridSuggestion = document.querySelector("#short-grid-suggestion");
     const shortViewStorageKey = "skyrscout-shorts-view";
     const shortGridSeenStorageKey = "skyrscout-shorts-grid-seen";
+    const shortPageSize = 12;
+    let shortVisibleLimit = shortPageSize;
 
     function readStoredValue(key) {
         try {
@@ -660,8 +787,57 @@ description: "Quick scouting clips, individual actions and standout moments from
         });
     }
 
+    function filterShorts() {
+        const searchTerm = shortSearchInput.value
+            .trim()
+            .toLowerCase();
+
+        const hasActiveSearch = Boolean(searchTerm);
+        let matchingShorts = 0;
+        let visibleShorts = 0;
+
+        getShortCards().forEach(function (card) {
+            const matchesSearch =
+                (card.dataset.search || "").includes(searchTerm);
+
+            if (matchesSearch) {
+                matchingShorts += 1;
+            }
+
+            const isVisible =
+                matchesSearch &&
+                (hasActiveSearch || matchingShorts <= shortVisibleLimit);
+
+            card.hidden = !isVisible;
+
+            if (isVisible) {
+                visibleShorts += 1;
+            }
+        });
+
+        shortsNoResults.hidden = matchingShorts !== 0;
+
+        const remainingShorts = matchingShorts - visibleShorts;
+        const canLoadMore = !hasActiveSearch && remainingShorts > 0;
+
+        shortsLoadMoreWrap.hidden = !canLoadMore;
+
+        if (canLoadMore) {
+            shortsLoadMoreButton.textContent =
+                `Show ${Math.min(shortPageSize, remainingShorts)} more`;
+        }
+    }
+
+    shortSearchInput.addEventListener("input", filterShorts);
+
     shortSortSelect.addEventListener("change", function () {
         sortShorts(shortSortSelect.value);
+        filterShorts();
+    });
+
+    shortsLoadMoreButton.addEventListener("click", function () {
+        shortVisibleLimit += shortPageSize;
+        filterShorts();
     });
 
     shortListViewButton.addEventListener("click", function () {
@@ -681,6 +857,7 @@ description: "Quick scouting clips, individual actions and standout moments from
 
     setShortsView(initialShortsView, false);
     sortShorts("newest-added");
+    filterShorts();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>

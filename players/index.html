@@ -222,6 +222,35 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
             text-align: center;
         }
     }
+    .catalog-load-more {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .catalog-load-more[hidden] {
+        display: none;
+    }
+
+    .catalog-load-more-button {
+        min-width: 180px;
+        padding: 12px 18px;
+        color: #081015;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 800;
+        background: #53c8ee;
+        border: 0;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+
+    .catalog-load-more-button:hover,
+    .catalog-load-more-button:focus-visible {
+        background: #78daf5;
+        outline: none;
+    }
+
 </style>
 
 <main class="page-background">
@@ -496,6 +525,20 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
             No players match your filters.
         </p>
 
+        <div
+            class="catalog-load-more"
+            id="players-load-more-wrap"
+            hidden
+        >
+            <button
+                class="catalog-load-more-button"
+                id="players-load-more"
+                type="button"
+            >
+                Show 24 more
+            </button>
+        </div>
+
     </section>
 
 </main>
@@ -512,6 +555,15 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
     const gridSuggestionButton = document.querySelector(
         "#players-grid-suggestion-button"
     );
+    const playersLoadMoreWrap = document.querySelector(
+        "#players-load-more-wrap"
+    );
+    const playersLoadMoreButton = document.querySelector(
+        "#players-load-more"
+    );
+
+    const playerPageSize = 24;
+    let playerVisibleLimit = playerPageSize;
 
     const playerViewStorageKey = "skyrscout-players-view";
     const playerGridSeenStorageKey = "skyrscout-players-grid-seen";
@@ -728,7 +780,9 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
             .toLowerCase();
 
         const selectedPosition = positionSelect.value;
+        const hasActiveFilters = Boolean(searchTerm || selectedPosition);
 
+        let matchingPlayers = 0;
         let visiblePlayers = 0;
 
         getPlayerCards().forEach(function (card) {
@@ -761,7 +815,15 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
                 });
             }
 
-            const isVisible = matchesSearch && matchesPosition;
+            const matchesFilters = matchesSearch && matchesPosition;
+
+            if (matchesFilters) {
+                matchingPlayers += 1;
+            }
+
+            const isVisible =
+                matchesFilters &&
+                (hasActiveFilters || matchingPlayers <= playerVisibleLimit);
 
             card.hidden = !isVisible;
 
@@ -770,7 +832,17 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
             }
         });
 
-        noResults.hidden = visiblePlayers !== 0;
+        noResults.hidden = matchingPlayers !== 0;
+
+        const remainingPlayers = matchingPlayers - visiblePlayers;
+        const canLoadMore = !hasActiveFilters && remainingPlayers > 0;
+
+        playersLoadMoreWrap.hidden = !canLoadMore;
+
+        if (canLoadMore) {
+            playersLoadMoreButton.textContent =
+                `Show ${Math.min(playerPageSize, remainingPlayers)} more`;
+        }
     }
 
     searchInput.addEventListener("input", filterPlayers);
@@ -779,6 +851,12 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
 
     sortSelect.addEventListener("change", function () {
         sortPlayers(sortSelect.value);
+        filterPlayers();
+    });
+
+    playersLoadMoreButton.addEventListener("click", function () {
+        playerVisibleLimit += playerPageSize;
+        filterPlayers();
     });
 
     listViewButton.addEventListener("click", function () {

@@ -31,6 +31,49 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
     ]
 }
 </script>
+<style>
+    .podcast-episode-list {
+        gap: 28px;
+    }
+
+    .podcast-season {
+        min-width: 0;
+    }
+
+    .podcast-season[hidden] {
+        display: none;
+    }
+
+    .podcast-season-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+    }
+
+    .podcast-season-header h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(1.3rem, 2.5vw, 1.65rem);
+    }
+
+    .podcast-season-count {
+        margin: 0;
+        color: #8f9ca3;
+        font-size: 0.86rem;
+        font-weight: 700;
+    }
+
+    .podcast-season-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+</style>
+
 <main class="page-background">
 
         <section class="podcast-page">
@@ -142,7 +185,7 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
     <h2>Episoder</h2>
 
     <p class="podcast-episodes-intro">
-        De nyeste episodene fra Scout of This World.
+        Episodene fra Scout of This World, delt inn etter sesong.
     </p>
 <label class="podcast-episode-search" for="podcast-episode-search">
     <span>Søk i episoder</span>
@@ -261,159 +304,223 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
                 return;
             }
 
+            const seasons = new Map();
+
             episodes.forEach(function (episode) {
-                const episodeUrl =
-                    episode.link || episode.audio_url || "#";
-
-                const descriptionText = stripHtml(
-                    episode.description
+                const seasonNumber = String(
+                    episode.season_number || "Uten sesong"
                 );
 
-                const card = document.createElement("article");
-                card.className = "podcast-episode-card";
-
-                const episodeGuide = podcastGuides[episode.guid];
-
-                card.dataset.search = [
-                    episode.title,
-                    descriptionText,
-                    episode.episode_number,
-                    episode.season_number,
-                    episodeGuide ? episodeGuide.search : ""
-                ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
-
-                const imageLink = document.createElement("a");
-                imageLink.className = "podcast-episode-image";
-                imageLink.href = episodeUrl;
-                imageLink.target = "_blank";
-                imageLink.rel = "noopener noreferrer";
-
-                if (episode.image) {
-                    const image = document.createElement("img");
-                    image.src = episode.image;
-                    image.alt = episode.title || "Podcast episode";
-                    image.loading = "lazy";
-
-                    imageLink.appendChild(image);
+                if (!seasons.has(seasonNumber)) {
+                    seasons.set(seasonNumber, []);
                 }
 
-                const content = document.createElement("div");
-                content.className = "podcast-episode-content";
+                seasons.get(seasonNumber).push(episode);
+            });
 
-                if (episode.episode_number) {
-                    const episodeNumber =
-                        document.createElement("p");
+            const seasonNumbers = Array.from(seasons.keys()).sort(
+                function (a, b) {
+                    const numberA = Number(a);
+                    const numberB = Number(b);
 
-                    episodeNumber.className =
-                        "podcast-episode-number";
+                    if (Number.isFinite(numberA) && Number.isFinite(numberB)) {
+                        return numberB - numberA;
+                    }
 
-                    episodeNumber.textContent =
-                        `Episode ${episode.episode_number}`;
-
-                    content.appendChild(episodeNumber);
+                    return b.localeCompare(a, "nb-NO");
                 }
+            );
 
-                const title = document.createElement("h3");
+            seasonNumbers.forEach(function (seasonNumber) {
+                const seasonEpisodes = seasons.get(seasonNumber);
+                const seasonSection = document.createElement("section");
+                seasonSection.className = "podcast-season";
+                seasonSection.dataset.season = seasonNumber;
 
-                const titleLink = document.createElement("a");
-                titleLink.href = episodeUrl;
-                titleLink.target = "_blank";
-                titleLink.rel = "noopener noreferrer";
-                titleLink.textContent =
-                    episode.title || "Scout of This World";
+                const seasonHeader = document.createElement("div");
+                seasonHeader.className = "podcast-season-header";
 
-                title.appendChild(titleLink);
-                content.appendChild(title);
+                const seasonTitle = document.createElement("h3");
+                seasonTitle.textContent =
+                    seasonNumber === "Uten sesong"
+                        ? seasonNumber
+                        : `Sesong ${seasonNumber}`;
 
-                const metadata = document.createElement("p");
-                metadata.className = "podcast-episode-meta";
+                const seasonCount = document.createElement("p");
+                seasonCount.className = "podcast-season-count";
+                seasonCount.textContent =
+                    `${seasonEpisodes.length} ${
+                        seasonEpisodes.length === 1 ? "episode" : "episoder"
+                    }`;
 
-                const metadataParts = [];
+                seasonHeader.appendChild(seasonTitle);
+                seasonHeader.appendChild(seasonCount);
 
-                if (episode.published) {
-                    const date = new Date(episode.published);
+                const seasonList = document.createElement("div");
+                seasonList.className = "podcast-season-list";
 
-                    metadataParts.push(
-                        date.toLocaleDateString("nb-NO", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric"
-                        })
+                seasonEpisodes.forEach(function (episode) {
+                    const episodeUrl =
+                        episode.link || episode.audio_url || "#";
+
+                    const descriptionText = stripHtml(
+                        episode.description
                     );
-                }
 
-                const formattedDuration = formatDuration(
-                    episode.duration
-                );
+                    const card = document.createElement("article");
+                    card.className = "podcast-episode-card";
 
-                if (formattedDuration) {
-                    metadataParts.push(formattedDuration);
-                }
+                    const episodeGuide = podcastGuides[episode.guid];
 
-                metadata.textContent = metadataParts.join(" • ");
-                content.appendChild(metadata);
+                    card.dataset.search = [
+                        episode.title,
+                        descriptionText,
+                        episode.episode_number,
+                        episode.episode_number
+                            ? `Episode ${episode.episode_number}`
+                            : "",
+                        episode.season_number
+                            ? `Sesong ${episode.season_number}`
+                            : "",
+                        episodeGuide ? episodeGuide.search : ""
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
 
-                if (descriptionText) {
-                    const description =
-                        document.createElement("p");
+                    const imageLink = document.createElement("a");
+                    imageLink.className = "podcast-episode-image";
+                    imageLink.href = episodeUrl;
+                    imageLink.target = "_blank";
+                    imageLink.rel = "noopener noreferrer";
 
-                    description.className =
-                        "podcast-episode-description";
+                    if (episode.image) {
+                        const image = document.createElement("img");
+                        image.src = episode.image;
+                        image.alt = episode.title || "Podcast episode";
+                        image.loading = "lazy";
 
-                    description.textContent = descriptionText;
+                        imageLink.appendChild(image);
+                    }
 
-                    content.appendChild(description);
-                }
+                    const content = document.createElement("div");
+                    content.className = "podcast-episode-content";
 
-                const actions = document.createElement("div");
-                actions.className = "podcast-episode-actions";
+                    if (episode.episode_number) {
+                        const episodeNumber =
+                            document.createElement("p");
 
-                const action = document.createElement("a");
-                action.className = "podcast-episode-action";
-                action.href = episodeUrl;
-                action.target = "_blank";
-                action.rel = "noopener noreferrer";
+                        episodeNumber.className =
+                            "podcast-episode-number";
 
-                const spotifyIcon =
-                    document.createElement("img");
+                        episodeNumber.textContent =
+                            `Episode ${episode.episode_number}`;
 
-                spotifyIcon.src =
-                    "https://cdn.simpleicons.org/spotify/081015";
+                        content.appendChild(episodeNumber);
+                    }
 
-                spotifyIcon.alt = "";
-                spotifyIcon.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
+                    const title = document.createElement("h3");
 
-                const actionText =
-                    document.createElement("span");
+                    const titleLink = document.createElement("a");
+                    titleLink.href = episodeUrl;
+                    titleLink.target = "_blank";
+                    titleLink.rel = "noopener noreferrer";
+                    titleLink.textContent =
+                        episode.title || "Scout of This World";
 
-                actionText.textContent = "Åpne på Spotify";
+                    title.appendChild(titleLink);
+                    content.appendChild(title);
 
-                action.appendChild(spotifyIcon);
-                action.appendChild(actionText);
-                actions.appendChild(action);
+                    const metadata = document.createElement("p");
+                    metadata.className = "podcast-episode-meta";
 
-                if (episodeGuide && episodeGuide.url) {
-                    const guideAction = document.createElement("a");
-                    guideAction.className =
-                        "podcast-episode-action podcast-episode-action--guide";
-                    guideAction.href = episodeGuide.url;
-                    guideAction.textContent = "Les episodeguiden";
+                    const metadataParts = [];
 
-                    actions.appendChild(guideAction);
-                }
+                    if (episode.published) {
+                        const date = new Date(episode.published);
 
-                content.appendChild(actions);
+                        metadataParts.push(
+                            date.toLocaleDateString("nb-NO", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            })
+                        );
+                    }
 
-                card.appendChild(imageLink);
-                card.appendChild(content);
+                    const formattedDuration = formatDuration(
+                        episode.duration
+                    );
 
-                episodeList.appendChild(card);
+                    if (formattedDuration) {
+                        metadataParts.push(formattedDuration);
+                    }
+
+                    metadata.textContent = metadataParts.join(" • ");
+                    content.appendChild(metadata);
+
+                    if (descriptionText) {
+                        const description =
+                            document.createElement("p");
+
+                        description.className =
+                            "podcast-episode-description";
+
+                        description.textContent = descriptionText;
+
+                        content.appendChild(description);
+                    }
+
+                    const actions = document.createElement("div");
+                    actions.className = "podcast-episode-actions";
+
+                    const action = document.createElement("a");
+                    action.className = "podcast-episode-action";
+                    action.href = episodeUrl;
+                    action.target = "_blank";
+                    action.rel = "noopener noreferrer";
+
+                    const spotifyIcon =
+                        document.createElement("img");
+
+                    spotifyIcon.src =
+                        "https://cdn.simpleicons.org/spotify/081015";
+
+                    spotifyIcon.alt = "";
+                    spotifyIcon.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                    const actionText =
+                        document.createElement("span");
+
+                    actionText.textContent = "Åpne på Spotify";
+
+                    action.appendChild(spotifyIcon);
+                    action.appendChild(actionText);
+                    actions.appendChild(action);
+
+                    if (episodeGuide && episodeGuide.url) {
+                        const guideAction = document.createElement("a");
+                        guideAction.className =
+                            "podcast-episode-action podcast-episode-action--guide";
+                        guideAction.href = episodeGuide.url;
+                        guideAction.textContent = "Les episodeguiden";
+
+                        actions.appendChild(guideAction);
+                    }
+
+                    content.appendChild(actions);
+
+                    card.appendChild(imageLink);
+                    card.appendChild(content);
+                    seasonList.appendChild(card);
+                });
+
+                seasonSection.appendChild(seasonHeader);
+                seasonSection.appendChild(seasonList);
+                episodeList.appendChild(seasonSection);
             });
 
             function filterEpisodes() {
@@ -421,21 +528,32 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
                     .trim()
                     .toLowerCase();
 
-                const cards = episodeList.querySelectorAll(
-                    ".podcast-episode-card"
+                const seasonSections = episodeList.querySelectorAll(
+                    ".podcast-season"
                 );
 
                 let visibleEpisodes = 0;
 
-                cards.forEach(function (card) {
-                    const isVisible =
-                        card.dataset.search.includes(searchTerm);
+                seasonSections.forEach(function (seasonSection) {
+                    const cards = seasonSection.querySelectorAll(
+                        ".podcast-episode-card"
+                    );
 
-                    card.hidden = !isVisible;
+                    let visibleInSeason = 0;
 
-                    if (isVisible) {
-                        visibleEpisodes += 1;
-                    }
+                    cards.forEach(function (card) {
+                        const isVisible =
+                            card.dataset.search.includes(searchTerm);
+
+                        card.hidden = !isVisible;
+
+                        if (isVisible) {
+                            visibleInSeason += 1;
+                            visibleEpisodes += 1;
+                        }
+                    });
+
+                    seasonSection.hidden = visibleInSeason === 0;
                 });
 
                 noResults.hidden = visibleEpisodes !== 0;
@@ -445,6 +563,8 @@ description: "Scout of This World er SkyrScouts norskspråklige podcast om fotba
                 "input",
                 filterEpisodes
             );
+
+            filterEpisodes();
 
         } catch (error) {
             console.error(error);

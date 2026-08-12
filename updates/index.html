@@ -4,6 +4,57 @@ title: "Updates"
 description: "News, rumours and confirmed developments involving players featured by SkyrScout."
 ---
 
+<style>
+    .updates-tools {
+        margin-bottom: 22px;
+        padding: 20px;
+        background: rgba(7, 11, 15, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 12px;
+    }
+
+    .update-card[hidden],
+    .updates-no-results[hidden],
+    .catalog-load-more[hidden] {
+        display: none;
+    }
+
+    .updates-no-results {
+        margin-top: 18px;
+        padding: 26px;
+        color: #c2ccd1;
+        text-align: center;
+        background: rgba(7, 11, 15, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 12px;
+    }
+
+    .catalog-load-more {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .catalog-load-more-button {
+        min-width: 180px;
+        padding: 12px 18px;
+        color: #081015;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 800;
+        background: #53c8ee;
+        border: 0;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+
+    .catalog-load-more-button:hover,
+    .catalog-load-more-button:focus-visible {
+        background: #78daf5;
+        outline: none;
+    }
+</style>
+
 <main class="page-background">
 
         <section class="updates-page">
@@ -17,7 +68,19 @@ description: "News, rumours and confirmed developments involving players feature
                 </p>
             </header>
 
-            <div class="updates-list">
+            <div class="updates-tools">
+                <label class="player-search" for="update-search">
+                    <span>Search updates</span>
+
+                    <input
+                        type="search"
+                        id="update-search"
+                        placeholder="Search by player, club, topic or keyword"
+                    >
+                </label>
+            </div>
+
+            <div class="updates-list" id="updates-list">
 
                 {% if site.update_posts and site.update_posts.size > 0 %}
 
@@ -31,7 +94,21 @@ description: "News, rumours and confirmed developments involving players feature
                         {% assign update_filename = update.path | split: "/" | last %}
                         {% assign update_date = update_filename | slice: 0, 10 | split: "-" %}
 
-                        <article class="update-card{% if update.pinned %} update-card--pinned{% endif %}">
+                        {% capture update_search_text %}
+                            {{ update.title }}
+                            {{ update.content | strip_html }}
+                            {{ update.player_name }}
+                            {% if update.players %}
+                                {% for update_player in update.players %}
+                                    {{ update_player.name }}
+                                {% endfor %}
+                            {% endif %}
+                        {% endcapture %}
+
+                        <article
+                            class="update-card{% if update.pinned %} update-card--pinned{% endif %}"
+                            data-search="{{ update_search_text | strip_newlines | downcase | escape }}"
+                        >
 
                             <p class="update-date">
                                 {% if update.pinned %}
@@ -68,6 +145,96 @@ description: "News, rumours and confirmed developments involving players feature
 
             </div>
 
+            <p
+                class="updates-no-results"
+                id="updates-no-results"
+                hidden
+            >
+                No updates match your search.
+            </p>
+
+            <div
+                class="catalog-load-more"
+                id="updates-load-more-wrap"
+                hidden
+            >
+                <button
+                    class="catalog-load-more-button"
+                    id="updates-load-more"
+                    type="button"
+                >
+                    Show 20 more
+                </button>
+            </div>
+
         </section>
 
     </main>
+
+<script>
+    const updateSearchInput = document.querySelector("#update-search");
+    const updatesNoResults = document.querySelector("#updates-no-results");
+    const updatesLoadMoreWrap = document.querySelector(
+        "#updates-load-more-wrap"
+    );
+    const updatesLoadMoreButton = document.querySelector(
+        "#updates-load-more"
+    );
+
+    const updatePageSize = 20;
+    let updateVisibleLimit = updatePageSize;
+
+    function getUpdateCards() {
+        return Array.from(document.querySelectorAll(".update-card"));
+    }
+
+    function filterUpdates() {
+        const searchTerm = updateSearchInput.value
+            .trim()
+            .toLowerCase();
+
+        const hasActiveSearch = Boolean(searchTerm);
+        let matchingUpdates = 0;
+        let visibleUpdates = 0;
+
+        getUpdateCards().forEach(function (card) {
+            const matchesSearch =
+                (card.dataset.search || "").includes(searchTerm);
+
+            if (matchesSearch) {
+                matchingUpdates += 1;
+            }
+
+            const isVisible =
+                matchesSearch &&
+                (hasActiveSearch || matchingUpdates <= updateVisibleLimit);
+
+            card.hidden = !isVisible;
+
+            if (isVisible) {
+                visibleUpdates += 1;
+            }
+        });
+
+        updatesNoResults.hidden = matchingUpdates !== 0;
+
+        const remainingUpdates = matchingUpdates - visibleUpdates;
+        const canLoadMore = !hasActiveSearch && remainingUpdates > 0;
+
+        updatesLoadMoreWrap.hidden = !canLoadMore;
+
+        if (canLoadMore) {
+            updatesLoadMoreButton.textContent =
+                `Show ${Math.min(updatePageSize, remainingUpdates)} more`;
+        }
+    }
+
+    updateSearchInput.addEventListener("input", filterUpdates);
+
+    updatesLoadMoreButton.addEventListener("click", function () {
+        updateVisibleLimit += updatePageSize;
+        filterUpdates();
+    });
+
+    filterUpdates();
+</script>
