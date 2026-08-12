@@ -30,4 +30,3 @@ No agreement has yet been announced, with the clubs currently reported to be in 
         View the post on X
     </a>
 </blockquote>
-```
