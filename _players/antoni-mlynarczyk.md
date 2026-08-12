@@ -15,7 +15,7 @@ nationalities:
 birth_date: "2005-05-03"
 height_cm: 186
 dominant_foot: "Right"
-two_footed_ability:
+two_footed_ability: "Reliable"
 
 positions:
   - role: "Left Winger"
@@ -25,10 +25,17 @@ positions:
     side: "right"
     rank: 2
 
-summary:
+summary: |
+  🇵🇱 Antoni Młynarczyk | 19 y/o LW/RW
+  ⚡ Fast Polish winger who can play on both flanks
+  📏 Stands 186 cm tall and drives directly at defenders
+  💥 Strikes with power and can surprise goalkeepers with unexpected shots
+  🎯 Beats opponents 1v1 and is a promising talent to watch
 
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
+
+  Antoni Młynarczyk is a fast Polish winger who can play on both flanks. Standing 186 cm tall, he drives directly at defenders and strikes with power. He is known for his unexpected shots and his ability to beat opponents 1v1, making him a promising talent to watch.
 
   Goal vs Pogoń Szczecin on 23 February 2024
 
