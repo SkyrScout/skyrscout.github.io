@@ -1,5 +1,4 @@
 ---
-
 title: "Lineker Rodrigues scores first Real Salt Lake goal"
 player: "lineker-rodrigues-dos-santos"
 player_name: "Lineker Rodrigues dos Santos"
@@ -8,7 +7,7 @@ source_url: "https://www.leaguescup.com/news/match-recap-real-salt-lake-cruises-
 source_via: "Real Salt Lake"
 source_via_url: "https://www.rsl.com/news/real-salt-lake-keeps-leagues-cup-hopes-alive-in-3-0-victory-over-fc-juarez"
 published_at: 2026-08-12 22:23:28 +0200
----------------------------------------
+---
 
 Lineker Rodrigues dos Santos marked his first appearance following the announcement of his new MLS contract by scoring his first goal for Real Salt Lake.
 
