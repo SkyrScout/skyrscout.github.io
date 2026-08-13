@@ -56,6 +56,9 @@
         >
     {% endif %}
 
+    {% assign social_image = nil %}
+    {% assign social_image_is_site_preview = false %}
+
     {% if page.youtube %}
         {% assign youtube_id = page.youtube
             | split: 'v='
@@ -70,17 +73,50 @@
             | append: youtube_id
             | append: '/hqdefault.jpg'
         %}
+    {% elsif page.collection == 'update_posts' and page.player %}
+        {% capture social_player_path %}/players/{{ page.player }}/{% endcapture %}
+        {% assign social_player_doc = site.players
+            | where: "url", social_player_path
+            | first
+        %}
 
+        {% if social_player_doc and social_player_doc.youtube %}
+            {% assign social_youtube_id = social_player_doc.youtube
+                | split: 'v='
+                | last
+                | split: '&'
+                | first
+                | split: '/'
+                | last
+            %}
+
+            {% assign social_image = 'https://img.youtube.com/vi/'
+                | append: social_youtube_id
+                | append: '/hqdefault.jpg'
+            %}
+        {% endif %}
+    {% endif %}
+
+    {% if social_image == nil and page.collection == 'update_posts' %}
+        {% assign social_image = '/assets/images/skyrscout-social-preview.png' | absolute_url %}
+        {% assign social_image_is_site_preview = true %}
+    {% elsif social_image == nil and page.url == '/' %}
+        {% assign social_image = '/assets/images/skyrscout-social-preview.png' | absolute_url %}
+        {% assign social_image_is_site_preview = true %}
+    {% endif %}
+
+    {% if social_image %}
         <meta property="og:image" content="{{ social_image }}">
-    {% elsif page.url == '/' %}
-        <meta property="og:image" content="{{ '/assets/images/skyrscout-social-preview.png' | absolute_url }}">
-        <meta property="og:image:width" content="1200">
-        <meta property="og:image:height" content="630">
-        <meta property="og:image:type" content="image/png">
+
+        {% if social_image_is_site_preview %}
+            <meta property="og:image:width" content="1200">
+            <meta property="og:image:height" content="630">
+            <meta property="og:image:type" content="image/png">
+        {% endif %}
     {% endif %}
 
     <!-- X / Twitter -->
-    {% if page.youtube or page.url == '/' %}
+    {% if social_image %}
         <meta name="twitter:card" content="summary_large_image">
     {% else %}
         <meta name="twitter:card" content="summary">
@@ -95,10 +131,8 @@
         >
     {% endif %}
 
-    {% if page.youtube %}
+    {% if social_image %}
         <meta name="twitter:image" content="{{ social_image }}">
-    {% elsif page.url == '/' %}
-        <meta name="twitter:image" content="{{ '/assets/images/skyrscout-social-preview.png' | absolute_url }}">
     {% endif %}
         {% if page.collection == 'players' %}
 
