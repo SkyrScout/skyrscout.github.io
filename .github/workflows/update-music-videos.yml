@@ -1,37 +1,114 @@
 name: Update music videos
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/update_music_videos.py"
+      - ".github/workflows/update-music-videos.yml"
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *"
+    # Run every six hours, but avoid the top of the hour.
+    - cron: "17 */6 * * *"
 
 permissions:
   contents: write
+  pages: write
+
+concurrency:
+  group: update-music-videos
+  cancel-in-progress: true
 
 jobs:
   update-music:
     runs-on: ubuntu-latest
+    timeout-minutes: 6
 
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Update music videos
-        run: python scripts/update_music_videos.py
+      - name: Update music videos safely
+        run: python3 scripts/update_music_videos.py
 
-      - name: Commit changes
+      - name: Commit only when music data changed
+        id: commit
         run: |
+          if git diff --quiet -- assets/data/music-videos.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No repository change required."
+            exit 0
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add assets/data/music-videos.json
+          git commit -m "Update music videos"
 
-          git diff --cached --quiet || (
-            git commit -m "Update music videos"
-            git push
-          )
+          for attempt in 1 2 3; do
+            echo "Push attempt $attempt/3..."
+
+            if git push origin HEAD:main; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+              echo "Music data pushed successfully."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Push was rejected. Rebasing onto the latest main branch..."
+
+              git fetch origin main
+
+              if ! git rebase origin/main; then
+                git rebase --abort || true
+                echo "::warning::Could not rebase the generated music-data commit. A later scheduled run will retry from the newest main branch."
+                echo "changed=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+
+              sleep 5
+            fi
+          done
+
+          echo "::warning::Could not push the generated music-data update after 3 attempts. A later scheduled run will retry."
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Request GitHub Pages rebuild
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set +e
+
+          for attempt in 1 2 3; do
+            echo "Requesting GitHub Pages build, attempt $attempt/3..."
+
+            status="$(
+              curl                 -sS                 --connect-timeout 10                 --max-time 30                 -o /tmp/pages-build-response.json                 -w "%{http_code}"                 -X POST                 -H "Accept: application/vnd.github+json"                 -H "Authorization: Bearer $GH_TOKEN"                 -H "X-GitHub-Api-Version: 2026-03-10"                 "https://api.github.com/repos/$REPOSITORY/pages/builds"
+            )"
+
+            if [ "$status" = "201" ]; then
+              echo "GitHub Pages build requested successfully."
+              exit 0
+            fi
+
+            echo "Pages build request returned HTTP ${status:-curl-failed}."
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep 10
+            fi
+          done
+
+          echo "::warning::Could not request a Pages rebuild after 3 attempts. The existing website is unaffected; the next normal deploy will publish the committed music-data change."
+          exit 0
