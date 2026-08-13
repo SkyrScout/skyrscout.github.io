@@ -24,14 +24,6 @@ summary:
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
 
-  Name: Valentin Robu
-  Date of birth: 23rd November, 2002
-  Citizenship: Romania
-  Height: 1,85 m
-  Position: Centre-Forward
-  Club: AFC Metalul Buzau
-  League: Liga 2, second tier, Romania
-
   Goal vs Dumbrăvița on August 3, 2024
 
   Goal vs Focșani on August 18, 2024
@@ -45,11 +37,13 @@ report: |
   Goal vs Universitatea Craiova on October 31, 2024
 
   Goal vs Selimbar on November 3, 2024
+
   Goal vs Selimbar on November 3, 2024
 
   Goal vs Afumați on November 23, 2024
 
   Assist vs Ceahlăul on December 8, 2024
+
   Wins the ball vs Ceahlăul on December 8, 2024
 
 transfermarkt: "https://www.transfermarkt.com/valentin-robu/profil/spieler/645491"
