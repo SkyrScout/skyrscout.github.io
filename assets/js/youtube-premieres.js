@@ -3,6 +3,7 @@
 
     const STATUS_URL = "/assets/data/youtube-premieres.json";
     const FETCH_TIMEOUT_MS = 4500;
+    let expiryTimer = null;
 
     function extractVideoId(value) {
         if (!value) return "";
@@ -10,7 +11,7 @@
         const patterns = [
             /img\.youtube\.com\/vi\/([^/?#]+)/i,
             /youtube\.com\/embed\/([^/?#]+)/i,
-            /youtube\.com\/watch\?.*?[?&]v=([^&#]+)/i,
+            /youtube\.com\/watch\?(?:[^#]*&)?v=([^&#]+)/i,
             /youtu\.be\/([^/?#]+)/i
         ];
 
@@ -71,6 +72,19 @@
         }
 
         return byMainVideo;
+    }
+
+    function getNextPremiere(activePremieres) {
+        return [...activePremieres.values()]
+            .sort((a, b) => a.start - b.start)[0] || null;
+    }
+
+    function getPremiereProfile(premiere) {
+        const profiles = Array.isArray(premiere && premiere.profiles)
+            ? premiere.profiles
+            : [];
+
+        return profiles.find((item) => item && item.player_slug) || null;
     }
 
     function formatCardTime(timestamp) {
@@ -163,6 +177,7 @@
             }
 
             media.dataset.premiereDecorated = "true";
+            media.dataset.premiereVideoId = premiere.videoId || mainVideoId;
             media.classList.add("skyr-premiere-media");
             media.append(makeBadge(), makeTimeChip(premiere.start));
         });
@@ -177,6 +192,7 @@
         }
 
         wrapper.dataset.premiereDecorated = "true";
+        wrapper.dataset.premiereVideoId = videoId;
         wrapper.classList.add("skyr-premiere-active");
 
         const poster = document.createElement("div");
@@ -248,6 +264,174 @@
         });
     }
 
+    function makeDiscoveryButton(label, href, className = "") {
+        const link = document.createElement("a");
+        link.className = `skyr-premiere-discovery-button ${className}`.trim();
+        link.href = href;
+        link.textContent = label;
+        return link;
+    }
+
+    function buildDiscoveryCard(premiere, variant) {
+        const relation = getPremiereProfile(premiere);
+        const profileUrl = relation && relation.player_slug
+            ? `/players/${relation.player_slug}/`
+            : "";
+
+        const section = document.createElement("section");
+        section.className = `skyr-premiere-discovery skyr-premiere-discovery-${variant}`;
+        section.dataset.premiereDiscovery = "true";
+        section.dataset.premiereVideoId = premiere.videoId;
+        section.setAttribute("aria-label", "Upcoming SkyrScout premiere");
+
+        const media = document.createElement(profileUrl ? "a" : "div");
+        media.className = "skyr-premiere-discovery-media";
+        if (profileUrl) {
+            media.href = profileUrl;
+            media.setAttribute("aria-label", `View ${premiere.title || "upcoming premiere"}`);
+        }
+
+        const image = document.createElement("img");
+        image.src = `https://img.youtube.com/vi/${premiere.videoId}/maxresdefault.jpg`;
+        image.alt = "";
+        image.loading = "lazy";
+        image.addEventListener("error", () => {
+            if (!image.src.endsWith("/hqdefault.jpg")) {
+                image.src = `https://img.youtube.com/vi/${premiere.videoId}/hqdefault.jpg`;
+            }
+        }, { once: true });
+
+        media.append(image, makeBadge(), makeTimeChip(premiere.start));
+
+        const body = document.createElement("div");
+        body.className = "skyr-premiere-discovery-body";
+
+        const kicker = document.createElement("p");
+        kicker.className = "skyr-premiere-discovery-kicker";
+        kicker.textContent = "Upcoming Premiere";
+
+        const title = document.createElement("h2");
+        title.className = "skyr-premiere-discovery-title";
+
+        if (profileUrl) {
+            const titleLink = document.createElement("a");
+            titleLink.href = profileUrl;
+            titleLink.textContent = premiere.title || "SkyrScout video premiere";
+            title.append(titleLink);
+        } else {
+            title.textContent = premiere.title || "SkyrScout video premiere";
+        }
+
+        const date = document.createElement("p");
+        date.className = "skyr-premiere-discovery-date";
+        date.textContent = `Premieres ${formatProfileTime(premiere.start)}`;
+
+        const note = document.createElement("p");
+        note.className = "skyr-premiere-discovery-note";
+        note.textContent = variant === "yard"
+            ? "A new SkyrScout video is ready for premiere."
+            : "Upcoming SkyrScout video linked to this player profile.";
+
+        const actions = document.createElement("div");
+        actions.className = "skyr-premiere-discovery-actions";
+
+        if (profileUrl) {
+            actions.append(makeDiscoveryButton("View player profile", profileUrl));
+        }
+
+        const youtubeButton = makeDiscoveryButton(
+            "Watch on YouTube",
+            `https://www.youtube.com/watch?v=${premiere.videoId}`,
+            "is-secondary"
+        );
+        youtubeButton.target = "_blank";
+        youtubeButton.rel = "noopener noreferrer";
+        actions.append(youtubeButton);
+
+        body.append(kicker, title, date, note, actions);
+        section.append(media, body);
+        return section;
+    }
+
+    function insertDiscovery(activePremieres) {
+        const premiere = getNextPremiere(activePremieres);
+        if (!premiere) return;
+
+        const reportGrid = document.querySelector("#yard-report-grid");
+        const latestReportsSection = reportGrid && reportGrid.closest(".yard-section");
+        if (latestReportsSection && !document.querySelector(".skyr-premiere-discovery-yard")) {
+            latestReportsSection.before(buildDiscoveryCard(premiere, "yard"));
+        }
+
+        const playersViewPanel = document.querySelector(".players-view-panel");
+        if (playersViewPanel && !document.querySelector(".skyr-premiere-discovery-players")) {
+            playersViewPanel.before(buildDiscoveryCard(premiere, "players"));
+        }
+    }
+
+    function clearPremiereUi() {
+        document.querySelectorAll("[data-premiere-discovery='true']").forEach((item) => {
+            item.remove();
+        });
+
+        document.querySelectorAll(".skyr-premiere-media").forEach((media) => {
+            const image = media.querySelector("img");
+            if (image && image.dataset.premiereOriginalSrc) {
+                image.src = image.dataset.premiereOriginalSrc;
+                delete image.dataset.premiereOriginalSrc;
+            }
+
+            media.querySelectorAll(":scope > .skyr-premiere-badge, :scope > .skyr-premiere-time")
+                .forEach((item) => item.remove());
+
+            media.classList.remove("skyr-premiere-media");
+            delete media.dataset.premiereDecorated;
+            delete media.dataset.premiereVideoId;
+        });
+
+        document.querySelectorAll(".skyr-premiere-active").forEach((wrapper) => {
+            wrapper.querySelectorAll(":scope > .skyr-premiere-poster")
+                .forEach((item) => item.remove());
+            wrapper.classList.remove("skyr-premiere-active");
+            delete wrapper.dataset.premiereDecorated;
+            delete wrapper.dataset.premiereVideoId;
+        });
+    }
+
+    function scheduleExpiry(data, activePremieres) {
+        if (expiryTimer !== null) {
+            window.clearTimeout(expiryTimer);
+            expiryTimer = null;
+        }
+
+        const premiere = getNextPremiere(activePremieres);
+        if (!premiere) return;
+
+        const delay = premiere.start - Date.now() + 1100;
+        if (delay <= 0) {
+            renderFromData(data);
+            return;
+        }
+
+        // setTimeout is capped at a signed 32-bit millisecond value.
+        const safeDelay = Math.min(delay, 2147483000);
+        expiryTimer = window.setTimeout(() => {
+            renderFromData(data);
+        }, safeDelay);
+    }
+
+    function renderFromData(data) {
+        clearPremiereUi();
+
+        const activePremieres = getActivePremieres(data);
+        if (!activePremieres.size) return;
+
+        decorateThumbnails(activePremieres);
+        decoratePlayerVideos(activePremieres);
+        insertDiscovery(activePremieres);
+        scheduleExpiry(data, activePremieres);
+    }
+
     async function loadStatuses() {
         const controller = new AbortController();
         const timer = window.setTimeout(
@@ -279,11 +463,7 @@
         const data = await loadStatuses();
         if (!data) return;
 
-        const activePremieres = getActivePremieres(data);
-        if (!activePremieres.size) return;
-
-        decorateThumbnails(activePremieres);
-        decoratePlayerVideos(activePremieres);
+        renderFromData(data);
     }
 
     if (document.readyState === "loading") {
