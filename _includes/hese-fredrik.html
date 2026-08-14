@@ -3,7 +3,6 @@
   Public Hese-Fredrik widget
 
   Hidden unless the backend says an alert is active.
-  Paste the Apps Script /exec URL into HESE_FREDRIK_ENDPOINT below.
 -->
 
 <style>
@@ -189,19 +188,7 @@
 (function () {
     "use strict";
 
-    /*
-     * PASTE THE DEPLOYED APPS SCRIPT /exec URL HERE.
-     * Example:
-     * https://script.google.com/macros/s/XXXXXXXXXXXX/exec
-     */
-    const HESE_FREDRIK_ENDPOINT = "PASTE_APPS_SCRIPT_EXEC_URL_HERE";
-
-    if (
-        !HESE_FREDRIK_ENDPOINT ||
-        HESE_FREDRIK_ENDPOINT.indexOf("PASTE_APPS_SCRIPT") === 0
-    ) {
-        return;
-    }
+    const HESE_FREDRIK_ENDPOINT = "https://script.google.com/macros/s/AKfycbw5hZ4rk0e4OwClAtrH3-K9g4Z_XBu00a61Lx-aqdlv_KRXxZhJhR3WGFynE9W2WY5Z/exec";
 
     const widget = document.querySelector("#hese-fredrik");
 
