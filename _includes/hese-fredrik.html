@@ -1,8 +1,8 @@
 <!--
   SkyrScout / Scoutland Yard
-  Public Hese-Fredrik widget
+  Public Hese-Fredrik floating alert widget
 
-  Hidden unless the backend says an alert is active.
+  Hidden unless backend says an alert is active.
 -->
 
 <style>
@@ -11,33 +11,99 @@
     }
 
     #hese-fredrik {
-        margin: 22px 0 4px;
-        border: 2px solid #b62f2f;
-        border-radius: 12px;
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 9999;
+        width: min(470px, calc(100vw - 48px));
+        border: 1px solid rgba(255, 92, 92, 0.95);
+        border-radius: 14px;
         overflow: hidden;
         background:
-            linear-gradient(90deg, rgba(142, 25, 25, 0.22), rgba(20, 20, 20, 0.96) 38%),
-            #111;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+            radial-gradient(circle at 18% 10%, rgba(178, 32, 32, 0.24), transparent 34%),
+            linear-gradient(135deg, rgba(16, 20, 24, 0.985), rgba(7, 10, 13, 0.985));
+        box-shadow:
+            0 18px 48px rgba(0, 0, 0, 0.58),
+            0 0 0 1px rgba(255,255,255,0.03),
+            0 0 24px rgba(214, 45, 45, 0.18);
+        backdrop-filter: blur(8px);
+        animation: heseFredrikIn 420ms cubic-bezier(.2,.9,.25,1);
     }
 
-    .hese-fredrik-inner {
+    #hese-fredrik::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 5px;
+        background: linear-gradient(#ff6d6d, #b41414);
+        z-index: 2;
+    }
+
+    @keyframes heseFredrikIn {
+        from {
+            opacity: 0;
+            transform: translate3d(30px, 18px, 0) scale(.97);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+    }
+
+    .hese-fredrik-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px 8px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        background: rgba(150, 20, 20, 0.15);
+    }
+
+    .hese-fredrik-label {
+        margin: 0;
+        color: #ff7777;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+    }
+
+    .hese-fredrik-close {
+        width: 30px;
+        height: 30px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        font: inherit;
+        font-size: 1.05rem;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .hese-fredrik-close:hover {
+        background: rgba(255,255,255,0.14);
+    }
+
+    .hese-fredrik-body {
         display: grid;
-        grid-template-columns: minmax(150px, 235px) 1fr;
-        min-height: 150px;
+        grid-template-columns: 150px minmax(0, 1fr);
+        min-height: 142px;
     }
 
     .hese-fredrik-image {
+        display: block;
         position: relative;
-        min-height: 150px;
-        background: #090909;
+        min-height: 142px;
+        background: #080a0c;
     }
 
     .hese-fredrik-image img {
         display: block;
         width: 100%;
         height: 100%;
-        min-height: 150px;
+        min-height: 142px;
         object-fit: cover;
     }
 
@@ -45,7 +111,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(90deg, transparent 55%, #111 100%);
+        background: linear-gradient(90deg, transparent 45%, rgba(7,10,13,0.9) 100%);
         pointer-events: none;
     }
 
@@ -54,102 +120,188 @@
         flex-direction: column;
         justify-content: center;
         gap: 7px;
-        padding: 20px 24px;
-    }
-
-    .hese-fredrik-label {
-        margin: 0;
-        color: #ff6666;
-        font-size: 0.74rem;
-        font-weight: 900;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+        min-width: 0;
+        padding: 16px 18px 16px 14px;
     }
 
     .hese-fredrik-copy h2 {
         margin: 0;
         color: #fff;
-        font-size: clamp(1.35rem, 2.3vw, 2rem);
-        line-height: 1.1;
-    }
-
-    .hese-fredrik-copy p {
-        margin: 0;
+        font-size: 1.12rem;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
     }
 
     .hese-fredrik-movement {
+        margin: 0;
         color: #fff;
-        font-size: 1.06rem;
+        font-size: 0.92rem;
         font-weight: 800;
     }
 
     .hese-fredrik-movement strong {
-        color: #ff7676;
-        font-size: 1.22em;
+        color: #ff7777;
+        font-size: 1.12rem;
     }
 
     .hese-fredrik-note {
-        color: #b8b8b8;
-        font-size: 0.82rem;
+        margin: 0;
+        color: #aeb8c2;
+        font-size: 0.76rem;
+        line-height: 1.35;
     }
 
     .hese-fredrik-action {
         align-self: flex-start;
-        margin-top: 4px;
-        padding: 8px 12px;
-        border: 1px solid #c94848;
+        margin-top: 2px;
+        padding: 7px 10px;
+        border: 1px solid rgba(255, 98, 98, 0.9);
         border-radius: 7px;
         color: #fff !important;
-        background: #8f2525;
-        font-size: 0.82rem;
+        background: rgba(151, 28, 28, 0.88);
+        font-size: 0.76rem;
         font-weight: 800;
         text-decoration: none !important;
     }
 
     .hese-fredrik-action:hover {
-        background: #aa2d2d;
+        background: rgba(183, 34, 34, 0.95);
+    }
+
+
+    #hese-fredrik-muted-toggle[hidden] {
+        display: none !important;
+    }
+
+    #hese-fredrik-muted-toggle {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 9998;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 11px;
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 999px;
+        background: rgba(10, 13, 16, 0.94);
+        color: #aeb8c2;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.42);
+        font: inherit;
+        font-size: 0.72rem;
+        cursor: pointer;
+    }
+
+    #hese-fredrik-muted-toggle:hover {
+        color: #fff;
+        border-color: rgba(255, 119, 119, 0.55);
+    }
+
+    .hese-fredrik-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .hese-fredrik-mute {
+        border: 0;
+        background: transparent;
+        color: #c8d0d8;
+        font: inherit;
+        font-size: 0.68rem;
+        font-weight: 800;
+        cursor: pointer;
+        padding: 5px 6px;
+        border-radius: 6px;
+    }
+
+    .hese-fredrik-mute:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
     }
 
     @media (max-width: 680px) {
-        .hese-fredrik-inner {
-            grid-template-columns: 112px 1fr;
-            min-height: 126px;
+        #hese-fredrik {
+            right: 12px;
+            bottom: 12px;
+            left: 12px;
+            width: auto;
+        }
+
+        #hese-fredrik-muted-toggle {
+            right: 12px;
+            bottom: 12px;
+            font-size: 0.66rem;
+        }
+
+        .hese-fredrik-body {
+            grid-template-columns: 108px minmax(0, 1fr);
+            min-height: 118px;
         }
 
         .hese-fredrik-image,
         .hese-fredrik-image img {
-            min-height: 126px;
+            min-height: 118px;
         }
 
-        .hese-fredrik-copy {
-            padding: 14px 14px 14px 12px;
+        .hese-fredrik-topbar {
+            padding: 8px 9px 7px 14px;
         }
 
         .hese-fredrik-label {
-            font-size: 0.62rem;
+            font-size: 0.61rem;
+        }
+
+        .hese-fredrik-copy {
+            gap: 5px;
+            padding: 11px 12px 11px 10px;
         }
 
         .hese-fredrik-copy h2 {
-            font-size: 1.05rem;
+            font-size: 0.93rem;
         }
 
         .hese-fredrik-movement {
-            font-size: 0.86rem;
+            font-size: 0.77rem;
+        }
+
+        .hese-fredrik-movement strong {
+            font-size: 1rem;
         }
 
         .hese-fredrik-note {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .hese-fredrik-action {
-            padding: 7px 9px;
-            font-size: 0.72rem;
+            padding: 6px 8px;
+            font-size: 0.68rem;
         }
     }
 </style>
 
 <section id="hese-fredrik" aria-live="polite" hidden>
-    <div class="hese-fredrik-inner">
+    <div class="hese-fredrik-topbar">
+        <p class="hese-fredrik-label">🚨 Hese-Fredrik Alert</p>
+
+        <div class="hese-fredrik-controls">
+            <button
+                class="hese-fredrik-mute"
+                id="hese-fredrik-mute"
+                type="button"
+                aria-label="Mute Hese-Fredrik alerts on this device"
+            >Mute alerts</button>
+
+            <button
+                class="hese-fredrik-close"
+                id="hese-fredrik-close"
+                type="button"
+                aria-label="Close Hese-Fredrik alert"
+            >×</button>
+        </div>
+    </div>
+
+    <div class="hese-fredrik-body">
         <a
             class="hese-fredrik-image"
             id="hese-fredrik-image-link"
@@ -160,8 +312,6 @@
         </a>
 
         <div class="hese-fredrik-copy">
-            <p class="hese-fredrik-label">🚨 Hese-Fredrik går!</p>
-
             <h2 id="hese-fredrik-title"></h2>
 
             <p class="hese-fredrik-movement">
@@ -170,7 +320,7 @@
             </p>
 
             <p class="hese-fredrik-note">
-                A SkyrScout video is moving unusually fast on YouTube.
+                This SkyrScout video is moving unusually fast on YouTube.
             </p>
 
             <a
@@ -184,23 +334,51 @@
     </div>
 </section>
 
+<button
+    id="hese-fredrik-muted-toggle"
+    type="button"
+    hidden
+    aria-label="Turn Hese-Fredrik alerts back on"
+>🔕 Hese-Fredrik off</button>
+
 <script>
 (function () {
     "use strict";
 
     const HESE_FREDRIK_ENDPOINT = "https://script.google.com/macros/s/AKfycbw5hZ4rk0e4OwClAtrH3-K9g4Z_XBu00a61Lx-aqdlv_KRXxZhJhR3WGFynE9W2WY5Z/exec";
-
     const widget = document.querySelector("#hese-fredrik");
+    const closeButton = document.querySelector("#hese-fredrik-close");
+    const muteButton = document.querySelector("#hese-fredrik-mute");
+    const mutedToggle = document.querySelector("#hese-fredrik-muted-toggle");
+    const MUTE_KEY = "skyrscout-hese-fredrik-muted";
 
     if (!widget) {
         return;
     }
 
-    /*
-     * Prefer a SkyrScout page when this YouTube upload belongs to a player
-     * profile or a Short already present on the site. Otherwise fall back
-     * to the YouTube URL supplied by the backend.
-     */
+    function isMuted() {
+        return localStorage.getItem(MUTE_KEY) === "1";
+    }
+
+    function setMuted(value) {
+        if (value) {
+            localStorage.setItem(MUTE_KEY, "1");
+            widget.hidden = true;
+            if (mutedToggle) {
+                mutedToggle.hidden = false;
+            }
+        } else {
+            localStorage.removeItem(MUTE_KEY);
+            if (mutedToggle) {
+                mutedToggle.hidden = true;
+            }
+        }
+    }
+
+    if (isMuted() && mutedToggle) {
+        mutedToggle.hidden = false;
+    }
+
     const siteLinks = {};
 
     {% for player in site.players %}
@@ -233,7 +411,40 @@
         {% endif %}
     {% endfor %}
 
+    let dismissedVideoId = null;
+
+    closeButton?.addEventListener("click", function () {
+        dismissedVideoId = widget.dataset.videoId || null;
+        widget.hidden = true;
+    });
+
+    muteButton?.addEventListener("click", function () {
+        setMuted(true);
+    });
+
+    mutedToggle?.addEventListener("click", function () {
+        setMuted(false);
+        dismissedVideoId = null;
+
+        if (window.__lastHeseFredrikPayload) {
+            window.SkyrScoutHeseFredrik(window.__lastHeseFredrikPayload);
+        }
+    });
+
     window.SkyrScoutHeseFredrik = function (payload) {
+        window.__lastHeseFredrikPayload = payload;
+
+        if (isMuted()) {
+            widget.hidden = true;
+            if (mutedToggle) {
+                mutedToggle.hidden = false;
+            }
+            return;
+        }
+
+        if (mutedToggle) {
+            mutedToggle.hidden = true;
+        }
         if (
             !payload ||
             payload.active !== true ||
@@ -244,10 +455,17 @@
         }
 
         const alert = payload.alert;
+
+        if (dismissedVideoId && dismissedVideoId === alert.videoId) {
+            return;
+        }
+
         const targetUrl =
             siteLinks[alert.videoId] ||
             alert.videoUrl ||
             ("https://www.youtube.com/watch?v=" + alert.videoId);
+
+        widget.dataset.videoId = alert.videoId || "";
 
         document.querySelector("#hese-fredrik-title").textContent =
             alert.title || "SkyrScout video";
@@ -264,11 +482,8 @@
             ("https://img.youtube.com/vi/" + alert.videoId + "/hqdefault.jpg");
         thumbnail.alt = alert.title || "SkyrScout video";
 
-        const imageLink = document.querySelector("#hese-fredrik-image-link");
-        const action = document.querySelector("#hese-fredrik-action");
-
-        imageLink.href = targetUrl;
-        action.href = targetUrl;
+        document.querySelector("#hese-fredrik-image-link").href = targetUrl;
+        document.querySelector("#hese-fredrik-action").href = targetUrl;
 
         widget.hidden = false;
     };
