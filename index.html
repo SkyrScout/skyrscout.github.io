@@ -102,13 +102,10 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
             </header>
 
-           {% assign chronological_updates = site.update_posts
+           {% assign latest_updates = site.update_posts
     | sort: "published_at"
     | reverse
 %}
-{% assign pinned_updates = chronological_updates | where: "pinned", true %}
-{% assign regular_updates = chronological_updates | where: "pinned", false %}
-{% assign latest_updates = pinned_updates | concat: regular_updates %}
 
 <section class="yard-marquee">
 
@@ -132,6 +129,9 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
     </div>
 
 </section>
+
+            {% include hese-fredrik.html %}
+
             <section class="yard-section">
 
                 <div class="yard-section-heading">
@@ -360,9 +360,6 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                         <article class="yard-update-card">
 
                             <p class="yard-update-date">
-                                {% if update.pinned %}
-                                    <span class="yard-update-pin-badge">PINNED</span>
-                                {% endif %}
                                 {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
                             </p>
 
@@ -573,14 +570,6 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                 });
         }
 
-        const podcastGuides = {
-            {% for guide in site.podcast_guides %}
-                {{ guide.podcast_guid | jsonify }}: {
-                    url: {{ guide.url | relative_url | jsonify }}
-                }{% unless forloop.last %},{% endunless %}
-            {% endfor %}
-        };
-
         function stripHtml(html) {
             const temporaryElement = document.createElement("div");
             temporaryElement.innerHTML = html || "";
@@ -641,11 +630,6 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 
                 const episodeUrl =
                     episode.link || episode.audio_url || "/podcast/";
-
-                const episodeGuide =
-                    episode.guid && podcastGuides[episode.guid]
-                        ? podcastGuides[episode.guid]
-                        : null;
 
                 const publishedDate = episode.published
                     ? new Date(episode.published)
@@ -735,29 +719,14 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                                 : ""
                         }
 
-                        <div class="yard-podcast-actions">
-                            <a
-                                class="yard-card-action"
-                                href="${episodeUrl}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Open on Spotify
-                            </a>
-
-                            ${
-                                episodeGuide && episodeGuide.url
-                                    ? `
-                                        <a
-                                            class="yard-card-action yard-card-action--guide"
-                                            href="${episodeGuide.url}"
-                                        >
-                                            Les episodeguiden
-                                        </a>
-                                    `
-                                    : ""
-                            }
-                        </div>
+                        <a
+                            class="yard-card-action"
+                            href="${episodeUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open on Spotify
+                        </a>
 
                     </div>
                 `;

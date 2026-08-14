@@ -1,0 +1,306 @@
+<!--
+  SkyrScout / Scoutland Yard
+  Public Hese-Fredrik widget
+
+  Hidden unless the backend says an alert is active.
+  Paste the Apps Script /exec URL into HESE_FREDRIK_ENDPOINT below.
+-->
+
+<style>
+    #hese-fredrik[hidden] {
+        display: none !important;
+    }
+
+    #hese-fredrik {
+        margin: 22px 0 4px;
+        border: 2px solid #b62f2f;
+        border-radius: 12px;
+        overflow: hidden;
+        background:
+            linear-gradient(90deg, rgba(142, 25, 25, 0.22), rgba(20, 20, 20, 0.96) 38%),
+            #111;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .hese-fredrik-inner {
+        display: grid;
+        grid-template-columns: minmax(150px, 235px) 1fr;
+        min-height: 150px;
+    }
+
+    .hese-fredrik-image {
+        position: relative;
+        min-height: 150px;
+        background: #090909;
+    }
+
+    .hese-fredrik-image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 150px;
+        object-fit: cover;
+    }
+
+    .hese-fredrik-image::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent 55%, #111 100%);
+        pointer-events: none;
+    }
+
+    .hese-fredrik-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 7px;
+        padding: 20px 24px;
+    }
+
+    .hese-fredrik-label {
+        margin: 0;
+        color: #ff6666;
+        font-size: 0.74rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .hese-fredrik-copy h2 {
+        margin: 0;
+        color: #fff;
+        font-size: clamp(1.35rem, 2.3vw, 2rem);
+        line-height: 1.1;
+    }
+
+    .hese-fredrik-copy p {
+        margin: 0;
+    }
+
+    .hese-fredrik-movement {
+        color: #fff;
+        font-size: 1.06rem;
+        font-weight: 800;
+    }
+
+    .hese-fredrik-movement strong {
+        color: #ff7676;
+        font-size: 1.22em;
+    }
+
+    .hese-fredrik-note {
+        color: #b8b8b8;
+        font-size: 0.82rem;
+    }
+
+    .hese-fredrik-action {
+        align-self: flex-start;
+        margin-top: 4px;
+        padding: 8px 12px;
+        border: 1px solid #c94848;
+        border-radius: 7px;
+        color: #fff !important;
+        background: #8f2525;
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+    .hese-fredrik-action:hover {
+        background: #aa2d2d;
+    }
+
+    @media (max-width: 680px) {
+        .hese-fredrik-inner {
+            grid-template-columns: 112px 1fr;
+            min-height: 126px;
+        }
+
+        .hese-fredrik-image,
+        .hese-fredrik-image img {
+            min-height: 126px;
+        }
+
+        .hese-fredrik-copy {
+            padding: 14px 14px 14px 12px;
+        }
+
+        .hese-fredrik-label {
+            font-size: 0.62rem;
+        }
+
+        .hese-fredrik-copy h2 {
+            font-size: 1.05rem;
+        }
+
+        .hese-fredrik-movement {
+            font-size: 0.86rem;
+        }
+
+        .hese-fredrik-note {
+            font-size: 0.7rem;
+        }
+
+        .hese-fredrik-action {
+            padding: 7px 9px;
+            font-size: 0.72rem;
+        }
+    }
+</style>
+
+<section id="hese-fredrik" aria-live="polite" hidden>
+    <div class="hese-fredrik-inner">
+        <a
+            class="hese-fredrik-image"
+            id="hese-fredrik-image-link"
+            href="#"
+            aria-label="Open the highlighted SkyrScout video"
+        >
+            <img id="hese-fredrik-thumbnail" src="" alt="">
+        </a>
+
+        <div class="hese-fredrik-copy">
+            <p class="hese-fredrik-label">🚨 Hese-Fredrik går!</p>
+
+            <h2 id="hese-fredrik-title"></h2>
+
+            <p class="hese-fredrik-movement">
+                <strong id="hese-fredrik-delta"></strong>
+                <span id="hese-fredrik-window"></span>
+            </p>
+
+            <p class="hese-fredrik-note">
+                A SkyrScout video is moving unusually fast on YouTube.
+            </p>
+
+            <a
+                class="hese-fredrik-action"
+                id="hese-fredrik-action"
+                href="#"
+            >
+                Watch now →
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+(function () {
+    "use strict";
+
+    /*
+     * PASTE THE DEPLOYED APPS SCRIPT /exec URL HERE.
+     * Example:
+     * https://script.google.com/macros/s/XXXXXXXXXXXX/exec
+     */
+    const HESE_FREDRIK_ENDPOINT = "PASTE_APPS_SCRIPT_EXEC_URL_HERE";
+
+    if (
+        !HESE_FREDRIK_ENDPOINT ||
+        HESE_FREDRIK_ENDPOINT.indexOf("PASTE_APPS_SCRIPT") === 0
+    ) {
+        return;
+    }
+
+    const widget = document.querySelector("#hese-fredrik");
+
+    if (!widget) {
+        return;
+    }
+
+    /*
+     * Prefer a SkyrScout page when this YouTube upload belongs to a player
+     * profile or a Short already present on the site. Otherwise fall back
+     * to the YouTube URL supplied by the backend.
+     */
+    const siteLinks = {};
+
+    {% for player in site.players %}
+        {% if player.youtube %}
+            {% assign hf_player_youtube_id = player.youtube
+                | split: 'v='
+                | last
+                | split: '&'
+                | first
+                | split: '/'
+                | last
+            %}
+            siteLinks["{{ hf_player_youtube_id | escape }}"] =
+                "{{ player.url | relative_url }}";
+        {% endif %}
+    {% endfor %}
+
+    {% for short in site.shorts %}
+        {% if short.youtube %}
+            {% assign hf_short_youtube_id = short.youtube
+                | split: 'shorts/'
+                | last
+                | split: '?'
+                | first
+                | split: '&'
+                | first
+            %}
+            siteLinks["{{ hf_short_youtube_id | escape }}"] =
+                "{{ short.url | relative_url }}";
+        {% endif %}
+    {% endfor %}
+
+    window.SkyrScoutHeseFredrik = function (payload) {
+        if (
+            !payload ||
+            payload.active !== true ||
+            !payload.alert
+        ) {
+            widget.hidden = true;
+            return;
+        }
+
+        const alert = payload.alert;
+        const targetUrl =
+            siteLinks[alert.videoId] ||
+            alert.videoUrl ||
+            ("https://www.youtube.com/watch?v=" + alert.videoId);
+
+        document.querySelector("#hese-fredrik-title").textContent =
+            alert.title || "SkyrScout video";
+
+        document.querySelector("#hese-fredrik-delta").textContent =
+            "+" + Number(alert.deltaViews || 0).toLocaleString("en-US") + " views";
+
+        document.querySelector("#hese-fredrik-window").textContent =
+            " in " + alert.windowMinutes + " minutes";
+
+        const thumbnail = document.querySelector("#hese-fredrik-thumbnail");
+        thumbnail.src =
+            alert.thumbnail ||
+            ("https://img.youtube.com/vi/" + alert.videoId + "/hqdefault.jpg");
+        thumbnail.alt = alert.title || "SkyrScout video";
+
+        const imageLink = document.querySelector("#hese-fredrik-image-link");
+        const action = document.querySelector("#hese-fredrik-action");
+
+        imageLink.href = targetUrl;
+        action.href = targetUrl;
+
+        widget.hidden = false;
+    };
+
+    const script = document.createElement("script");
+    const separator = HESE_FREDRIK_ENDPOINT.indexOf("?") === -1 ? "?" : "&";
+
+    script.src =
+        HESE_FREDRIK_ENDPOINT +
+        separator +
+        "callback=SkyrScoutHeseFredrik&_=" +
+        Date.now();
+
+    script.async = true;
+
+    script.onerror = function () {
+        widget.hidden = true;
+    };
+
+    document.head.appendChild(script);
+})();
+</script>
