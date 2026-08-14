@@ -81,6 +81,11 @@ report: |
 
   If judged purely on footballing ability rather than geography, Erbol Atabaev is already playing well above the level of the Kyrgyz Premier League.
 
+additional_videos:
+  - youtube: "https://www.youtube.com/watch?v=4Wxsn_x9Ezs"
+    date: "15.08.2026"
+    title: "Erbol Atabaev – Skills & Highlights"
+
 transfermarkt: "https://www.transfermarkt.com/erbol-atabaev/profil/spieler/914997"
 sofascore: "https://www.sofascore.com/no/football/player/erbol-atabaev/1218814#tab:season"
 

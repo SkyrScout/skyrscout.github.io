@@ -233,3 +233,64 @@
         font-size: 0.7rem;
     }
 }
+
+/* Multivideo premieres: the same poster treatment can be used inside the
+   smaller additional-video cards without touching the featured scout video. */
+.additional-video-wrapper.skyr-premiere-active {
+    overflow: hidden;
+}
+
+.additional-video-wrapper.skyr-premiere-active iframe {
+    display: none;
+}
+
+.additional-video-wrapper .skyr-premiere-poster .skyr-premiere-badge {
+    top: 10px;
+    left: 10px;
+    padding: 5px 7px;
+    font-size: 0.62rem;
+}
+
+.additional-video-wrapper .skyr-premiere-poster-content {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    gap: 12px;
+}
+
+.additional-video-wrapper .skyr-premiere-kicker {
+    margin-bottom: 4px;
+    font-size: 0.62rem;
+}
+
+.additional-video-wrapper .skyr-premiere-poster-title {
+    font-size: clamp(1rem, 2.2vw, 1.35rem);
+}
+
+.additional-video-wrapper .skyr-premiere-poster-date {
+    margin-top: 5px;
+    font-size: 0.72rem;
+}
+
+.additional-video-wrapper .skyr-premiere-youtube-link {
+    min-height: 32px;
+    padding: 6px 9px;
+    font-size: 0.68rem;
+}
+
+@media (max-width: 640px) {
+    .additional-video-wrapper .skyr-premiere-poster-content {
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        gap: 7px;
+    }
+
+    .additional-video-wrapper .skyr-premiere-poster-title {
+        font-size: 1rem;
+    }
+
+    .additional-video-wrapper .skyr-premiere-poster-date {
+        font-size: 0.68rem;
+    }
+}

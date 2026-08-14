@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Generate assets/data/youtube-premieres.json from the YouTube links in _players/.
+Generate assets/data/youtube-premieres.json from every YouTube link in _players/.
 
 Design goals:
 - No manual premiere fields in player profiles.
+- Check both the featured `youtube` video and `additional_videos`.
+- Preserve the relation between an upcoming video and its player profile so
+  cards can advertise an upcoming additional video without changing the
+  profile's featured/main video.
 - Only write the JSON after every YouTube API batch succeeds.
 - Keep the previous good file untouched on API/network/configuration failure.
 - Do not rewrite the file when the actual premiere data has not changed.
@@ -19,9 +23,9 @@ import re
 import sys
 import time
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
-from urllib.error import HTTPError, URLError
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +35,12 @@ API_URL = "https://www.googleapis.com/youtube/v3/videos"
 BATCH_SIZE = 50
 REQUEST_TIMEOUT = 20
 MAX_ATTEMPTS = 4
+
+
+YOUTUBE_LINE_RE = re.compile(
+    r'(?m)^([ \t]*)(-\s+)?youtube:\s*'
+    r'(?:(?:"([^"]+)")|(?:\'([^\']+)\')|([^\s#]+))\s*$'
+)
 
 
 def warning(message: str) -> None:
@@ -48,16 +58,28 @@ def extract_front_matter(text: str) -> str:
     return parts[1]
 
 
-def extract_youtube_url(front_matter: str) -> str:
-    match = re.search(
-        r'(?m)^youtube:\s*(?:"([^"]+)"|\'([^\']+)\'|([^\s#]+))\s*$',
-        front_matter,
-    )
+def extract_profile_youtube_urls(front_matter: str) -> list[tuple[str, str]]:
+    """Return profile YouTube URLs as (kind, url), preserving file order."""
+    videos: list[tuple[str, str]] = []
+    main_seen = False
 
-    if not match:
-        return ""
+    for match in YOUTUBE_LINE_RE.finditer(front_matter):
+        indent, bullet = match.group(1), match.group(2)
+        url = html.unescape(
+            next(group for group in match.groups()[2:] if group is not None)
+        )
 
-    return html.unescape(next(group for group in match.groups() if group))
+        # The featured/main field is the unindented, non-list `youtube:` key.
+        # Any indented/list occurrence belongs to additional_videos.
+        is_main = not main_seen and indent == "" and bullet is None
+        kind = "main" if is_main else "additional"
+
+        if is_main:
+            main_seen = True
+
+        videos.append((kind, url))
+
+    return videos
 
 
 def extract_video_id(url: str) -> str:
@@ -80,8 +102,9 @@ def extract_video_id(url: str) -> str:
     return match.group(1) if match else ""
 
 
-def collect_player_video_ids() -> list[str]:
-    ids: set[str] = set()
+def collect_player_videos() -> dict[str, list[dict[str, str]]]:
+    """Map each YouTube ID to every player-profile relation that uses it."""
+    sources: dict[str, list[dict[str, str]]] = {}
 
     for path in sorted(PLAYERS_DIR.glob("*.md")):
         try:
@@ -91,13 +114,53 @@ def collect_player_video_ids() -> list[str]:
             continue
 
         front_matter = extract_front_matter(text)
-        url = extract_youtube_url(front_matter)
-        video_id = extract_video_id(url)
+        profile_videos = extract_profile_youtube_urls(front_matter)
+        if not profile_videos:
+            continue
 
-        if video_id:
-            ids.add(video_id)
+        parsed: list[tuple[str, str]] = []
+        for kind, url in profile_videos:
+            video_id = extract_video_id(url)
+            if video_id:
+                parsed.append((kind, video_id))
 
-    return sorted(ids)
+        if not parsed:
+            continue
+
+        main_video_id = next(
+            (video_id for kind, video_id in parsed if kind == "main"),
+            "",
+        )
+        if not main_video_id:
+            warning(
+                f"{path.name} has YouTube links but no valid featured/main video. "
+                "Skipping its premiere relations."
+            )
+            continue
+
+        seen_in_profile: set[str] = set()
+        for kind, video_id in parsed:
+            if video_id in seen_in_profile:
+                continue
+            seen_in_profile.add(video_id)
+
+            relation = {
+                "player_slug": path.stem,
+                "kind": kind,
+                "main_video_id": main_video_id,
+            }
+            sources.setdefault(video_id, []).append(relation)
+
+    for relations in sources.values():
+        relations.sort(
+            key=lambda item: (
+                item["player_slug"],
+                item["kind"],
+                item["main_video_id"],
+            )
+        )
+
+    return dict(sorted(sources.items()))
 
 
 def request_json(url: str) -> dict:
@@ -109,7 +172,7 @@ def request_json(url: str) -> dict:
                 url,
                 headers={
                     "Accept": "application/json",
-                    "User-Agent": "SkyrScout-Premiere-Updater/1.0",
+                    "User-Agent": "SkyrScout-Premiere-Updater/2.0",
                 },
             )
 
@@ -135,8 +198,12 @@ def request_json(url: str) -> dict:
     )
 
 
-def fetch_upcoming(video_ids: list[str], api_key: str) -> dict[str, dict]:
+def fetch_upcoming(
+    video_sources: dict[str, list[dict[str, str]]],
+    api_key: str,
+) -> dict[str, dict]:
     upcoming: dict[str, dict] = {}
+    video_ids = list(video_sources)
 
     for start in range(0, len(video_ids), BATCH_SIZE):
         batch = video_ids[start : start + BATCH_SIZE]
@@ -187,6 +254,7 @@ def fetch_upcoming(video_ids: list[str], api_key: str) -> dict[str, dict]:
                 "status": "upcoming",
                 "scheduled_start": scheduled_start,
                 "title": snippet.get("title") or "",
+                "profiles": video_sources.get(video_id, []),
             }
 
     return dict(sorted(upcoming.items()))
@@ -238,19 +306,31 @@ def main() -> int:
         )
         return 0
 
-    video_ids = collect_player_video_ids()
+    video_sources = collect_player_videos()
 
-    if not video_ids:
+    if not video_sources:
         warning(
             "No player YouTube video IDs were found. "
             "Keeping the previous premiere status file unchanged."
         )
         return 0
 
-    print(f"Checking {len(video_ids)} player videos in YouTube Data API.")
+    relation_count = sum(len(relations) for relations in video_sources.values())
+    additional_count = sum(
+        1
+        for relations in video_sources.values()
+        for relation in relations
+        if relation["kind"] == "additional"
+    )
+
+    print(
+        f"Checking {len(video_sources)} unique player videos "
+        f"({relation_count} profile relation(s), "
+        f"{additional_count} additional video(s)) in YouTube Data API."
+    )
 
     try:
-        upcoming = fetch_upcoming(video_ids, api_key)
+        upcoming = fetch_upcoming(video_sources, api_key)
     except Exception as exc:
         warning(
             f"Premiere update aborted safely: {exc}. "
