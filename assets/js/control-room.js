@@ -106,7 +106,7 @@ window.controlRoomSnapRows=snapRows;
 (function(){
   const VIEW_ASPECT=2.4827586207;
   const DETAIL_WORLD=[0,0,1036.8,734.0155];
-  const shares={"Norway":"24.8%","United States of America":"18.6%","Brazil":"6.7%","India":"4.9%"};
+  const shares={};
   let selectedCountry=null;
   let selectedDisplay=null;
   const dragState=new WeakMap();
@@ -220,7 +220,7 @@ window.controlRoomSnapRows=snapRows;
       if(country){
         overview.hidden=true;detail.hidden=false;
         detail.querySelector('.geo-country-title').textContent=display;
-        detail.querySelector('.geo-country-share').textContent=shares[country]?shares[country]+' of tracked geography':'Selected country';
+        detail.querySelector('.geo-country-share').textContent=shares[country]?shares[country]+' of tracked geography':'Geography data pending';
       }else{
         overview.hidden=false;detail.hidden=true;
       }
@@ -229,7 +229,7 @@ window.controlRoomSnapRows=snapRows;
 
   function syncBadge(country,display){
     document.querySelectorAll('.map-scope-badge').forEach(el=>{
-      el.textContent=country?display+' · demo geography':'Demo traffic · 48 H';
+      el.textContent=country?display+' · geography pending':'Map ready · data pending';
     });
   }
 
@@ -382,133 +382,22 @@ window.controlRoomSnapRows=snapRows;
 
 
 (function(){
-  /*
-    Temporary visual traffic layer.
-    Values below are demo weights so we can judge the map treatment before
-    the real YouTube Analytics geography feed is connected.
-  */
-  const DEMO_TRAFFIC = {
-    "Norway": 100,
-    "United States of America": 75,
-    "Brazil": 34,
-    "India": 25,
-    "United Kingdom": 18,
-    "Germany": 14,
-    "Sweden": 12,
-    "Canada": 10,
-    "France": 8,
-    "Netherlands": 7,
-    "Australia": 6,
-    "Japan": 5
-  };
-
-  function intensityStyle(weight){
-    const t = Math.max(.05, Math.min(1, weight / 100));
-    return {
-      edge: (.025 + t * .075).toFixed(3),
-      strokeWidth: (.16 + t * .20).toFixed(2),
-      nodeOpacity: (.58 + t * .42).toFixed(3)
-    };
-  }
-
-  function makeNode(svg, hit, weight, mode){
-    const centerAttr = mode === 'world' ? hit.dataset.worldCenter : hit.dataset.detailCenter;
-    if(!centerAttr) return null;
-    const [cx, cy] = centerAttr.split(/[ ,]+/).map(Number);
-    if(!Number.isFinite(cx) || !Number.isFinite(cy)) return null;
-
-    const t = Math.max(.05, Math.min(1, weight / 100));
-    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.setAttribute('class','traffic-node');
-    g.style.setProperty('--traffic-delay', (-2.4 * t).toFixed(2) + 's');
-
-    const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    halo.setAttribute('class','traffic-halo');
-    halo.setAttribute('cx',cx);
-    halo.setAttribute('cy',cy);
-    halo.setAttribute('r',(mode === 'world' ? 2.8 + t*4.6 : 3.2 + t*4.8).toFixed(2));
-
-    const spark1 = document.createElementNS('http://www.w3.org/2000/svg','line');
-    spark1.setAttribute('class','traffic-spark');
-    spark1.setAttribute('x1',cx - (1.8+t*1.8)); spark1.setAttribute('x2',cx + (1.8+t*1.8));
-    spark1.setAttribute('y1',cy); spark1.setAttribute('y2',cy);
-    const spark2 = document.createElementNS('http://www.w3.org/2000/svg','line');
-    spark2.setAttribute('class','traffic-spark');
-    spark2.setAttribute('x1',cx); spark2.setAttribute('x2',cx);
-    spark2.setAttribute('y1',cy - (1.8+t*1.8)); spark2.setAttribute('y2',cy + (1.8+t*1.8));
-
-    const core = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    core.setAttribute('class','traffic-core');
-    core.setAttribute('cx',cx);
-    core.setAttribute('cy',cy);
-    core.setAttribute('r',(mode === 'world' ? .72 + t*1.18 : .86 + t*1.25).toFixed(2));
-
-    g.appendChild(halo);
-    g.appendChild(spark1);
-    g.appendChild(spark2);
-    g.appendChild(core);
-    return g;
-  }
-
-  function applyTrafficToMap(body){
-    body.querySelectorAll('.map-layer').forEach(svg => {
-      const mode = svg.classList.contains('world-layer') ? 'world' : 'detail';
-
-      let nodes = svg.querySelector('.traffic-nodes');
-      if(nodes) nodes.remove();
-      nodes = document.createElementNS('http://www.w3.org/2000/svg','g');
-      nodes.setAttribute('class','traffic-nodes');
-
-      const hits = Array.from(svg.querySelectorAll('.map-country-hit'));
-      Object.entries(DEMO_TRAFFIC).forEach(([country, weight]) => {
-        const hit = hits.find(el => el.dataset.country === country);
-        if(!hit) return;
-
-        const s = intensityStyle(weight);
-        hit.classList.add('traffic-country');
-        hit.style.setProperty('--traffic-edge',s.edge);
-        hit.style.setProperty('--traffic-stroke-width',s.strokeWidth);
-
-        const node = makeNode(svg, hit, weight, mode);
-        if(node){
-          node.style.setProperty('--traffic-node-opacity',s.nodeOpacity);
-          nodes.appendChild(node);
-        }
-      });
-
-      // Put visual nodes under invisible click hit-zones, so interaction stays unchanged.
-      const hitGroup = svg.querySelector('.world-hit-zones, .detail-hit-zones');
-      if(hitGroup) svg.insertBefore(nodes, hitGroup);
-      else svg.appendChild(nodes);
+  // No synthetic traffic data. Keep the map clean until a real Analytics geography feed is connected.
+  function clearSyntheticTraffic(root){
+    (root || document).querySelectorAll('.traffic-nodes').forEach(el => el.remove());
+    (root || document).querySelectorAll('.traffic-country').forEach(el => {
+      el.classList.remove('traffic-country');
+      el.style.removeProperty('--traffic-edge');
+      el.style.removeProperty('--traffic-stroke-width');
     });
   }
+  clearSyntheticTraffic(document);
 
-  function applyAll(){
-    document.querySelectorAll('.mapbody.map-interactive').forEach(applyTrafficToMap);
-
-    // Make clear that this is a temporary visualization, not live geography.
-    document.querySelectorAll('.map-scope-badge').forEach(badge => {
-      if((badge.textContent || '').trim() === 'All traffic · 48 H'){
-        badge.textContent = 'Demo traffic · 48 H';
-      }
-    });
-  }
-
-  applyAll();
-
-  // Focus Mode clones a console, so ensure the cloned map gets the visual layer too.
-  const observer = new MutationObserver(() => {
-    document.querySelectorAll('#consoleFocusShell .mapbody.map-interactive').forEach(body => {
-      if(!body.dataset.trafficDemoApplied){
-        applyTrafficToMap(body);
-        body.dataset.trafficDemoApplied = '1';
-      }
-    });
-  });
   const shell = document.getElementById('consoleFocusShell');
-  if(shell) observer.observe(shell,{childList:true,subtree:true});
+  if(shell){
+    new MutationObserver(() => clearSyntheticTraffic(shell)).observe(shell,{childList:true,subtree:true});
+  }
 })();
-
 
 
 (function(){
@@ -561,8 +450,7 @@ window.controlRoomSnapRows=snapRows;
   }
 
   const coltonReference = {
-    youtubeId: 'zPDOV79nRE4',
-    metrics: {views:'163',likes:'8',ctr:'7.5%',avgViewDuration:'6:21',watchTime:'17.1 h',uniqueViewers:'35'}
+    youtubeId: 'zPDOV79nRE4'
   };
 
   function formatReportDate(value){
@@ -595,20 +483,19 @@ window.controlRoomSnapRows=snapRows;
     if(meta) meta.innerHTML = (club ? escapeHtml(club) + '<br>' : '') + 'Report ' + escapeHtml(formatReportDate(reportDate));
     if(trafficTitle) trafficTitle.textContent = name.replace(/\s*\(\d{4}\)\s*$/, '') + ' // Traffic / Audience';
 
-    const isColton = videoId === coltonReference.youtubeId;
-    if(panel) panel.classList.toggle('selected-data-pending', !isColton);
+    if(panel){
+      panel.classList.add('selected-data-pending');
+      panel.dataset.selectedYoutubeId = videoId;
+    }
 
     document.querySelectorAll('[data-selected-metric]').forEach(el => {
-      const key = el.dataset.selectedMetric;
-      el.textContent = isColton && coltonReference.metrics[key] ? coltonReference.metrics[key] : '—';
+      el.textContent = '—';
     });
 
     const trafficBody = document.getElementById('selectedTrafficBody');
     if(trafficBody){
       trafficBody.querySelectorAll('strong').forEach(el => {
-        if(!el.dataset.referenceValue) el.dataset.referenceValue = el.textContent;
-        if(!isColton) el.textContent = '—';
-        else el.textContent = el.dataset.referenceValue;
+        el.textContent = '—';
       });
     }
   }

@@ -18,7 +18,11 @@
   const overviewTitle = document.getElementById('crRealtimeListTitle');
   const overviewBadge = document.getElementById('crRealtimeBadge');
 
-  let requestSerial = 0;
+  const DEBUG_CALLBACK = 'SkyrScoutControlRoomHFDebug';
+  const PUBLIC_CALLBACK = 'SkyrScoutControlRoomHFPublic';
+  let activeRequestToken = 0;
+  let activeScript = null;
+  let activeTimeout = null;
 
   function fmtNumber(value){
     const n = Number(value);
@@ -394,16 +398,107 @@
     }
   }
 
+  function setFeedMessage(message, isError){
+    if(moversList){
+      clear(moversList);
+      const empty = document.createElement('div');
+      empty.className = 'hf-empty' + (isError ? ' hf-error' : '');
+      empty.textContent = message;
+      moversList.appendChild(empty);
+    }
+  }
+
   function fail(message){
     setStatus('error','Hese-Fredrik offline');
     if(badge) badge.textContent = 'Offline';
-    if(moversList && !moversList.querySelector('.hf-mover')){
-      clear(moversList);
-      const empty = document.createElement('div');
-      empty.className = 'hf-empty hf-error';
-      empty.textContent = message || 'Could not reach the Hese-Fredrik endpoint.';
-      moversList.appendChild(empty);
+    setFeedMessage(message || 'Could not reach the Hese-Fredrik endpoint.', true);
+  }
+
+  function clearRequest(){
+    if(activeTimeout){
+      window.clearTimeout(activeTimeout);
+      activeTimeout = null;
     }
+    if(activeScript && activeScript.parentNode){
+      activeScript.parentNode.removeChild(activeScript);
+    }
+    activeScript = null;
+  }
+
+  function jsonpUrl(mode, callbackName){
+    const sep = endpoint.indexOf('?') === -1 ? '?' : '&';
+    const parts = [];
+    if(mode) parts.push('mode=' + encodeURIComponent(mode));
+    parts.push('callback=' + encodeURIComponent(callbackName));
+    parts.push('_=' + Date.now());
+    return endpoint + sep + parts.join('&');
+  }
+
+  function renderPublicFallback(payload, reason){
+    if(!payload || payload.ok === false){
+      throw new Error('Invalid public Hese-Fredrik payload');
+    }
+
+    if(badge) badge.textContent = 'Backend live';
+    const checked = document.getElementById('hfCheckedAt');
+    const alertsCount = document.getElementById('hfActiveAlerts');
+    const videos = document.getElementById('hfVideosPolled');
+    if(checked) checked.textContent = fmtTime(payload.checkedAt);
+    if(alertsCount) alertsCount.textContent = payload.active === true ? '1 public' : '0 public';
+    if(videos) videos.textContent = '—';
+
+    setStatus('warn','Hese-Fredrik backend live · Control Room feed unavailable');
+    setFeedMessage('The public Hese-Fredrik feed answered, but the Control Room debug feed did not. ' + (reason || ''), false);
+
+    if(rulesBody){
+      clear(rulesBody);
+      const empty = document.createElement('div');
+      empty.className = 'hf-empty';
+      empty.textContent = 'Internal rules require the debug feed.';
+      rulesBody.appendChild(empty);
+    }
+    if(alertBody){
+      clear(alertBody);
+      const empty = document.createElement('div');
+      empty.className = 'hf-empty';
+      empty.textContent = payload.active === true && payload.alert
+        ? 'Public Hese-Fredrik is active. Internal alert state is unavailable until the debug feed connects.'
+        : 'Public backend is live. No public alarm is active.';
+      alertBody.appendChild(empty);
+    }
+  }
+
+  function requestPublicFallback(token, reason){
+    clearRequest();
+    const script = document.createElement('script');
+    activeScript = script;
+
+    window[PUBLIC_CALLBACK] = function(payload){
+      if(token !== activeRequestToken) return;
+      clearRequest();
+      try{
+        renderPublicFallback(payload || {}, reason);
+      }catch(error){
+        console.warn('Control Room public Hese-Fredrik fallback:', error);
+        fail('The backend answered, but the public payload could not be rendered.');
+      }
+    };
+
+    script.async = true;
+    script.src = jsonpUrl('', PUBLIC_CALLBACK);
+    script.onerror = function(){
+      if(token !== activeRequestToken) return;
+      clearRequest();
+      fail('Neither the Control Room feed nor the public Hese-Fredrik feed could be loaded.');
+    };
+
+    activeTimeout = window.setTimeout(function(){
+      if(token !== activeRequestToken) return;
+      clearRequest();
+      fail('Hese-Fredrik backend did not call back before the timeout.');
+    }, REQUEST_TIMEOUT_MS);
+
+    document.head.appendChild(script);
   }
 
   function load(){
@@ -412,49 +507,36 @@
       return;
     }
 
-    requestSerial += 1;
-    const callbackName = '__SkyrScoutControlRoomHF' + requestSerial;
+    activeRequestToken += 1;
+    const token = activeRequestToken;
+    clearRequest();
+
     const script = document.createElement('script');
-    let finished = false;
+    activeScript = script;
 
-    const timeout = window.setTimeout(() => {
-      if(finished) return;
-      finished = true;
-      cleanup();
-      fail('Hese-Fredrik endpoint timed out.');
-    }, REQUEST_TIMEOUT_MS);
-
-    function cleanup(){
-      window.clearTimeout(timeout);
-      try{ delete window[callbackName]; }catch(_){ window[callbackName] = undefined; }
-      if(script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[callbackName] = function(payload){
-      if(finished) return;
-      finished = true;
+    window[DEBUG_CALLBACK] = function(payload){
+      if(token !== activeRequestToken) return;
+      clearRequest();
       try{
         render(payload || {});
       }catch(error){
-        console.warn('Control Room live feed:', error);
-        fail('Hese-Fredrik payload could not be rendered.');
-      }finally{
-        cleanup();
+        console.warn('Control Room live feed render:', error);
+        requestPublicFallback(token, 'Debug payload was returned but could not be rendered.');
       }
     };
 
     script.async = true;
+    script.src = jsonpUrl('debug', DEBUG_CALLBACK);
     script.onerror = function(){
-      if(finished) return;
-      finished = true;
-      cleanup();
-      fail('Could not load the Hese-Fredrik JSONP feed.');
+      if(token !== activeRequestToken) return;
+      requestPublicFallback(token, 'Debug feed request failed.');
     };
 
-    const sep = endpoint.indexOf('?') === -1 ? '?' : '&';
-    script.src = endpoint + sep +
-      'callback=' + encodeURIComponent(callbackName) +
-      '&mode=debug&_=' + Date.now();
+    activeTimeout = window.setTimeout(function(){
+      if(token !== activeRequestToken) return;
+      requestPublicFallback(token, 'Debug feed returned no callback.');
+    }, REQUEST_TIMEOUT_MS);
+
     document.head.appendChild(script);
   }
 
