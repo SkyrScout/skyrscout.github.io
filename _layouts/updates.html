@@ -91,7 +91,18 @@ layout: default
 }
     {% endif %}
 
-    {% if page.source_url or page.source_via_url %}
+    {% if page.sources %}
+    ,
+    "citation": [
+        {% for source_item in page.sources %}
+        {
+            "@type": "WebPage",
+            "name": {{ source_item.name | default: "Source" | jsonify }},
+            "url": {{ source_item.url | jsonify }}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    ]
+    {% elsif page.source_url or page.source_via_url %}
     ,
     "citation": [
         {% if page.source_url %}
@@ -143,7 +154,27 @@ layout: default
             {{ content }}
         </section>
 
-        {% if page.source_url or page.source_via_url %}
+        {% if page.sources %}
+
+            <section class="update-source">
+
+                <span>Sources</span>
+
+                <p class="update-source-links">
+                    {% for source_item in page.sources %}
+                        <a
+                            href="{{ source_item.url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {{ source_item.name | default: "Source" }}
+                        </a>{% unless forloop.last %}<br>{% endunless %}
+                    {% endfor %}
+                </p>
+
+            </section>
+
+        {% elsif page.source_url or page.source_via_url %}
 
             <section class="update-source">
 
