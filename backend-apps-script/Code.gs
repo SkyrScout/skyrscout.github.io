@@ -24,11 +24,19 @@ const HF = Object.freeze({
   CATALOG_REFRESH_HOURS: 6,
   HISTORY_MINUTES: 180,
 
-  // Starter thresholds for the PUBLIC siren.
-  // Change these numbers whenever we decide what "extreme" should mean.
+  // Thresholds for the PUBLIC siren. Keep this deliberately strict.
   ALERT_RULES: [
     { minutes: 15, minViews: 50 },
     { minutes: 60, minViews: 100 }
+  ],
+
+  // More sensitive thresholds for the PRIVATE Control Room.
+  // This is an operator warning, not the public siren.
+  // A video like Colton Swan doing roughly 30+ views in a rolling hour
+  // should already register as "Hese-Fredrik går" internally.
+  INTERNAL_RULES: [
+    { minutes: 15, minViews: 12 },
+    { minutes: 60, minViews: 30 }
   ],
 
   // Prevent the public widget from flickering off immediately after a trigger.
@@ -134,8 +142,9 @@ function pollYouTube() {
       });
     });
 
-    const alerts = evaluateAlerts_(movers, now);
-    const debugState = buildDebugState_(movers, alerts, now);
+    const alerts = evaluateAlerts_(movers, now, HF.ALERT_RULES, HF.MAX_PUBLIC_ALERTS);
+    const internalAlerts = evaluateAlerts_(movers, now, HF.INTERNAL_RULES, HF.MAX_DEBUG_MOVERS);
+    const debugState = buildDebugState_(movers, alerts, internalAlerts, now);
     const publicState = buildPublicState_(
       alerts,
       now,
@@ -443,11 +452,11 @@ function deltaForWindow_(history, now, minutes) {
 
 /* -------------------------- Detection -------------------------- */
 
-function evaluateAlerts_(movers, now) {
+function evaluateAlerts_(movers, now, rules, maxAlerts) {
   const alerts = [];
 
   movers.forEach(function(mover) {
-    HF.ALERT_RULES.forEach(function(rule) {
+    (rules || []).forEach(function(rule) {
       const delta = mover.deltas[String(rule.minutes)];
 
       if (delta !== null && delta >= rule.minViews) {
@@ -483,7 +492,7 @@ function evaluateAlerts_(movers, now) {
     .sort(function(a, b) {
       return b.score - a.score || b.deltaViews - a.deltaViews;
     })
-    .slice(0, HF.MAX_PUBLIC_ALERTS);
+    .slice(0, Number(maxAlerts || HF.MAX_PUBLIC_ALERTS));
 }
 
 
@@ -517,7 +526,7 @@ function buildPublicState_(alerts, now, previous) {
 }
 
 
-function buildDebugState_(movers, alerts, now) {
+function buildDebugState_(movers, alerts, internalAlerts, now) {
   const ranked = movers
     .map(function(mover) {
       const sixty = mover.deltas["60"];
@@ -553,7 +562,9 @@ function buildDebugState_(movers, alerts, now) {
     checkedAt: now,
     videosPolled: movers.length,
     rules: HF.ALERT_RULES,
+    internalRules: HF.INTERNAL_RULES,
     activeAlerts: alerts,
+    internalAlerts: internalAlerts || [],
     topMovers: ranked
   };
 }
