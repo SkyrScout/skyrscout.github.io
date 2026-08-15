@@ -58,29 +58,45 @@
 
     {% assign social_image = nil %}
     {% assign social_image_is_site_preview = false %}
-    {% assign social_image_width = nil %}
-    {% assign social_image_height = nil %}
-    {% assign social_image_type = nil %}
 
-    {% if page.social_image %}
-        {% assign social_image = page.social_image | absolute_url %}
-        {% assign social_image_width = page.social_image_width | default: 1200 %}
-        {% assign social_image_height = page.social_image_height | default: 630 %}
-        {% assign social_image_type = page.social_image_type | default: "image/jpeg" %}
-    {% elsif page.youtube %}
-        {% assign youtube_id = page.youtube
-            | split: 'v='
-            | last
-            | split: '&'
-            | first
-            | split: '/'
-            | last
-        %}
+    {% if page.youtube %}
+        {% assign youtube_id = nil %}
 
-        {% assign social_image = 'https://img.youtube.com/vi/'
-            | append: youtube_id
-            | append: '/hqdefault.jpg'
-        %}
+        {% if page.youtube contains '/shorts/' %}
+            {% assign youtube_id = page.youtube
+                | split: 'shorts/'
+                | last
+                | split: '?'
+                | first
+                | split: '&'
+                | first
+            %}
+        {% elsif page.youtube contains 'youtu.be/' %}
+            {% assign youtube_id = page.youtube
+                | split: 'youtu.be/'
+                | last
+                | split: '?'
+                | first
+                | split: '&'
+                | first
+            %}
+        {% else %}
+            {% assign youtube_id = page.youtube
+                | split: 'v='
+                | last
+                | split: '&'
+                | first
+                | split: '/'
+                | last
+            %}
+        {% endif %}
+
+        {% if youtube_id %}
+            {% assign social_image = 'https://img.youtube.com/vi/'
+                | append: youtube_id
+                | append: '/hqdefault.jpg'
+            %}
+        {% endif %}
     {% elsif page.collection == 'update_posts' and page.player %}
         {% capture social_player_path %}/players/{{ page.player }}/{% endcapture %}
         {% assign social_player_doc = site.players
@@ -89,19 +105,43 @@
         %}
 
         {% if social_player_doc and social_player_doc.youtube %}
-            {% assign social_youtube_id = social_player_doc.youtube
-                | split: 'v='
-                | last
-                | split: '&'
-                | first
-                | split: '/'
-                | last
-            %}
+            {% assign social_youtube_id = nil %}
 
-            {% assign social_image = 'https://img.youtube.com/vi/'
-                | append: social_youtube_id
-                | append: '/hqdefault.jpg'
-            %}
+            {% if social_player_doc.youtube contains '/shorts/' %}
+                {% assign social_youtube_id = social_player_doc.youtube
+                    | split: 'shorts/'
+                    | last
+                    | split: '?'
+                    | first
+                    | split: '&'
+                    | first
+                %}
+            {% elsif social_player_doc.youtube contains 'youtu.be/' %}
+                {% assign social_youtube_id = social_player_doc.youtube
+                    | split: 'youtu.be/'
+                    | last
+                    | split: '?'
+                    | first
+                    | split: '&'
+                    | first
+                %}
+            {% else %}
+                {% assign social_youtube_id = social_player_doc.youtube
+                    | split: 'v='
+                    | last
+                    | split: '&'
+                    | first
+                    | split: '/'
+                    | last
+                %}
+            {% endif %}
+
+            {% if social_youtube_id %}
+                {% assign social_image = 'https://img.youtube.com/vi/'
+                    | append: social_youtube_id
+                    | append: '/hqdefault.jpg'
+                %}
+            {% endif %}
         {% endif %}
     {% endif %}
 
@@ -115,27 +155,12 @@
 
     {% if social_image %}
         <meta property="og:image" content="{{ social_image }}">
-        <meta property="og:image:secure_url" content="{{ social_image }}">
 
-        {% if social_image_width %}
-            <meta property="og:image:width" content="{{ social_image_width }}">
-        {% elsif social_image_is_site_preview %}
+        {% if social_image_is_site_preview %}
             <meta property="og:image:width" content="1200">
-        {% endif %}
-
-        {% if social_image_height %}
-            <meta property="og:image:height" content="{{ social_image_height }}">
-        {% elsif social_image_is_site_preview %}
             <meta property="og:image:height" content="630">
-        {% endif %}
-
-        {% if social_image_type %}
-            <meta property="og:image:type" content="{{ social_image_type }}">
-        {% elsif social_image_is_site_preview %}
             <meta property="og:image:type" content="image/png">
         {% endif %}
-
-        <meta property="og:image:alt" content="{{ page_title | strip | escape }}">
     {% endif %}
 
     <!-- X / Twitter -->
@@ -156,7 +181,6 @@
 
     {% if social_image %}
         <meta name="twitter:image" content="{{ social_image }}">
-        <meta name="twitter:image:alt" content="{{ page_title | strip | escape }}">
     {% endif %}
         {% if page.collection == 'players' %}
 
