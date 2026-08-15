@@ -1,0 +1,133 @@
+---
+layout: null
+permalink: /control-room/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="color-scheme" content="dark">
+  <title>Scoutland Yard Control Room</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}">
+</head>
+<body data-hese-fredrik-endpoint="{{ site.data.control_room.hese_fredrik_endpoint | escape }}">
+<div class="app"><aside class="sidebar"><div class="kicker">Scoutland Yard</div><div class="brand">CONTROL<br/>ROOM</div><div class="room active"><strong>Control Room</strong><small>Monitoring &amp; intelligence</small></div><div class="room"><strong>Library</strong><small>Research &amp; documents</small></div><div class="room"><strong>Speilsalen</strong><small>Later</small></div><div class="foot"><div class="footbox" id="controlRoomDataStatus"><span class="dot" id="controlRoomDataDot"></span>Data link checking…</div><div class="footbox">SkyrScout<br/><span style="color:#647987">Administrator</span></div></div></aside><main class="main"><header class="header"><div><h1>Control Room</h1><p id="controlRoomScreenSubtitle">POV workstation. Overview screen.</p></div><div class="tabs"><button aria-pressed="true" class="tab active" data-screen-target="overview" type="button">Overview</button><button aria-pressed="false" class="tab" data-screen-target="youtube" type="button">YouTube</button><button aria-pressed="false" class="tab" data-screen-target="website" type="button">Website</button><button aria-pressed="false" class="tab" data-screen-target="hese-fredrik" type="button">Hese-Fredrik</button></div></header><div class="dashboard control-screen active" data-screen="overview">
+<section class="topgrid"><div class="side"><section class="panel sidepanel"><div class="ph"><div class="pt">Realtime Monitor</div><span class="badge">48 H</span></div><div class="sidebody rtbody"><div><div class="big">986</div><div class="sub">Views · last 48 hours</div><div class="chart"><div class="yscale"><span>90</span><span>60</span><span>30</span><span>0</span></div><div class="plot"><i class="gridline g1"></i><i class="gridline g2"></i><i class="gridline g3"></i><i class="gridline g4"></i><div class="columns"><i style="height:18%"></i><i style="height:28%"></i><i style="height:24%"></i><i style="height:35%"></i><i style="height:46%"></i><i style="height:39%"></i><i style="height:55%"></i><i style="height:70%"></i><i style="height:48%"></i><i style="height:80%"></i><i style="height:44%"></i><i style="height:53%"></i><i style="height:41%"></i><i style="height:57%"></i><i style="height:88%"></i><i style="height:52%"></i></div></div><div></div><div class="xscale"><span>48h ago</span><span>Now</span></div></div><div class="mini-title">Top videos · 48 H</div></div><div class="rtlist"><div class="rtrow"><span>Mikkel Ladefoged</span><b>248</b></div><div class="rtrow"><span>Antonio Galeano</span><b>92</b></div><div class="rtrow"><span>Colton Swan</span><b>62</b></div><div class="rtrow"><span>Ghost of Maradona...</span><b>51</b></div><div class="rtrow"><span>Mohamed Saliou Ban...</span><b>20</b></div><div class="rtrow"><span>Emrick Fotsing</span><b>19</b></div><div class="rtrow"><span>Zhasulan Amir</span><b>17</b></div><div class="rtrow"><span>Mohamed El Amine R...</span><b>16</b></div><div class="rtrow"><span>201 cm tall striker wit...</span><b>16</b></div><div class="rtrow"><span>18-Year-Old Midfielde...</span><b>16</b></div><div class="rtrow"><span>Joel Yakubu</span><b>16</b></div><div class="rtrow"><span>Mamadou Sylla</span><b>15</b></div></div></div></section>
+<section class="panel sidepanel"><div class="ph"><div class="pt">Geography</div><span class="badge">48 H</span></div>
+<div class="sidebody geography-panel-body">
+<div class="geo-overview-state">
+<div>
+<div class="mini-title" style="margin-bottom:5px">Top countries</div>
+<div class="geohead"><span>0%</span><span>10%</span><span>20%</span><span>30%</span></div>
+</div>
+<div class="geolist">
+<button class="geoitem geo-country-link" data-map-country="Norway" type="button"><div class="georow"><span>Norway</span><b>24.8%</b></div><div class="geobar"><i style="width:82.7%"></i></div></button>
+<button class="geoitem geo-country-link" data-map-country="United States of America" type="button"><div class="georow"><span>USA</span><b>18.6%</b></div><div class="geobar"><i style="width:62.0%"></i></div></button>
+<button class="geoitem geo-country-link" data-map-country="Brazil" type="button"><div class="georow"><span>Brazil</span><b>6.7%</b></div><div class="geobar"><i style="width:22.3%"></i></div></button>
+<button class="geoitem geo-country-link" data-map-country="India" type="button"><div class="georow"><span>India</span><b>4.9%</b></div><div class="geobar"><i style="width:16.3%"></i></div></button>
+</div>
+</div>
+<div class="geo-country-state" hidden="">
+<div class="geo-country-toolbar"><button class="geo-world-view" type="button">← World view</button><span class="geo-country-share"></span></div>
+<div class="geo-country-title"></div>
+<div class="mini-title geo-country-section-title">Top videos from this country</div>
+<div class="geo-country-info">Video breakdown will populate here when the YouTube Analytics geography feed is connected.</div>
+<div class="mini-title geo-country-section-title">City breakdown</div>
+<div class="geo-city-status">City-level data will appear when YouTube returns enough data for the selected scope.</div>
+<div class="geo-delay-note">Geography may lag behind Realtime activity.</div>
+</div>
+</div></section></div>
+<section class="panel mappanel"><div class="ph"><div class="pt">World Traffic</div><span class="badge map-scope-badge">All traffic · 48 H</span></div>{% include control-room-map.html %}</section></section>
+<section class="lower"><section class="panel lowerpanel"><div class="ph"><div class="pt">All Player Videos</div><span class="badge">Newest first</span></div><div class="body"><div class="player-scroll" id="playerScroll"><div class="toolbar">{{ site.players | size }} player videos · newest added first · scroll inside this console</div>{% for player in site.players %}
+{% assign control_title_main = player.title | split: ' | ' | first %}
+{% assign control_title_parts = control_title_main | split: ' – ' %}
+{% assign control_player_name = control_title_parts[0] | strip %}
+{% assign control_player_club = control_title_parts[1] | default: '' | strip %}
+{% assign control_youtube_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+<div class="video-row"
+     data-player-row
+     data-player-name="{{ control_player_name | escape }}"
+     data-player-display="{{ control_title_main | escape }}"
+     data-player-club="{{ control_player_club | escape }}"
+     data-youtube-id="{{ control_youtube_id | escape }}"
+     data-report-date="{{ player.report_date | escape }}"
+     data-site-added="{{ player.site_added | escape }}"
+     data-player-url="{{ player.url | relative_url }}">
+  <img src="https://i.ytimg.com/vi/{{ control_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
+  <div class="vmeta"><strong>{{ control_title_main }}</strong><small>{{ player.site_added }}</small></div>
+  <b data-player-live-value>—</b>
+</div>
+{% endfor %}</div></div></section>
+<section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Player</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Published 8 Aug 2026 · Public</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">163</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">8</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">7.5%</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">6:21</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">17.1 h</b></div><div class="metric" data-selected-metric-card="uniqueViewers"><span>Unique viewers</span><b data-selected-metric="uniqueViewers">35</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="scaledchart"><div class="ctitle">Watch time · hours · since publishing</div><div class="cys"><span class="t">17.5</span><span class="m1">11.6</span><span class="m2">5.8</span><span class="b">0</span></div><div class="cplot"><i class="gl a"></i><i class="gl b1"></i><i class="gl b2"></i><i class="gl d"></i><div class="cbars"><i style="height:9%"></i><i style="height:18%"></i><i style="height:28%"></i><i style="height:36%"></i><i style="height:43%"></i><i style="height:52%"></i><i style="height:60%"></i><i style="height:66%"></i><i style="height:73%"></i><i style="height:80%"></i><i style="height:85%"></i><i style="height:91%"></i></div></div><div></div><div class="cxs"><span>0</span><span>6 days</span></div></div><div class="scaledchart"><div class="ctitle">Realtime views · 48 H</div><div class="cys"><span class="t">60</span><span class="m1">40</span><span class="m2">20</span><span class="b">0</span></div><div class="cplot"><i class="gl a"></i><i class="gl b1"></i><i class="gl b2"></i><i class="gl d"></i><div class="cbars"><i style="height:8%"></i><i style="height:14%"></i><i style="height:18%"></i><i style="height:21%"></i><i style="height:35%"></i><i style="height:49%"></i><i style="height:24%"></i><i style="height:16%"></i><i style="height:31%"></i><i style="height:44%"></i><i style="height:28%"></i><i style="height:42%"></i></div></div><div></div><div class="cxs"><span>48h ago</span><span>Now</span></div></div></div></div></section>
+<section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected player data</div></div><span class="badge">48 H</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">Realtime</div><div class="kv"><span>Views · last 48 h</span><strong>63</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>26</strong></div><div class="kv"><span>YouTube search</span><strong>17</strong></div><div class="kv"><span>External</span><strong>11</strong></div><div class="kv"><span>Suggested videos</span><strong>4</strong></div><div class="kv"><span>Other YouTube features</span><strong>3</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>Norway 24.8%</strong></div><div class="kv"><span>Age</span><strong style="color:#6f8491">No data</strong></div><div class="kv"><span>Gender</span><strong style="color:#6f8491">No data</strong></div></div></section></section>
+</div><section class="control-screen system-screen" data-screen="youtube" hidden="">
+<div class="system-placeholder-wrap">
+<section class="panel system-placeholder-panel">
+<div class="ph"><div class="pt">YouTube</div><span class="badge">Connection stage</span></div>
+<div class="system-placeholder-body">
+<div class="system-placeholder-kicker">Next data link</div>
+<h2>YouTube Analytics</h2>
+<p>Private channel analytics will be connected through an authenticated backend. No private token will be exposed in GitHub Pages.</p>
+</div>
+</section>
+</div>
+</section><section class="control-screen system-screen" data-screen="website" hidden="">
+<div class="system-placeholder-wrap">
+<section class="panel system-placeholder-panel">
+<div class="ph"><div class="pt">Website</div><span class="badge">Connection stage</span></div>
+<div class="system-placeholder-body">
+<div class="system-placeholder-kicker">Next data link</div>
+<h2>Website intelligence</h2>
+<p>This screen is reserved for site traffic, player-page activity and referral analysis. It is deliberately not populated with invented metrics.</p>
+</div>
+</section>
+</div>
+</section><section class="control-screen system-screen" data-screen="hese-fredrik" hidden="">
+<div class="hf-screen-grid">
+<section class="panel hf-status-panel">
+<div class="ph"><div class="pt">Hese-Fredrik</div><span class="badge" id="hfConnectionBadge">Connecting…</span></div>
+<div class="hf-status-body">
+<div class="hf-status-kicker">Live public YouTube movement feed</div>
+<div class="hf-stat-grid">
+<div class="hf-stat"><span>Videos polled</span><strong id="hfVideosPolled">—</strong></div>
+<div class="hf-stat"><span>Active alerts</span><strong id="hfActiveAlerts">—</strong></div>
+<div class="hf-stat"><span>Last check</span><strong id="hfCheckedAt">—</strong></div>
+</div>
+<p class="hf-source-note">Backed by the existing Hese-Fredrik Apps Script poller. This feed contains public YouTube-derived movement data only.</p>
+</div>
+</section>
+<section class="panel hf-movers-panel">
+<div class="ph"><div class="pt">Moving now</div><span class="badge">5m / 15m / 60m</span></div>
+<div class="hf-movers-head"><span>Video</span><span>Total</span><span>Poll</span><span>15m</span><span>60m</span></div>
+<div class="hf-movers-list" id="hfMoversList">
+<div class="hf-empty">Waiting for live Hese-Fredrik data…</div>
+</div>
+</section>
+<section class="panel hf-rules-panel">
+<div class="ph"><div class="pt">Alert rules</div><span class="badge">Current backend</span></div>
+<div class="hf-rules-body" id="hfRulesBody">
+<div class="hf-empty">Waiting for backend rules…</div>
+</div>
+</section>
+<section class="panel hf-alert-panel">
+<div class="ph"><div class="pt">Active alert</div><span class="badge" id="hfAlertBadge">Standby</span></div>
+<div class="hf-alert-body" id="hfAlertBody">
+<div class="hf-empty">No active Hese-Fredrik alert.</div>
+</div>
+</section>
+</div>
+</section></main></div>
+<div id="consoleFocusOverlay" class="console-focus-overlay" aria-hidden="true">
+  <div id="consoleFocusShell" class="console-focus-shell" role="dialog" aria-modal="true" aria-label="Focused console">
+    <button id="consoleFocusClose" class="console-focus-close" type="button" aria-label="Close focused console" title="Close">×</button>
+  </div>
+</div>
+
+<script src="{{ '/assets/js/control-room.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/control-room-live.js' | relative_url }}" defer></script>
+</body>
+</html>

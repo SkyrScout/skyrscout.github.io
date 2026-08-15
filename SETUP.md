@@ -130,3 +130,31 @@ That is already a primitive first data feed for the future private Scoutland Yar
 ## One possible snag
 
 If the existing API key has a browser/referrer **application restriction**, server-side Apps Script requests can be rejected even though the key itself is correct. The key should remain restricted to **YouTube Data API v3**. If the first Apps Script run returns a 403, inspect the key's application restriction rather than creating another key.
+
+## Scoutland Yard Control Room
+
+The Control Room lives at `/control-room/`. It is intentionally **not linked from the public Front Desk yet**, has `noindex, nofollow`, is excluded from the manual sitemap, and is disallowed in `robots.txt`.
+
+That is discovery control, **not authentication**. Do not expose private YouTube Analytics through this page until the Google/Firebase Staff Entrance and backend token verification are in place.
+
+### Current live connection
+
+`assets/js/control-room-live.js` reads the existing Hese-Fredrik `?mode=debug` JSONP feed. That feed contains public YouTube-derived movement data only. The existing YouTube API key remains server-side in Apps Script Script Properties.
+
+The amber world traffic/geography layer is still explicitly demo data until YouTube Analytics is connected.
+
+### Secrets and keys
+
+Using several keys/secrets is fine. Put each secret in the layer that actually needs it:
+
+- Apps Script secrets -> **Apps Script > Project Settings > Script Properties**.
+- GitHub Actions secrets -> **GitHub repository Actions secrets** when a workflow needs them.
+- Firebase / Cloud backend secrets -> the backend's secret store / environment, never client-side JavaScript.
+- Firebase web configuration (`apiKey`, `authDomain`, `projectId`, etc.) is client configuration, not an admin credential. Access control must still be enforced by authentication and backend authorization.
+
+Never place OAuth refresh tokens, service-account private keys, Analytics credentials or private API keys in `_data`, HTML, CSS or browser JavaScript. GitHub Pages is static: anything emitted into the built site is public, even if the source value came from a GitHub Secret.
+
+### Next backend connection
+
+The next private data connection is YouTube Analytics (country/city, traffic sources, watch time, audience, per-video scopes). It should be exposed to the Control Room only after Staff Entrance authentication is enforced. Geography can lag behind realtime; the UI is already designed to show that caveat.
+
