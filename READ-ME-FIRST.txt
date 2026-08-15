@@ -1,0 +1,19 @@
+HESE-FREDRIK CLOCK-HOUR FIX
+
+Changed files:
+1. backend-apps-script/Code.gs
+2. assets/js/control-room-data.js
+
+What changed:
+- 15-minute detection remains rolling.
+- Hour detection is now aligned to Europe/Oslo clock hours.
+- Current hour = HH:00 to now.
+- Previous hour = previous HH:00 to HH:59.
+- Hour-before-previous is retained as the relative baseline.
+- Control Room labels now say CURRENT HOUR / PREVIOUS HOUR instead of 60 M.
+
+IMPORTANT:
+Replacing the GitHub file is not enough for Code.gs.
+Code.gs must also replace the script in the existing Google Apps Script project,
+pollYouTube must be run once, and the existing Web App deployment must be
+updated to a New version.

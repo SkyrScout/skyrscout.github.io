@@ -26,20 +26,26 @@
   }
 
   function bestDelta(mover){
-    const d60 = mover.delta60m === null || mover.delta60m === undefined ? null : Number(mover.delta60m);
+    const currentHour = mover.currentHourViews === null || mover.currentHourViews === undefined ? null : Number(mover.currentHourViews);
+    const previousHour = mover.previousHourViews === null || mover.previousHourViews === undefined ? null : Number(mover.previousHourViews);
     const d15 = mover.delta15m === null || mover.delta15m === undefined ? null : Number(mover.delta15m);
-    if(Number.isFinite(d60) && Number.isFinite(d15)){
-      return d15 * 4 > d60 ? {value:d15,label:'15 M'} : {value:d60,label:'60 M'};
+
+    const candidates = [];
+    if(Number.isFinite(currentHour)) candidates.push({value:currentHour,label:'CURRENT HOUR',weight:currentHour});
+    if(Number.isFinite(previousHour)) candidates.push({value:previousHour,label:'PREVIOUS HOUR',weight:previousHour});
+    if(Number.isFinite(d15)) candidates.push({value:d15,label:'15 M',weight:d15 * 4});
+
+    if(candidates.length){
+      candidates.sort((a,b) => b.weight - a.weight);
+      return candidates[0];
     }
-    if(Number.isFinite(d60)) return {value:d60,label:'60 M'};
-    if(Number.isFinite(d15)) return {value:d15,label:'15 M'};
     if(Number.isFinite(Number(mover.deltaSincePoll))) return {value:Number(mover.deltaSincePoll), label:'LAST POLL'};
     return {value:null,label:'LIVE'};
   }
 
   function alertSignature(alert){
     if(!alert) return '';
-    return [alert.videoId || '', alert.windowMinutes || '', alert.reason || 'alert'].join(':');
+    return [alert.videoId || '', alert.windowMinutes || '', alert.windowType || '', alert.hourKind || '', alert.reason || 'alert'].join(':');
   }
 
   function getAck(){
@@ -103,17 +109,20 @@
   function baselineText(alert){
     const baseline = alert.baselineViews === null || alert.baselineViews === undefined ? null : Number(alert.baselineViews);
     const multiple = alert.multiple === null || alert.multiple === undefined ? null : Number(alert.multiple);
+    const label = alert.baselineLabel || (alert.windowType === 'clockHour' ? 'Previous clock hour' : 'Previous comparable window');
+
     if(alert.reason === 'relative' && Number.isFinite(baseline)){
       if(Number.isFinite(multiple)){
-        return 'Previous comparable window: ' + baseline.toLocaleString('en-US') + ' · ' + multiple.toFixed(1) + '× pace';
+        return label + ': ' + baseline.toLocaleString('en-US') + ' · ' + multiple.toFixed(1) + '× pace';
       }
-      return 'Previous comparable window: ' + baseline.toLocaleString('en-US') + ' · new activity spike';
+      return label + ': ' + baseline.toLocaleString('en-US') + ' · new activity spike';
     }
     if(Number.isFinite(baseline)){
-      return 'Previous comparable window: ' + baseline.toLocaleString('en-US') + ' · absolute spike rule';
+      return label + ': ' + baseline.toLocaleString('en-US') + ' · absolute spike rule';
     }
     return 'Absolute spike rule';
   }
+
 
   function showInternalOverlay(alert, moreCount){
     if(!alert) return;
@@ -134,7 +143,10 @@
 
     title.textContent = alert.title || 'YouTube video';
     const delta = Number(alert.deltaViews || 0);
-    movement.textContent = '+' + delta.toLocaleString('en-US') + ' views / ' + Number(alert.windowMinutes || 0) + ' min' + (moreCount ? ' · +' + moreCount + ' more moving' : '');
+    const movementWindow = alert.windowType === 'clockHour'
+      ? (alert.hourKind === 'previous' ? 'previous clock hour' : 'current clock hour')
+      : Number(alert.windowMinutes || 0) + ' min';
+    movement.textContent = '+' + delta.toLocaleString('en-US') + ' views · ' + movementWindow + (moreCount ? ' · +' + moreCount + ' more moving' : '');
     baseline.textContent = baselineText(alert);
     thumb.src = alert.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(alert.videoId || '') + '/hqdefault.jpg');
     thumb.alt = alert.title || 'Hese-Fredrik alert thumbnail';
@@ -165,7 +177,9 @@
 
     if(internalAlerts.length){
       const lead = internalAlerts[0];
-      const windowLabel = Number(lead.windowMinutes || 0) === 15 ? '15 M' : '60 M';
+      const windowLabel = lead.windowType === 'clockHour'
+        ? (lead.hourKind === 'previous' ? 'PREV HR' : 'CURR HR')
+        : '15 M';
       const delta = Number(lead.deltaViews || 0);
       setStatus(
         'Hese-Fredrik går! · ' + (lead.title || 'video') +

@@ -23,6 +23,7 @@ const HF = Object.freeze({
   POLL_MINUTES: 5,
   CATALOG_REFRESH_HOURS: 6,
   HISTORY_MINUTES: 180,
+  CLOCK_TIME_ZONE: "Europe/Oslo",
 
   // Thresholds for the PUBLIC siren. Keep this deliberately strict.
   ALERT_RULES: [
@@ -31,9 +32,10 @@ const HF = Object.freeze({
   ],
 
   // PRIVATE Control Room uses a hybrid model:
-  // 1) absolute spikes always trigger, even on already busy videos
-  // 2) relative spikes trigger much earlier when a normally quiet video moves
-  // Example: 10 views in an hour after a 2-view previous hour = 5x baseline -> alert.
+  // 1) 15-minute rules are rolling and act as an early spike detector
+  // 2) 60-minute rules are CLOCK HOURS, aligned to Europe/Oslo
+  // 3) absolute spikes always trigger; relative spikes catch quiet videos moving
+  // Example: 10 views in the current/previous clock hour after a 2-view hour = alert.
   INTERNAL_ABSOLUTE_RULES: [
     { minutes: 15, minViews: 12 },
     { minutes: 60, minViews: 30 }
@@ -131,10 +133,11 @@ function pollYouTube() {
 
       const deltas = {};
       const previousDeltas = {};
-      HF.ALERT_RULES.forEach(function(rule) {
-        deltas[String(rule.minutes)] = deltaForWindow_(trimmed, now, rule.minutes);
-        previousDeltas[String(rule.minutes)] = previousWindowDelta_(trimmed, now, rule.minutes);
-      });
+      const clockHours = clockHourMetrics_(trimmed, now);
+
+      // 15m stays rolling. 60m is handled as aligned clock hours.
+      deltas["15"] = deltaForWindow_(trimmed, now, 15);
+      previousDeltas["15"] = previousWindowDelta_(trimmed, now, 15);
 
       movers.push({
         videoId: video.id,
@@ -145,7 +148,8 @@ function pollYouTube() {
         previousPollViews: previous ? previous[1] : null,
         deltaSincePoll: previous ? Math.max(0, views - previous[1]) : null,
         deltas: deltas,
-        previousDeltas: previousDeltas
+        previousDeltas: previousDeltas,
+        clockHours: clockHours
       });
     });
 
@@ -488,15 +492,149 @@ function previousWindowDelta_(history, now, minutes) {
 }
 
 
+function clockHourStart_(now) {
+  const localHour = Utilities.formatDate(
+    new Date(now),
+    HF.CLOCK_TIME_ZONE,
+    "yyyy-MM-dd'T'HH':00:00'XXX"
+  );
+
+  const parsed = new Date(localHour).getTime();
+  if (!Number.isFinite(parsed)) {
+    throw new Error("Could not resolve clock-hour boundary for " + HF.CLOCK_TIME_ZONE);
+  }
+
+  return parsed;
+}
+
+
+function nearestSample_(history, target) {
+  if (!history.length) {
+    return null;
+  }
+
+  let best = null;
+  let bestDistance = Infinity;
+
+  for (let i = 0; i < history.length; i += 1) {
+    const sample = history[i];
+    const distance = Math.abs(sample[0] - target);
+
+    if (distance < bestDistance) {
+      best = sample;
+      bestDistance = distance;
+    }
+
+    if (sample[0] > target && distance > bestDistance) {
+      break;
+    }
+  }
+
+  const maxDistance = Math.max(8, HF.POLL_MINUTES * 2) * 60 * 1000;
+  return best && bestDistance <= maxDistance ? best : null;
+}
+
+
+function clockHourMetrics_(history, now) {
+  if (!history.length) {
+    return {
+      timeZone: HF.CLOCK_TIME_ZONE,
+      currentHourStart: null,
+      previousHourStart: null,
+      currentHourMinutesElapsed: null,
+      currentHourViews: null,
+      previousHourViews: null,
+      hourBeforeViews: null
+    };
+  }
+
+  const hourMs = 60 * 60 * 1000;
+  const currentHourStart = clockHourStart_(now);
+  const previousHourStart = currentHourStart - hourMs;
+  const hourBeforeStart = previousHourStart - hourMs;
+
+  const startCurrent = nearestSample_(history, currentHourStart);
+  const startPrevious = nearestSample_(history, previousHourStart);
+  const startHourBefore = nearestSample_(history, hourBeforeStart);
+  const latest = history[history.length - 1];
+
+  return {
+    timeZone: HF.CLOCK_TIME_ZONE,
+    currentHourStart: currentHourStart,
+    previousHourStart: previousHourStart,
+    currentHourMinutesElapsed: Math.max(
+      0,
+      Math.floor((now - currentHourStart) / (60 * 1000))
+    ),
+    currentHourViews:
+      startCurrent && latest && latest[0] >= startCurrent[0]
+        ? Math.max(0, latest[1] - startCurrent[1])
+        : null,
+    previousHourViews:
+      startPrevious && startCurrent && startCurrent[0] > startPrevious[0]
+        ? Math.max(0, startCurrent[1] - startPrevious[1])
+        : null,
+    hourBeforeViews:
+      startHourBefore && startPrevious && startPrevious[0] > startHourBefore[0]
+        ? Math.max(0, startPrevious[1] - startHourBefore[1])
+        : null
+  };
+}
+
+
 /* -------------------------- Detection -------------------------- */
+
+function clockHourCandidates_(mover) {
+  const hours = mover && mover.clockHours ? mover.clockHours : {};
+  return [
+    {
+      value: hours.currentHourViews,
+      kind: "current",
+      label: "Current clock hour",
+      baseline: hours.previousHourViews,
+      baselineLabel: "Previous clock hour"
+    },
+    {
+      value: hours.previousHourViews,
+      kind: "previous",
+      label: "Previous clock hour",
+      baseline: hours.hourBeforeViews,
+      baselineLabel: "Hour before previous"
+    }
+  ];
+}
+
 
 function evaluateAlerts_(movers, now, rules, maxAlerts) {
   const alerts = [];
 
   movers.forEach(function(mover) {
     (rules || []).forEach(function(rule) {
-      const delta = mover.deltas[String(rule.minutes)];
+      if (rule.minutes === 60) {
+        clockHourCandidates_(mover).forEach(function(hour) {
+          const delta = hour.value;
+          if (delta !== null && delta >= rule.minViews) {
+            alerts.push({
+              videoId: mover.videoId,
+              title: mover.title,
+              thumbnail: mover.thumbnail,
+              videoUrl: mover.videoUrl,
+              totalViews: mover.totalViews,
+              deltaViews: delta,
+              windowMinutes: 60,
+              windowType: "clockHour",
+              hourKind: hour.kind,
+              windowLabel: hour.label,
+              thresholdViews: rule.minViews,
+              score: delta / rule.minViews,
+              detectedAt: now
+            });
+          }
+        });
+        return;
+      }
 
+      const delta = mover.deltas[String(rule.minutes)];
       if (delta !== null && delta >= rule.minViews) {
         alerts.push({
           videoId: mover.videoId,
@@ -506,6 +644,8 @@ function evaluateAlerts_(movers, now, rules, maxAlerts) {
           totalViews: mover.totalViews,
           deltaViews: delta,
           windowMinutes: rule.minutes,
+          windowType: "rolling",
+          windowLabel: rule.minutes + " minute rolling window",
           thresholdViews: rule.minViews,
           score: delta / rule.minViews,
           detectedAt: now
@@ -514,7 +654,6 @@ function evaluateAlerts_(movers, now, rules, maxAlerts) {
     });
   });
 
-  // A video may satisfy several rules. Keep only its strongest rule.
   const bestByVideo = {};
   alerts.forEach(function(alert) {
     const existing = bestByVideo[alert.videoId];
@@ -524,9 +663,7 @@ function evaluateAlerts_(movers, now, rules, maxAlerts) {
   });
 
   return Object.keys(bestByVideo)
-    .map(function(id) {
-      return bestByVideo[id];
-    })
+    .map(function(id) { return bestByVideo[id]; })
     .sort(function(a, b) {
       return b.score - a.score || b.deltaViews - a.deltaViews;
     })
@@ -539,6 +676,34 @@ function evaluateInternalAlerts_(movers, now, maxAlerts) {
 
   movers.forEach(function(mover) {
     HF.INTERNAL_ABSOLUTE_RULES.forEach(function(rule) {
+      if (rule.minutes === 60) {
+        clockHourCandidates_(mover).forEach(function(hour) {
+          const delta = hour.value;
+          if (delta !== null && delta >= rule.minViews) {
+            candidates.push({
+              videoId: mover.videoId,
+              title: mover.title,
+              thumbnail: mover.thumbnail,
+              videoUrl: mover.videoUrl,
+              totalViews: mover.totalViews,
+              deltaViews: delta,
+              windowMinutes: 60,
+              windowType: "clockHour",
+              hourKind: hour.kind,
+              windowLabel: hour.label,
+              thresholdViews: rule.minViews,
+              reason: "absolute",
+              baselineViews: hour.baseline,
+              baselineLabel: hour.baselineLabel,
+              multiple: null,
+              score: 2 + delta / rule.minViews,
+              detectedAt: now
+            });
+          }
+        });
+        return;
+      }
+
       const delta = mover.deltas[String(rule.minutes)];
       if (delta !== null && delta >= rule.minViews) {
         candidates.push({
@@ -549,9 +714,12 @@ function evaluateInternalAlerts_(movers, now, maxAlerts) {
           totalViews: mover.totalViews,
           deltaViews: delta,
           windowMinutes: rule.minutes,
+          windowType: "rolling",
+          windowLabel: rule.minutes + " minute rolling window",
           thresholdViews: rule.minViews,
           reason: "absolute",
           baselineViews: mover.previousDeltas[String(rule.minutes)],
+          baselineLabel: "Previous comparable " + rule.minutes + " minute window",
           multiple: null,
           score: 2 + delta / rule.minViews,
           detectedAt: now
@@ -560,6 +728,45 @@ function evaluateInternalAlerts_(movers, now, maxAlerts) {
     });
 
     HF.INTERNAL_RELATIVE_RULES.forEach(function(rule) {
+      if (rule.minutes === 60) {
+        clockHourCandidates_(mover).forEach(function(hour) {
+          const delta = hour.value;
+          const baseline = hour.baseline;
+
+          if (delta === null || baseline === null || delta < rule.minViews) {
+            return;
+          }
+
+          const multiple = baseline === 0 ? Infinity : delta / baseline;
+          if (baseline === 0 || multiple >= rule.multiplier) {
+            const relativeStrength = baseline === 0
+              ? delta / rule.minViews + 1
+              : multiple / rule.multiplier;
+
+            candidates.push({
+              videoId: mover.videoId,
+              title: mover.title,
+              thumbnail: mover.thumbnail,
+              videoUrl: mover.videoUrl,
+              totalViews: mover.totalViews,
+              deltaViews: delta,
+              windowMinutes: 60,
+              windowType: "clockHour",
+              hourKind: hour.kind,
+              windowLabel: hour.label,
+              thresholdViews: rule.minViews,
+              reason: "relative",
+              baselineViews: baseline,
+              baselineLabel: hour.baselineLabel,
+              multiple: Number.isFinite(multiple) ? multiple : null,
+              score: 3 + relativeStrength,
+              detectedAt: now
+            });
+          }
+        });
+        return;
+      }
+
       const key = String(rule.minutes);
       const delta = mover.deltas[key];
       const baseline = mover.previousDeltas[key];
@@ -582,9 +789,12 @@ function evaluateInternalAlerts_(movers, now, maxAlerts) {
           totalViews: mover.totalViews,
           deltaViews: delta,
           windowMinutes: rule.minutes,
+          windowType: "rolling",
+          windowLabel: rule.minutes + " minute rolling window",
           thresholdViews: rule.minViews,
           reason: "relative",
           baselineViews: baseline,
+          baselineLabel: "Previous comparable " + rule.minutes + " minute window",
           multiple: Number.isFinite(multiple) ? multiple : null,
           score: 3 + relativeStrength,
           detectedAt: now
@@ -643,8 +853,10 @@ function buildPublicState_(alerts, now, previous) {
 function buildDebugState_(movers, alerts, internalAlerts, now) {
   const ranked = movers
     .map(function(mover) {
-      const sixty = mover.deltas["60"];
       const fifteen = mover.deltas["15"];
+      const hours = mover.clockHours || {};
+      const currentHour = hours.currentHourViews;
+      const previousHour = hours.previousHourViews;
 
       return {
         videoId: mover.videoId,
@@ -654,13 +866,18 @@ function buildDebugState_(movers, alerts, internalAlerts, now) {
         totalViews: mover.totalViews,
         deltaSincePoll: mover.deltaSincePoll,
         delta15m: fifteen,
-        delta60m: sixty,
         previous15m: mover.previousDeltas ? mover.previousDeltas["15"] : null,
-        previous60m: mover.previousDeltas ? mover.previousDeltas["60"] : null,
+        currentHourViews: currentHour,
+        previousHourViews: previousHour,
+        hourBeforeViews: hours.hourBeforeViews,
+        currentHourStart: hours.currentHourStart,
+        previousHourStart: hours.previousHourStart,
+        currentHourMinutesElapsed: hours.currentHourMinutesElapsed,
         rankValue:
           Math.max(
             fifteen === null ? -1 : fifteen * 4,
-            sixty === null ? -1 : sixty,
+            currentHour === null ? -1 : currentHour,
+            previousHour === null ? -1 : previousHour,
             mover.deltaSincePoll === null ? -1 : mover.deltaSincePoll * 12
           )
       };
@@ -677,8 +894,10 @@ function buildDebugState_(movers, alerts, internalAlerts, now) {
   return {
     checkedAt: now,
     videosPolled: movers.length,
+    clockTimeZone: HF.CLOCK_TIME_ZONE,
     rules: HF.ALERT_RULES,
     internalRules: {
+      note: "15m = rolling; 60m = aligned clock hours",
       absolute: HF.INTERNAL_ABSOLUTE_RULES,
       relative: HF.INTERNAL_RELATIVE_RULES
     },
