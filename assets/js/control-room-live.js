@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const endpoint = document.body.dataset.heseFredrikEndpoint || '';
+  const endpoint = document.body.dataset.heseFredrikEndpoint || 'https://script.google.com/macros/s/AKfycbw5hZ4rk0e4OwClAtrH3-K9g4Z_XBu00a61Lx-aqdlv_KRXxZhJhR3WGFynE9W2WY5Z/exec';
   const REFRESH_MS = 60 * 1000;
   const REQUEST_TIMEOUT_MS = 15000;
   const ACK_KEY = 'skyrscout-cr-hf-internal-ack-v3';
