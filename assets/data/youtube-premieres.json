@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-08-14T13:05:23Z",
+    "updated_utc": "2026-08-15T10:02:34Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "4Wxsn_x9Ezs": {
-      "status": "upcoming",
-      "scheduled_start": "2026-08-15T10:00:00Z",
-      "title": "Erbol Atabaev – Skills & Highlights ",
-      "profiles": [
-        {
-          "player_slug": "erbol-atabaev",
-          "kind": "additional",
-          "main_video_id": "W4bdnkYu6CA"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
