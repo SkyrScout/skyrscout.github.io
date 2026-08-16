@@ -1,20 +1,17 @@
 ---
-
 title: "RBK News: Amin Chiakha reportedly rejects Champions League offer to stay at Rosenborg"
 sources:
-
-* name: "Maghreb-Foot"
-  url: "https://maghreb-foot.com/%D8%AD%D8%B5%D8%B1%D9%8A-%D9%84%D9%80-maghreb-foot-%D8%A3%D9%85%D9%8A%D9%86-%D8%B4%D9%8A%D8%A7%D8%AE%D8%A9-%D9%8A%D8%B1%D9%81%D8%B6%D8%A7-%D8%B9%D8%B1%D8%B6%D8%A7-%D8%A3%D9%88%D8%B1%D9%88%D8%A8/"
-* name: "F.C. Copenhagen"
-  url: "https://www.fck.dk/en/news/amin-chiakha-joins-rosenborg-boldklub-loan"
-* name: "Rosenborg BK statistics"
-  url: "https://statistikk.rbk.no/spiller/521-amin-chiakha"
-* name: "Rosenborg BK"
-  url: "https://www.rbk.no/lag/amin-chiakha"
-* name: "Rosenborg BK - Viking match report"
-  url: "https://www.rbk.no/nyheter/brennhete-chiakha-senket-viking-fem-minutter-pa-overtid"
-  published_at: 2026-08-16 13:35:00 +0200
-
+  - name: "Maghreb-Foot"
+    url: "https://maghreb-foot.com/%D8%AD%D8%B5%D8%B1%D9%8A-%D9%84%D9%80-maghreb-foot-%D8%A3%D9%85%D9%8A%D9%86-%D8%B4%D9%8A%D8%A7%D8%AE%D8%A9-%D9%8A%D8%B1%D9%81%D8%B6%D8%A7-%D8%B9%D8%B1%D8%B6%D8%A7-%D8%A3%D9%88%D8%B1%D9%88%D8%A8/"
+  - name: "F.C. Copenhagen"
+    url: "https://www.fck.dk/en/news/amin-chiakha-joins-rosenborg-boldklub-loan"
+  - name: "Rosenborg BK statistics"
+    url: "https://statistikk.rbk.no/spiller/521-amin-chiakha"
+  - name: "Rosenborg BK"
+    url: "https://www.rbk.no/lag/amin-chiakha"
+  - name: "Rosenborg BK - Viking match report"
+    url: "https://www.rbk.no/nyheter/brennhete-chiakha-senket-viking-fem-minutter-pa-overtid"
+published_at: 2026-08-16 13:35:00 +0200
 ---
 
 Amin Chiakha has reportedly rejected an official offer from an unnamed European club competing in the Champions League this season because he wants to remain at Rosenborg.
