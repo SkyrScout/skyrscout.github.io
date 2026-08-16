@@ -1258,3 +1258,37 @@ body.hf-alert-flash::after{
   .video-library-heading{gap:6px}
   .video-library-tab{padding:4px 6px;font-size:6px}
 }
+
+
+/* === Video Library fixes: functional Focus Mode tabs + sane Shorts proportions ===
+   Tab/row clicks are delegated in control-room-live.js so they also work inside
+   the cloned Focus Mode console. Shorts use the established compact 4:5 treatment
+   instead of being forced into a 16:9 long-video crop. */
+.video-library-panel [data-video-format="short"] img{
+  width:35px;
+  height:44px;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  justify-self:center;
+  background:#000;
+}
+.console-focus-shell .video-library-panel [data-video-format="short"] img,
+.console-focus-shell.players-focus .video-library-panel [data-video-format="short"] img{
+  width:56px!important;
+  height:70px!important;
+  aspect-ratio:4/5!important;
+  object-fit:cover!important;
+  justify-self:center;
+  background:#000;
+}
+.selthumb.short-format{
+  width:86px;
+  aspect-ratio:4/5;
+  justify-self:start;
+}
+.selthumb.short-format img{
+  object-fit:cover;
+}
+@media(max-width:1200px){
+  .selthumb.short-format{width:76px}
+}

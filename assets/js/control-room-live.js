@@ -70,10 +70,17 @@
 
   function dispatchVideoLibrarySelection(row){
     if(!row) return;
+    const format = String(row.dataset.videoFormat || 'long');
+    const selectedThumb = document.getElementById('selectedPlayerThumb');
+    const selectedThumbFrame = selectedThumb ? selectedThumb.closest('.selthumb') : null;
+    if(selectedThumbFrame){
+      selectedThumbFrame.classList.toggle('short-format', format === 'short');
+    }
+
     document.dispatchEvent(new CustomEvent('controlroom:videoselected',{
       detail:{
         videoId:String(row.dataset.youtubeId || ''),
-        format:String(row.dataset.videoFormat || 'long'),
+        format:format,
         title:String(row.dataset.playerDisplay || row.dataset.videoTitle || ''),
         siteAdded:String(row.dataset.siteAdded || ''),
         url:String(row.dataset.playerUrl || row.dataset.videoUrl || '')
@@ -98,7 +105,12 @@
 
     if(badgeEl) badgeEl.textContent = 'SHORT';
     if(thumbEl){
-      thumbEl.src = 'https://i.ytimg.com/vi/' + encodeURIComponent(videoId) + '/mqdefault.jpg';
+      const encodedId = encodeURIComponent(videoId);
+      thumbEl.onerror = function(){
+        this.onerror = null;
+        this.src = 'https://i.ytimg.com/vi/' + encodedId + '/mqdefault.jpg';
+      };
+      thumbEl.src = 'https://i.ytimg.com/vi/' + encodedId + '/maxresdefault.jpg';
       thumbEl.alt = title + ' thumbnail';
     }
     if(nameEl) nameEl.textContent = title;
@@ -108,55 +120,82 @@
     document.querySelectorAll('[data-selected-metric]').forEach(el => { el.textContent = '—'; });
   }
 
-  function initVideoLibrary(){
-    const tabButtons = Array.from(document.querySelectorAll('[data-video-library-tab]'));
-    const panes = Array.from(document.querySelectorAll('[data-video-library-pane]'));
-
-    panes.forEach(sortVideoLibraryPane);
-
-    function activate(format){
-      const next = format === 'short' ? 'short' : 'long';
-      tabButtons.forEach(button => {
-        const active = button.dataset.videoLibraryTab === next;
-        button.classList.toggle('active', active);
-        button.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      panes.forEach(pane => { pane.hidden = pane.dataset.videoLibraryPane !== next; });
-    }
-
-    tabButtons.forEach(button => {
-      button.addEventListener('click', () => activate(button.dataset.videoLibraryTab));
+  function activateVideoLibraryPanel(panel, format){
+    if(!panel) return;
+    const next = format === 'short' ? 'short' : 'long';
+    panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
+      const active = button.dataset.videoLibraryTab === next;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', active ? 'true' : 'false');
     });
+    panel.querySelectorAll('[data-video-library-pane]').forEach(pane => {
+      pane.hidden = pane.dataset.videoLibraryPane !== next;
+    });
+  }
 
-    document.querySelectorAll('[data-video-library-row]').forEach(row => {
+  function chooseVideoLibraryRow(row){
+    if(!row) return;
+    dispatchVideoLibrarySelection(row);
+    if(row.dataset.videoFormat === 'short') selectShortInOverview(row);
+  }
+
+  function initVideoLibrary(){
+    document.querySelectorAll('.video-library-panel [data-video-library-pane]').forEach(sortVideoLibraryPane);
+    document.querySelectorAll('.video-library-panel [data-video-library-row]').forEach(row => {
       row.setAttribute('tabindex','0');
       row.setAttribute('role','button');
-      const choose = () => {
-        dispatchVideoLibrarySelection(row);
-        if(row.dataset.videoFormat === 'short') selectShortInOverview(row);
-      };
-      row.addEventListener('click', choose);
-      row.addEventListener('keydown', event => {
-        if(event.key === 'Enter' || event.key === ' '){
-          event.preventDefault();
-          choose();
-        }
-      });
     });
 
-    activate('long');
+    // Focus Mode clones panels with cloneNode(true), which does not copy element-level
+    // event listeners. Delegate from document so tabs and rows keep working in clones.
+    document.addEventListener('click', event => {
+      const tab = event.target.closest('[data-video-library-tab]');
+      if(tab){
+        const panel = tab.closest('.video-library-panel');
+        if(panel){
+          event.preventDefault();
+          event.stopPropagation();
+          activateVideoLibraryPanel(panel, tab.dataset.videoLibraryTab);
+          return;
+        }
+      }
+
+      const row = event.target.closest('[data-video-library-row]');
+      if(row && row.closest('.video-library-panel')){
+        chooseVideoLibraryRow(row);
+      }
+    });
+
+    document.addEventListener('keydown', event => {
+      const row = event.target.closest && event.target.closest('[data-video-library-row]');
+      if(!row || !row.closest('.video-library-panel')) return;
+      if(event.key === 'Enter' || event.key === ' '){
+        event.preventDefault();
+        chooseVideoLibraryRow(row);
+      }
+    });
+
+    document.querySelectorAll('.video-library-panel').forEach(panel => {
+      activateVideoLibraryPanel(panel, 'long');
+    });
   }
 
   let activeRequestToken = 0;
 
-  function fmtNumber(value){
+  function numericOrNull(value){
+    if(value === null || value === undefined || value === '') return null;
     const n = Number(value);
-    return Number.isFinite(n) ? n.toLocaleString('en-US') : '—';
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function fmtNumber(value){
+    const n = numericOrNull(value);
+    return n === null ? '—' : n.toLocaleString('en-US');
   }
 
   function fmtDelta(value){
-    const n = Number(value);
-    if(!Number.isFinite(n)) return '—';
+    const n = numericOrNull(value);
+    if(n === null) return '—';
     return (n >= 0 ? '+' : '') + n.toLocaleString('en-US');
   }
 
@@ -214,20 +253,20 @@
   }
 
   function bestOverviewDelta(mover){
-    const currentHour = Number(mover && mover.currentHourViews);
-    const previousHour = Number(mover && mover.previousHourViews);
-    const d15 = Number(mover && mover.delta15m);
-    const poll = Number(mover && mover.deltaSincePoll);
+    const currentHour = numericOrNull(mover && mover.currentHourViews);
+    const previousHour = numericOrNull(mover && mover.previousHourViews);
+    const d15 = numericOrNull(mover && mover.delta15m);
+    const poll = numericOrNull(mover && mover.deltaSincePoll);
     const candidates = [];
 
-    if(Number.isFinite(currentHour)) candidates.push({value:currentHour,label:'CURRENT HOUR',weight:currentHour});
-    if(Number.isFinite(previousHour)) candidates.push({value:previousHour,label:'PREVIOUS HOUR',weight:previousHour});
-    if(Number.isFinite(d15)) candidates.push({value:d15,label:'15 M',weight:d15 * 4});
+    if(currentHour !== null) candidates.push({value:currentHour,label:'CURRENT HOUR',weight:currentHour});
+    if(previousHour !== null) candidates.push({value:previousHour,label:'PREVIOUS HOUR',weight:previousHour});
+    if(d15 !== null) candidates.push({value:d15,label:'15 M',weight:d15 * 4});
     if(candidates.length){
       candidates.sort((a,b) => b.weight - a.weight);
       return candidates[0];
     }
-    if(Number.isFinite(poll)) return {value:poll,label:'LAST POLL',weight:poll};
+    if(poll !== null) return {value:poll,label:'LAST POLL',weight:poll};
     return {value:null,label:'LIVE',weight:0};
   }
 

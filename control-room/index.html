@@ -95,7 +95,7 @@ sitemap: false
            data-report-date="{{ short.report_date | escape }}"
            data-site-added="{{ short.site_added | escape }}"
            data-video-url="{{ short.url | relative_url }}">
-        <img src="https://i.ytimg.com/vi/{{ control_short_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
+        <img src="https://i.ytimg.com/vi/{{ control_short_youtube_id }}/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ control_short_youtube_id }}/mqdefault.jpg';">
         <div class="vmeta"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></div>
         <b data-short-live-value>—</b>
       </div>
