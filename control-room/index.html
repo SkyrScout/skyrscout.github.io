@@ -86,38 +86,76 @@ sitemap: false
 </section>
 </div>
 </section><section class="control-screen system-screen" data-screen="hese-fredrik" hidden="">
-<div class="hf-screen-grid">
-<section class="panel hf-status-panel">
+<div class="hf-screen-v2">
+<section class="panel hf-command-panel">
 <div class="ph"><div class="pt">Hese-Fredrik</div><span class="badge" id="hfConnectionBadge">Connecting…</span></div>
-<div class="hf-status-body">
-<div class="hf-status-kicker">Live public YouTube movement feed</div>
+<div class="hf-command-body">
+<div class="hf-command-copy">
+<div class="hf-status-kicker">Live YouTube movement monitor</div>
+<strong id="hfLiveSummary">Waiting for Hese-Fredrik…</strong>
+<p>Public YouTube movement data, delivered through the authenticated Staff backend.</p>
+</div>
 <div class="hf-stat-grid">
 <div class="hf-stat"><span>Videos polled</span><strong id="hfVideosPolled">—</strong></div>
 <div class="hf-stat"><span>Active alerts</span><strong id="hfActiveAlerts">—</strong></div>
 <div class="hf-stat"><span>Last check</span><strong id="hfCheckedAt">—</strong></div>
 </div>
-<p class="hf-source-note">Backed by the existing Hese-Fredrik Apps Script poller. This feed contains public YouTube-derived movement data only.</p>
+<div class="hf-filter-wrap">
+<span>Moving now</span>
+<div class="hf-filter-group" role="group" aria-label="Filter Hese-Fredrik movers">
+<button class="hf-filter active" data-hf-filter="all" type="button">ALL</button>
+<button class="hf-filter" data-hf-filter="video" type="button">VIDEOS</button>
+<button class="hf-filter" data-hf-filter="short" type="button">SHORTS</button>
+</div>
+</div>
 </div>
 </section>
+
+<section class="panel hf-active-panel">
+<div class="ph"><div class="pt">Active alerts</div><span class="badge" id="hfAlertBadge">Standby</span></div>
+<div class="hf-active-list" id="hfActiveAlertList">
+<div class="hf-empty">No active Hese-Fredrik alert.</div>
+</div>
+</section>
+
+<div class="hf-work-grid">
 <section class="panel hf-movers-panel">
-<div class="ph"><div class="pt">Moving now</div><span class="badge">Poll / 15m / clock hours</span></div>
-<div class="hf-movers-head"><span>Video</span><span>Total</span><span>Poll</span><span>15m</span><span>Current hr</span><span>Previous hr</span></div>
+<div class="ph"><div class="pt">Moving now</div><span class="badge" id="hfMoverCount">—</span></div>
+<div class="hf-movers-head"><span>Video</span><span>Total</span><span>15m</span><span>Current hr</span><span>Previous hr</span></div>
 <div class="hf-movers-list" id="hfMoversList">
 <div class="hf-empty">Waiting for live Hese-Fredrik data…</div>
 </div>
 </section>
+
+<section class="panel hf-detail-panel" id="hfDetailPanel">
+<div class="ph"><div class="pt">Selected signal</div><span class="badge" id="hfSelectedTypeBadge">—</span></div>
+<div class="hf-detail-body" id="hfDetailBody">
+<div class="hf-empty">Select a moving video or active alert.</div>
+</div>
+</section>
+</div>
+
 <section class="panel hf-rules-panel">
-<div class="ph"><div class="pt">Alert rules</div><span class="badge">Current backend</span></div>
+<div class="ph"><div class="pt">Alert logic</div><span class="badge">Current backend</span></div>
 <div class="hf-rules-body" id="hfRulesBody">
 <div class="hf-empty">Waiting for backend rules…</div>
 </div>
 </section>
-<section class="panel hf-alert-panel">
-<div class="ph"><div class="pt">Active alert</div><span class="badge" id="hfAlertBadge">Standby</span></div>
-<div class="hf-alert-body" id="hfAlertBody">
-<div class="hf-empty">No active Hese-Fredrik alert.</div>
+
+<div id="hfVideoTypeCatalog" hidden>
+{% for player in site.players %}
+{% if player.youtube %}
+{% assign hf_catalog_player_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+<i data-hf-video-id="{{ hf_catalog_player_id | escape }}" data-hf-video-type="video"></i>
+{% endif %}
+{% endfor %}
+{% for short in site.shorts %}
+{% if short.youtube %}
+{% assign hf_catalog_short_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+<i data-hf-video-id="{{ hf_catalog_short_id | escape }}" data-hf-video-type="short"></i>
+{% endif %}
+{% endfor %}
 </div>
-</section>
 </div>
 </section></main></div>
 <div id="consoleFocusOverlay" class="console-focus-overlay" aria-hidden="true">
