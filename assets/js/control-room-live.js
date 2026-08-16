@@ -39,6 +39,114 @@
     filter: 'all'
   };
 
+  function parseLibraryDate(value){
+    const raw = String(value || '').trim();
+    if(!raw) return 0;
+
+    const dmy = raw.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
+    if(dmy){
+      return Date.UTC(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]));
+    }
+
+    const iso = Date.parse(raw);
+    return Number.isFinite(iso) ? iso : 0;
+  }
+
+  function sortVideoLibraryPane(pane){
+    if(!pane) return;
+    const scroll = pane.querySelector('.player-scroll');
+    if(!scroll) return;
+
+    const rows = Array.from(scroll.querySelectorAll('[data-video-library-row]'));
+    rows.sort((a,b) => {
+      const byDate = parseLibraryDate(b.dataset.siteAdded) - parseLibraryDate(a.dataset.siteAdded);
+      if(byDate) return byDate;
+      const aTitle = String(a.dataset.playerDisplay || a.dataset.videoTitle || '');
+      const bTitle = String(b.dataset.playerDisplay || b.dataset.videoTitle || '');
+      return aTitle.localeCompare(bTitle, 'en');
+    });
+    rows.forEach(row => scroll.appendChild(row));
+  }
+
+  function dispatchVideoLibrarySelection(row){
+    if(!row) return;
+    document.dispatchEvent(new CustomEvent('controlroom:videoselected',{
+      detail:{
+        videoId:String(row.dataset.youtubeId || ''),
+        format:String(row.dataset.videoFormat || 'long'),
+        title:String(row.dataset.playerDisplay || row.dataset.videoTitle || ''),
+        siteAdded:String(row.dataset.siteAdded || ''),
+        url:String(row.dataset.playerUrl || row.dataset.videoUrl || '')
+      }
+    }));
+  }
+
+  function selectShortInOverview(row){
+    if(!row) return;
+
+    document.querySelectorAll('[data-video-library-row].selected').forEach(item => item.classList.remove('selected'));
+    row.classList.add('selected');
+
+    const title = String(row.dataset.videoTitle || 'SkyrScout Short');
+    const videoId = String(row.dataset.youtubeId || '');
+    const siteAdded = String(row.dataset.siteAdded || '');
+    const badgeEl = document.getElementById('selectedPlayerBadge');
+    const thumbEl = document.getElementById('selectedPlayerThumb');
+    const nameEl = document.getElementById('selectedPlayerName');
+    const metaEl = document.getElementById('selectedPlayerMeta');
+    const trafficTitle = document.getElementById('selectedTrafficTitle');
+
+    if(badgeEl) badgeEl.textContent = 'SHORT';
+    if(thumbEl){
+      thumbEl.src = 'https://i.ytimg.com/vi/' + encodeURIComponent(videoId) + '/mqdefault.jpg';
+      thumbEl.alt = title + ' thumbnail';
+    }
+    if(nameEl) nameEl.textContent = title;
+    if(metaEl) metaEl.innerHTML = 'YouTube Short' + (siteAdded ? '<br/>Added ' + siteAdded : '');
+    if(trafficTitle) trafficTitle.textContent = title + ' // Traffic / Audience';
+
+    document.querySelectorAll('[data-selected-metric]').forEach(el => { el.textContent = '—'; });
+  }
+
+  function initVideoLibrary(){
+    const tabButtons = Array.from(document.querySelectorAll('[data-video-library-tab]'));
+    const panes = Array.from(document.querySelectorAll('[data-video-library-pane]'));
+
+    panes.forEach(sortVideoLibraryPane);
+
+    function activate(format){
+      const next = format === 'short' ? 'short' : 'long';
+      tabButtons.forEach(button => {
+        const active = button.dataset.videoLibraryTab === next;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panes.forEach(pane => { pane.hidden = pane.dataset.videoLibraryPane !== next; });
+    }
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => activate(button.dataset.videoLibraryTab));
+    });
+
+    document.querySelectorAll('[data-video-library-row]').forEach(row => {
+      row.setAttribute('tabindex','0');
+      row.setAttribute('role','button');
+      const choose = () => {
+        dispatchVideoLibrarySelection(row);
+        if(row.dataset.videoFormat === 'short') selectShortInOverview(row);
+      };
+      row.addEventListener('click', choose);
+      row.addEventListener('keydown', event => {
+        if(event.key === 'Enter' || event.key === ' '){
+          event.preventDefault();
+          choose();
+        }
+      });
+    });
+
+    activate('long');
+  }
+
   let activeRequestToken = 0;
 
   function fmtNumber(value){
@@ -807,6 +915,7 @@
     });
   });
 
+  initVideoLibrary();
   load();
   window.setInterval(load, REFRESH_MS);
   document.addEventListener('controlroom:screenchange', event => {

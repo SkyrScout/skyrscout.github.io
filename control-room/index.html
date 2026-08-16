@@ -41,28 +41,70 @@ sitemap: false
 </div>
 </div></section></div>
 <section class="panel mappanel"><div class="ph"><div class="pt">World Traffic</div><span class="badge map-scope-badge">MAP READY · DATA PENDING</span></div>{% include control-room-map.html %}</section></section>
-<section class="lower"><section class="panel lowerpanel"><div class="ph"><div class="pt">All Player Videos</div><span class="badge">Newest first</span></div><div class="body"><div class="player-scroll" id="playerScroll"><div class="toolbar">{{ site.players | size }} player videos · newest added first · scroll inside this console</div>{% for player in site.players %}
-{% assign control_title_main = player.title | split: ' | ' | first %}
-{% assign control_title_parts = control_title_main | split: ' – ' %}
-{% assign control_player_name = control_title_parts[0] | strip %}
-{% assign control_player_club = control_title_parts[1] | default: '' | strip %}
-{% assign control_youtube_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
-<div class="video-row"
-     data-player-row
-     data-player-name="{{ control_player_name | escape }}"
-     data-player-display="{{ control_title_main | escape }}"
-     data-player-club="{{ control_player_club | escape }}"
-     data-youtube-id="{{ control_youtube_id | escape }}"
-     data-report-date="{{ player.report_date | escape }}"
-     data-site-added="{{ player.site_added | escape }}"
-     data-player-url="{{ player.url | relative_url }}">
-  <img src="https://i.ytimg.com/vi/{{ control_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
-  <div class="vmeta"><strong>{{ control_title_main }}</strong><small>{{ player.site_added }}</small></div>
-  <b data-player-live-value>—</b>
+<section class="lower"><section class="panel lowerpanel video-library-panel">
+<div class="ph video-library-head">
+  <div class="video-library-heading">
+    <div class="pt">Video Library</div>
+    <div class="video-library-tabs" role="tablist" aria-label="Video library format">
+      <button class="video-library-tab active" type="button" role="tab" aria-selected="true" data-video-library-tab="long">LONG VIDEOS</button>
+      <button class="video-library-tab" type="button" role="tab" aria-selected="false" data-video-library-tab="short">SHORT VIDEOS</button>
+    </div>
+  </div>
+  <span class="badge" id="videoLibrarySortBadge">Newest first</span>
 </div>
-{% endfor %}</div></div></section>
-<section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Player</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Report 8 Aug 2026</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">—</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">—</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">—</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">—</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">—</b></div><div class="metric" data-selected-metric-card="uniqueViewers"><span>Unique viewers</span><b data-selected-metric="uniqueViewers">—</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="hf-empty">YouTube Analytics connection pending. Charts will remain empty until real data is available.</div></div></div></section>
-<section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected player data</div></div><span class="badge">DATA PENDING</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">YouTube Analytics</div><div class="kv"><span>Views · last 48 h</span><strong>—</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>—</strong></div><div class="kv"><span>YouTube search</span><strong>—</strong></div><div class="kv"><span>External</span><strong>—</strong></div><div class="kv"><span>Suggested videos</span><strong>—</strong></div><div class="kv"><span>Other YouTube features</span><strong>—</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>—</strong></div><div class="kv"><span>Age</span><strong>—</strong></div><div class="kv"><span>Gender</span><strong>—</strong></div></div></section></section>
+<div class="body video-library-body">
+  <div class="video-library-pane" data-video-library-pane="long">
+    <div class="player-scroll" id="playerScroll">
+      <div class="toolbar">{{ site.players | size }} long videos · newest added first · scroll inside this console</div>
+      {% for player in site.players %}
+      {% assign control_title_main = player.title | split: ' | ' | first %}
+      {% assign control_title_parts = control_title_main | split: ' – ' %}
+      {% assign control_player_name = control_title_parts[0] | strip %}
+      {% assign control_player_club = control_title_parts[1] | default: '' | strip %}
+      {% assign control_youtube_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+      <div class="video-row"
+           data-player-row
+           data-video-library-row
+           data-video-format="long"
+           data-player-name="{{ control_player_name | escape }}"
+           data-player-display="{{ control_title_main | escape }}"
+           data-player-club="{{ control_player_club | escape }}"
+           data-youtube-id="{{ control_youtube_id | escape }}"
+           data-report-date="{{ player.report_date | escape }}"
+           data-site-added="{{ player.site_added | escape }}"
+           data-player-url="{{ player.url | relative_url }}">
+        <img src="https://i.ytimg.com/vi/{{ control_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="vmeta"><strong>{{ control_title_main }}</strong><small>{{ player.site_added }}</small></div>
+        <b data-player-live-value>—</b>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="video-library-pane" data-video-library-pane="short" hidden>
+    <div class="player-scroll" id="shortScroll">
+      <div class="toolbar">{{ site.shorts | size }} Shorts · newest added first · scroll inside this console</div>
+      {% for short in site.shorts %}
+      {% assign control_short_youtube_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+      <div class="video-row"
+           data-short-row
+           data-video-library-row
+           data-video-format="short"
+           data-video-title="{{ short.title | escape }}"
+           data-youtube-id="{{ control_short_youtube_id | escape }}"
+           data-report-date="{{ short.report_date | escape }}"
+           data-site-added="{{ short.site_added | escape }}"
+           data-video-url="{{ short.url | relative_url }}">
+        <img src="https://i.ytimg.com/vi/{{ control_short_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="vmeta"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></div>
+        <b data-short-live-value>—</b>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div></section>
+<section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Video</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Report 8 Aug 2026</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">—</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">—</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">—</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">—</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">—</b></div><div class="metric" data-selected-metric-card="uniqueViewers"><span>Unique viewers</span><b data-selected-metric="uniqueViewers">—</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="hf-empty">YouTube Analytics connection pending. Charts will remain empty until real data is available.</div></div></div></section>
+<section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected video data</div></div><span class="badge">DATA PENDING</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">YouTube Analytics</div><div class="kv"><span>Views · last 48 h</span><strong>—</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>—</strong></div><div class="kv"><span>YouTube search</span><strong>—</strong></div><div class="kv"><span>External</span><strong>—</strong></div><div class="kv"><span>Suggested videos</span><strong>—</strong></div><div class="kv"><span>Other YouTube features</span><strong>—</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>—</strong></div><div class="kv"><span>Age</span><strong>—</strong></div><div class="kv"><span>Gender</span><strong>—</strong></div></div></section></section>
 </div><section class="control-screen system-screen" data-screen="youtube" hidden="">
 <div class="system-placeholder-wrap">
 <section class="panel system-placeholder-panel">
