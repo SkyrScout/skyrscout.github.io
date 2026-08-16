@@ -1,0 +1,72 @@
+import {
+  getAuthorizedStaffSession,
+  signOutStaff,
+  staffAccessConfig
+} from "./staff-access.js";
+
+const app = document.getElementById("staffProtectedApp");
+const gate = document.getElementById("staffAuthGate");
+const gateText = document.getElementById("staffAuthGateText");
+const identity = document.getElementById("staffIdentity");
+const role = document.getElementById("staffRole");
+const signOutButton = document.getElementById("staffControlRoomSignOut");
+
+function entranceUrl() {
+  const next = window.location.pathname + window.location.search + window.location.hash;
+  return `${staffAccessConfig.entrancePath}?next=${encodeURIComponent(next)}`;
+}
+
+function loadClassicScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function startControlRoom() {
+  await loadClassicScript("/assets/js/control-room.js");
+  await loadClassicScript("/assets/js/control-room-live.js");
+}
+
+async function authorizeControlRoom() {
+  gate.hidden = false;
+  gateText.textContent = "Checking SkyrScout staff access…";
+
+  const session = await getAuthorizedStaffSession();
+
+  if (session.status !== "authorized") {
+    if (session.status === "not-configured") {
+      gate.dataset.state = "error";
+      gateText.textContent = "Staff Entrance is not connected to Firebase yet.";
+      return;
+    }
+
+    window.location.replace(entranceUrl());
+    return;
+  }
+
+  if (identity) identity.textContent = session.profile.scoutName;
+  if (role) role.textContent = session.profile.role;
+
+  app.hidden = false;
+  gate.hidden = true;
+
+  try {
+    await startControlRoom();
+  } catch (error) {
+    gate.hidden = false;
+    gate.dataset.state = "error";
+    gateText.textContent = "Staff access is valid, but the Control Room scripts could not be loaded.";
+  }
+}
+
+signOutButton?.addEventListener("click", async () => {
+  await signOutStaff();
+  window.location.replace(staffAccessConfig.entrancePath);
+});
+
+authorizeControlRoom();

@@ -8,14 +8,21 @@ sitemap: false
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="dark">
   <title>Scoutland Yard Control Room</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}">
 </head>
 <body data-hese-fredrik-endpoint="{{ site.data.control_room.hese_fredrik_endpoint | escape }}">
-<div class="app"><aside class="sidebar"><div class="kicker">Scoutland Yard</div><div class="brand">CONTROL<br/>ROOM</div><div class="room active"><strong>Control Room</strong><small>Monitoring &amp; intelligence</small></div><div class="room"><strong>Library</strong><small>Research &amp; documents</small></div><div class="room"><strong>Speilsalen</strong><small>Later</small></div><div class="foot"><div class="footbox" id="controlRoomDataStatus"><span class="dot" id="controlRoomDataDot"></span>Data link checking…</div><div class="footbox">SkyrScout<br/><span style="color:#647987">Administrator</span></div></div></aside><main class="main"><header class="header"><div><h1>Control Room</h1><p id="controlRoomScreenSubtitle">POV workstation. Overview screen.</p></div><div class="tabs"><button aria-pressed="true" class="tab active" data-screen-target="overview" type="button">Overview</button><button aria-pressed="false" class="tab" data-screen-target="youtube" type="button">YouTube</button><button aria-pressed="false" class="tab" data-screen-target="website" type="button">Website</button><button aria-pressed="false" class="tab" data-screen-target="hese-fredrik" type="button">Hese-Fredrik</button></div></header><div class="dashboard control-screen active" data-screen="overview">
+<div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
+  <div class="staff-auth-gate-card">
+    <span class="staff-auth-gate-dot"></span>
+    <strong id="staffAuthGateText">Checking SkyrScout staff access…</strong>
+  </div>
+</div>
+<div class="app" id="staffProtectedApp" hidden><aside class="sidebar"><div class="kicker">Scoutland Yard</div><div class="brand">CONTROL<br/>ROOM</div><div class="room active"><strong>Control Room</strong><small>Monitoring &amp; intelligence</small></div><div class="room"><strong>Library</strong><small>Research &amp; documents</small></div><div class="room"><strong>Speilsalen</strong><small>Later</small></div><div class="foot"><div class="footbox" id="controlRoomDataStatus"><span class="dot" id="controlRoomDataDot"></span>Data link checking…</div><div class="footbox staff-session-box"><strong id="staffIdentity">SkyrScout Staff</strong><br/><span id="staffRole" style="color:#647987">Staff</span><button id="staffControlRoomSignOut" class="staff-session-signout" type="button">Sign out</button></div></div></aside><main class="main"><header class="header"><div><h1>Control Room</h1><p id="controlRoomScreenSubtitle">POV workstation. Overview screen.</p></div><div class="tabs"><button aria-pressed="true" class="tab active" data-screen-target="overview" type="button">Overview</button><button aria-pressed="false" class="tab" data-screen-target="youtube" type="button">YouTube</button><button aria-pressed="false" class="tab" data-screen-target="website" type="button">Website</button><button aria-pressed="false" class="tab" data-screen-target="hese-fredrik" type="button">Hese-Fredrik</button></div></header><div class="dashboard control-screen active" data-screen="overview">
 <section class="topgrid"><div class="side"><section class="panel sidepanel"><div class="ph"><div class="pt">Realtime Monitor</div><span class="badge" id="crRealtimeBadge">CONNECTING</span></div><div class="sidebody rtbody"><div><div class="big">—</div><div class="sub">48-hour YouTube Analytics total · not connected yet</div><div class="hf-empty">The 48-hour total and graph will populate from YouTube Analytics. No placeholder numbers are shown.</div><div class="mini-title" id="crRealtimeListTitle">MOVING NOW</div></div><div class="rtlist" id="crRealtimeList"><div class="hf-empty">Waiting for Hese-Fredrik movement data…</div></div></div></section>
 <section class="panel sidepanel"><div class="ph"><div class="pt">Geography</div><span class="badge">48 H</span></div>
 <div class="sidebody geography-panel-body">
@@ -119,7 +126,6 @@ sitemap: false
   </div>
 </div>
 
-<script src="{{ '/assets/js/control-room.js' | relative_url }}" defer></script>
-<script src="{{ '/assets/js/control-room-live.js' | relative_url }}" defer></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}"></script>
 </body>
 </html>

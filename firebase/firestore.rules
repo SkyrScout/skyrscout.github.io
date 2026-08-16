@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function verifiedGoogleUser() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true;
+    }
+
+    function staffRecordPath() {
+      return /databases/$(database)/documents/staff_allowlist/$(request.auth.token.email.lower());
+    }
+
+    function isApprovedStaff() {
+      return verifiedGoogleUser()
+        && exists(staffRecordPath())
+        && get(staffRecordPath()).data.active == true;
+    }
+
+    // Each signed-in person can only check their own allowlist record.
+    // No browser client can create, edit, list or delete staff records.
+    match /staff_allowlist/{email} {
+      allow get: if verifiedGoogleUser()
+        && request.auth.token.email.lower() == email;
+      allow list, create, update, delete: if false;
+    }
+
+    // Reserved namespace for future internal Scoutland Yard data.
+    match /staff_private/{document=**} {
+      allow read: if isApprovedStaff();
+      allow write: if false;
+    }
+
+    // Deny everything not explicitly allowed above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

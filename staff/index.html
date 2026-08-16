@@ -1,0 +1,79 @@
+---
+layout: null
+permalink: /staff/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Staff Entrance | Scoutland Yard</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/staff-entrance.css' | relative_url }}">
+</head>
+<body>
+  <main class="staff-entrance-shell" aria-labelledby="staffEntranceTitle">
+    <section class="staff-entrance-scene" aria-label="Scoutland Yard">
+      <div class="staff-entrance-caption">
+        <p class="staff-eyebrow">Scoutland Yard</p>
+        <h1 id="staffEntranceTitle">Staff Entrance</h1>
+        <p>Private access point for SkyrScout staff. Only approved personnel may enter the internal Scoutland Yard tools.</p>
+      </div>
+    </section>
+
+    <section class="staff-entrance-panel" aria-labelledby="staffSignInTitle">
+      <div class="staff-signin-card">
+        <header class="staff-signin-header">
+          <p class="staff-eyebrow">Access protocol</p>
+          <h2 id="staffSignInTitle">Personnel only</h2>
+          <p>Sign in with the Google account approved for your SkyrScout staff identity.</p>
+        </header>
+
+        <div class="staff-signin-body">
+          <div class="staff-lock-row" aria-hidden="true">
+            <span class="staff-lock-icon">S</span>
+            <div>
+              <strong>OnlyScout</strong>
+              <span>No fans. No public access.</span>
+            </div>
+          </div>
+
+          <div class="staff-auth-status" id="staffAuthStatus" role="status" aria-live="polite">
+            <span class="staff-status-dot"></span>
+            <span id="staffAuthStatusText">Checking staff session…</span>
+          </div>
+
+          <div class="staff-auth-error" id="staffAuthError" role="alert" hidden></div>
+
+          <button class="staff-google-button" id="staffGoogleSignIn" type="button" disabled>
+            <span class="staff-google-mark" aria-hidden="true">G</span>
+            <span>Sign in with Google</span>
+          </button>
+
+          <button class="staff-enter-button" id="staffEnterYard" type="button" hidden>
+            Enter Scoutland Yard
+          </button>
+
+          <button class="staff-signout-button" id="staffSignOut" type="button" hidden>
+            Use another Google account
+          </button>
+
+          <div class="staff-access-notes">
+            <div><strong>Google sign-in required</strong><span>Firebase Authentication verifies the Google session.</span></div>
+            <div><strong>Explicit staff allowlist</strong><span>Authentication alone is not enough. The account must also be approved.</span></div>
+            <div><strong>Private internal tools</strong><span>Control Room data is loaded only after staff access is granted.</span></div>
+          </div>
+
+          <p class="staff-footer-note">Scoutland Yard is an internal SkyrScout workspace.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="{{ '/assets/js/staff-entrance.js' | relative_url }}"></script>
+</body>
+</html>

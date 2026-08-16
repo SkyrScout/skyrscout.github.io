@@ -1,0 +1,54 @@
+SCOUTLAND YARD — STAFF ENTRANCE SETUP
+========================================
+
+WHAT IS ALREADY BUILT IN THIS PATCH
+-----------------------------------
+- /staff/ Staff Entrance using the existing Scoutland Yard building artwork.
+- Google sign-in through Firebase Authentication.
+- A Firestore allowlist check after Google authentication.
+- Direct /control-room/ visits are blocked by the auth guard and sent to /staff/.
+- Control Room scripts/data do not start loading until staff access is approved.
+- Staff identity is shown by Scout alias, not the Google account's display name.
+- Sign-out control in Control Room.
+- noindex / nofollow / noarchive metadata on Staff Entrance and Control Room.
+- Neither page is added to the Jekyll sitemap.
+
+FIREBASE CONSOLE STEPS STILL REQUIRED
+-------------------------------------
+1. Open Firebase Console with the Google account that should own the SkyrScout internal project.
+2. Create a Firebase project, or add Firebase to the Google Cloud project chosen for Scoutland Yard.
+3. Project overview -> Add app -> Web.
+   Suggested app nickname: Scoutland Yard Staff
+4. Copy the Firebase config object shown by Firebase.
+5. Open assets/js/staff-firebase-config.js in the repository.
+   Replace ONLY the REPLACE_WITH_... values with the exact Firebase values.
+6. Firebase Console -> Authentication -> Sign-in method -> Google -> Enable -> Save.
+7. Firebase Console -> Authentication -> Settings -> Authorized domains.
+   Add: skyrscout.github.io
+8. Firebase Console -> Firestore Database -> Create database.
+9. Firestore -> Rules.
+   Replace the rules with the contents of firebase/firestore.rules and Publish.
+10. Firestore -> Data -> create collection: staff_allowlist
+11. Create exactly three documents. Document ID = the approved Google email in LOWERCASE.
+    Each document should contain:
+      active      boolean   true
+      scout_name  string    Bon Scout / Scout Pilgrim / Scouty Pippen
+      role        string    Administrator / Scout / Scout (or the labels you want)
+
+IMPORTANT
+---------
+The three approved Google email addresses are deliberately NOT hardcoded in GitHub.
+The allowlist lives in Firestore and the security rules prevent browser clients from
+listing or editing it.
+
+The Firebase web config is not a service-account secret. Never place a service-account
+JSON key, OAuth client secret, YouTube API key or other private credential in GitHub.
+
+CURRENT LIMIT
+-------------
+The Staff Entrance protects normal access and prevents private Control Room data from
+loading before authorization. Because GitHub Pages is a public static host, the static
+HTML/CSS/JS shell itself can still be requested by someone who knows the exact URL.
+Private analytics, internal documents and secrets must therefore remain behind
+Firebase/Google-authenticated data endpoints. If the HTML shell itself must become
+server-inaccessible too, move the internal app behind an authenticated server layer.
