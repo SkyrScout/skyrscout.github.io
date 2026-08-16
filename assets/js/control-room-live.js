@@ -32,6 +32,7 @@
   const state = {
     movers: [],
     alerts: [],
+    suspicious: [],
     rules: {},
     checkedAt: null,
     videosPolled: null,
@@ -239,11 +240,13 @@
 
   function mergedVideo(videoId){
     const mover = state.movers.find(item => item && item.videoId === videoId) || null;
+    const suspicious = state.suspicious.find(item => item && item.videoId === videoId) || null;
     const alert = state.alerts.find(item => item && item.videoId === videoId) || null;
-    if(!mover && !alert) return null;
-    return Object.assign({}, mover || {}, alert || {}, {
+    if(!mover && !suspicious && !alert) return null;
+    return Object.assign({}, mover || {}, suspicious || {}, alert || {}, {
       videoId,
       _mover: mover,
+      _suspicious: suspicious,
       _alert: alert
     });
   }
@@ -252,22 +255,39 @@
     return state.alerts.some(alert => alert && alert.videoId === videoId);
   }
 
-  function bestOverviewDelta(mover){
-    const currentHour = numericOrNull(mover && mover.currentHourViews);
-    const previousHour = numericOrNull(mover && mover.previousHourViews);
-    const d15 = numericOrNull(mover && mover.delta15m);
-    const poll = numericOrNull(mover && mover.deltaSincePoll);
-    const candidates = [];
+  function isSuspicious(videoId){
+    return state.suspicious.some(signal => signal && signal.videoId === videoId);
+  }
 
-    if(currentHour !== null) candidates.push({value:currentHour,label:'CURRENT HOUR',weight:currentHour});
-    if(previousHour !== null) candidates.push({value:previousHour,label:'PREVIOUS HOUR',weight:previousHour});
-    if(d15 !== null) candidates.push({value:d15,label:'15 M',weight:d15 * 4});
-    if(candidates.length){
-      candidates.sort((a,b) => b.weight - a.weight);
-      return candidates[0];
+  function signalFor(item){
+    if(!item) return null;
+    return item._alert || item._suspicious || item.signal || null;
+  }
+
+  function activityStatus(item){
+    if(!item) return 'STANDBY';
+    if(item._alert || item.signalLevel === 'ALARM' || isActiveAlert(item.videoId)) return 'ALARM';
+    if(item._suspicious || item.signalLevel === 'SUSPICIOUS' || isSuspicious(item.videoId)) return 'SUSPICIOUS';
+    const explicit = String(item.activityStatus || '').toUpperCase();
+    if(explicit) return explicit;
+    const poll = numericOrNull(item.deltaSincePoll);
+    const current = numericOrNull(item.currentHourViews);
+    const previous = numericOrNull(item.previousHourViews);
+    if((poll !== null && poll > 0) || (current !== null && current > 0)) return 'MOVING';
+    if(previous !== null && previous > 0) return 'RECENT';
+    return 'STANDBY';
+  }
+
+  function bestOverviewDelta(mover){
+    const signal = signalFor(mergedVideo(mover && mover.videoId));
+    if(signal && numericOrNull(signal.deltaViews) !== null){
+      return {value:numericOrNull(signal.deltaViews),label:activityStatus(mover)};
     }
-    if(poll !== null) return {value:poll,label:'LAST POLL',weight:poll};
-    return {value:null,label:'LIVE',weight:0};
+    const poll = numericOrNull(mover && mover.deltaSincePoll);
+    const currentHour = numericOrNull(mover && mover.currentHourViews);
+    if(poll !== null && poll > 0) return {value:poll,label:'LAST POLL'};
+    if(currentHour !== null && currentHour > 0) return {value:currentHour,label:'THIS HOUR'};
+    return {value:null,label:activityStatus(mover)};
   }
 
   function alertSignature(alert){
@@ -314,36 +334,49 @@
   }
 
   function windowLabel(alert){
-    if(alert && alert.windowType === 'clockHour'){
+    if(!alert) return 'activity';
+    if(alert.windowLabel) return String(alert.windowLabel).toLowerCase();
+    if(alert.windowType === 'clockHour'){
       return alert.hourKind === 'previous' ? 'previous clock hour' : 'current clock hour';
     }
-    return String(Number(alert && alert.windowMinutes) || 15) + ' min';
+    if(alert.windowType === 'poll') return 'last poll';
+    if(Number(alert.windowMinutes) === 60) return 'clock hour';
+    return 'activity';
   }
 
   function shortWindowLabel(alert){
-    if(alert && alert.windowType === 'clockHour'){
-      return alert.hourKind === 'previous' ? 'PREV HR' : 'CURR HR';
+    if(!alert) return 'SIGNAL';
+    if(alert.windowType === 'clockHour'){
+      return alert.hourKind === 'previous' ? 'LAST HR' : 'THIS HR';
     }
-    return String(Number(alert && alert.windowMinutes) || 15) + ' M';
+    if(alert.windowType === 'poll') return 'LAST POLL';
+    return 'SIGNAL';
   }
 
   function baselineText(alert){
-    const baseline = alert && alert.baselineViews !== null && alert.baselineViews !== undefined
+    if(!alert) return '';
+    if(alert.reason === 'batchJump') return 'Possible delayed YouTube counter batch';
+    if(alert.reason === 'rollback') return 'YouTube counter adjustment detected';
+    if(alert.reason === 'unconfirmedHour') return 'Hour movement is not confirmed strongly enough for an alarm';
+
+    const baseline = alert.baselineViews !== null && alert.baselineViews !== undefined
       ? Number(alert.baselineViews)
       : null;
-    const multiple = alert && alert.multiple !== null && alert.multiple !== undefined
+    const multiple = alert.multiple !== null && alert.multiple !== undefined
       ? Number(alert.multiple)
       : null;
-    const label = (alert && alert.baselineLabel) ||
-      (alert && alert.windowType === 'clockHour' ? 'Hour before previous' : 'Previous comparable window');
+    const label = alert.baselineLabel ||
+      (alert.windowType === 'clockHour' ? 'Hour before previous' : 'Comparison');
 
     if(Number.isFinite(baseline)){
-      if(alert && alert.reason === 'relative' && Number.isFinite(multiple)){
+      if(alert.reason === 'relative' && Number.isFinite(multiple)){
         return label + ': ' + baseline.toLocaleString('en-US') + ' · ' + multiple.toFixed(1) + '× pace';
       }
       return label + ': ' + baseline.toLocaleString('en-US');
     }
-    return alert && alert.reason === 'absolute' ? 'Absolute spike rule' : 'Relative activity spike';
+    if(alert.reason === 'absolute') return 'Absolute alarm threshold reached';
+    if(alert.reason === 'relative') return 'Relative activity threshold reached';
+    return alert.confidence ? 'Confidence: ' + String(alert.confidence).toUpperCase() : 'Activity signal';
   }
 
   function openHeseVideo(videoId){
@@ -448,36 +481,39 @@
     try{ localStorage.removeItem(ACK_KEY); }catch(_){ }
   }
 
-  function renderOverviewMovers(items, internalAlerts){
+  function renderOverviewMovers(items, internalAlerts, suspiciousSignals){
     if(!overviewList) return;
-    const movers = Array.isArray(items) ? items : [];
     const activeIds = new Set((internalAlerts || []).map(a => a.videoId));
+    const suspiciousIds = new Set((suspiciousSignals || []).map(a => a.videoId));
+    const movers = (Array.isArray(items) ? items : []).filter(item => {
+      const poll = numericOrNull(item && item.deltaSincePoll);
+      const current = numericOrNull(item && item.currentHourViews);
+      return activeIds.has(item.videoId) || suspiciousIds.has(item.videoId) ||
+        (poll !== null && poll > 0) || (current !== null && current > 0);
+    });
 
     clear(overviewList);
+    if(overviewTitle) overviewTitle.textContent = 'ACTIVITY RADAR';
+    if(overviewBadge) overviewBadge.textContent = internalAlerts.length ? 'ALARM' : suspiciousSignals.length ? 'WATCH' : 'LIVE';
 
     if(!movers.length){
-      if(overviewTitle) overviewTitle.textContent = 'MOVING NOW';
-      if(overviewBadge) overviewBadge.textContent = internalAlerts.length ? 'ALERT' : 'LIVE';
       const empty = document.createElement('div');
       empty.className = 'hf-empty';
-      empty.textContent = 'No mover data returned yet.';
+      empty.textContent = 'No current counter movement.';
       overviewList.appendChild(empty);
       return;
     }
 
-    const first = bestOverviewDelta(movers[0]);
-    if(overviewTitle) overviewTitle.textContent = internalAlerts.length ? 'HESE-FREDRIK · MOVING NOW' : 'MOVING NOW · ' + first.label;
-    if(overviewBadge) overviewBadge.textContent = internalAlerts.length ? 'ALERT' : 'LIVE';
-
     movers.forEach(item => {
       const d = bestOverviewDelta(item);
       const row = document.createElement('div');
-      row.className = 'rtrow live-mover' + (activeIds.has(item.videoId) ? ' live-alert' : '');
+      row.className = 'rtrow live-mover' + (activeIds.has(item.videoId) ? ' live-alert' : '') + (suspiciousIds.has(item.videoId) ? ' live-suspicious' : '');
       const name = document.createElement('span');
       name.textContent = item.title || item.videoId || 'YouTube video';
       name.title = name.textContent;
       const value = document.createElement('b');
       value.textContent = d.value === null ? '—' : '+' + d.value.toLocaleString('en-US');
+      value.title = d.label;
       row.append(name,value);
       overviewList.appendChild(row);
     });
@@ -503,7 +539,7 @@
     const movers = filteredMovers();
     if(moverCount){
       moverCount.textContent = state.filter === 'all'
-        ? fmtNumber(state.movers.length) + ' moving'
+        ? fmtNumber(state.movers.length) + ' active'
         : fmtNumber(movers.length) + ' of ' + fmtNumber(state.movers.length);
     }
 
@@ -511,66 +547,65 @@
       const empty = document.createElement('div');
       empty.className = 'hf-empty';
       empty.textContent = state.filter === 'all'
-        ? 'No mover data returned yet.'
-        : 'No ' + (state.filter === 'short' ? 'Shorts' : 'videos') + ' are moving in the current feed.';
+        ? 'No activity in the current radar feed.'
+        : 'No ' + (state.filter === 'short' ? 'Shorts' : 'videos') + ' in the current activity radar.';
       moversList.appendChild(empty);
       return;
     }
 
     movers.forEach(item => {
+      const status = activityStatus(item);
       const row = document.createElement('button');
       row.type = 'button';
       row.className = 'hf-mover';
       if(state.selectedVideoId === item.videoId) row.classList.add('selected');
-      if(isActiveAlert(item.videoId)) row.classList.add('is-alert');
+      if(status === 'ALARM') row.classList.add('is-alert');
+      if(status === 'SUSPICIOUS') row.classList.add('is-suspicious');
       row.dataset.videoId = item.videoId || '';
 
       const main = document.createElement('div');
       main.className = 'hf-mover-main';
-
       const img = document.createElement('img');
       img.src = item.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(item.videoId || '') + '/mqdefault.jpg');
       img.alt = '';
       img.loading = 'lazy';
-
       const copy = document.createElement('div');
       copy.className = 'hf-mover-copy';
-
       const strong = document.createElement('strong');
       strong.textContent = item.title || item.videoId || 'YouTube video';
-
       const meta = document.createElement('div');
       meta.className = 'hf-mover-meta';
-
       const type = document.createElement('span');
       type.className = 'hf-type-pill ' + videoType(item);
       type.textContent = typeLabel(item);
       meta.appendChild(type);
-
-      if(isActiveAlert(item.videoId)){
-        const alertPill = document.createElement('span');
-        alertPill.className = 'hf-alert-pill';
-        alertPill.textContent = 'ALERT';
-        meta.appendChild(alertPill);
+      if(status === 'SUSPICIOUS' || status === 'ALARM'){
+        const signalPill = document.createElement('span');
+        signalPill.className = status === 'ALARM' ? 'hf-alert-pill' : 'hf-suspicious-pill';
+        signalPill.textContent = status;
+        meta.appendChild(signalPill);
       }
-
       copy.append(strong,meta);
       main.append(img,copy);
       row.appendChild(main);
 
       const values = [
         ['total', item.totalViews, fmtNumber],
-        ['d15', item.delta15m, fmtDelta],
+        ['poll', item.deltaSincePoll, fmtDelta],
         ['current', item.currentHourViews, fmtDelta],
         ['previous', item.previousHourViews, fmtDelta]
       ];
-
       values.forEach(([name,value,formatter]) => {
         const el = document.createElement('div');
-        el.className = 'hf-mover-value ' + name + (name === 'd15' || name === 'current' || name === 'previous' ? ' delta' : '');
+        el.className = 'hf-mover-value ' + name + (name !== 'total' ? ' delta' : '');
         el.textContent = formatter(value);
         row.appendChild(el);
       });
+
+      const statusEl = document.createElement('div');
+      statusEl.className = 'hf-mover-status ' + status.toLowerCase();
+      statusEl.textContent = status;
+      row.appendChild(statusEl);
 
       row.addEventListener('click', () => selectVideo(item.videoId));
       moversList.appendChild(row);
@@ -581,48 +616,52 @@
     if(!activeAlertList) return;
     clear(activeAlertList);
 
-    if(!state.alerts.length){
+    const signals = state.alerts.concat(state.suspicious).sort((a,b) => {
+      const aAlarm = String(a && a.signalLevel || '').toUpperCase() === 'ALARM' ? 1 : 0;
+      const bAlarm = String(b && b.signalLevel || '').toUpperCase() === 'ALARM' ? 1 : 0;
+      if(aAlarm !== bAlarm) return bAlarm - aAlarm;
+      return Number(b && b.score || 0) - Number(a && a.score || 0);
+    });
+
+    if(!signals.length){
       if(alertBadge) alertBadge.textContent = 'Standby';
       const empty = document.createElement('div');
       empty.className = 'hf-empty';
-      empty.textContent = 'No active Hese-Fredrik alert.';
+      empty.textContent = 'No suspicious activity or Hese-Fredrik alarm.';
       activeAlertList.appendChild(empty);
       return;
     }
 
     if(alertBadge){
-      alertBadge.textContent = state.alerts.length === 1
-        ? '1 ACTIVE'
-        : state.alerts.length + ' ACTIVE';
+      const parts = [];
+      if(state.alerts.length) parts.push(state.alerts.length + ' ALARM' + (state.alerts.length === 1 ? '' : 'S'));
+      if(state.suspicious.length) parts.push(state.suspicious.length + ' SUSPICIOUS');
+      alertBadge.textContent = parts.join(' · ');
     }
 
-    state.alerts.forEach(alert => {
+    signals.forEach(signal => {
+      const level = String(signal.signalLevel || (isActiveAlert(signal.videoId) ? 'ALARM' : 'SUSPICIOUS')).toUpperCase();
       const card = document.createElement('button');
       card.type = 'button';
-      card.className = 'hf-active-card';
-      if(state.selectedVideoId === alert.videoId) card.classList.add('selected');
+      card.className = 'hf-active-card ' + (level === 'ALARM' ? 'is-alarm' : 'is-suspicious');
+      card.dataset.videoId = signal.videoId || '';
+      if(state.selectedVideoId === signal.videoId) card.classList.add('selected');
 
       const img = document.createElement('img');
-      img.src = alert.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(alert.videoId || '') + '/mqdefault.jpg');
+      img.src = signal.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(signal.videoId || '') + '/mqdefault.jpg');
       img.alt = '';
-
       const copy = document.createElement('div');
       copy.className = 'hf-active-card-copy';
-
       const title = document.createElement('strong');
-      title.textContent = alert.title || alert.videoId || 'SkyrScout video';
-
+      title.textContent = signal.title || signal.videoId || 'SkyrScout video';
       const small = document.createElement('small');
-      small.textContent = typeLabel(alert) + ' · ' + windowLabel(alert) + ' · ' + baselineText(alert);
-
+      small.textContent = typeLabel(signal) + ' · ' + level + ' · ' + windowLabel(signal) + ' · ' + baselineText(signal);
       copy.append(title,small);
-
       const delta = document.createElement('div');
       delta.className = 'hf-active-delta';
-      delta.textContent = fmtDelta(alert.deltaViews);
-
+      delta.textContent = fmtDelta(signal.deltaViews);
       card.append(img,copy,delta);
-      card.addEventListener('click', () => selectVideo(alert.videoId, {scroll:true}));
+      card.addEventListener('click', () => selectVideo(signal.videoId, {scroll:true}));
       activeAlertList.appendChild(card);
     });
   }
@@ -644,7 +683,7 @@
 
     let item = state.selectedVideoId ? mergedVideo(state.selectedVideoId) : null;
     if(!item){
-      const fallback = state.alerts[0] || filteredMovers()[0] || state.movers[0] || null;
+      const fallback = state.alerts[0] || state.suspicious[0] || filteredMovers()[0] || state.movers[0] || null;
       if(fallback){
         state.selectedVideoId = fallback.videoId;
         item = mergedVideo(fallback.videoId);
@@ -655,48 +694,40 @@
       if(detailTypeBadge) detailTypeBadge.textContent = '—';
       const empty = document.createElement('div');
       empty.className = 'hf-empty';
-      empty.textContent = 'Select a moving video or active alert.';
+      empty.textContent = 'Select a video from the activity radar or Signals.';
       detailBody.appendChild(empty);
       return;
     }
 
-    const alert = item._alert;
+    const signal = signalFor(item);
+    const status = activityStatus(item);
     const type = typeLabel(item);
     if(detailTypeBadge){
-      detailTypeBadge.textContent = alert ? type + ' · ALERT' : type;
+      detailTypeBadge.textContent = type;
+      detailTypeBadge.classList.toggle('short', videoType(item) === 'short');
     }
 
     const head = document.createElement('div');
     head.className = 'hf-detail-head';
-
     const img = document.createElement('img');
     img.src = item.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(item.videoId || '') + '/hqdefault.jpg');
     img.alt = item.title || 'Selected Hese-Fredrik video';
-
     const copy = document.createElement('div');
     copy.className = 'hf-detail-copy';
-
     const h2 = document.createElement('h2');
     h2.textContent = item.title || item.videoId || 'YouTube video';
-
     const p = document.createElement('p');
     p.textContent = 'YouTube ID: ' + (item.videoId || '—') + ' · last feed check ' + fmtTime(state.checkedAt);
-
     const flags = document.createElement('div');
     flags.className = 'hf-detail-flags';
-
     const typePill = document.createElement('span');
     typePill.className = 'hf-type-pill ' + videoType(item);
     typePill.textContent = type;
     flags.appendChild(typePill);
-
-    if(alert){
-      const alertPill = document.createElement('span');
-      alertPill.className = 'hf-alert-pill';
-      alertPill.textContent = shortWindowLabel(alert) + ' ALERT';
-      flags.appendChild(alertPill);
-    }
-
+    const statusPill = document.createElement('span');
+    statusPill.className = status === 'ALARM' ? 'hf-alert-pill' : status === 'SUSPICIOUS' ? 'hf-suspicious-pill' : 'hf-status-pill ' + status.toLowerCase();
+    statusPill.textContent = status;
+    flags.appendChild(statusPill);
     copy.append(h2,p,flags);
     head.append(img,copy);
 
@@ -705,23 +736,27 @@
     metrics.append(
       metric('Total views', fmtNumber(item.totalViews), false),
       metric('Since last poll', fmtDelta(item.deltaSincePoll), false),
-      metric('Last 15 min', fmtDelta(item.delta15m), Boolean(alert && Number(alert.windowMinutes) === 15)),
-      metric('Current clock hour', fmtDelta(item.currentHourViews), Boolean(alert && alert.windowType === 'clockHour' && alert.hourKind !== 'previous')),
-      metric('Previous clock hour', fmtDelta(item.previousHourViews), Boolean(alert && alert.windowType === 'clockHour' && alert.hourKind === 'previous')),
-      metric('Alert status', alert ? 'ACTIVE' : 'STANDBY', Boolean(alert))
+      metric('This clock hour', fmtDelta(item.currentHourViews), status === 'ALARM' && signal && signal.hourKind !== 'previous'),
+      metric('Previous clock hour', fmtDelta(item.previousHourViews), status === 'ALARM' && signal && signal.hourKind === 'previous'),
+      metric('This hour confidence', String(item.currentHourConfidence || '—').toUpperCase(), false),
+      metric('Signal status', status, status === 'ALARM')
     );
-
     detailBody.append(head,metrics);
 
-    if(alert){
-      const alertBox = document.createElement('div');
-      alertBox.className = 'hf-detail-alert';
+    const note = document.createElement('div');
+    note.className = 'hf-detail-note';
+    note.textContent = 'Previous clock hour is the stored counter difference between the two hour-boundary snapshots. This clock hour is still in progress.';
+    detailBody.appendChild(note);
+
+    if(signal){
+      const signalBox = document.createElement('div');
+      signalBox.className = 'hf-detail-alert ' + (status === 'SUSPICIOUS' ? 'suspicious' : 'alarm');
       const title = document.createElement('strong');
-      title.textContent = fmtDelta(alert.deltaViews) + ' views · ' + windowLabel(alert);
-      const note = document.createElement('p');
-      note.textContent = baselineText(alert);
-      alertBox.append(title,note);
-      detailBody.appendChild(alertBox);
+      title.textContent = status + ' · ' + fmtDelta(signal.deltaViews) + ' · ' + windowLabel(signal);
+      const signalNote = document.createElement('p');
+      signalNote.textContent = baselineText(signal);
+      signalBox.append(title,signalNote);
+      detailBody.appendChild(signalBox);
     }
 
     const actions = document.createElement('div');
@@ -760,21 +795,19 @@
 
     const absolute = internalRules && Array.isArray(internalRules.absolute) ? internalRules.absolute : [];
     const relative = internalRules && Array.isArray(internalRules.relative) ? internalRules.relative : [];
+    const suspicious = internalRules && internalRules.suspicious ? internalRules.suspicious : {};
     const rules = [];
 
-    absolute.forEach(rule => {
-      const label = Number(rule.minutes) === 60 ? 'Clock-hour absolute' : String(rule.minutes) + ' min absolute';
-      rules.push([label, '+' + fmtNumber(rule.minViews) + ' views']);
-    });
-    relative.forEach(rule => {
-      const label = Number(rule.minutes) === 60 ? 'Clock-hour relative' : String(rule.minutes) + ' min relative';
-      rules.push([label, '+' + fmtNumber(rule.minViews) + ' & ≥' + Number(rule.multiplier || 0).toFixed(1) + '×']);
-    });
+    absolute.forEach(rule => rules.push(['Alarm · clock hour absolute', '+' + fmtNumber(rule.minViews) + ' views']));
+    relative.forEach(rule => rules.push(['Alarm · clock hour relative', '+' + fmtNumber(rule.minViews) + ' & ≥' + Number(rule.multiplier || 0).toFixed(1) + '×']));
+    if(numericOrNull(suspicious.lastPollMinViews) !== null) rules.push(['Suspicious · last poll', '+' + fmtNumber(suspicious.lastPollMinViews) + ' views']);
+    if(numericOrNull(suspicious.hourMinViews) !== null) rules.push(['Suspicious · current hour', '+' + fmtNumber(suspicious.hourMinViews) + ' views']);
+    if(numericOrNull(suspicious.alarmMinPositivePolls) !== null) rules.push(['Alarm confirmation', '≥' + fmtNumber(suspicious.alarmMinPositivePolls) + ' positive polls']);
 
     if(!rules.length){
       const empty = document.createElement('div');
       empty.className = 'hf-empty';
-      empty.textContent = 'No internal alert rules returned.';
+      empty.textContent = 'No internal signal rules returned.';
       rulesBody.appendChild(empty);
       return;
     }
@@ -796,9 +829,11 @@
 
     const videos = document.getElementById('hfVideosPolled');
     const alertsCount = document.getElementById('hfActiveAlerts');
+    const suspiciousCount = document.getElementById('hfSuspiciousCount');
     const checked = document.getElementById('hfCheckedAt');
 
     state.alerts = Array.isArray(payload.internalAlerts) ? payload.internalAlerts : [];
+    state.suspicious = Array.isArray(payload.suspiciousSignals) ? payload.suspiciousSignals : [];
     state.movers = Array.isArray(payload.topMovers) ? payload.topMovers : [];
     state.rules = payload.internalRules || {};
     state.checkedAt = payload.checkedAt;
@@ -806,16 +841,21 @@
 
     if(videos) videos.textContent = fmtNumber(payload.videosPolled);
     if(alertsCount) alertsCount.textContent = fmtNumber(state.alerts.length);
+    if(suspiciousCount) suspiciousCount.textContent = fmtNumber(state.suspicious.length);
     if(checked) checked.textContent = fmtTime(payload.checkedAt);
 
     if(liveSummary){
-      liveSummary.textContent = state.alerts.length
-        ? state.alerts.length + ' active alert' + (state.alerts.length === 1 ? '' : 's') + ' across ' + fmtNumber(payload.videosPolled) + ' polled videos'
-        : 'Monitoring ' + fmtNumber(payload.videosPolled) + ' videos · no active alerts';
+      if(state.alerts.length){
+        liveSummary.textContent = state.alerts.length + ' confirmed Hese-Fredrik alarm' + (state.alerts.length === 1 ? '' : 's') + ' · ' + state.suspicious.length + ' suspicious';
+      }else if(state.suspicious.length){
+        liveSummary.textContent = state.suspicious.length + ' suspicious signal' + (state.suspicious.length === 1 ? '' : 's') + ' · no confirmed alarm';
+      }else{
+        liveSummary.textContent = 'Monitoring ' + fmtNumber(payload.videosPolled) + ' videos · ' + fmtNumber(payload.activityCount || state.movers.length) + ' in activity radar';
+      }
     }
 
     if(!state.selectedVideoId || !mergedVideo(state.selectedVideoId)){
-      const first = state.alerts[0] || state.movers[0] || null;
+      const first = state.alerts[0] || state.suspicious[0] || state.movers[0] || null;
       state.selectedVideoId = first ? first.videoId : null;
     }
 
@@ -824,12 +864,15 @@
     renderMovers();
     renderDetail();
     renderRules(state.rules);
-    renderOverviewMovers(state.movers, state.alerts);
+    renderOverviewMovers(state.movers, state.alerts, state.suspicious);
 
     if(state.alerts.length){
       const lead = state.alerts[0];
-      setStatus('warn','Hese-Fredrik går! · ' + (lead.title || 'video') + ' ' + fmtDelta(lead.deltaViews) + ' / ' + shortWindowLabel(lead));
+      setStatus('warn','Hese-Fredrik ALARM · ' + (lead.title || 'video') + ' ' + fmtDelta(lead.deltaViews) + ' / ' + shortWindowLabel(lead));
       showInternalOverlay(state.alerts);
+    }else if(state.suspicious.length){
+      setStatus('warn','Hese-Fredrik watching · ' + state.suspicious.length + ' suspicious · ' + fmtTime(payload.checkedAt));
+      hideOverlayIfClear(state.alerts);
     }else{
       setStatus('ok','Hese-Fredrik live · ' + fmtTime(payload.checkedAt));
       hideOverlayIfClear(state.alerts);
@@ -869,7 +912,10 @@
 
     state.movers = [];
     state.alerts = [];
+    state.suspicious = [];
     state.checkedAt = payload.checkedAt;
+    const suspiciousCount = document.getElementById('hfSuspiciousCount');
+    if(suspiciousCount) suspiciousCount.textContent = '—';
     state.selectedVideoId = null;
 
     setStatus('warn','Hese-Fredrik backend live · Control Room feed unavailable');
@@ -900,6 +946,80 @@
       empty.className = 'hf-empty';
       empty.textContent = 'Internal rules require the debug feed.';
       rulesBody.appendChild(empty);
+    }
+  }
+
+  function initHeseFocusMode(){
+    const overlay = document.getElementById('consoleFocusOverlay');
+    const shell = document.getElementById('consoleFocusShell');
+    const closeBtn = document.getElementById('consoleFocusClose');
+    if(!overlay || !shell || !closeBtn) return;
+
+    let lastTrigger = null;
+    const panels = Array.from(document.querySelectorAll('[data-screen="hese-fredrik"] .hf-focus-panel'));
+
+    function closeFocus(){
+      if(!overlay.classList.contains('open')) return;
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden','true');
+      document.body.classList.remove('console-focus-open');
+      shell.querySelectorAll('.panel').forEach(el => el.remove());
+      if(lastTrigger && typeof lastTrigger.focus === 'function') lastTrigger.focus();
+      lastTrigger = null;
+    }
+
+    function openFocus(panel, trigger){
+      if(!panel || overlay.classList.contains('open')) return;
+      lastTrigger = trigger || null;
+      shell.className = 'console-focus-shell hese-focus';
+      if(panel.classList.contains('hf-movers-panel')) shell.classList.add('hese-radar-focus');
+      if(panel.classList.contains('hf-detail-panel')) shell.classList.add('hese-detail-focus');
+      if(panel.classList.contains('hf-signals-panel')) shell.classList.add('hese-signals-focus');
+      if(panel.classList.contains('hf-rules-panel')) shell.classList.add('hese-rules-focus');
+      if(panel.classList.contains('hf-command-panel')) shell.classList.add('hese-command-focus');
+
+      const clone = panel.cloneNode(true);
+      clone.classList.remove('console-focusable');
+      clone.querySelectorAll('.console-focus-btn').forEach(el => el.remove());
+      shell.querySelectorAll('.panel').forEach(el => el.remove());
+      shell.appendChild(clone);
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden','false');
+      document.body.classList.add('console-focus-open');
+      requestAnimationFrame(() => closeBtn.focus());
+    }
+
+    panels.forEach(panel => {
+      if(panel.querySelector(':scope > .ph > .console-focus-btn')) return;
+      panel.classList.add('console-focusable');
+      const header = panel.querySelector(':scope > .ph');
+      if(!header) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'console-focus-btn';
+      btn.innerHTML = '⛶';
+      btn.title = 'Open console in Focus Mode';
+      btn.setAttribute('aria-label','Open console in Focus Mode');
+      header.appendChild(btn);
+      btn.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        openFocus(panel, btn);
+      });
+    });
+
+    if(!closeBtn.dataset.heseFocusBound){
+      closeBtn.dataset.heseFocusBound = '1';
+      closeBtn.addEventListener('click', closeFocus);
+      overlay.addEventListener('click', event => { if(event.target === overlay) closeFocus(); });
+      document.addEventListener('keydown', event => { if(event.key === 'Escape' && shell.classList.contains('hese-focus')) closeFocus(); });
+      shell.addEventListener('click', event => {
+        const row = event.target.closest('.hf-mover[data-video-id], .hf-active-card[data-video-id]');
+        if(!row || !shell.classList.contains('hese-focus')) return;
+        const id = row.dataset.videoId;
+        closeFocus();
+        if(id) selectVideo(id);
+      });
     }
   }
 
@@ -954,6 +1074,7 @@
     });
   });
 
+  initHeseFocusMode();
   initVideoLibrary();
   load();
   window.setInterval(load, REFRESH_MS);

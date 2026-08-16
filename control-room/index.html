@@ -23,7 +23,7 @@ sitemap: false
   </div>
 </div>
 <div class="app" id="staffProtectedApp" hidden><aside class="sidebar"><div class="kicker">Scoutland Yard</div><div class="brand">CONTROL<br/>ROOM</div><div class="room active"><strong>Control Room</strong><small>Monitoring &amp; intelligence</small></div><div class="room"><strong>Library</strong><small>Research &amp; documents</small></div><div class="room"><strong>Speilsalen</strong><small>Later</small></div><div class="foot"><div class="footbox" id="controlRoomDataStatus"><span class="dot" id="controlRoomDataDot"></span>Data link checking…</div><div class="footbox staff-session-box"><strong id="staffIdentity">SkyrScout Staff</strong><br/><span id="staffRole" style="color:#647987">Staff</span><button id="staffControlRoomSignOut" class="staff-session-signout" type="button">Sign out</button></div></div></aside><main class="main"><header class="header"><div><h1>Control Room</h1><p id="controlRoomScreenSubtitle">POV workstation. Overview screen.</p></div><div class="tabs"><button aria-pressed="true" class="tab active" data-screen-target="overview" type="button">Overview</button><button aria-pressed="false" class="tab" data-screen-target="youtube" type="button">YouTube</button><button aria-pressed="false" class="tab" data-screen-target="website" type="button">Website</button><button aria-pressed="false" class="tab" data-screen-target="hese-fredrik" type="button">Hese-Fredrik</button></div></header><div class="dashboard control-screen active" data-screen="overview">
-<section class="topgrid"><div class="side"><section class="panel sidepanel"><div class="ph"><div class="pt">Realtime Monitor</div><span class="badge" id="crRealtimeBadge">CONNECTING</span></div><div class="sidebody rtbody"><div><div class="big">—</div><div class="sub">48-hour YouTube Analytics total · not connected yet</div><div class="hf-empty">The 48-hour total and graph will populate from YouTube Analytics. No placeholder numbers are shown.</div><div class="mini-title" id="crRealtimeListTitle">MOVING NOW</div></div><div class="rtlist" id="crRealtimeList"><div class="hf-empty">Waiting for Hese-Fredrik movement data…</div></div></div></section>
+<section class="topgrid"><div class="side"><section class="panel sidepanel"><div class="ph"><div class="pt">Realtime Monitor</div><span class="badge" id="crRealtimeBadge">CONNECTING</span></div><div class="sidebody rtbody"><div><div class="big">—</div><div class="sub">48-hour YouTube Analytics total · not connected yet</div><div class="hf-empty">The 48-hour total and graph will populate from YouTube Analytics. No placeholder numbers are shown.</div><div class="mini-title" id="crRealtimeListTitle">ACTIVITY RADAR</div></div><div class="rtlist" id="crRealtimeList"><div class="hf-empty">Waiting for Hese-Fredrik movement data…</div></div></div></section>
 <section class="panel sidepanel"><div class="ph"><div class="pt">Geography</div><span class="badge">48 H</span></div>
 <div class="sidebody geography-panel-body">
 <div class="geo-overview-state">
@@ -128,23 +128,24 @@ sitemap: false
 </section>
 </div>
 </section><section class="control-screen system-screen" data-screen="hese-fredrik" hidden="">
-<div class="hf-screen-v2">
-<section class="panel hf-command-panel">
+<div class="hf-screen-v3">
+<section class="panel hf-command-panel hf-focus-panel">
 <div class="ph"><div class="pt">Hese-Fredrik</div><span class="badge" id="hfConnectionBadge">Connecting…</span></div>
 <div class="hf-command-body">
 <div class="hf-command-copy">
-<div class="hf-status-kicker">Live YouTube movement monitor</div>
+<div class="hf-status-kicker">Live YouTube activity radar</div>
 <strong id="hfLiveSummary">Waiting for Hese-Fredrik…</strong>
-<p>Public YouTube movement data, delivered through the authenticated Staff backend.</p>
+<p>Clock-hour movement from stored YouTube counter snapshots. Suspicious activity and confirmed alarms are shown separately.</p>
 </div>
 <div class="hf-stat-grid">
 <div class="hf-stat"><span>Videos polled</span><strong id="hfVideosPolled">—</strong></div>
-<div class="hf-stat"><span>Active alerts</span><strong id="hfActiveAlerts">—</strong></div>
+<div class="hf-stat suspicious"><span>Suspicious</span><strong id="hfSuspiciousCount">—</strong></div>
+<div class="hf-stat alarm"><span>Alarms</span><strong id="hfActiveAlerts">—</strong></div>
 <div class="hf-stat"><span>Last check</span><strong id="hfCheckedAt">—</strong></div>
 </div>
 <div class="hf-filter-wrap">
-<span>Moving now</span>
-<div class="hf-filter-group" role="group" aria-label="Filter Hese-Fredrik movers">
+<span>Activity radar</span>
+<div class="hf-filter-group" role="group" aria-label="Filter Hese-Fredrik activity radar">
 <button class="hf-filter active" data-hf-filter="all" type="button">ALL</button>
 <button class="hf-filter" data-hf-filter="video" type="button">VIDEOS</button>
 <button class="hf-filter" data-hf-filter="short" type="button">SHORTS</button>
@@ -153,32 +154,32 @@ sitemap: false
 </div>
 </section>
 
-<section class="panel hf-active-panel">
-<div class="ph"><div class="pt">Active alerts</div><span class="badge" id="hfAlertBadge">Standby</span></div>
+<section class="panel hf-active-panel hf-signals-panel hf-focus-panel">
+<div class="ph"><div class="pt">Signals</div><span class="badge" id="hfAlertBadge">Standby</span></div>
 <div class="hf-active-list" id="hfActiveAlertList">
-<div class="hf-empty">No active Hese-Fredrik alert.</div>
+<div class="hf-empty">No suspicious activity or Hese-Fredrik alarm.</div>
 </div>
 </section>
 
 <div class="hf-work-grid">
-<section class="panel hf-movers-panel">
-<div class="ph"><div class="pt">Moving now</div><span class="badge" id="hfMoverCount">—</span></div>
-<div class="hf-movers-head"><span>Video</span><span>Total</span><span>15m</span><span>Current hr</span><span>Previous hr</span></div>
+<section class="panel hf-movers-panel hf-focus-panel">
+<div class="ph"><div class="pt">Activity radar</div><span class="badge" id="hfMoverCount">—</span></div>
+<div class="hf-movers-head"><span>Video</span><span>Total</span><span>Last poll</span><span>This hr</span><span>Last hr</span><span>Status</span></div>
 <div class="hf-movers-list" id="hfMoversList">
 <div class="hf-empty">Waiting for live Hese-Fredrik data…</div>
 </div>
 </section>
 
-<section class="panel hf-detail-panel" id="hfDetailPanel">
+<section class="panel hf-detail-panel hf-focus-panel" id="hfDetailPanel">
 <div class="ph"><div class="pt">Selected signal</div><span class="badge" id="hfSelectedTypeBadge">—</span></div>
 <div class="hf-detail-body" id="hfDetailBody">
-<div class="hf-empty">Select a moving video or active alert.</div>
+<div class="hf-empty">Select a video from the activity radar or Signals.</div>
 </div>
 </section>
 </div>
 
-<section class="panel hf-rules-panel">
-<div class="ph"><div class="pt">Alert logic</div><span class="badge">Current backend</span></div>
+<section class="panel hf-rules-panel hf-focus-panel">
+<div class="ph"><div class="pt">Signal logic</div><span class="badge">Current backend</span></div>
 <div class="hf-rules-body" id="hfRulesBody">
 <div class="hf-empty">Waiting for backend rules…</div>
 </div>

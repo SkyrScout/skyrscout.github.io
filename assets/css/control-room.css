@@ -1292,3 +1292,93 @@ body.hf-alert-flash::after{
 @media(max-width:1200px){
   .selthumb.short-format{width:76px}
 }
+
+
+/* === Hese-Fredrik Control Room v3: clock-hour radar, two-level signals, clean layout === */
+.control-screen[hidden]{display:none!important}
+.control-screen[data-screen="hese-fredrik"]{min-height:0;height:100%;overflow:hidden;padding:9px 10px 11px}
+.hf-screen-v3{min-height:0;height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:8px}
+.hf-screen-v3>.panel,.hf-screen-v3>.hf-work-grid>.panel{min-height:0}
+.hf-screen-v3 .hf-command-panel{display:grid;grid-template-rows:34px auto}
+.hf-screen-v3 .hf-command-panel>.ph,
+.hf-screen-v3 .hf-signals-panel>.ph,
+.hf-screen-v3 .hf-movers-panel>.ph,
+.hf-screen-v3 .hf-detail-panel>.ph,
+.hf-screen-v3 .hf-rules-panel>.ph{height:34px}
+.hf-screen-v3 .hf-command-body{display:grid;grid-template-columns:minmax(300px,1.15fr) minmax(430px,1fr) auto;gap:14px;align-items:center;padding:8px 11px}
+.hf-screen-v3 .hf-command-copy>strong{font-size:13px}
+.hf-screen-v3 .hf-command-copy p{margin-top:3px;font-size:7px}
+.hf-screen-v3 .hf-status-kicker{margin-bottom:2px;font-size:7px}
+.hf-screen-v3 .hf-stat-grid{grid-template-columns:repeat(4,minmax(86px,1fr));gap:6px}
+.hf-screen-v3 .hf-stat{padding:6px 8px}
+.hf-screen-v3 .hf-stat strong{font-size:13px;margin-top:2px}
+.hf-screen-v3 .hf-stat.suspicious{border-color:rgba(211,145,48,.38)}
+.hf-screen-v3 .hf-stat.suspicious strong{color:#e4ad58}
+.hf-screen-v3 .hf-stat.alarm{border-color:rgba(236,92,73,.42)}
+.hf-screen-v3 .hf-stat.alarm strong{color:#ff7f6d}
+.hf-screen-v3 .hf-filter-wrap{gap:3px}
+.hf-screen-v3 .hf-active-panel{display:grid;grid-template-rows:34px auto}
+.hf-screen-v3 .hf-active-list{min-height:48px;max-height:86px;padding:6px 9px;gap:7px}
+.hf-screen-v3 .hf-active-card{flex-basis:min(350px,76vw);grid-template-columns:66px minmax(0,1fr) auto;padding:5px}
+.hf-screen-v3 .hf-active-card.is-suspicious{border-color:rgba(211,145,48,.38);background:linear-gradient(90deg,rgba(160,101,23,.07),rgba(1,4,6,.96))}
+.hf-screen-v3 .hf-active-card.is-alarm{border-color:rgba(239,93,70,.58);background:linear-gradient(90deg,rgba(219,70,45,.11),rgba(1,4,6,.96))}
+.hf-screen-v3 .hf-active-card.is-alarm .hf-active-delta{color:#ff806f}
+.hf-screen-v3 .hf-active-card.is-suspicious .hf-active-delta{color:#e4ad58}
+.hf-screen-v3 .hf-work-grid{min-height:0;display:grid;grid-template-columns:minmax(0,1.48fr) minmax(350px,.78fr);gap:8px}
+.hf-screen-v3 .hf-movers-panel{display:grid;grid-template-rows:34px 25px minmax(0,1fr)}
+.hf-screen-v3 .hf-detail-panel{display:grid;grid-template-rows:34px minmax(0,1fr)}
+.hf-screen-v3 .hf-movers-head,
+.hf-screen-v3 .hf-mover{grid-template-columns:minmax(260px,1fr) 68px 66px 68px 68px 78px;gap:7px}
+.hf-screen-v3 .hf-movers-head{display:grid;align-items:center;padding:0 7px;border-bottom:1px solid #13232b;color:#687e8a;font-size:7px;text-transform:uppercase;letter-spacing:.05em}
+.hf-screen-v3 .hf-movers-head span:not(:first-child){text-align:right}
+.hf-screen-v3 .hf-movers-list{min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;padding:0 7px 3px;scrollbar-width:thin;scrollbar-color:#173848 #000}
+.hf-screen-v3 .hf-mover{min-height:55px;padding:4px 2px}
+.hf-screen-v3 .hf-mover.is-suspicious{background-image:linear-gradient(90deg,rgba(173,107,25,.06),transparent 34%)}
+.hf-screen-v3 .hf-mover.is-alert{background-image:linear-gradient(90deg,rgba(219,70,45,.09),transparent 34%)}
+.hf-mover-status{text-align:right;font-size:7px;font-weight:900;letter-spacing:.05em}
+.hf-mover-status.moving{color:#8ed6f4}.hf-mover-status.recent{color:#728b98}.hf-mover-status.suspicious{color:#e4ad58}.hf-mover-status.alarm{color:#ff806f}.hf-mover-status.standby{color:#536873}
+.hf-type-pill.short{border-color:#1c607b!important;color:#7fd8f4!important;background:rgba(12,82,111,.15)!important}
+.hf-alert-pill{border-color:rgba(239,93,70,.62)!important;color:#ff8b79!important;background:rgba(181,49,34,.16)!important}
+.hf-suspicious-pill{display:inline-flex;align-items:center;min-height:16px;padding:0 5px;border:1px solid rgba(211,145,48,.55);border-radius:999px;color:#e4ad58;background:rgba(132,81,14,.13);font-size:6px;font-weight:900;letter-spacing:.06em}
+.hf-status-pill{display:inline-flex;align-items:center;min-height:16px;padding:0 5px;border:1px solid #1c4355;border-radius:999px;color:#91cde7;font-size:6px;font-weight:900;letter-spacing:.06em}.hf-status-pill.recent{color:#7c929d;border-color:#243945}.hf-status-pill.moving{color:#91d8f5;border-color:#205d78}
+#hfSelectedTypeBadge.short{border-color:#1c607b;color:#7fd8f4;background:rgba(12,82,111,.15)}
+.hf-detail-note{margin-top:7px;padding:6px 8px;border:1px solid #102631;border-radius:7px;color:#647c88;background:#010507;font-size:7px;line-height:1.4}
+.hf-detail-alert.suspicious{border-color:rgba(211,145,48,.35);background:rgba(160,101,23,.055)}
+.hf-detail-alert.suspicious strong{color:#e4ad58}
+.hf-detail-alert.alarm{border-color:rgba(239,93,70,.42);background:rgba(181,49,34,.07)}
+.hf-detail-alert.alarm strong{color:#ff806f}
+.hf-screen-v3 .hf-rules-panel{display:grid;grid-template-rows:34px auto}
+.hf-screen-v3 .hf-rules-body{padding:6px 9px}
+.hf-screen-v3 .hf-rule{font-size:7px}.hf-screen-v3 .hf-rule strong{font-size:7px}
+.rtrow.live-suspicious b{color:#e4ad58}
+.rtrow.live-alert b{color:#ff806f}
+.hf-focus-panel>.ph{gap:7px}
+.hf-focus-panel>.ph>.badge{margin-left:auto}
+
+/* Hese-Fredrik Focus Mode uses the same overlay as Overview, but every Hese console is eligible. */
+.console-focus-shell.hese-focus{width:min(86vw,1480px);height:min(86vh,900px)}
+.console-focus-shell.hese-focus .panel{display:grid!important;grid-template-rows:48px minmax(0,1fr)!important}
+.console-focus-shell.hese-radar-focus .panel{grid-template-rows:48px 34px minmax(0,1fr)!important}
+.console-focus-shell.hese-focus .hf-movers-list,.console-focus-shell.hese-focus .hf-detail-body,.console-focus-shell.hese-focus .hf-active-list,.console-focus-shell.hese-focus .hf-rules-body{min-height:0;overflow-y:auto!important}
+.console-focus-shell.hese-radar-focus{width:min(90vw,1580px);height:min(88vh,920px)}
+.console-focus-shell.hese-radar-focus .hf-movers-head,.console-focus-shell.hese-radar-focus .hf-mover{grid-template-columns:minmax(360px,1fr) 90px 90px 90px 90px 100px!important;font-size:11px!important}
+.console-focus-shell.hese-radar-focus .hf-mover{min-height:72px!important;padding:7px 8px!important}
+.console-focus-shell.hese-radar-focus .hf-mover-copy strong{font-size:13px!important}
+.console-focus-shell.hese-radar-focus .hf-mover-value,.console-focus-shell.hese-radar-focus .hf-mover-status{font-size:12px!important}
+.console-focus-shell.hese-detail-focus .hf-detail-body{padding:24px 28px!important}
+.console-focus-shell.hese-detail-focus .hf-detail-copy h2{font-size:23px!important}
+.console-focus-shell.hese-detail-focus .hf-detail-copy p,.console-focus-shell.hese-detail-focus .hf-detail-note{font-size:11px!important}
+.console-focus-shell.hese-detail-focus .hf-detail-metrics{gap:10px!important}
+.console-focus-shell.hese-detail-focus .hf-detail-metric{min-height:78px!important;padding:12px!important}
+.console-focus-shell.hese-detail-focus .hf-detail-metric span{font-size:10px!important}.console-focus-shell.hese-detail-focus .hf-detail-metric strong{font-size:22px!important}
+.console-focus-shell.hese-signals-focus .hf-active-list{max-height:none!important;padding:22px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
+.console-focus-shell.hese-signals-focus .hf-active-card{width:100%!important;max-width:none!important;flex-basis:auto!important;grid-template-columns:112px minmax(0,1fr) auto!important;padding:10px!important}
+.console-focus-shell.hese-signals-focus .hf-active-card img{width:112px!important}.console-focus-shell.hese-signals-focus .hf-active-card-copy strong{font-size:14px!important}.console-focus-shell.hese-signals-focus .hf-active-card-copy small{font-size:10px!important}.console-focus-shell.hese-signals-focus .hf-active-delta{font-size:18px!important}
+.console-focus-shell.hese-rules-focus{width:min(72vw,1100px);height:min(62vh,620px)}
+.console-focus-shell.hese-rules-focus .hf-rules-body{padding:28px 34px!important;align-content:start;gap:15px 28px!important}.console-focus-shell.hese-rules-focus .hf-rule{font-size:13px!important}.console-focus-shell.hese-rules-focus .hf-rule strong{font-size:13px!important}
+.console-focus-shell.hese-command-focus{width:min(78vw,1260px);height:min(55vh,540px)}
+.console-focus-shell.hese-command-focus .hf-command-body{grid-template-columns:1fr!important;padding:28px 34px!important;align-content:start!important}.console-focus-shell.hese-command-focus .hf-command-copy>strong{font-size:23px!important}.console-focus-shell.hese-command-focus .hf-command-copy p{font-size:11px!important}.console-focus-shell.hese-command-focus .hf-stat strong{font-size:22px!important}.console-focus-shell.hese-command-focus .hf-stat span{font-size:10px!important}
+
+@media(max-width:1200px){.hf-screen-v3 .hf-command-body{grid-template-columns:1fr 1fr}.hf-screen-v3 .hf-filter-wrap{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between}.hf-screen-v3 .hf-work-grid{grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr)}.hf-screen-v3 .hf-movers-head,.hf-screen-v3 .hf-mover{grid-template-columns:minmax(220px,1fr) 58px 58px 62px 62px 70px}}
+@media(max-width:900px){.control-screen[data-screen="hese-fredrik"]{height:auto;overflow:visible}.hf-screen-v3{height:auto;grid-template-rows:none}.hf-screen-v3 .hf-command-body{grid-template-columns:1fr}.hf-screen-v3 .hf-filter-wrap{grid-column:auto}.hf-screen-v3 .hf-work-grid{grid-template-columns:1fr}.hf-screen-v3 .hf-movers-panel{min-height:520px}.hf-screen-v3 .hf-detail-panel{min-height:420px}}
+@media(max-width:680px){.hf-screen-v3 .hf-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hf-screen-v3 .hf-movers-head{display:none}.hf-screen-v3 .hf-mover{grid-template-columns:minmax(0,1fr) repeat(2,58px);min-height:78px}.hf-screen-v3 .hf-mover-main{grid-column:1/-1}.hf-screen-v3 .hf-mover-value.total,.hf-screen-v3 .hf-mover-value.current,.hf-screen-v3 .hf-mover-value.previous{display:none}.hf-screen-v3 .hf-mover-status{display:flex;align-items:center;justify-content:flex-end}.console-focus-shell.hese-signals-focus .hf-active-list{grid-template-columns:1fr!important}}
