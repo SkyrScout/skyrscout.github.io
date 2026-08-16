@@ -28,6 +28,10 @@ function loadClassicScript(src) {
 }
 
 async function startControlRoom() {
+  // Load the authenticated Firebase data bridge before any Control Room
+  // script is allowed to request live data. The browser must never call
+  // Apps Script directly; the callable function does that server-side.
+  await import("/assets/js/staff-backend.js");
   await loadClassicScript("/assets/js/control-room.js");
   await loadClassicScript("/assets/js/control-room-live.js");
 }

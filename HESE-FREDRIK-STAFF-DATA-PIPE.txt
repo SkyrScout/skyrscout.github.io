@@ -1,0 +1,42 @@
+SKYRSCOUT / SCOUTLAND YARD
+Hese-Fredrik Staff Data Pipe
+
+WHAT THIS PATCH FIXES
+---------------------
+The browser no longer calls script.google.com at all.
+
+Before:
+  Control Room browser -> Apps Script -> Google multi-login could rewrite /macros/s/
+  into /macros/u/2/s/ -> 404 -> Chrome ORB block.
+
+After:
+  Approved Firebase Staff session -> Firebase callable function -> Apps Script.
+
+The Apps Script request now originates server-side from Google Cloud, with none of the
+user's Google account cookies. Having several Google accounts signed in on the PC no
+longer affects the Hese-Fredrik data request.
+
+SECURITY
+--------
+The callable function rejects the request unless:
+  1. Firebase Authentication supplied a signed-in user;
+  2. that user has a verified Google email;
+  3. staff_allowlist/<lowercase-email> exists in Firestore;
+  4. that document has active: true.
+
+FILES
+-----
+assets/js/control-room-auth.js       loads the authenticated data bridge first
+assets/js/staff-backend.js           calls the Firebase callable function
+assets/js/staff-firebase-config.js   adds Functions region/name
+assets/js/control-room-live.js       NO direct Apps Script / JSONP requests anymore
+control-room/index.html              removes Apps Script endpoint from the page shell
+firebase/functions/index.js          secure server-side Hese-Fredrik relay
+firebase/functions/package.json      Node 22 dependencies
+firebase/firebase.json               Firebase CLI config
+
+DEPLOYMENT NOTE
+---------------
+The GitHub files can be uploaded immediately, but live data requires the Firebase
+project config and the deployed controlRoomFeed function. Do NOT reintroduce the
+Apps Script endpoint in control-room-live.js.

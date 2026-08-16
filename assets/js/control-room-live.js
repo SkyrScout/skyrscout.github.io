@@ -1,9 +1,7 @@
 (function(){
   'use strict';
 
-  const endpoint = document.body.dataset.heseFredrikEndpoint || 'https://script.google.com/macros/s/AKfycbw5hZ4rk0e4OwClAtrH3-K9g4Z_XBu00a61Lx-aqdlv_KRXxZhJhR3WGFynE9W2WY5Z/exec';
   const REFRESH_MS = 60 * 1000;
-  const REQUEST_TIMEOUT_MS = 15000;
   const ACK_KEY = 'skyrscout-cr-hf-internal-ack-v3';
   const ACK_TTL_MS = 45 * 60 * 1000;
 
@@ -18,11 +16,7 @@
   const overviewTitle = document.getElementById('crRealtimeListTitle');
   const overviewBadge = document.getElementById('crRealtimeBadge');
 
-  const DEBUG_CALLBACK = 'SkyrScoutControlRoomHFDebug';
-  const PUBLIC_CALLBACK = 'SkyrScoutControlRoomHFPublic';
   let activeRequestToken = 0;
-  let activeScript = null;
-  let activeTimeout = null;
 
   function fmtNumber(value){
     const n = Number(value);
@@ -414,26 +408,6 @@
     setFeedMessage(message || 'Could not reach the Hese-Fredrik endpoint.', true);
   }
 
-  function clearRequest(){
-    if(activeTimeout){
-      window.clearTimeout(activeTimeout);
-      activeTimeout = null;
-    }
-    if(activeScript && activeScript.parentNode){
-      activeScript.parentNode.removeChild(activeScript);
-    }
-    activeScript = null;
-  }
-
-  function jsonpUrl(mode, callbackName){
-    const sep = endpoint.indexOf('?') === -1 ? '?' : '&';
-    const parts = [];
-    if(mode) parts.push('mode=' + encodeURIComponent(mode));
-    parts.push('callback=' + encodeURIComponent(callbackName));
-    parts.push('_=' + Date.now());
-    return endpoint + sep + parts.join('&');
-  }
-
   function renderPublicFallback(payload, reason){
     if(!payload || payload.ok === false){
       throw new Error('Invalid public Hese-Fredrik payload');
@@ -468,76 +442,46 @@
     }
   }
 
-  function requestPublicFallback(token, reason){
-    clearRequest();
-    const script = document.createElement('script');
-    activeScript = script;
 
-    window[PUBLIC_CALLBACK] = function(payload){
-      if(token !== activeRequestToken) return;
-      clearRequest();
-      try{
-        renderPublicFallback(payload || {}, reason);
-      }catch(error){
-        console.warn('Control Room public Hese-Fredrik fallback:', error);
-        fail('The backend answered, but the public payload could not be rendered.');
-      }
-    };
-
-    script.async = true;
-    script.src = jsonpUrl('', PUBLIC_CALLBACK);
-    script.onerror = function(){
-      if(token !== activeRequestToken) return;
-      clearRequest();
-      fail('Neither the Control Room feed nor the public Hese-Fredrik feed could be loaded.');
-    };
-
-    activeTimeout = window.setTimeout(function(){
-      if(token !== activeRequestToken) return;
-      clearRequest();
-      fail('Hese-Fredrik backend did not call back before the timeout.');
-    }, REQUEST_TIMEOUT_MS);
-
-    document.head.appendChild(script);
+  function staffBackend(){
+    const backend = window.SkyrScoutStaffBackend;
+    if(!backend || typeof backend.fetchHeseFredrik !== 'function'){
+      throw new Error('Authenticated Staff backend is not available.');
+    }
+    return backend;
   }
 
-  function load(){
-    if(!endpoint){
-      fail('Backend endpoint is not configured on this page.');
-      return;
+  async function requestPublicFallback(token, reason){
+    try{
+      const payload = await staffBackend().fetchHeseFredrik('public');
+      if(token !== activeRequestToken) return;
+      renderPublicFallback(payload || {}, reason);
+    }catch(error){
+      if(token !== activeRequestToken) return;
+      console.warn('Control Room public Hese-Fredrik fallback:', error);
+      fail('Neither the Control Room feed nor the public Hese-Fredrik feed could be loaded through the Staff backend.');
     }
+  }
 
+  async function load(){
     activeRequestToken += 1;
     const token = activeRequestToken;
-    clearRequest();
 
-    const script = document.createElement('script');
-    activeScript = script;
-
-    window[DEBUG_CALLBACK] = function(payload){
+    try{
+      const payload = await staffBackend().fetchHeseFredrik('debug');
       if(token !== activeRequestToken) return;
-      clearRequest();
+
       try{
         render(payload || {});
       }catch(error){
         console.warn('Control Room live feed render:', error);
-        requestPublicFallback(token, 'Debug payload was returned but could not be rendered.');
+        await requestPublicFallback(token, 'Debug payload was returned but could not be rendered.');
       }
-    };
-
-    script.async = true;
-    script.src = jsonpUrl('debug', DEBUG_CALLBACK);
-    script.onerror = function(){
+    }catch(error){
       if(token !== activeRequestToken) return;
-      requestPublicFallback(token, 'Debug feed request failed.');
-    };
-
-    activeTimeout = window.setTimeout(function(){
-      if(token !== activeRequestToken) return;
-      requestPublicFallback(token, 'Debug feed returned no callback.');
-    }, REQUEST_TIMEOUT_MS);
-
-    document.head.appendChild(script);
+      console.warn('Control Room Staff backend:', error);
+      await requestPublicFallback(token, 'Debug feed request failed.');
+    }
   }
 
   load();

@@ -20,6 +20,11 @@ export const staffAccessConfig = Object.freeze({
   defaultTarget: "/control-room/"
 });
 
+export const staffBackendConfig = Object.freeze({
+  functionsRegion: "europe-west1",
+  controlRoomFunction: "controlRoomFeed"
+});
+
 export function firebaseIsConfigured() {
   return Boolean(
     firebaseConfig.apiKey &&
