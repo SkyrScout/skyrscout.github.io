@@ -29,9 +29,9 @@ summary: |
   🪂 Excellent header of the ball
 
 report: |
-  This player profile is based on video scouting by Bon Scout and data scouting by Scout Pilgrim. A full written scouting report is not currently available.
+  This player profile is based on video scouting by Bon Scout. A full written scouting report is not currently available.
 
-  Scout Pilgrim's assessment was based primarily on Rieper's performances and statistical profile for FC Fredericia in the Danish second tier. Suitable video material from Fredericia was limited, so the accompanying footage comes from his time at Silkeborg in 2024, from a match against FC Copenhagen.
+  Bon Scout's assessment was based primarily on Rieper's performances and statistical profile for FC Fredericia in the Danish second tier. Suitable video material from Fredericia was limited, so the accompanying footage comes from his time at Silkeborg in 2024, from a match against FC Copenhagen.
 
   Rieper was excellent in the first half as Silkeborg went into the break at 0–0. He was involved in situations leading to goals conceded after the break, although without making any major individual errors. The footage nevertheless shows many of the qualities identified in the scouting: he is a big and strong centre-back, moves well for his size, is very good in possession and passing from the back, competes strongly in duels and is excellent in the air.
 
