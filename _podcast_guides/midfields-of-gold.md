@@ -30,13 +30,25 @@ Vi snakker varmt om:
 
 {% include podcast-player-card.html slug="andreas-lausen" %}
 
-### Yaqub Finey - Svensk sprengstoff? - [Video 1](https://www.youtube.com/watch?v=yqoEWuLHM1I) / [Video 2](https://www.youtube.com/watch?v=e2y2Fo8esjA)
+22 år gammel dansk midtbanespiller som også kan brukes fra venstre. Lausen har godt blikk for spillet, en presis høyrefot og er en god avslutter. 6 mål og 4 assist på 18 kamper i NordicBet Liga viser at han også bidrar med sluttprodukt.
+
+### Yacqub Finey - Svensk sprengstoff? - [Video 1](https://www.youtube.com/watch?v=yqoEWuLHM1I) / [Video 2](https://www.youtube.com/watch?v=e2y2Fo8esjA)
 
 {% include podcast-player-card.html slug="yacqub-finey" %}
 
+21 år gammel svensk-somalisk angrepsspiller på hele 201 cm. Finey er uvanlig teknisk for størrelsen, med godt blikk, presise pasninger og avslutninger, farlige direkte frispark og stor trussel på innlegg. Han kan spille både offensiv midtbane, spiss og høyreving, men vi ser størst potensial som nier eller tier.
+
 ### Doni Arifi - Finsk fenghette eller Kruttønne fra Kosovo - Den nye Selnæs? - [Video 1](https://www.youtube.com/watch?v=QbWwI_lwB98) / [Video 2](https://www.youtube.com/watch?v=lfeCuT3ySfA)
 
+{% include podcast-player-card.html slug="doni-arifi" %}
+
+22 år gammel finsk-kosovsk sekser på 195 cm. Arifi passer svært godt som den sentrale, sittende midtbanespilleren i en 4-3-3, med svært høy pasningsvolum og treffprosent, en kraftfull venstrefot, god teknikk og fysikk til å vinne ball. Han har også egenskaper til å spille midtstopper, men vi mener han bør brukes som sekser.
+
 ### Ollobergan Karimov - Usbekisk Wonderkid? - [Video 1 (Short)](https://www.youtube.com/shorts/HdcxRo-gLrg) / [Video 2](https://www.youtube.com/watch?v=gV8D4aPfh9U)
+
+{% include podcast-player-card.html slug="ollobergan-karimov" %}
+
+18 år gammel usbekisk sekser og en ordentlig ballsentral. Karimov har meget godt blikk, et stort pasningsrepertoar og teknisk ballbehandling, og styrer spillet fra en dypere posisjon. Han er venstrefotet, men bruker også høyrefoten med stor presisjon. Det fysiske er fortsatt et utviklingsområde når han skal etablere seg i seniorfotballen.
 
 ## TRIFORCE
 
@@ -75,3 +87,5 @@ Deretter gjør vi en dypere analyse på:
 ### Kacper Karasek - Ekstraklasa Joker Nord neste sesong? - [Video](https://www.youtube.com/watch?v=STT0NZADZMI)
 
 {% include podcast-player-card.html slug="kacper-karasek" %}
+
+22 år gammel polsk offensiv midtbanespiller som også kan brukes på venstrekanten eller som spiss. Karasek kombinerer presise avslutninger med kreativ pasningskvalitet og er i tillegg en ekte dødballspesialist på cornere, frispark og straffer. 10 mål og 3 assist på 17 ligakamper i 2024 understreker sluttproduktet.

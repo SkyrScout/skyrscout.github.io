@@ -31,19 +31,25 @@ Vi ser på noen spillere som har interessante tall og ferdigheter, men som vi ik
 
 {% include podcast-player-card.html slug="szymon-lyczko" %}
 
-Født 09.02.2006. Spiller for Stal Rzeszów på nivå 2 i Polen.
+18 år gammel kantspiller fra Polen som kan spille på begge sider. Łyczko er rask og eksplosiv, sterk 1 mot 1 og en skarp dribbler. Høyrefoten er den foretrukne, men han bruker også venstrefoten godt til innlegg, pasninger, skudd og avslutninger.
 
 ### Milan Kolarević - Dribblekant/dribblefant nr. 2 - [Video](https://www.youtube.com/watch?v=dZB20vbqHN8)
 
-Født 07.04.2004. Spiller for FK Voždovac på nivå 2 i Serbia.
+{% include podcast-player-card.html slug="milan-kolarevic" %}
+
+20 år gammel venstreving fra Serbia og en dribblekant i ordets rette forstand. 5,8 vellykkede driblinger med 77 prosent treffrate hos SofaScore er oppsiktsvekkende høyt. Han har også gode langpasninger, en farlig høyrefot fra distanse og jobber bra defensivt, men 7 prosent goal conversion viser at effektiviteten foran mål må opp.
 
 ### Szilárd Szabó - Episodens "Bubblare" - [Video](https://www.youtube.com/watch?v=AmTosPGTMEE)
 
-Født 01.10.2006. Spiller for Soroksár SC på lån fra Ferencvárosi TC, på nivå 2 i Ungarn.
+{% include podcast-player-card.html slug="szilard-szabo" %}
+
+18 år gammel høyreving på lån fra Ferencváros til Soroksár SC. Han er ikke en klassisk dribbleving, men har gode ferdigheter 1 mot 1, beveger seg smart uten ball og kan opptre mer som en sidespiss. 6 mål og 6 assist på 14 kamper viser at han allerede leverte svært godt med målpoeng på nivå 2 i Ungarn.
 
 ### Fran Topić - En siste slenger: "On Topic"! - [Video](https://www.youtube.com/watch?v=V0iDS7e1r2M)
 
-Født 20.03.2004. Spiller for HŠK Zrinjski Mostar på øverste nivå i Bosnia-Hercegovina.
+{% include podcast-player-card.html slug="fran-topic" %}
+
+20 år gammel kroatisk-bosnisk høyreving med bakgrunn fra Dinamo Zagreb. Den 188 cm høye venstrefotspilleren passer godt som innoverkant eller sidespiss, men avslutter så godt med begge bein at vi regner ham som genuint tobeint. Effektiv dribbler, brukbar i lufta og med 5 mål og 2 assist på 16 kamper hadde han også sluttprodukt.
 
 ## TRIOVING
 
@@ -53,13 +59,19 @@ Vi har kommet til indrefileten La Pièce de Résistance. PILEGRIMSLEDEN! Her dyk
 
 {% include podcast-player-card.html slug="drilon-hazrollaj" %}
 
+20 år gammel kantspiller fra Kosovo som kan spille på begge sider. Hazrollaj er rask, direkte og genuint tobeint, med en spesielt kraftfull og presis venstrefot. 9 mål og 5 assist på 18 ligakamper kombineres med høy arbeidskapasitet og aggressivt presspill.
+
 ### Isak Bjerkebo - Her har vel "Broren til Ove" full kontroll? - [Video 1](https://www.youtube.com/watch?v=pUs-ti52eIQ) / [Video 2](https://www.youtube.com/watch?v=sMDIY4t0rjo)
 
 {% include podcast-player-card.html slug="isak-bjerkebo" %}
 
+21 år gammel svensk venstreving med bra fart og særlig interessante bevegelser uten ball. Bjerkebo timer løpene sine godt, finner rom i og rundt boksen og avslutter kontrollert. Videomaterialet ga derimot ikke nok grunnlag til å konkludere sikkert om hvor god han er til å slå spillere med ball.
+
 ### Arif Aiman - "We are scouting on thin ice here!" Dribblekant/dribblefant nr. 4 - [Video](https://www.youtube.com/watch?v=RSALwKOaPI4)
 
 {% include podcast-player-card.html slug="arif-aiman" %}
+
+22 år gammel kantspiller fra Malaysia som kan brukes på begge sider. Aiman er lynrask, genuint tobeint og svært sterk 1 mot 1, med farlig dødballfot og mye offensivt sluttprodukt.
 
 ## P.S. Áki Debes Samuelsen
 
