@@ -62,6 +62,8 @@ Det er alltid vanskelig å velge ut hvilke spillere som skal på Topp 3-lista, m
 
 ### Mustapha Jah - Et rungende Jah - [Video](https://www.youtube.com/watch?v=RUpb9IYICU4)
 
+{% include podcast-player-card.html slug="mustapha-jah" %}
+
 21 år gammel spiss på 190 cm som fyller 22 år i januar. "Zlatan", som blir kalt i hjemlandet Gambia, ble hentet til Cluj i Romania sommeren 2022 og var klar for å ta steget for alvor da han skadet korsbåndet før jul i 2023. Ett år senere var han tilbake i trening, men sommeren 2025 forlot han Cluj og skrev en ettårskontrakt med FC Floriana på Malta. Her har han til tider vist hvilken eminent fotballspiller han kan være, men tåler egentlig kneet og kroppen belastningen? Og hva skjer i overgangsvinduene som ligger foran oss før kontrakten løper ut?
 
 ## Har vi litt "Spitzgefühl"?
