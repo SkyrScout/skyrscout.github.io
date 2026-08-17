@@ -774,10 +774,34 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
         });
     }
 
+    function normalizePlayerSearchText(value) {
+        return String(value || "")
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/g, "")
+            .replace(/æ/g, "ae")
+            .replace(/œ/g, "oe")
+            .replace(/ø/g, "o")
+            .replace(/ł/g, "l")
+            .replace(/đ/g, "d")
+            .replace(/ð/g, "d")
+            .replace(/þ/g, "th")
+            .replace(/ß/g, "ss")
+            .replace(/ı/g, "i")
+            .replace(/ħ/g, "h")
+            .replace(/ŧ/g, "t")
+            .replace(/ŋ/g, "n")
+            .replace(/ə/g, "e")
+            .replace(/ƒ/g, "f")
+            .replace(/ĸ/g, "k")
+            .replace(/[’'`´‘]/g, "")
+            .replace(/[‐‑‒–—−\-_/.,:;()[\]{}|]+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
     function filterPlayers() {
-        const searchTerm = searchInput.value
-            .trim()
-            .toLowerCase();
+        const searchTerm = normalizePlayerSearchText(searchInput.value);
 
         const selectedPosition = positionSelect.value;
         const hasActiveFilters = Boolean(searchTerm || selectedPosition);
@@ -786,7 +810,7 @@ description: "Scouting reports and video analysis of players featured by SkyrSco
         let visiblePlayers = 0;
 
         getPlayerCards().forEach(function (card) {
-            const playerText = card.dataset.search;
+            const playerText = normalizePlayerSearchText(card.dataset.search);
             const playerPositions = getPositionEntries(card);
 
             const matchesSearch = playerText.includes(searchTerm);
