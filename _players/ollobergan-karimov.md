@@ -40,7 +40,7 @@ report: |
 
   Although left-foot dominant, he is also very capable with his right foot. The video shows him receiving with either foot and playing both short and long passes, as well as accurate deliveries from wide areas, with either side.
 
-  Karimov impressed strongly at U17 level and likely attracted attention from scouts through those performances. At senior club level, however, he had not yet established himself as a regular and was receiving limited playing time.
+  Karimov impressed at the AFC U17 Asian Cup in 2023, where Uzbekistan reached the semi-finals. His performances at the tournament likely put him on the radar of a number of scouts. At senior club level, however, he had not yet established himself as a regular and was receiving limited playing time.
 
   His physical development remains an area for improvement. The domestic league can be demanding physically, and Karimov still has some adaptation ahead of him in that respect.
 
