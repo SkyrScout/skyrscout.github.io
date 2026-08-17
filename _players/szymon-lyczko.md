@@ -49,7 +49,7 @@ report: |
 
   While still developing, he already possesses the raw tools needed to succeed at a higher level. Greater consistency in his decision-making and goal contributions would help him take the next step.
 
-  Playing in Poland’s second tier at the time of this profile, Łyczko looks ready for a bigger challenge. Clubs looking for an exciting, modern winger with upside should be paying close attention.
+  Playing in Poland’s second tier, Łyczko looks ready for a bigger challenge. Clubs looking for an exciting, modern winger with upside should be paying close attention.
 
 transfermarkt: "https://www.transfermarkt.com/szymon-lyczko/profil/spieler/1108661"
 sofascore: "https://www.sofascore.com/football/player/szymon-lyczko/1435357#tab:season"

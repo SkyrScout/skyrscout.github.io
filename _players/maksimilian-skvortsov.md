@@ -78,7 +78,7 @@ report: |
 
   Transfer outlook
 
-  At the time of this report, Estonia sat 48th in UEFA's league coefficient rankings, although recent European results had seen the league begin climbing again.
+  Estonia sat 48th in UEFA's league coefficient rankings, although recent European results had seen the league begin climbing again.
 
   With a contract until the end of 2027, Skvortsov is unlikely to come cheaply by Estonian standards, but an estimated fee of €500,000 to €1 million could represent excellent value.
 

@@ -18,7 +18,7 @@ positions:
     rank: 1
 
 summary: |
-  🇬🇭 Kwame Peprah | 25 y/o CF
+  🇬🇭 Kwame Peprah | 24 y/o CF
   💪 181 cm power striker – built like an ox, excellent hold-up play
   💥 Hammer strikes with both feet; Klinsmann-like power on headers
   ⚽ Smart runs, strong finisher – 10G + 5A in 10 league games
@@ -26,7 +26,7 @@ summary: |
   🔜 Contract to June 2026 – profile fits Norway (OBOS level)
 
 report: |
-  Kwame Peprah | 25-year-old centre-forward | Ghana
+  Kwame Peprah | 24-year-old centre-forward | Ghana
 
   A compact, powerfully built striker standing 181 cm tall — a complete power package, built like a small ox. Peprah thrives in physical duels, offering excellent hold-up play and tremendous shot power with both feet. His finishing is strong and decisive, and while his ball control is solid rather than silky, he consistently creates shooting opportunities through strength and positioning.
 

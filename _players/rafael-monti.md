@@ -20,7 +20,7 @@ positions:
     rank: 1
 
 summary: |
-  🇦🇷 Rafael Monti | 26 y/o CF
+  🇦🇷 Rafael Monti | 25 y/o CF
   💪 Traditional No.9 — physical, intelligent & strong in duels
   🎯 Excellent box positioning, sharp movement & well-timed runs
   ⚽ Reliable finisher with both feet and in the air

@@ -4,8 +4,8 @@ short_by: "Bon Scout"
 
 title: "Antoni Młynarczyk – Polish the Keeper’s Dome!"
 player_slug: "antoni-mlynarczyk"
-co_signature_player_slugs:
-secondary_player_slugs:
+co_signature_player_slugs: []
+secondary_player_slugs: []
 youtube: "https://www.youtube.com/shorts/aiWlGz5ZufU"
 report_date: "11.08.2025"
 site_added: "12.08.2026"
