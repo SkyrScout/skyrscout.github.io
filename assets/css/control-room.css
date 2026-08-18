@@ -1551,3 +1551,208 @@ body.hf-alert-flash::after{
 @media(max-width:900px){
   body{overflow:auto}.main{height:auto;min-height:100vh}.control-screen[data-screen="youtube"]{height:auto;overflow:visible}.yt-screen-grid{height:auto;grid-template-columns:1fr;grid-template-rows:none}.youtube-panel{min-height:360px}.yt-video-selector-panel{min-height:520px}.yt-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.yt-metric:nth-child(4),.yt-metric:nth-child(5){display:block}.yt-audience-split,.yt-geo-columns{grid-template-columns:1fr}
 }
+
+/* === YouTube Analytics readability + Focus Mode refinement v4 =============
+   Keeps the YouTube-red identity as an accent, not as the body text colour.
+   Rows are bar-ready through --yt-bar-pct (0% until real data is supplied). */
+.youtube-screen-v1{
+  --yt-red:#ff433d;
+  --yt-red-bright:#ff716b;
+  --yt-line:rgba(255,67,61,.30);
+  --yt-soft:rgba(255,92,85,.10);
+  --yt-body:#d8d4d4;
+  --yt-muted:#999090;
+  --yt-muted-2:#746d6d;
+  --yt-inner-line:#282323;
+  --yt-bar-track:#272323;
+  --yt-bar-fill:#c85c57;
+}
+.youtube-panel{
+  border-color:var(--yt-line)!important;
+  background:linear-gradient(180deg,rgba(11,4,4,.88),#030303 42%,#000)!important;
+  box-shadow:inset 0 1px 0 rgba(255,83,76,.025);
+  grid-template-rows:40px minmax(0,1fr);
+}
+.youtube-panel>.ph{
+  border-bottom-color:var(--yt-soft)!important;
+  background:linear-gradient(90deg,rgba(83,9,9,.22),rgba(11,5,5,.08) 56%,transparent)!important;
+}
+.youtube-panel .pt{
+  color:var(--yt-red-bright)!important;
+  font-size:11px;
+  text-shadow:0 0 10px rgba(255,72,65,.16);
+}
+.youtube-panel .badge{color:#d6cccc;border-color:rgba(133,57,54,.48);background:rgba(48,13,13,.10)}
+.youtube-panel.console-focusable:hover{border-color:rgba(255,83,76,.58)!important;box-shadow:0 10px 28px rgba(0,0,0,.72),0 0 18px rgba(255,28,28,.055)!important}
+.yt-step{width:24px;height:20px;color:#c38480;font-size:8px;border-color:rgba(170,66,62,.40)}
+.yt-panel-body{padding:10px 11px;color:var(--yt-body);font-size:10px;line-height:1.4}
+
+/* Normal-screen typography: readable without turning the dashboard into cards. */
+.yt-format-tab{font-size:9px;padding:4px 8px;color:#c5b7b6}
+.yt-selector-context{font-size:9px;color:var(--yt-muted);padding-bottom:7px}.yt-selector-context strong{color:#e09a96}
+.yt-video-row{min-height:55px;grid-template-columns:74px minmax(0,1fr) 18px;gap:9px;padding:5px 4px;border-bottom-color:#201b1b}
+.yt-video-row img{width:74px}.yt-video-row.yt-short-row img{width:40px;height:50px}
+.yt-video-copy strong{font-size:10px;color:#eee}.yt-video-copy small{font-size:9px;color:var(--yt-muted)}
+.yt-row-arrow{font-size:17px;color:#8c5a57}
+
+.yt-selected-head{grid-template-columns:104px minmax(0,1fr);gap:12px;margin-bottom:9px}.yt-selected-head img{width:104px;border-color:#2a2424}
+.yt-selected-head strong{font-size:15px;color:#f2eeee}.yt-selected-head span{font-size:9px;color:var(--yt-muted)}
+.yt-metric-grid{gap:7px}.yt-metric{min-height:66px;border-color:var(--yt-inner-line);background:#050505;padding:8px 9px}
+.yt-metric span{font-size:10px;color:var(--yt-muted)}.yt-metric strong{font-size:21px;color:#f3f1f1;margin-top:4px}.yt-metric small{font-size:8px;color:var(--yt-muted-2)}
+.yt-chart-shell{border-top-color:var(--yt-inner-line);padding-top:7px}.yt-chart-head{font-size:9px;color:var(--yt-muted)}.yt-chart-head b{font-size:8px;color:#c57570}.yt-line-placeholder span{font-size:9px;color:var(--yt-muted-2)}
+
+.yt-info-strip{grid-template-columns:19px minmax(0,1fr);gap:8px;padding:8px 9px;font-size:9px;color:#9eb7c2}.yt-info-dot{width:17px;height:17px;font-size:10px}
+.yt-realtime-kpis{gap:7px;margin-top:8px}.yt-realtime-kpis>div{padding:9px;border-color:#233137;background:#030606}
+.yt-realtime-kpis span{font-size:10px;color:#9aacb4}.yt-realtime-kpis strong{font-size:24px;color:#f0f4f5}.yt-realtime-kpis small{font-size:8px;color:#6f8c98}
+.yt-panel-note{font-size:9px;color:var(--yt-muted);line-height:1.45}
+
+.yt-feature-metric{border-color:var(--yt-inner-line);background:#050505;padding:10px 11px}.yt-feature-metric span{font-size:11px;color:var(--yt-muted)}.yt-feature-metric strong{font-size:30px;color:#f4f1f1}.yt-feature-metric small{font-size:9px;color:var(--yt-muted-2)}
+.yt-section-label{font-size:10px;color:#ee8f89;margin:10px 0 7px}
+.yt-source-stack{height:9px;background:var(--yt-bar-track)}
+.yt-source-intro{font-size:10px;color:var(--yt-muted);line-height:1.45;margin-bottom:7px}
+.yt-detail-context{font-size:10px;color:var(--yt-muted);border-color:var(--yt-inner-line);background:#050505;padding:9px 10px}.yt-detail-context strong{font-size:13px;color:#ece4e3}
+.yt-geo-copy strong{font-size:12px;color:#f09a95}.yt-geo-copy span{font-size:10px;color:var(--yt-muted)}
+.yt-geo-detail{border-color:var(--yt-inner-line);background:#050505;padding:10px}.yt-geo-detail span{font-size:9px;color:var(--yt-muted)}.yt-geo-detail strong{font-size:13px}.yt-geo-detail small{font-size:9px;color:var(--yt-muted)}
+.yt-audience-card{border-color:var(--yt-inner-line);background:#050505;padding:10px}.yt-audience-card>span{font-size:10px;color:#ee8f89}
+
+/* Bar-ready comparison rows.  Real data can set --yt-bar-pct:33.1%; no value = 0%. */
+.yt-mini-source-list>div,
+.yt-source-button,
+.yt-detail-row,
+.yt-geo-list>div,
+.yt-audience-card>div{
+  --yt-bar-pct:0%;
+  position:relative;
+  min-height:38px;
+  padding:7px 4px 8px;
+  border-bottom:0;
+  color:var(--yt-body);
+  font-size:10px;
+}
+.yt-mini-source-list>div::after,
+.yt-source-button::after,
+.yt-detail-row::after,
+.yt-geo-list>div::after,
+.yt-audience-card>div::after{
+  content:"";
+  grid-column:1/-1;
+  display:block;
+  height:5px;
+  margin-top:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--yt-bar-fill) 0 var(--yt-bar-pct),var(--yt-bar-track) var(--yt-bar-pct) 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.018);
+}
+.yt-mini-source-list>div+div,
+.yt-source-button+.yt-source-button,
+.yt-detail-row+.yt-detail-row,
+.yt-geo-list>div+div,
+.yt-audience-card>div+div{border-top:1px solid #171414}
+.yt-mini-source-list>div{grid-template-columns:minmax(0,1fr) 72px}.yt-mini-source-list>div span{color:#d5d0d0}.yt-mini-source-list strong{font-size:11px;color:#f4f2f2;text-align:right}
+.yt-source-button{grid-template-columns:minmax(0,1fr) 72px 18px;gap:8px;font-size:11px;color:#d5d0d0}.yt-source-button strong{font-size:11px;color:#f4f2f2;text-align:right}.yt-source-button b{color:#9e625f}
+.yt-source-button:hover,.yt-source-button.active{border-color:rgba(179,68,63,.32);background:rgba(117,17,17,.075)}
+.yt-detail-row{grid-template-columns:minmax(0,1fr) 78px;font-size:11px}.yt-detail-row span{color:#d5d0d0}.yt-detail-row strong{font-size:11px;color:#f4f2f2;text-align:right}.yt-detail-row small{font-size:9px;color:var(--yt-muted)}
+.yt-geo-list>div{grid-template-columns:minmax(0,1fr) 70px 16px;font-size:10px}.yt-geo-list>div span{color:#d5d0d0}.yt-geo-list>div strong{text-align:right;color:#f4f2f2}.yt-geo-list b{color:#9e625f}
+.yt-audience-card>div{grid-template-columns:minmax(0,1fr) 70px;font-size:10px}.yt-audience-card strong{font-size:10px;color:#d5d0d0}.yt-audience-card b{font-size:11px;color:#f4f2f2;text-align:right}
+
+/* Secondary copy is neutral; red is reserved for identity, state and direction. */
+.youtube-panel .yt-panel-note,
+.youtube-panel .yt-source-intro,
+.youtube-panel .yt-selector-context,
+.youtube-panel .yt-selected-head span,
+.youtube-panel .yt-metric span,
+.youtube-panel .yt-metric small,
+.youtube-panel .yt-feature-metric span,
+.youtube-panel .yt-feature-metric small,
+.youtube-panel .yt-geo-copy span,
+.youtube-panel .yt-geo-detail span,
+.youtube-panel .yt-geo-detail small{color:var(--yt-muted)!important}
+
+/* Focus Mode is a reflow, not a stretched compact console. */
+.console-focus-shell .youtube-panel{
+  border-color:rgba(255,67,61,.38)!important;
+  background:linear-gradient(180deg,#070303,#010101 30%,#000)!important;
+}
+.console-focus-shell .youtube-panel>.ph{height:56px!important;background:linear-gradient(90deg,rgba(92,12,12,.25),transparent 70%)!important;border-bottom-color:rgba(255,76,69,.12)!important}
+.console-focus-shell .youtube-panel .pt{font-size:18px!important;text-shadow:0 0 14px rgba(255,72,65,.18)}
+.console-focus-shell .youtube-panel .yt-step{width:34px;height:26px;font-size:11px}
+.console-focus-shell .youtube-panel .yt-panel-body{
+  width:min(1360px,100%);
+  margin:0 auto;
+  padding:26px 30px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  font-size:16px!important;
+  line-height:1.45;
+  align-content:start;
+}
+.console-focus-shell .youtube-panel .yt-format-tab{font-size:13px!important;padding:7px 12px!important}
+.console-focus-shell .youtube-panel .yt-selector-context{font-size:14px!important;padding-bottom:12px!important}
+.console-focus-shell .youtube-panel .yt-video-row{min-height:86px!important;grid-template-columns:128px minmax(0,1fr) 28px!important;gap:16px!important;padding:9px 8px!important}
+.console-focus-shell .youtube-panel .yt-video-row img{width:128px!important}.console-focus-shell .youtube-panel .yt-video-row.yt-short-row img{width:66px!important;height:82px!important}
+.console-focus-shell .youtube-panel .yt-video-copy strong{font-size:17px!important}.console-focus-shell .youtube-panel .yt-video-copy small{font-size:13px!important}
+.console-focus-shell .youtube-panel .yt-row-arrow{font-size:24px!important}
+
+.console-focus-shell .youtube-panel .yt-selected-head{grid-template-columns:170px minmax(0,1fr);gap:22px;margin-bottom:18px}.console-focus-shell .youtube-panel .yt-selected-head img{width:170px}.console-focus-shell .youtube-panel .yt-selected-head strong{font-size:24px!important}.console-focus-shell .youtube-panel .yt-selected-head span{font-size:14px!important}
+.console-focus-shell .youtube-panel .yt-metric-grid{gap:12px}.console-focus-shell .youtube-panel .yt-metric{min-height:112px!important;padding:15px 16px!important;border-color:#302a2a}.console-focus-shell .youtube-panel .yt-metric span{font-size:14px!important}.console-focus-shell .youtube-panel .yt-metric strong{font-size:38px!important;margin-top:7px}.console-focus-shell .youtube-panel .yt-metric small{font-size:12px!important;margin-top:5px}
+.console-focus-shell .youtube-panel .yt-chart-head{font-size:13px!important}.console-focus-shell .youtube-panel .yt-chart-head b{font-size:12px!important}.console-focus-shell .youtube-panel .yt-line-placeholder span{font-size:13px!important}
+
+.console-focus-shell .youtube-panel .yt-info-strip{font-size:14px!important;grid-template-columns:26px minmax(0,1fr);gap:12px;padding:12px 14px}.console-focus-shell .youtube-panel .yt-info-dot{width:24px;height:24px;font-size:14px}
+.console-focus-shell .youtube-panel .yt-realtime-kpis{gap:14px;margin-top:15px}.console-focus-shell .youtube-panel .yt-realtime-kpis>div{padding:15px 17px}.console-focus-shell .youtube-panel .yt-realtime-kpis span{font-size:14px}.console-focus-shell .youtube-panel .yt-realtime-kpis strong{font-size:42px}.console-focus-shell .youtube-panel .yt-realtime-kpis small{font-size:12px}
+.console-focus-shell .youtube-panel .yt-panel-note{font-size:14px!important}
+.console-focus-shell .youtube-panel .yt-feature-metric{padding:18px 20px;min-height:160px}.console-focus-shell .youtube-panel .yt-feature-metric span{font-size:16px}.console-focus-shell .youtube-panel .yt-feature-metric strong{font-size:52px;margin-top:10px}.console-focus-shell .youtube-panel .yt-feature-metric small{font-size:13px}
+.console-focus-shell .youtube-panel .yt-section-label{font-size:14px;margin:0 0 10px}
+.console-focus-shell .youtube-panel .yt-source-intro,.console-focus-shell .youtube-panel .yt-detail-context,.console-focus-shell .youtube-panel .yt-geo-copy span{font-size:14px!important}
+.console-focus-shell .youtube-panel .yt-detail-context{padding:14px 16px}.console-focus-shell .youtube-panel .yt-detail-context strong{font-size:18px}
+
+.console-focus-shell .youtube-panel .yt-mini-source-list>div,
+.console-focus-shell .youtube-panel .yt-source-button,
+.console-focus-shell .youtube-panel .yt-detail-row,
+.console-focus-shell .youtube-panel .yt-geo-list>div,
+.console-focus-shell .youtube-panel .yt-audience-card>div{
+  min-height:58px!important;
+  padding:10px 6px 11px!important;
+  font-size:16px!important;
+}
+.console-focus-shell .youtube-panel .yt-mini-source-list>div::after,
+.console-focus-shell .youtube-panel .yt-source-button::after,
+.console-focus-shell .youtube-panel .yt-detail-row::after,
+.console-focus-shell .youtube-panel .yt-geo-list>div::after,
+.console-focus-shell .youtube-panel .yt-audience-card>div::after{height:8px;margin-top:5px}
+.console-focus-shell .youtube-panel .yt-mini-source-list strong,
+.console-focus-shell .youtube-panel .yt-source-button strong,
+.console-focus-shell .youtube-panel .yt-detail-row strong,
+.console-focus-shell .youtube-panel .yt-geo-list strong,
+.console-focus-shell .youtube-panel .yt-audience-card b{font-size:17px!important}
+.console-focus-shell .youtube-panel .yt-source-button b{font-size:24px!important}
+.console-focus-shell .youtube-panel .yt-detail-row small{font-size:13px!important}
+
+/* Reach is deliberately reorganised in Focus Mode so the extra width adds information density. */
+.console-focus-shell .youtube-panel.yt-reach-panel .yt-reach-body{
+  display:grid;
+  grid-template-columns:minmax(290px,.58fr) minmax(520px,1.42fr);
+  grid-template-rows:auto auto minmax(0,1fr);
+  grid-template-areas:"metric label" "metric stack" "metric list";
+  column-gap:34px;
+  row-gap:10px;
+  align-items:start;
+}
+.console-focus-shell .youtube-panel.yt-reach-panel .yt-feature-metric{grid-area:metric}
+.console-focus-shell .youtube-panel.yt-reach-panel .yt-section-label{grid-area:label;align-self:end}
+.console-focus-shell .youtube-panel.yt-reach-panel .yt-source-stack{grid-area:stack;height:12px}
+.console-focus-shell .youtube-panel.yt-reach-panel .yt-mini-source-list{grid-area:list;margin-top:2px}
+
+.console-focus-shell .youtube-panel .yt-traffic-body,
+.console-focus-shell .youtube-panel .yt-detail-body{width:min(1180px,100%);margin-left:auto;margin-right:auto}
+.console-focus-shell .youtube-panel .yt-source-button{grid-template-columns:minmax(0,1fr) 100px 28px!important}
+.console-focus-shell .youtube-panel .yt-detail-row{grid-template-columns:minmax(0,1fr) 100px!important}
+
+.console-focus-shell .youtube-panel .yt-geo-copy strong{font-size:17px}.console-focus-shell .youtube-panel .yt-geo-columns{grid-template-columns:minmax(360px,.8fr) minmax(0,1.2fr);gap:22px;margin-top:18px}.console-focus-shell .youtube-panel .yt-geo-detail{padding:18px}.console-focus-shell .youtube-panel .yt-geo-detail span{font-size:13px}.console-focus-shell .youtube-panel .yt-geo-detail strong{font-size:22px}.console-focus-shell .youtube-panel .yt-geo-detail small{font-size:14px}
+.console-focus-shell .youtube-panel .yt-audience-split{gap:20px}.console-focus-shell .youtube-panel .yt-audience-card{padding:18px}.console-focus-shell .youtube-panel .yt-audience-card>span{font-size:15px;margin-bottom:10px}
+
+@media(max-width:900px){
+  .console-focus-shell .youtube-panel .yt-panel-body{padding:20px 18px!important}
+  .console-focus-shell .youtube-panel.yt-reach-panel .yt-reach-body{display:block}
+  .console-focus-shell .youtube-panel.yt-reach-panel .yt-feature-metric{margin-bottom:18px}
+  .console-focus-shell .youtube-panel .yt-traffic-body,.console-focus-shell .youtube-panel .yt-detail-body{width:100%}
+}
