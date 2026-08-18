@@ -278,75 +278,11 @@
     }
   }
 
-  function hasGeoShape(obj){
-    if(!obj || typeof obj !== 'object' || Array.isArray(obj)){
-      return false;
-    }
-
-    const keys = Object.keys(obj).map(k => k.toLowerCase());
-
-    const hasCountryKey = keys.some(k => k.includes('countr'));
-    const hasGeoKey = keys.some(k => k.includes('geograph'));
-    const hasRows = Object.values(obj).some(
-      v => Array.isArray(v) && v.length
-    );
-
-    return (hasCountryKey || hasGeoKey) && hasRows;
-  }
-
   function findGeographyRoot(payload){
-    const preferred = [
-      payload && payload.geography,
-      payload && payload.geographySnapshot,
-      payload && payload.youtubeAnalyticsGeography,
-      payload && payload.analyticsGeography,
-      payload &&
-        payload.analytics &&
-        payload.analytics.geography,
-      payload &&
-        payload.youtubeAnalytics &&
-        payload.youtubeAnalytics.geography
-    ].filter(Boolean);
-
-    for(const candidate of preferred){
-      if(candidate && typeof candidate === 'object'){
-        return candidate;
-      }
-    }
-
-    const seen = new Set();
-
-    function walk(value, depth){
-      if(
-        !value ||
-        typeof value !== 'object' ||
-        depth > 4 ||
-        seen.has(value)
-      ){
-        return null;
-      }
-
-      seen.add(value);
-
-      if(hasGeoShape(value)){
-        return value;
-      }
-
-      for(const [key, child] of Object.entries(value)){
-        if(!child || typeof child !== 'object'){
-          continue;
-        }
-
-        if(/geograph|countr|audience|analytics/i.test(key)){
-          const hit = walk(child, depth + 1);
-          if(hit) return hit;
-        }
-      }
-
-      return null;
-    }
-
-    return walk(payload, 0);
+    const root = payload && payload.geography;
+    return root && typeof root === 'object' && !Array.isArray(root)
+      ? root
+      : null;
   }
 
   function arrayFrom(root, names){
@@ -482,420 +418,147 @@
   }
 
   function normalizeCountries(root){
-    let rows = arrayFrom(root, [
-      'countries',
-      'countryRows',
-      'geographyRows',
-      'countryData',
-      'topCountries',
-      'latestCountryRows',
-      'geographyCountryRows'
-    ]);
+    const rows = Array.isArray(root && root.countries)
+      ? root.countries
+      : [];
 
-    let schema = schemaFrom(root, [
-      'countrySchema',
-      'countryRowSchema',
-      'geographySchema',
-      'countryColumns',
-      'geographyColumns',
-      'countryColumnHeaders'
-    ]);
-
-    if(
-      !rows.length &&
-      root.country &&
-      typeof root.country === 'object'
-    ){
-      rows = Array.isArray(root.country.rows)
-        ? root.country.rows
-        : [];
-
-      schema = schema.length
-        ? schema
-        : (
-            root.country.schema ||
-            root.country.columns ||
-            root.country.columnHeaders ||
-            []
-          );
-    }
-
-    if(
-      !rows.length &&
-      root.countries &&
-      root.countries.rows
-    ){
-      rows = root.countries.rows;
-
-      schema = schema.length
-        ? schema
-        : (
-            root.countries.schema ||
-            root.countries.columns ||
-            root.countries.columnHeaders ||
-            []
-          );
-    }
-
-    const normalized = [];
-
-    rows.forEach(row => {
-      const obj = rowObject(row, schema);
-
-      let rawCountry = firstValue(obj, [
-        'country',
-        'countryCode',
-        'country_code',
-        'code',
-        'iso',
-        'iso2',
-        'name',
-        'countryName',
-        'country_name'
-      ]);
-
-      let views = numberOrNull(
-        firstValue(obj, [
-          'views',
-          'viewCount',
-          'view_count',
-          'count',
-          'value',
-          'traffic'
-        ])
-      );
-
-      let share = numberOrNull(
-        firstValue(obj, [
-          'share',
-          'percentage',
-          'percent',
-          'pct',
-          'ratio'
-        ])
-      );
-
-      let display = firstValue(obj, [
-        'display',
-        'displayName',
-        'countryName',
-        'country_name',
-        'label'
-      ]);
-
-      if(Array.isArray(row) && !schema.length){
-        rawCountry = row[0];
-        views = numberOrNull(row[1]);
-
-        if(row.length > 2){
-          share = numberOrNull(row[2]);
-        }
+    const normalized = rows.map(row => {
+      if(!row || typeof row !== 'object' || Array.isArray(row)){
+        return null;
       }
 
-      if(!rawCountry){
-        return;
+      const rawCountry = String(row.country || '').trim();
+      const views = numberOrNull(row.views);
+      if(!rawCountry || views === null){
+        return null;
       }
 
       const mapName = mapCountryName(rawCountry);
-
       if(!mapName){
-        return;
+        return null;
       }
 
-      normalized.push({
-        raw: String(rawCountry),
+      return {
+        raw: rawCountry,
         mapName,
         key: countryKey(mapName),
-        display: displayCountryName(
-          mapName,
-          display
-        ),
+        display: displayCountryName(mapName, ''),
         views,
-        share
-      });
-    });
+        share: null
+      };
+    }).filter(Boolean);
 
     const totalViews = normalized.reduce(
-      (sum, x) => sum + (x.views || 0),
+      (sum, item) => sum + item.views,
       0
     );
 
     normalized.forEach(item => {
-      if(item.share !== null){
-        if(item.share > 0 && item.share <= 1){
-          item.share *= 100;
-        }
-      }else if(
-        totalViews > 0 &&
-        item.views !== null
-      ){
-        item.share =
-          item.views / totalViews * 100;
-      }
+      item.share = totalViews > 0
+        ? item.views / totalViews * 100
+        : null;
     });
 
-    normalized.sort(
-      (a,b) =>
-        (b.views || b.share || 0) -
-        (a.views || a.share || 0)
-    );
-
+    normalized.sort((a,b) => b.views - a.views);
     return normalized;
   }
 
+  function findCountryDetailRoot(root){
+    if(!root || typeof root !== 'object' || Array.isArray(root)){
+      return null;
+    }
+
+    // The verified payload contains ISO-2 country keys whose values expose
+    // topVideos[] and cities[]. The wrapper key itself was not needed by the UI,
+    // so identify that single object by its observed structure rather than by
+    // inventing alternate field names.
+    const candidates = [root].concat(
+      Object.values(root).filter(
+        value => value && typeof value === 'object' && !Array.isArray(value)
+      )
+    );
+
+    for(const candidate of candidates){
+      const entries = Object.entries(candidate);
+      const matches = entries.filter(([code, detail]) =>
+        /^[A-Z]{2}$/.test(String(code)) &&
+        detail && typeof detail === 'object' && !Array.isArray(detail) &&
+        (Array.isArray(detail.topVideos) || Array.isArray(detail.cities))
+      );
+      if(matches.length){
+        return candidate;
+      }
+    }
+
+    return null;
+  }
+
   function normalizeBreakdownRows(root, kind){
+    const detailRoot = findCountryDetailRoot(root);
+    const out = new Map();
+    if(!detailRoot){
+      return out;
+    }
+
     const isVideo = kind === 'video';
 
-    const rowNames = isVideo
-      ? [
-          'countryVideoRows',
-          'videoCountryRows',
-          'videosByCountryRows',
-          'topVideoRows',
-          'geographyVideoRows'
-        ]
-      : [
-          'countryCityRows',
-          'cityCountryRows',
-          'citiesByCountryRows',
-          'cityRows',
-          'geographyCityRows'
-        ];
-
-    const schemaNames = isVideo
-      ? [
-          'countryVideoSchema',
-          'videoCountrySchema',
-          'videoSchema',
-          'videoColumns',
-          'countryVideoColumns'
-        ]
-      : [
-          'countryCitySchema',
-          'cityCountrySchema',
-          'citySchema',
-          'cityColumns',
-          'countryCityColumns'
-        ];
-
-    const rows = arrayFrom(root, rowNames);
-    const schema = schemaFrom(root, schemaNames);
-    const out = new Map();
-
-    rows.forEach(row => {
-      const obj = rowObject(row, schema);
-
-      let c = firstValue(obj, [
-        'country',
-        'countryCode',
-        'country_code',
-        'code',
-        'iso',
-        'countryName'
-      ]);
-
-      let views = numberOrNull(
-        firstValue(obj, [
-          'views',
-          'viewCount',
-          'view_count',
-          'count',
-          'value'
-        ])
-      );
-
-      let name = firstValue(
-        obj,
-        isVideo
-          ? [
-              'title',
-              'videoTitle',
-              'video_title',
-              'name',
-              'videoId',
-              'video_id'
-            ]
-          : [
-              'city',
-              'cityName',
-              'city_name',
-              'name',
-              'label'
-            ]
-      );
-
-      let videoId = isVideo
-        ? firstValue(obj, [
-            'videoId',
-            'video_id',
-            'id'
-          ])
-        : null;
-
-      if(Array.isArray(row) && !schema.length){
-        c = row[0];
-
-        if(isVideo){
-          videoId = row[1];
-          name = row[2] || row[1];
-
-          views = numberOrNull(
-            row[3] !== undefined
-              ? row[3]
-              : row[2]
-          );
-        }else{
-          name = row[1];
-          views = numberOrNull(row[2]);
-        }
-      }
-
-      if(!c || !name){
-        return;
-      }
-
-      const key = countryKey(c);
-
-      if(!out.has(key)){
-        out.set(key, []);
-      }
-
-      out.get(key).push({
-        name: String(name),
-        videoId: videoId
-          ? String(videoId)
-          : '',
-        views
-      });
-    });
-
-    const objectNames = isVideo
-      ? [
-          'videosByCountry',
-          'topVideosByCountry',
-          'countryVideos'
-        ]
-      : [
-          'citiesByCountry',
-          'countryCities',
-          'cityBreakdownByCountry'
-        ];
-
-    objectNames.forEach(name => {
-      const obj = root && root[name];
-
+    Object.entries(detailRoot).forEach(([countryCode, detail]) => {
       if(
-        !obj ||
-        typeof obj !== 'object' ||
-        Array.isArray(obj)
+        !/^[A-Z]{2}$/.test(String(countryCode)) ||
+        !detail ||
+        typeof detail !== 'object' ||
+        Array.isArray(detail)
       ){
         return;
       }
 
-      Object.entries(obj).forEach(
-        ([country, list]) => {
-          if(!Array.isArray(list)){
-            return;
-          }
+      const source = isVideo ? detail.topVideos : detail.cities;
+      if(!Array.isArray(source)){
+        return;
+      }
 
-          const key = countryKey(country);
-          const target = out.get(key) || [];
-
-          list.forEach(item => {
-            if(item == null){
-              return;
-            }
-
-            if(typeof item === 'string'){
-              target.push({
-                name: item,
-                videoId: '',
-                views: null
-              });
-            }else if(Array.isArray(item)){
-              target.push({
-                name: String(
-                  item[isVideo ? 1 : 0] ||
-                  item[0] ||
-                  ''
-                ),
-                videoId: isVideo
-                  ? String(item[0] || '')
-                  : '',
-                views: numberOrNull(
-                  item[isVideo ? 2 : 1]
-                )
-              });
-            }else if(typeof item === 'object'){
-              target.push({
-                name: String(
-                  firstValue(
-                    item,
-                    isVideo
-                      ? [
-                          'title',
-                          'videoTitle',
-                          'name',
-                          'videoId'
-                        ]
-                      : [
-                          'city',
-                          'cityName',
-                          'name'
-                        ]
-                  ) || ''
-                ),
-                videoId: isVideo
-                  ? String(
-                      firstValue(
-                        item,
-                        ['videoId','id']
-                      ) || ''
-                    )
-                  : '',
-                views: numberOrNull(
-                  firstValue(
-                    item,
-                    [
-                      'views',
-                      'viewCount',
-                      'count',
-                      'value'
-                    ]
-                  )
-                )
-              });
-            }
-          });
-
-          out.set(key, target);
+      const key = countryKey(countryCode);
+      const list = source.map(item => {
+        if(!item || typeof item !== 'object' || Array.isArray(item)){
+          return null;
         }
-      );
-    });
 
-    out.forEach(list =>
-      list.sort(
-        (a,b) =>
-          (b.views || 0) -
-          (a.views || 0)
-      )
-    );
+        if(isVideo){
+          const videoId = String(item.videoId || '').trim();
+          const views = numberOrNull(item.views);
+          if(!videoId || views === null){
+            return null;
+          }
+          return {
+            name: '',
+            videoId,
+            views
+          };
+        }
+
+        const city = String(item.city || '').trim();
+        const views = numberOrNull(item.views);
+        if(!city || views === null){
+          return null;
+        }
+        return {
+          name: city,
+          videoId: '',
+          views
+        };
+      }).filter(Boolean);
+
+      list.sort((a,b) => b.views - a.views);
+      out.set(key, list);
+    });
 
     return out;
   }
 
   function latestGeoDate(root){
-    return firstValue(root || {}, [
-      'latestAvailableDate',
-      'latestDate',
-      'dataThrough',
-      'availableThrough',
-      'throughDate',
-      'countryDate',
-      'geographyDate',
-      'reportDate',
-      'date'
-    ]) || '';
+    return root && root.endDate
+      ? String(root.endDate)
+      : '';
   }
 
   function normalizeGeography(payload){
@@ -914,6 +577,8 @@
 
     return {
       root,
+      startDate: root.startDate ? String(root.startDate) : '',
+      endDate: root.endDate ? String(root.endDate) : '',
       date: latestGeoDate(root),
       countries,
       videos:
@@ -934,11 +599,8 @@
       return;
     }
 
-    const style =
-      document.createElement('style');
-
+    const style = document.createElement('style');
     style.id = 'vpsGeoStyle';
-
     style.textContent = `
       .vps-geo-date{
         font-size:9px;
@@ -974,34 +636,63 @@
       }
 
       .vps-geo-node{
-        pointer-events:none
+        pointer-events:none;
+        opacity:var(--vps-geo-opacity,1)
       }
 
       .vps-geo-node .vps-geo-halo{
-        fill:#ffb830;
-        opacity:.14
+        fill:rgba(255,184,38,var(--vps-geo-halo-fill,.08));
+        stroke:rgba(255,198,67,var(--vps-geo-halo-stroke,.52));
+        stroke-width:.52;
+        vector-effect:non-scaling-stroke;
+        transform-box:fill-box;
+        transform-origin:center;
+        filter:drop-shadow(0 0 var(--vps-geo-halo-glow,3px) rgba(255,174,25,.72));
+        animation:vpsGeoTrafficPulse 3.1s ease-out infinite;
+        animation-delay:var(--vps-geo-delay,0s)
       }
 
       .vps-geo-node .vps-geo-core{
-        fill:#ffbd3f;
-        stroke:#ffe0a0;
-        stroke-width:.34;
-        vector-effect:non-scaling-stroke
+        fill:#ffd35a;
+        stroke:#fff0a7;
+        stroke-width:.28;
+        vector-effect:non-scaling-stroke;
+        opacity:.98;
+        filter:
+          drop-shadow(0 0 2px rgba(255,226,130,1))
+          drop-shadow(0 0 var(--vps-geo-core-glow,5px) rgba(255,175,27,.95))
+          drop-shadow(0 0 var(--vps-geo-outer-glow,10px) rgba(255,137,10,.62))
       }
 
       .vps-geo-node .vps-geo-ring{
         fill:none;
-        stroke:#ffb830;
-        stroke-width:.42;
-        opacity:.45;
+        stroke:rgba(255,199,79,var(--vps-geo-ring-opacity,.45));
+        stroke-width:.38;
         vector-effect:non-scaling-stroke
       }
 
-      .map-country-hit.vps-geo-country{
+      .map-country-hit.vps-geo-country,
+      .map-country-dot.vps-geo-country{
         fill:transparent!important;
-        stroke:rgba(255,184,48,.16)!important;
-        stroke-width:.28!important;
+        stroke:rgba(255,184,48,var(--vps-geo-edge,.08))!important;
+        stroke-width:var(--vps-geo-stroke,.22)!important;
         vector-effect:non-scaling-stroke
+      }
+
+      .map-country-hit.vps-geo-country:hover,
+      .map-country-dot.vps-geo-country:hover{
+        fill:rgba(13,53,75,.16)!important;
+        stroke:rgba(86,205,250,.72)!important
+      }
+
+      @keyframes vpsGeoTrafficPulse{
+        0%{opacity:.78;transform:scale(.52)}
+        58%{opacity:.14;transform:scale(1.50)}
+        100%{opacity:0;transform:scale(1.95)}
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        .vps-geo-node .vps-geo-halo{animation:none;opacity:.24}
       }
     `;
 
@@ -1073,12 +764,11 @@
 
         svg.querySelectorAll(
           '.vps-geo-country'
-        ).forEach(
-          el =>
-            el.classList.remove(
-              'vps-geo-country'
-            )
-        );
+        ).forEach(el => {
+          el.classList.remove('vps-geo-country');
+          el.style.removeProperty('--vps-geo-edge');
+          el.style.removeProperty('--vps-geo-stroke');
+        });
 
         const group =
           document.createElementNS(
@@ -1111,6 +801,24 @@
             'vps-geo-country'
           );
 
+          const rawWeight =
+            country.views !== null
+              ? country.views
+              : (country.share || 0);
+          const t = Math.max(
+            .08,
+            Math.min(1, rawWeight / max)
+          );
+
+          hit.style.setProperty(
+            '--vps-geo-edge',
+            (.035 + .20 * t).toFixed(3)
+          );
+          hit.style.setProperty(
+            '--vps-geo-stroke',
+            (.18 + .22 * t).toFixed(2)
+          );
+
           const center = world
             ? hit.dataset.worldCenter
             : hit.dataset.detailCenter;
@@ -1132,18 +840,6 @@
             return;
           }
 
-          const weight =
-            (
-              country.views !== null
-                ? country.views
-                : (country.share || 0)
-            ) / max;
-
-          const t = Math.max(
-            .12,
-            Math.min(1, weight)
-          );
-
           const scale =
             world ? 1 : 1.12;
 
@@ -1159,6 +855,39 @@
           g.setAttribute(
             'class',
             'vps-geo-node'
+          );
+
+          g.style.setProperty(
+            '--vps-geo-opacity',
+            (.42 + .58 * t).toFixed(2)
+          );
+          g.style.setProperty(
+            '--vps-geo-delay',
+            (-2.45 * t).toFixed(2) + 's'
+          );
+          g.style.setProperty(
+            '--vps-geo-halo-fill',
+            (.025 + .095 * t).toFixed(3)
+          );
+          g.style.setProperty(
+            '--vps-geo-halo-stroke',
+            (.24 + .48 * t).toFixed(3)
+          );
+          g.style.setProperty(
+            '--vps-geo-ring-opacity',
+            (.22 + .46 * t).toFixed(3)
+          );
+          g.style.setProperty(
+            '--vps-geo-halo-glow',
+            (1.5 + 4.5 * t).toFixed(1) + 'px'
+          );
+          g.style.setProperty(
+            '--vps-geo-core-glow',
+            (2.5 + 5.5 * t).toFixed(1) + 'px'
+          );
+          g.style.setProperty(
+            '--vps-geo-outer-glow',
+            (4.5 + 10.5 * t).toFixed(1) + 'px'
           );
 
           const halo =
@@ -1178,7 +907,7 @@
           halo.setAttribute(
             'r',
             (
-              (2.6 + 4.7 * t) *
+              (2.1 + 6.2 * t) *
               scale
             ).toFixed(2)
           );
@@ -1200,7 +929,7 @@
           ring.setAttribute(
             'r',
             (
-              (1.35 + 1.8 * t) *
+              (1.05 + 2.35 * t) *
               scale
             ).toFixed(2)
           );
@@ -1222,7 +951,7 @@
           core.setAttribute(
             'r',
             (
-              (.70 + 1.08 * t) *
+              (.52 + 1.62 * t) *
               scale
             ).toFixed(2)
           );
@@ -1309,18 +1038,14 @@
       }
     }
 
-    date.textContent =
-      state.geography.date
-        ? (
-            'Latest available data: ' +
-            fmtDate(
-              state.geography.date
-            )
-          )
-        : (
-            'Latest available ' +
-            'YouTube Analytics geography'
-          );
+    if(state.geography.endDate){
+      const period = state.geography.startDate
+        ? fmtDate(state.geography.startDate) + ' → ' + fmtDate(state.geography.endDate)
+        : fmtDate(state.geography.endDate);
+      date.textContent = 'YouTube Analytics · ' + period;
+    }else{
+      date.textContent = 'Latest available YouTube Analytics geography';
+    }
 
     geolist.replaceChildren();
 
@@ -1465,6 +1190,22 @@
       : '';
   }
 
+  function setMapScopeBadge(countryDisplay){
+    if(!state.geography){
+      return;
+    }
+
+    const latest = state.geography.endDate
+      ? 'LATEST AVAILABLE · ' + fmtDate(state.geography.endDate)
+      : 'LATEST AVAILABLE';
+
+    document.querySelectorAll('.map-scope-badge').forEach(badge => {
+      badge.textContent = countryDisplay
+        ? countryDisplay + ' · ' + latest
+        : latest;
+    });
+  }
+
   function renderGeoDetails(countryValue){
     if(!state.geography){
       return;
@@ -1482,6 +1223,7 @@
     }
 
     state.selectedCountryKey = key;
+    setMapScopeBadge(country.display);
 
     geographyBodies()
       .forEach(panel => {
@@ -1683,8 +1425,9 @@
         );
 
       if(badge){
-        badge.textContent =
-          'LATEST AVAILABLE';
+        badge.textContent = geo.endDate
+          ? 'LATEST AVAILABLE · ' + fmtDate(geo.endDate)
+          : 'LATEST AVAILABLE';
       }
     }
 
@@ -1703,21 +1446,7 @@
         renderGeoOverview
       );
 
-    const mapBadge =
-      document.querySelector(
-        '[data-screen="overview"] ' +
-        '.map-scope-badge'
-      );
-
-    if(mapBadge){
-      mapBadge.textContent =
-        geo.date
-          ? (
-              'LATEST AVAILABLE · ' +
-              fmtDate(geo.date)
-            )
-          : 'LATEST AVAILABLE';
-    }
+    setMapScopeBadge(null);
 
     renderMapTraffic();
 
@@ -1994,6 +1723,7 @@
 
         window.setTimeout(
           () => {
+            setMapScopeBadge(null);
             geographyBodies()
               .forEach(panel => {
                 const overview =
@@ -2038,26 +1768,35 @@
 
     state.observer =
       new MutationObserver(
-        () => {
+        mutations => {
           if(!state.geography){
+            return;
+          }
+
+          const panelChanged = mutations.some(mutation =>
+            Array.from(mutation.addedNodes || []).some(node =>
+              node &&
+              node.nodeType === 1 &&
+              (
+                (node.matches && node.matches('.panel')) ||
+                (node.querySelector && node.querySelector('.panel'))
+              )
+            )
+          );
+
+          if(!panelChanged){
             return;
           }
 
           window.setTimeout(
             () => {
-              geographyBodies()
-                .forEach(
-                  renderGeoOverview
-                );
-
+              geographyBodies().forEach(renderGeoOverview);
               renderMapTraffic();
 
-              if(
-                state.selectedCountryKey
-              ){
-                renderGeoDetails(
-                  state.selectedCountryKey
-                );
+              if(state.selectedCountryKey){
+                renderGeoDetails(state.selectedCountryKey);
+              }else{
+                setMapScopeBadge(null);
               }
             },
             0
