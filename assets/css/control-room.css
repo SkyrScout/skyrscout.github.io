@@ -1756,3 +1756,71 @@ body.hf-alert-flash::after{
   .console-focus-shell .youtube-panel.yt-reach-panel .yt-feature-metric{margin-bottom:18px}
   .console-focus-shell .youtube-panel .yt-traffic-body,.console-focus-shell .youtube-panel .yt-detail-body{width:100%}
 }
+
+
+/* === YouTube Analytics v5: compact focus heights + helper-text polish ===== */
+/* Helper copy gets one more step of readability without making the grid larger. */
+.youtube-panel .yt-selector-context,
+.youtube-panel .yt-panel-note,
+.youtube-panel .yt-source-intro,
+.youtube-panel .yt-detail-context,
+.youtube-panel .yt-geo-copy span,
+.youtube-panel .yt-selected-head span,
+.youtube-panel .yt-info-strip{
+  font-size:10.5px!important;
+  line-height:1.48;
+}
+.youtube-panel .yt-video-copy strong{font-size:10.5px}
+.youtube-panel .yt-metric span{font-size:10.5px}
+.youtube-panel .yt-metric small{font-size:9px}
+.youtube-panel .yt-feature-metric small{font-size:9.5px}
+.youtube-panel .yt-mini-source-list>div,
+.youtube-panel .yt-source-button,
+.youtube-panel .yt-detail-row,
+.youtube-panel .yt-geo-list>div,
+.youtube-panel .yt-audience-card>div{font-size:10.5px}
+
+/* YouTube Focus Mode has its own height classes.  It should reflow, not become
+   a full-screen black canvas when the console only has a few rows. */
+.console-focus-shell.youtube-focus{
+  width:min(92vw,1560px);
+  height:min(72vh,740px);
+  max-height:88vh;
+}
+.console-focus-shell.youtube-focus.youtube-focus-tall{height:min(84vh,880px)}
+.console-focus-shell.youtube-focus.youtube-focus-medium{height:min(74vh,760px)}
+.console-focus-shell.youtube-focus.youtube-focus-compact{height:min(62vh,640px);min-height:470px}
+.console-focus-shell.youtube-focus > .youtube-panel{
+  height:100%!important;
+  overflow:hidden!important;
+}
+.console-focus-shell.youtube-focus .youtube-panel .yt-panel-body{
+  height:100%;
+  min-height:0;
+  overflow-y:auto!important;
+  scrollbar-gutter:stable;
+}
+
+/* Reach/Discovery is especially sparse before data arrives, so use the
+   available width but avoid the previous huge empty lower half. */
+.console-focus-shell.youtube-focus-compact .youtube-panel.yt-reach-panel .yt-reach-body{
+  grid-template-rows:auto auto auto;
+  align-content:start;
+}
+.console-focus-shell.youtube-focus-compact .youtube-panel.yt-reach-panel .yt-mini-source-list{
+  align-self:start;
+}
+
+/* Keep focus headers/close control visually anchored on shorter shells. */
+.console-focus-shell.youtube-focus .console-focus-close{top:-13px;right:-13px}
+
+@media(max-width:900px){
+  .console-focus-shell.youtube-focus,
+  .console-focus-shell.youtube-focus.youtube-focus-tall,
+  .console-focus-shell.youtube-focus.youtube-focus-medium,
+  .console-focus-shell.youtube-focus.youtube-focus-compact{
+    width:94vw;
+    height:88vh;
+    min-height:0;
+  }
+}

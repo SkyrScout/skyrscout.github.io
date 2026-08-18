@@ -59,6 +59,19 @@ window.controlRoomSnapRows=snapRows;
     if(panel.classList.contains('mappanel')) shell.classList.add('map-focus');
     if(panel.classList.contains('sidepanel')) shell.classList.add('side-focus');
 
+    // YouTube Focus Mode uses content-aware shell heights instead of stretching
+    // every console to the same near-fullscreen canvas.
+    if(panel.classList.contains('youtube-panel')) {
+      shell.classList.add('youtube-focus');
+      if(panel.classList.contains('yt-video-selector-panel')) {
+        shell.classList.add('youtube-focus-tall');
+      } else if(panel.classList.contains('yt-performance-panel') || panel.classList.contains('yt-realtime-panel')) {
+        shell.classList.add('youtube-focus-medium');
+      } else {
+        shell.classList.add('youtube-focus-compact');
+      }
+    }
+
     const focusTitle = (panel.querySelector('.pt')?.textContent || '').trim().toLowerCase();
     if(focusTitle.includes('realtime monitor')) shell.classList.add('realtime-focus');
     if(focusTitle.includes('geography')) shell.classList.add('geo-focus');
