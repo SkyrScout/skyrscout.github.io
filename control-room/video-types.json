@@ -1,0 +1,25 @@
+---
+layout: null
+permalink: /control-room/video-types.json
+---
+{
+  "generatedAt": "{{ site.time | date_to_xmlschema }}",
+  "longs": [
+{% for player in site.players %}
+{% if player.youtube %}
+{% assign hf_type_long_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '?' | first | split: '/' | last %}
+    "{{ hf_type_long_id | escape }}",
+{% endif %}
+{% endfor %}
+    null
+  ],
+  "shorts": [
+{% for short in site.shorts %}
+{% if short.youtube %}
+{% assign hf_type_short_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+    "{{ hf_type_short_id | escape }}",
+{% endif %}
+{% endfor %}
+    null
+  ]
+}

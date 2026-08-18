@@ -793,16 +793,42 @@
     if(!rulesBody) return;
     clear(rulesBody);
 
-    const absolute = internalRules && Array.isArray(internalRules.absolute) ? internalRules.absolute : [];
-    const relative = internalRules && Array.isArray(internalRules.relative) ? internalRules.relative : [];
+    const byType = internalRules && internalRules.byType && typeof internalRules.byType === 'object'
+      ? internalRules.byType
+      : null;
     const suspicious = internalRules && internalRules.suspicious ? internalRules.suspicious : {};
     const rules = [];
 
-    absolute.forEach(rule => rules.push(['Alarm · clock hour absolute', '+' + fmtNumber(rule.minViews) + ' views']));
-    relative.forEach(rule => rules.push(['Alarm · clock hour relative', '+' + fmtNumber(rule.minViews) + ' & ≥' + Number(rule.multiplier || 0).toFixed(1) + '×']));
-    if(numericOrNull(suspicious.lastPollMinViews) !== null) rules.push(['Suspicious · last poll', '+' + fmtNumber(suspicious.lastPollMinViews) + ' views']);
-    if(numericOrNull(suspicious.hourMinViews) !== null) rules.push(['Suspicious · current hour', '+' + fmtNumber(suspicious.hourMinViews) + ' views']);
-    if(numericOrNull(suspicious.alarmMinPositivePolls) !== null) rules.push(['Alarm confirmation', '≥' + fmtNumber(suspicious.alarmMinPositivePolls) + ' positive polls']);
+    if(byType){
+      [['long','LONG'],['short','SHORT'],['unknown','UNKNOWN']].forEach(([key,label]) => {
+        const rule = byType[key];
+        if(!rule) return;
+        rules.push([label + ' · absolute hour', '+' + fmtNumber(rule.absoluteHourMinViews) + ' views']);
+        rules.push([label + ' · recent 1–2 h', '+' + fmtNumber(rule.recentTwoHoursMinViews) + ' views']);
+        rules.push([
+          label + ' · relative hour',
+          '+' + fmtNumber(rule.relativeHourMinViews) + ' & ≥' +
+            Number(rule.relativeHourMultiplier || 0).toFixed(1) + '×'
+        ]);
+        rules.push([
+          label + ' · suspicious',
+          'poll +' + fmtNumber(rule.suspiciousLastPollMinViews) +
+            ' · hour +' + fmtNumber(rule.suspiciousHourMinViews)
+        ]);
+      });
+    }else{
+      const absolute = internalRules && Array.isArray(internalRules.absolute) ? internalRules.absolute : [];
+      const relative = internalRules && Array.isArray(internalRules.relative) ? internalRules.relative : [];
+      absolute.forEach(rule => rules.push(['Alarm · clock hour absolute', '+' + fmtNumber(rule.minViews) + ' views']));
+      relative.forEach(rule => rules.push(['Alarm · clock hour relative', '+' + fmtNumber(rule.minViews) + ' & ≥' + Number(rule.multiplier || 0).toFixed(1) + '×']));
+      if(numericOrNull(suspicious.lastPollMinViews) !== null) rules.push(['Suspicious · last poll', '+' + fmtNumber(suspicious.lastPollMinViews) + ' views']);
+      if(numericOrNull(suspicious.hourMinViews) !== null) rules.push(['Suspicious · current hour', '+' + fmtNumber(suspicious.hourMinViews) + ' views']);
+    }
+
+    if(numericOrNull(suspicious.alarmMinPositivePolls) !== null){
+      rules.push(['Alarm confirmation', '≥' + fmtNumber(suspicious.alarmMinPositivePolls) + ' positive polls']);
+    }
+    rules.push(['Public siren', 'Strongest confirmed ALARM']);
 
     if(!rules.length){
       const empty = document.createElement('div');

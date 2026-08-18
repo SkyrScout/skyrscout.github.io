@@ -346,6 +346,7 @@
     "use strict";
 
     const HESE_FREDRIK_ENDPOINT = "https://script.google.com/macros/s/AKfycbw5hZ4rk0e4OwClAtrH3-K9g4Z_XBu00a61Lx-aqdlv_KRXxZhJhR3WGFynE9W2WY5Z/exec";
+    const HESE_FREDRIK_REFRESH_MS = 60 * 1000;
     const widget = document.querySelector("#hese-fredrik");
     const closeButton = document.querySelector("#hese-fredrik-close");
     const muteButton = document.querySelector("#hese-fredrik-mute");
@@ -450,6 +451,7 @@
             payload.active !== true ||
             !payload.alert
         ) {
+            dismissedVideoId = null;
             widget.hidden = true;
             return;
         }
@@ -474,7 +476,9 @@
             "+" + Number(alert.deltaViews || 0).toLocaleString("en-US") + " views";
 
         document.querySelector("#hese-fredrik-window").textContent =
-            " in " + alert.windowMinutes + " minutes";
+            alert.windowLabel
+                ? " · " + alert.windowLabel
+                : " in " + Number(alert.windowMinutes || 0) + " minutes";
 
         const thumbnail = document.querySelector("#hese-fredrik-thumbnail");
         thumbnail.src =
@@ -488,21 +492,30 @@
         widget.hidden = false;
     };
 
-    const script = document.createElement("script");
-    const separator = HESE_FREDRIK_ENDPOINT.indexOf("?") === -1 ? "?" : "&";
+    function refreshHeseFredrik() {
+        const script = document.createElement("script");
+        const separator = HESE_FREDRIK_ENDPOINT.indexOf("?") === -1 ? "?" : "&";
 
-    script.src =
-        HESE_FREDRIK_ENDPOINT +
-        separator +
-        "callback=SkyrScoutHeseFredrik&_=" +
-        Date.now();
+        script.src =
+            HESE_FREDRIK_ENDPOINT +
+            separator +
+            "callback=SkyrScoutHeseFredrik&_=" +
+            Date.now();
 
-    script.async = true;
+        script.async = true;
 
-    script.onerror = function () {
-        widget.hidden = true;
-    };
+        script.onload = function () {
+            script.remove();
+        };
 
-    document.head.appendChild(script);
+        script.onerror = function () {
+            script.remove();
+        };
+
+        document.head.appendChild(script);
+    }
+
+    refreshHeseFredrik();
+    window.setInterval(refreshHeseFredrik, HESE_FREDRIK_REFRESH_MS);
 })();
 </script>
