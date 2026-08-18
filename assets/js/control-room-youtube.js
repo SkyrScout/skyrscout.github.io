@@ -1,11 +1,34 @@
-
-/* YouTube 09 runtime injector
-   The panel is created here before the authenticated Control Room scripts load.
-   This makes Most Likes independent of whether the rendered HTML contains the
-   ninth grid cell. control-room.js will then discover it normally and add the
-   standard Focus Mode button; control-room-live.js will populate #ytMostLikedList.
+/* YouTube 09 Most Likes runtime injector
+   Ensures console 09 exists before authenticated Control Room scripts load.
+   24H is the default view; 7D and Lifetime are available in-console.
 */
 (function ensureMostLikesPanel(){
+  const styleId = 'ytMostLikesRuntimeStyle';
+  if(!document.getElementById(styleId)){
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .yt-screen-grid > .yt-most-liked-panel{grid-column:3;grid-row:3;display:grid!important;visibility:visible!important;opacity:1!important}
+      .yt-most-liked-body{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;overflow:hidden}
+      .yt-like-tabs{display:flex;align-items:center;gap:5px}
+      .yt-like-tab{appearance:none;border:1px solid #3a1715;border-radius:999px;background:#080707;color:#9d8381;padding:3px 8px;font:800 7px/1 inherit;letter-spacing:.04em;cursor:pointer}
+      .yt-like-tab:hover{border-color:#80413d;color:#f2dddd}
+      .yt-like-tab.active{border-color:#d75f58;background:#29100f;color:#fff}
+      .yt-most-liked-list{min-height:0;display:grid;align-content:start;gap:3px;overflow-y:auto;padding-right:4px;scrollbar-gutter:stable}
+      .yt-most-liked-row{min-width:0;display:grid;grid-template-columns:22px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:7px;row-gap:3px;align-items:center;padding:5px 3px 6px;border-bottom:1px solid #1e0d0d}
+      .yt-most-liked-rank{grid-row:1/3;align-self:center;color:#d66d68;font-size:9px;font-weight:900;text-align:center}
+      .yt-most-liked-title{min-width:0;color:#f0eeee;font-size:8px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .yt-most-liked-count{color:#fff;font-size:10px;font-weight:900;white-space:nowrap}
+      .yt-most-liked-meta{min-width:0;display:flex;align-items:center;gap:6px}
+      .yt-most-liked-type{flex:0 0 auto;color:#8d7372;font-size:6px;font-weight:900;letter-spacing:.05em}
+      .yt-most-liked-bar{min-width:0;flex:1;height:5px;overflow:hidden;border-radius:999px;background:#1a0c0c}
+      .yt-most-liked-bar>i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#80302d,#e2645e)}
+      .yt-most-liked-empty{padding:10px 4px;color:#6f5b5a;font-size:8px;line-height:1.4}
+      @media(max-width:900px){.yt-screen-grid>.yt-most-liked-panel{grid-column:auto;grid-row:auto}}
+    `;
+    document.head.appendChild(style);
+  }
+
   const screen = document.querySelector('.control-screen[data-screen="youtube"], .youtube-screen');
   const grid = screen && screen.querySelector('.yt-screen-grid');
   if(!grid || grid.querySelector('.yt-most-liked-panel')) return;
@@ -24,42 +47,25 @@
           <button class="yt-info-button" type="button" aria-label="About Most Likes data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
             <div><strong>Source</strong><span>VPS collector / YouTube Data API</span></div>
-            <div><strong>Freshness</strong><span>Refreshed with the same VPS poll as the live video counters.</span></div>
-            <div><strong>Meaning</strong><span>Ranks SkyrScout uploads by their current public lifetime like count.</span></div>
-            <div><strong>Rule</strong><span>Only real like counts returned by YouTube are shown.</span></div>
+            <div><strong>Freshness</strong><span>Current like totals use the normal VPS poll. 24H and 7D baselines use one local snapshot per hour.</span></div>
+            <div><strong>Meaning</strong><span>24H and 7D rank net likes gained. Lifetime ranks the current public like total.</span></div>
+            <div><strong>Rule</strong><span>No extra YouTube poll is made for like history.</span></div>
           </div>
         </div>
       </div>
     </div>
     <div class="yt-panel-body yt-most-liked-body">
-      <div class="yt-most-liked-list" id="ytMostLikedList">
-        <div class="yt-most-liked-empty">Waiting for VPS like counts…</div>
+      <div class="yt-like-tabs" role="tablist" aria-label="Most Likes time range">
+        <button class="yt-like-tab active" type="button" role="tab" aria-selected="true" data-yt-like-window="24h">24H</button>
+        <button class="yt-like-tab" type="button" role="tab" aria-selected="false" data-yt-like-window="7d">7D</button>
+        <button class="yt-like-tab" type="button" role="tab" aria-selected="false" data-yt-like-window="lifetime">LIFETIME</button>
       </div>
-      <div class="yt-panel-note">Lifetime likes · refreshed with the VPS collector.</div>
+      <div class="yt-most-liked-list" id="ytMostLikedList" data-yt-most-liked-list>
+        <div class="yt-most-liked-empty">Building like history…</div>
+      </div>
+      <div class="yt-panel-note" data-yt-most-liked-note>BUILDING HISTORY · 0H / 24H</div>
     </div>`;
-
   grid.appendChild(panel);
-
-  if(!document.getElementById('ytMostLikesRuntimeStyle')){
-    const style = document.createElement('style');
-    style.id = 'ytMostLikesRuntimeStyle';
-    style.textContent = `
-      .yt-screen-grid > .yt-most-liked-panel{grid-column:3;grid-row:3;display:grid!important;visibility:visible!important;opacity:1!important}
-      .yt-most-liked-body{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px;overflow:hidden}
-      .yt-most-liked-list{min-height:0;display:grid;align-content:start;gap:3px;overflow-y:auto;padding-right:4px;scrollbar-gutter:stable}
-      .yt-most-liked-row{min-width:0;display:grid;grid-template-columns:22px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:7px;row-gap:3px;align-items:center;padding:5px 3px 6px;border-bottom:1px solid #1e0d0d}
-      .yt-most-liked-rank{grid-row:1/3;align-self:center;color:#d66d68;font-size:9px;font-weight:900;text-align:center}
-      .yt-most-liked-title{min-width:0;color:#f0eeee;font-size:8px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .yt-most-liked-count{color:#fff;font-size:10px;font-weight:900;white-space:nowrap}
-      .yt-most-liked-meta{min-width:0;display:flex;align-items:center;gap:6px}
-      .yt-most-liked-type{flex:0 0 auto;color:#8d7372;font-size:6px;font-weight:900;letter-spacing:.05em}
-      .yt-most-liked-bar{min-width:0;flex:1;height:5px;overflow:hidden;border-radius:999px;background:#1a0c0c}
-      .yt-most-liked-bar>i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#80302d,#e2645e)}
-      .yt-most-liked-empty{padding:10px 4px;color:#6f5b5a;font-size:8px;line-height:1.4}
-      @media(max-width:900px){.yt-screen-grid>.yt-most-liked-panel{grid-column:auto;grid-row:auto}}
-    `;
-    document.head.appendChild(style);
-  }
 })();
 
 (function(){

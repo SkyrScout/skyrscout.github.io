@@ -21,7 +21,6 @@
   const overviewTitle = document.getElementById('crRealtimeListTitle');
   const overviewBadge = document.getElementById('crRealtimeBadge');
   const filterButtons = Array.from(document.querySelectorAll('[data-hf-filter]'));
-  const mostLikedList = document.getElementById('ytMostLikedList');
 
   const typeCatalog = new Map();
   document.querySelectorAll('#hfVideoTypeCatalog [data-hf-video-id]').forEach(node => {
@@ -39,7 +38,11 @@
     videosPolled: null,
     selectedVideoId: null,
     filter: 'all',
-    mostLiked: []
+    mostLiked: [],
+    mostLiked24h: [],
+    mostLiked7d: [],
+    likesHistory: {},
+    likeWindow: '24h'
   };
 
   function parseLibraryDate(value){
@@ -852,61 +855,136 @@
     });
   }
 
-  function renderMostLiked(items){
-    if(!mostLikedList) return;
-    clear(mostLikedList);
-
-    const rows = Array.isArray(items)
-      ? items.filter(item => numericOrNull(item && item.likeCount) !== null).slice(0,5)
-      : [];
-
-    if(!rows.length){
-      const empty = document.createElement('div');
-      empty.className = 'yt-most-liked-empty';
-      empty.textContent = 'Waiting for VPS like counts…';
-      mostLikedList.appendChild(empty);
-      return;
-    }
-
-    const maxLikes = Math.max.apply(null, rows.map(item => numericOrNull(item.likeCount) || 0));
-
-    rows.forEach((item,index) => {
-      const likes = numericOrNull(item.likeCount);
-      const row = document.createElement('div');
-      row.className = 'yt-most-liked-row';
-
-      const rank = document.createElement('span');
-      rank.className = 'yt-most-liked-rank';
-      rank.textContent = '#' + (index + 1);
-
-      const title = document.createElement('strong');
-      title.className = 'yt-most-liked-title';
-      title.textContent = item.title || item.videoId || 'SkyrScout video';
-      title.title = title.textContent;
-
-      const count = document.createElement('b');
-      count.className = 'yt-most-liked-count';
-      count.textContent = fmtNumber(likes);
-
-      const meta = document.createElement('div');
-      meta.className = 'yt-most-liked-meta';
-
-      const type = document.createElement('span');
-      type.className = 'yt-most-liked-type';
-      type.textContent = String(item.videoType || 'unknown').toUpperCase();
-
-      const bar = document.createElement('span');
-      bar.className = 'yt-most-liked-bar';
-      const fill = document.createElement('i');
-      const pct = maxLikes > 0 && likes !== null ? Math.max(2, Math.round((likes / maxLikes) * 100)) : 0;
-      fill.style.width = pct + '%';
-      bar.appendChild(fill);
-      meta.append(type,bar);
-
-      row.append(rank,title,count,meta);
-      mostLikedList.appendChild(row);
+  function mostLikedLists(){
+    const seen = new Set();
+    return Array.from(document.querySelectorAll('[data-yt-most-liked-list], #ytMostLikedList')).filter(node => {
+      if(seen.has(node)) return false;
+      seen.add(node);
+      return true;
     });
   }
+
+  function mostLikedNotes(){
+    return Array.from(document.querySelectorAll('[data-yt-most-liked-note]'));
+  }
+
+  function fmtLikeDelta(value){
+    const n = numericOrNull(value);
+    if(n === null) return '—';
+    return (n > 0 ? '+' : '') + fmtNumber(n);
+  }
+
+  function formatHistoryAge(hours){
+    const h = Math.max(0, Number(hours) || 0);
+    if(h < 1) return '<1H';
+    if(h < 24) return Math.floor(h) + 'H';
+    const days = Math.floor(h / 24);
+    const remainder = Math.floor(h % 24);
+    return remainder ? (days + 'D ' + remainder + 'H') : (days + 'D');
+  }
+
+  function activeMostLikedItems(){
+    if(state.likeWindow === 'lifetime') return state.mostLiked;
+    if(state.likeWindow === '7d') return state.mostLiked7d;
+    return state.mostLiked24h;
+  }
+
+  function syncMostLikedTabs(){
+    document.querySelectorAll('[data-yt-like-window]').forEach(button => {
+      const active = String(button.dataset.ytLikeWindow || '') === state.likeWindow;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+  }
+
+  function mostLikedNoteText(){
+    if(state.likeWindow === 'lifetime'){
+      return 'Lifetime likes · refreshed with the VPS collector.';
+    }
+
+    const age = Math.max(0, Number((state.likesHistory || {}).ageHours) || 0);
+    const targetHours = state.likeWindow === '7d' ? 168 : 24;
+    const complete = age >= targetHours;
+    const targetLabel = state.likeWindow === '7d' ? '7D' : '24H';
+
+    if(!complete){
+      return 'BUILDING HISTORY · ' + formatHistoryAge(age) + ' / ' + targetLabel + ' · ranking uses collected history so far.';
+    }
+    return 'Rolling ' + targetLabel + ' net likes · hourly local baseline · no extra API polls.';
+  }
+
+  function renderMostLiked(){
+    const lists = mostLikedLists();
+    if(!lists.length) return;
+
+    syncMostLikedTabs();
+
+    const items = activeMostLikedItems();
+    const isLifetime = state.likeWindow === 'lifetime';
+    const rows = Array.isArray(items)
+      ? items.filter(item => numericOrNull(item && (isLifetime ? item.likeCount : item.likeDelta)) !== null).slice(0,5)
+      : [];
+
+    lists.forEach(list => {
+      clear(list);
+
+      if(!rows.length){
+        const empty = document.createElement('div');
+        empty.className = 'yt-most-liked-empty';
+        empty.textContent = isLifetime ? 'Waiting for VPS like counts…' : 'Building like history…';
+        list.appendChild(empty);
+        return;
+      }
+
+      const metrics = rows.map(item => {
+        const value = numericOrNull(isLifetime ? item.likeCount : item.likeDelta);
+        return value === null ? 0 : Math.max(0, value);
+      });
+      const maxMetric = Math.max.apply(null, metrics);
+
+      rows.forEach((item,index) => {
+        const metric = numericOrNull(isLifetime ? item.likeCount : item.likeDelta);
+        const row = document.createElement('div');
+        row.className = 'yt-most-liked-row';
+
+        const rank = document.createElement('span');
+        rank.className = 'yt-most-liked-rank';
+        rank.textContent = '#' + (index + 1);
+
+        const title = document.createElement('strong');
+        title.className = 'yt-most-liked-title';
+        title.textContent = item.title || item.videoId || 'SkyrScout video';
+        title.title = title.textContent;
+
+        const count = document.createElement('b');
+        count.className = 'yt-most-liked-count';
+        count.textContent = isLifetime ? fmtNumber(metric) : fmtLikeDelta(metric);
+
+        const meta = document.createElement('div');
+        meta.className = 'yt-most-liked-meta';
+
+        const type = document.createElement('span');
+        type.className = 'yt-most-liked-type';
+        type.textContent = String(item.videoType || 'unknown').toUpperCase();
+
+        const bar = document.createElement('span');
+        bar.className = 'yt-most-liked-bar';
+        const fill = document.createElement('i');
+        const positive = metric === null ? 0 : Math.max(0, metric);
+        const pct = maxMetric > 0 ? Math.max(2, Math.round((positive / maxMetric) * 100)) : 0;
+        fill.style.width = pct + '%';
+        bar.appendChild(fill);
+        meta.append(type,bar);
+
+        row.append(rank,title,count,meta);
+        list.appendChild(row);
+      });
+    });
+
+    const note = mostLikedNoteText();
+    mostLikedNotes().forEach(el => { el.textContent = note; });
+  }
+
 
   function render(payload){
     if(!payload || payload.ok === false) throw new Error('Invalid Hese-Fredrik payload');
@@ -920,6 +998,9 @@
     state.suspicious = Array.isArray(payload.suspiciousSignals) ? payload.suspiciousSignals : [];
     state.movers = Array.isArray(payload.topMovers) ? payload.topMovers : [];
     state.mostLiked = Array.isArray(payload.mostLiked) ? payload.mostLiked : [];
+    state.mostLiked24h = Array.isArray(payload.mostLiked24h) ? payload.mostLiked24h : [];
+    state.mostLiked7d = Array.isArray(payload.mostLiked7d) ? payload.mostLiked7d : [];
+    state.likesHistory = payload.likesHistory || {};
     state.rules = payload.internalRules || {};
     state.checkedAt = payload.checkedAt;
     state.videosPolled = payload.videosPolled;
@@ -950,7 +1031,7 @@
     renderDetail();
     renderRules(state.rules);
     renderOverviewMovers(state.movers, state.alerts, state.suspicious);
-    renderMostLiked(state.mostLiked);
+    renderMostLiked();
 
     if(state.alerts.length){
       const lead = state.alerts[0];
@@ -1149,6 +1230,18 @@
       await requestPublicFallback(token, 'Debug feed request failed.');
     }
   }
+
+
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-yt-like-window]');
+    if(!button) return;
+    const next = String(button.dataset.ytLikeWindow || '').toLowerCase();
+    if(!['24h','7d','lifetime'].includes(next)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    state.likeWindow = next;
+    renderMostLiked();
+  });
 
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
