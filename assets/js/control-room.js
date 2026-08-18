@@ -9,10 +9,10 @@ window.controlRoomSnapRows=snapRows;
   const overlay = document.getElementById('consoleFocusOverlay');
   const shell = document.getElementById('consoleFocusShell');
   const closeBtn = document.getElementById('consoleFocusClose');
-  const panels = Array.from(document.querySelectorAll('.dashboard .panel'));
+  const panels = Array.from(document.querySelectorAll('.dashboard .panel, .youtube-screen .panel'));
   let lastTrigger = null;
 
-  const scrollSelectors = ['.rtlist','.geolist','.player-scroll','.trafficbody'];
+  const scrollSelectors = ['.rtlist','.geolist','.player-scroll','.trafficbody','.yt-video-list','.yt-panel-body'];
 
   function addFocusButton(panel){
     panel.classList.add('console-focusable');
@@ -25,7 +25,10 @@ window.controlRoomSnapRows=snapRows;
     btn.innerHTML = '⛶';
     btn.title = 'Open console in Focus Mode';
     btn.setAttribute('aria-label','Open console in Focus Mode');
-    header.appendChild(btn);
+    const buttonHost = panel.classList.contains('youtube-panel')
+      ? (header.querySelector('.yt-header-tools') || header)
+      : header;
+    buttonHost.appendChild(btn);
 
     btn.addEventListener('click', function(e){
       e.stopPropagation();

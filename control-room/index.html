@@ -106,18 +106,281 @@ sitemap: false
 </div></section>
 <section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Video</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Report 8 Aug 2026</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">—</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">—</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">—</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">—</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">—</b></div><div class="metric" data-selected-metric-card="uniqueViewers"><span>Unique viewers</span><b data-selected-metric="uniqueViewers">—</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="hf-empty">YouTube Analytics connection pending. Charts will remain empty until real data is available.</div></div></div></section>
 <section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected video data</div></div><span class="badge">DATA PENDING</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">YouTube Analytics</div><div class="kv"><span>Views · last 48 h</span><strong>—</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>—</strong></div><div class="kv"><span>YouTube search</span><strong>—</strong></div><div class="kv"><span>External</span><strong>—</strong></div><div class="kv"><span>Suggested videos</span><strong>—</strong></div><div class="kv"><span>Other YouTube features</span><strong>—</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>—</strong></div><div class="kv"><span>Age</span><strong>—</strong></div><div class="kv"><span>Gender</span><strong>—</strong></div></div></section></section>
-</div><section class="control-screen system-screen" data-screen="youtube" hidden="">
-<div class="system-placeholder-wrap">
-<section class="panel system-placeholder-panel">
-<div class="ph"><div class="pt">YouTube</div><span class="badge">Connection stage</span></div>
-<div class="system-placeholder-body">
-<div class="system-placeholder-kicker">Next data link</div>
-<h2>YouTube Analytics</h2>
-<p>Private channel analytics will be connected through an authenticated backend. No private token will be exposed in GitHub Pages.</p>
+</div><section class="control-screen youtube-screen youtube-screen-v1" data-screen="youtube" hidden="">
+<div class="yt-screen-grid">
+  <section class="panel youtube-panel yt-video-selector-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">01</span><div class="pt">Video Selector</div></div>
+      <div class="yt-header-tools">
+        <div class="yt-format-tabs" role="tablist" aria-label="YouTube video format">
+          <button class="yt-format-tab active" type="button" role="tab" aria-selected="true" data-yt-format-tab="long">LONG VIDEOS</button>
+          <button class="yt-format-tab" type="button" role="tab" aria-selected="false" data-yt-format-tab="short">SHORTS</button>
+        </div>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Video Selector data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>SkyrScout site catalogue</span></div>
+            <div><strong>Freshness</strong><span>Changes when the site catalogue changes</span></div>
+            <div><strong>Meaning</strong><span>Selecting a video drives every YouTube console on this screen.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-selector-body">
+      <div class="yt-selector-context">
+        <span>Selected video drives every console to the right.</span>
+        <strong data-yt-selected-type>LONG VIDEO</strong>
+      </div>
+      <div class="yt-video-pane" data-yt-video-pane="long">
+        <div class="yt-video-list">
+          {% for player in site.players %}
+          {% assign yt_title_main = player.title | split: ' | ' | first %}
+          {% assign yt_title_parts = yt_title_main | split: ' – ' %}
+          {% assign yt_player_name = yt_title_parts[0] | strip %}
+          {% assign yt_player_club = yt_title_parts[1] | default: '' | strip %}
+          {% assign yt_video_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+          <button class="yt-video-row" type="button"
+                  data-yt-video-row
+                  data-yt-video-format="long"
+                  data-yt-video-id="{{ yt_video_id | escape }}"
+                  data-yt-video-title="{{ yt_title_main | escape }}"
+                  data-yt-video-name="{{ yt_player_name | escape }}"
+                  data-yt-video-meta="{{ yt_player_club | escape }}"
+                  data-yt-video-date="{{ player.site_added | escape }}">
+            <img src="https://i.ytimg.com/vi/{{ yt_video_id }}/mqdefault.jpg" alt="" loading="lazy">
+            <span class="yt-video-copy"><strong>{{ yt_title_main }}</strong><small>{{ player.site_added }}</small></span>
+            <span class="yt-row-arrow">›</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="yt-video-pane" data-yt-video-pane="short" hidden>
+        <div class="yt-video-list">
+          {% for short in site.shorts %}
+          {% assign yt_short_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+          <button class="yt-video-row yt-short-row" type="button"
+                  data-yt-video-row
+                  data-yt-video-format="short"
+                  data-yt-video-id="{{ yt_short_id | escape }}"
+                  data-yt-video-title="{{ short.title | escape }}"
+                  data-yt-video-name="{{ short.title | escape }}"
+                  data-yt-video-meta="YouTube Short"
+                  data-yt-video-date="{{ short.site_added | escape }}">
+            <img src="https://i.ytimg.com/vi/{{ yt_short_id }}/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ yt_short_id }}/mqdefault.jpg';">
+            <span class="yt-video-copy"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></span>
+            <span class="yt-row-arrow">›</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-performance-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">02</span><div class="pt">Performance</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Performance data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest fully processed Analytics data.</span></div>
+            <div><strong>Meaning</strong><span>Performance for the selected video, including views, watch time and audience metrics when available.</span></div>
+            <div><strong>Lag</strong><span>Newer activity may not yet be included. The latest available date is shown when supplied.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-performance-body">
+      <div class="yt-selected-head">
+        <img data-yt-selected-thumb src="" alt="">
+        <div><strong data-yt-selected-title>Select a video</strong><span data-yt-selected-meta>Performance overview</span></div>
+      </div>
+      <div class="yt-metric-grid">
+        <div class="yt-metric"><span>Views</span><strong>—</strong><small>Since publishing</small></div>
+        <div class="yt-metric"><span>Watch time</span><strong>—</strong><small>Hours</small></div>
+        <div class="yt-metric"><span>Avg. view duration</span><strong>—</strong><small>Since publishing</small></div>
+        <div class="yt-metric"><span>Unique viewers</span><strong>—</strong><small>Latest available</small></div>
+        <div class="yt-metric"><span>Subscribers</span><strong>—</strong><small>From this video</small></div>
+      </div>
+      <div class="yt-chart-shell">
+        <div class="yt-chart-head"><span>Performance since publishing</span><b>DATA PENDING</b></div>
+        <div class="yt-line-placeholder"><span>Analytics series will populate here.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-realtime-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">03</span><div class="pt">Realtime</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-live">LIVE</span>
+        <span class="badge yt-freshness yt-freshness-recent">RECENT</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Realtime data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>VPS collector / YouTube Data API</span></div>
+            <div><strong>Freshness</strong><span>LIVE is current movement. RECENT is completed short-window history.</span></div>
+            <div><strong>Meaning</strong><span>This panel is for the freshest reliable activity we can measure.</span></div>
+            <div><strong>Rule</strong><span>No missing period is filled with zero and no unsupported series is invented.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-realtime-body">
+      <div class="yt-info-strip"><span class="yt-info-dot">i</span><span>Fresh data and completed Analytics data are labelled separately. No missing period is shown as zero.</span></div>
+      <div class="yt-realtime-kpis">
+        <div><span>This hour</span><strong>—</strong><small>LIVE · VPS</small></div>
+        <div><span>Previous hour</span><strong>—</strong><small>RECENT · VPS</small></div>
+        <div><span>Last 48 h</span><strong>—</strong><small>RECENT · VPS</small></div>
+      </div>
+      <div class="yt-chart-shell yt-realtime-chart-shell">
+        <div class="yt-chart-head"><span>48-hour activity</span><b>NO FAKE BARS</b></div>
+        <div class="yt-bars-placeholder"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="yt-panel-note">Exact hourly history is shown only when the backend can supply it reliably.</div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-reach-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">04</span><div class="pt">Reach / Discovery</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Reach and Discovery data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed Analytics data.</span></div>
+            <div><strong>Meaning</strong><span>Shows how viewers discover the selected video, including impressions CTR and discovery mix.</span></div>
+            <div><strong>Lag</strong><span>Discovery data may trail current live movement.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-reach-body">
+      <div class="yt-feature-metric"><span>Impressions click-through rate</span><strong>—</strong><small>Latest available</small></div>
+      <div class="yt-section-label">How viewers find this video</div>
+      <div class="yt-source-stack" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="yt-mini-source-list">
+        <div><span>External</span><strong>—</strong></div>
+        <div><span>YouTube Search</span><strong>—</strong></div>
+        <div><span>Channel pages</span><strong>—</strong></div>
+        <div><span>Direct or unknown</span><strong>—</strong></div>
+        <div><span>Suggested videos</span><strong>—</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-traffic-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">05</span><div class="pt">Traffic Sources</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Traffic Sources data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed Analytics data.</span></div>
+            <div><strong>Meaning</strong><span>Shows which source categories sent viewers to the selected video. Choose one to continue into the Drill-down console.</span></div>
+            <div><strong>Lag</strong><span>Source attribution may update after live view movement.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-traffic-body">
+      <div class="yt-source-intro">Choose a source to open the natural drill-down in the console to the right.</div>
+      <div class="yt-source-buttons">
+        <button class="yt-source-button active" type="button" data-yt-source="external"><span>External</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="search"><span>YouTube Search</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="channel"><span>Channel pages</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="suggested"><span>Suggested videos</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="direct"><span>Direct or unknown</span><strong>—</strong><b>›</b></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-detail-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">06</span><div class="pt" id="ytDetailTitle">External sites / apps</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Drill-down data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed detail available for the selected source.</span></div>
+            <div><strong>Meaning</strong><span>Expands the Traffic Sources console into external sites, search terms or other source-specific detail.</span></div>
+            <div><strong>Lag</strong><span>Detailed attribution can be less complete than the headline source totals.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-detail-body" id="ytDetailBody"></div>
+  </section>
+
+  <section class="panel youtube-panel yt-geography-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">07</span><div class="pt">Geography</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Geography data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest fully processed geography period.</span></div>
+            <div><strong>Meaning</strong><span>Shows where viewers of the selected video are located, with country and city detail when YouTube returns it.</span></div>
+            <div><strong>Lag</strong><span>Geography is not realtime and may lag behind current traffic.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-geography-body">
+      <div class="yt-geo-copy"><strong>Top regions</strong><span>Uses the same real Analytics geography feed as Overview, with room for deeper country and city drill-down.</span></div>
+      <div class="yt-geo-columns">
+        <div class="yt-geo-list">
+          <div><span>Country</span><strong>—</strong><b>›</b></div>
+          <div><span>Country</span><strong>—</strong><b>›</b></div>
+          <div><span>Country</span><strong>—</strong><b>›</b></div>
+        </div>
+        <div class="yt-geo-detail">
+          <span>Selected country</span>
+          <strong>City breakdown + top videos</strong>
+          <small>Real country/city data will populate here.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-audience-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">08</span><div class="pt">Audience</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Audience data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed audience data.</span></div>
+            <div><strong>Meaning</strong><span>Shows subscriber mix and demographic breakdowns when YouTube has enough data to report them.</span></div>
+            <div><strong>Lag</strong><span>Privacy thresholds and processing delays can leave some values unavailable.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-audience-body">
+      <div class="yt-audience-split">
+        <div class="yt-audience-card"><span>Watch time from subscribers</span><div><strong>Not subscribed</strong><b>—</b></div><div><strong>Subscribed</strong><b>—</b></div></div>
+        <div class="yt-audience-card"><span>Age</span><div><strong>13–17</strong><b>—</b></div><div><strong>18–24</strong><b>—</b></div><div><strong>25–34</strong><b>—</b></div><div><strong>35–44</strong><b>—</b></div><div><strong>45–54</strong><b>—</b></div></div>
+      </div>
+      <div class="yt-panel-note">Audience values stay empty when YouTube does not return enough data.</div>
+    </div>
+  </section>
 </div>
 </section>
-</div>
-</section><section class="control-screen system-screen" data-screen="website" hidden="">
+
+<section class="control-screen system-screen" data-screen="website" hidden="">
 <div class="system-placeholder-wrap">
 <section class="panel system-placeholder-panel">
 <div class="ph"><div class="pt">Website</div><span class="badge">Connection stage</span></div>
@@ -208,6 +471,7 @@ sitemap: false
   </div>
 </div>
 
+<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}"></script>
 <script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}"></script>
 </body>
 </html>
