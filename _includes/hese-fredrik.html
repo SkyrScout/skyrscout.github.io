@@ -127,9 +127,11 @@
     .hese-fredrik-copy h2 {
         margin: 0;
         color: #fff;
+        font-family: Arial, Helvetica, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
         font-size: 1.12rem;
         line-height: 1.15;
         overflow-wrap: anywhere;
+        font-variant-emoji: emoji;
     }
 
     .hese-fredrik-movement {
@@ -151,9 +153,20 @@
         line-height: 1.35;
     }
 
-    .hese-fredrik-action {
-        align-self: flex-start;
+    .hese-fredrik-action[hidden] {
+        display: none !important;
+    }
+
+    .hese-fredrik-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
         margin-top: 2px;
+    }
+
+    .hese-fredrik-action {
+        display: inline-flex;
+        align-items: center;
         padding: 7px 10px;
         border: 1px solid rgba(255, 98, 98, 0.9);
         border-radius: 7px;
@@ -161,11 +174,23 @@
         background: rgba(151, 28, 28, 0.88);
         font-size: 0.76rem;
         font-weight: 800;
+        line-height: 1.15;
         text-decoration: none !important;
     }
 
     .hese-fredrik-action:hover {
         background: rgba(183, 34, 34, 0.95);
+    }
+
+    .hese-fredrik-action--youtube {
+        border-color: rgba(255,255,255,0.20);
+        background: rgba(255,255,255,0.065);
+        color: #dce4e8 !important;
+    }
+
+    .hese-fredrik-action--youtube:hover {
+        background: rgba(255,255,255,0.12);
+        color: #fff !important;
     }
 
 
@@ -323,13 +348,26 @@
                 This SkyrScout video is moving unusually fast on YouTube.
             </p>
 
-            <a
-                class="hese-fredrik-action"
-                id="hese-fredrik-action"
-                href="#"
-            >
-                Watch now →
-            </a>
+            <div class="hese-fredrik-actions">
+                <a
+                    class="hese-fredrik-action"
+                    id="hese-fredrik-site-action"
+                    href="#"
+                    hidden
+                >
+                    View Short profile →
+                </a>
+
+                <a
+                    class="hese-fredrik-action hese-fredrik-action--youtube"
+                    id="hese-fredrik-youtube-action"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Watch on YouTube ↗
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -380,7 +418,7 @@
         mutedToggle.hidden = false;
     }
 
-    const siteLinks = {};
+    const siteEntries = {};
 
     {% for player in site.players %}
         {% if player.youtube %}
@@ -392,8 +430,10 @@
                 | split: '/'
                 | last
             %}
-            siteLinks["{{ hf_player_youtube_id | escape }}"] =
-                "{{ player.url | relative_url }}";
+            siteEntries[{{ hf_player_youtube_id | jsonify }}] = {
+                url: {{ player.url | relative_url | jsonify }},
+                kind: "player"
+            };
         {% endif %}
     {% endfor %}
 
@@ -407,8 +447,11 @@
                 | split: '&'
                 | first
             %}
-            siteLinks["{{ hf_short_youtube_id | escape }}"] =
-                "{{ short.url | relative_url }}";
+            siteEntries[{{ hf_short_youtube_id | jsonify }}] = {
+                url: {{ short.url | relative_url | jsonify }},
+                kind: "short",
+                title: {{ short.title | jsonify }}
+            };
         {% endif %}
     {% endfor %}
 
@@ -462,15 +505,19 @@
             return;
         }
 
-        const targetUrl =
-            siteLinks[alert.videoId] ||
+        const siteEntry = siteEntries[alert.videoId] || null;
+        const youtubeUrl =
             alert.videoUrl ||
             ("https://www.youtube.com/watch?v=" + alert.videoId);
+        const targetUrl = siteEntry ? siteEntry.url : youtubeUrl;
+        const displayTitle =
+            siteEntry && siteEntry.kind === "short" && siteEntry.title
+                ? siteEntry.title
+                : (alert.title || "SkyrScout video");
 
         widget.dataset.videoId = alert.videoId || "";
 
-        document.querySelector("#hese-fredrik-title").textContent =
-            alert.title || "SkyrScout video";
+        document.querySelector("#hese-fredrik-title").textContent = displayTitle;
 
         document.querySelector("#hese-fredrik-delta").textContent =
             "+" + Number(alert.deltaViews || 0).toLocaleString("en-US") + " views";
@@ -484,10 +531,26 @@
         thumbnail.src =
             alert.thumbnail ||
             ("https://img.youtube.com/vi/" + alert.videoId + "/hqdefault.jpg");
-        thumbnail.alt = alert.title || "SkyrScout video";
+        thumbnail.alt = displayTitle;
 
         document.querySelector("#hese-fredrik-image-link").href = targetUrl;
-        document.querySelector("#hese-fredrik-action").href = targetUrl;
+
+        const siteAction = document.querySelector("#hese-fredrik-site-action");
+        const youtubeAction = document.querySelector("#hese-fredrik-youtube-action");
+
+        if (siteEntry) {
+            siteAction.hidden = false;
+            siteAction.href = siteEntry.url;
+            siteAction.textContent =
+                siteEntry.kind === "short"
+                    ? "View Short profile →"
+                    : "View player profile →";
+        } else {
+            siteAction.hidden = true;
+            siteAction.removeAttribute("href");
+        }
+
+        youtubeAction.href = youtubeUrl;
 
         widget.hidden = false;
     };
