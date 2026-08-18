@@ -921,9 +921,20 @@
 
     const items = activeMostLikedItems();
     const isLifetime = state.likeWindow === 'lifetime';
-    const rows = Array.isArray(items)
-      ? items.filter(item => numericOrNull(item && (isLifetime ? item.likeCount : item.likeDelta)) !== null).slice(0,5)
+    const allRows = Array.isArray(items)
+      ? items.filter(item => numericOrNull(item && (isLifetime ? item.likeCount : item.likeDelta)) !== null)
       : [];
+
+    // A zero-delta ranking is meaningless while 24H/7D history is still being built.
+    // For rolling windows, show only videos that have actually gained likes.
+    const rows = (isLifetime
+      ? allRows
+      : allRows.filter(item => numericOrNull(item.likeDelta) > 0)
+    ).slice(0,5);
+
+    const historyAge = Math.max(0, Number((state.likesHistory || {}).ageHours) || 0);
+    const targetHours = state.likeWindow === '7d' ? 168 : 24;
+    const historyComplete = isLifetime || historyAge >= targetHours;
 
     lists.forEach(list => {
       clear(list);
@@ -931,7 +942,38 @@
       if(!rows.length){
         const empty = document.createElement('div');
         empty.className = 'yt-most-liked-empty';
-        empty.textContent = isLifetime ? 'Waiting for VPS like counts…' : 'Building like history…';
+
+        if(isLifetime){
+          empty.textContent = 'Waiting for VPS like counts…';
+        }else if(!historyComplete){
+          const label = state.likeWindow === '7d' ? '7D' : '24H';
+          const pct = Math.max(1, Math.min(100, Math.round((historyAge / targetHours) * 100)));
+
+          const title = document.createElement('strong');
+          title.textContent = 'BUILDING ' + label + ' HISTORY';
+
+          const detail = document.createElement('div');
+          detail.style.marginTop = '8px';
+          detail.textContent = 'Hourly like snapshots are being collected. The ranking appears as soon as a video gains a like.';
+
+          const track = document.createElement('span');
+          track.className = 'yt-most-liked-bar';
+          track.style.display = 'block';
+          track.style.marginTop = '12px';
+          track.style.maxWidth = '520px';
+          const fill = document.createElement('i');
+          fill.style.width = pct + '%';
+          track.appendChild(fill);
+
+          const progress = document.createElement('div');
+          progress.style.marginTop = '7px';
+          progress.textContent = formatHistoryAge(historyAge) + ' / ' + label + ' collected';
+
+          empty.append(title, detail, track, progress);
+        }else{
+          empty.textContent = 'No likes gained in this window yet.';
+        }
+
         list.appendChild(empty);
         return;
       }
