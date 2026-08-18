@@ -1925,3 +1925,19 @@ body.hf-alert-flash::after{
 .console-focus-shell .youtube-panel.yt-most-liked-panel .yt-most-liked-type{font-size:11px}
 .console-focus-shell .youtube-panel.yt-most-liked-panel .yt-most-liked-bar{height:9px}
 .console-focus-shell .youtube-panel.yt-most-liked-panel .yt-most-liked-empty{font-size:14px}
+
+
+/* Most Likes frontend hardening · 20260819-0110-mostlikes2 */
+.yt-screen-grid > .yt-most-liked-panel{
+  grid-column:3;
+  grid-row:3;
+  display:grid !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+@media(max-width:900px){
+  .yt-screen-grid > .yt-most-liked-panel{
+    grid-column:auto;
+    grid-row:auto;
+  }
+}
