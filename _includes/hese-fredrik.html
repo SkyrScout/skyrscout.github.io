@@ -517,7 +517,17 @@
 
         widget.dataset.videoId = alert.videoId || "";
 
-        document.querySelector("#hese-fredrik-title").textContent = displayTitle;
+        const heseTitle = document.querySelector("#hese-fredrik-title");
+        heseTitle.textContent = displayTitle;
+
+        // Windows does not natively render regional-indicator flag emoji.
+        // Re-run Twemoji after every live title update so flags stay visible.
+        if (window.twemoji) {
+            twemoji.parse(heseTitle, {
+                folder: "svg",
+                ext: ".svg"
+            });
+        }
 
         document.querySelector("#hese-fredrik-delta").textContent =
             "+" + Number(alert.deltaViews || 0).toLocaleString("en-US") + " views";

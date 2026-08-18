@@ -832,3 +832,29 @@ if (marqueeItems) {
         loadLatestPodcast();
         loadLatestMusic();
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    if (!window.twemoji) {
+        return;
+    }
+
+    const twemojiOptions = {
+        folder: "svg",
+        ext: ".svg"
+    };
+
+    const shortGrid = document.querySelector("#yard-latest-shorts");
+    if (shortGrid) {
+        twemoji.parse(shortGrid, twemojiOptions);
+    }
+
+    const heseTitle = document.querySelector("#hese-fredrik-title");
+    if (heseTitle) {
+        twemoji.parse(heseTitle, twemojiOptions);
+    }
+})();
+</script>
