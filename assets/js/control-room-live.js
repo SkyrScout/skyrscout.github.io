@@ -21,6 +21,7 @@
   const overviewTitle = document.getElementById('crRealtimeListTitle');
   const overviewBadge = document.getElementById('crRealtimeBadge');
   const filterButtons = Array.from(document.querySelectorAll('[data-hf-filter]'));
+  const mostLikedList = document.getElementById('ytMostLikedList');
 
   const typeCatalog = new Map();
   document.querySelectorAll('#hfVideoTypeCatalog [data-hf-video-id]').forEach(node => {
@@ -37,7 +38,8 @@
     checkedAt: null,
     videosPolled: null,
     selectedVideoId: null,
-    filter: 'all'
+    filter: 'all',
+    mostLiked: []
   };
 
   function parseLibraryDate(value){
@@ -850,6 +852,62 @@
     });
   }
 
+  function renderMostLiked(items){
+    if(!mostLikedList) return;
+    clear(mostLikedList);
+
+    const rows = Array.isArray(items)
+      ? items.filter(item => numericOrNull(item && item.likeCount) !== null).slice(0,5)
+      : [];
+
+    if(!rows.length){
+      const empty = document.createElement('div');
+      empty.className = 'yt-most-liked-empty';
+      empty.textContent = 'Waiting for VPS like counts…';
+      mostLikedList.appendChild(empty);
+      return;
+    }
+
+    const maxLikes = Math.max.apply(null, rows.map(item => numericOrNull(item.likeCount) || 0));
+
+    rows.forEach((item,index) => {
+      const likes = numericOrNull(item.likeCount);
+      const row = document.createElement('div');
+      row.className = 'yt-most-liked-row';
+
+      const rank = document.createElement('span');
+      rank.className = 'yt-most-liked-rank';
+      rank.textContent = '#' + (index + 1);
+
+      const title = document.createElement('strong');
+      title.className = 'yt-most-liked-title';
+      title.textContent = item.title || item.videoId || 'SkyrScout video';
+      title.title = title.textContent;
+
+      const count = document.createElement('b');
+      count.className = 'yt-most-liked-count';
+      count.textContent = fmtNumber(likes);
+
+      const meta = document.createElement('div');
+      meta.className = 'yt-most-liked-meta';
+
+      const type = document.createElement('span');
+      type.className = 'yt-most-liked-type';
+      type.textContent = String(item.videoType || 'unknown').toUpperCase();
+
+      const bar = document.createElement('span');
+      bar.className = 'yt-most-liked-bar';
+      const fill = document.createElement('i');
+      const pct = maxLikes > 0 && likes !== null ? Math.max(2, Math.round((likes / maxLikes) * 100)) : 0;
+      fill.style.width = pct + '%';
+      bar.appendChild(fill);
+      meta.append(type,bar);
+
+      row.append(rank,title,count,meta);
+      mostLikedList.appendChild(row);
+    });
+  }
+
   function render(payload){
     if(!payload || payload.ok === false) throw new Error('Invalid Hese-Fredrik payload');
 
@@ -861,6 +919,7 @@
     state.alerts = Array.isArray(payload.internalAlerts) ? payload.internalAlerts : [];
     state.suspicious = Array.isArray(payload.suspiciousSignals) ? payload.suspiciousSignals : [];
     state.movers = Array.isArray(payload.topMovers) ? payload.topMovers : [];
+    state.mostLiked = Array.isArray(payload.mostLiked) ? payload.mostLiked : [];
     state.rules = payload.internalRules || {};
     state.checkedAt = payload.checkedAt;
     state.videosPolled = payload.videosPolled;
@@ -891,6 +950,7 @@
     renderDetail();
     renderRules(state.rules);
     renderOverviewMovers(state.movers, state.alerts, state.suspicious);
+    renderMostLiked(state.mostLiked);
 
     if(state.alerts.length){
       const lead = state.alerts[0];
