@@ -7,7 +7,7 @@
 
   function bodies(){
     return Array.from(document.querySelectorAll(
-      '[data-screen="youtube"] [data-yt-geography-body], #consoleFocusShell [data-yt-geography-body]'
+      '[data-screen="youtube"] .yt-geography-body, #consoleFocusShell .yt-geography-body'
     ));
   }
 
@@ -108,8 +108,59 @@
     });
   }
 
+  function ensureCompatibleMarkup(panel){
+    if(!panel) return;
+    if(panel.querySelector('[data-yt-geo-countries]')){
+      panel.setAttribute('data-yt-geography-body', '');
+      return;
+    }
+
+    // Older YouTube-tab builds used a visual placeholder here.
+    // Upgrade that body in place so the real Geography feed can render
+    // without depending on a specific historical index.html version.
+    panel.setAttribute('data-yt-geography-body', '');
+    panel.innerHTML = `
+      <div class="yt-geo-tabs" role="tablist" aria-label="Geography level">
+        <button class="yt-geo-tab active" type="button" role="tab" aria-selected="true" data-yt-geo-tab="countries">COUNTRIES</button>
+        <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="cities">CITIES</button>
+      </div>
+
+      <div class="yt-geo-view" data-yt-geo-view="countries">
+        <div class="yt-geo-copy">
+          <strong>Countries</strong>
+          <span data-yt-geo-period>Latest available YouTube Analytics geography.</span>
+        </div>
+        <div class="yt-geo-country-list" data-yt-geo-countries>
+          <div class="yt-geo-empty">Waiting for geography data…</div>
+        </div>
+      </div>
+
+      <div class="yt-geo-view" data-yt-geo-view="cities" hidden>
+        <div class="yt-geo-city-head">
+          <div>
+            <span>SELECTED COUNTRY</span>
+            <strong data-yt-geo-selected-country>—</strong>
+          </div>
+          <b data-yt-geo-selected-total>—</b>
+        </div>
+        <div class="yt-geo-city-grid">
+          <section class="yt-geo-breakdown">
+            <h4>TOP CITIES</h4>
+            <div data-yt-geo-cities><div class="yt-geo-empty">Choose a country first.</div></div>
+          </section>
+          <section class="yt-geo-breakdown">
+            <h4>TOP VIDEOS</h4>
+            <div data-yt-geo-videos><div class="yt-geo-empty">Choose a country first.</div></div>
+          </section>
+        </div>
+      </div>
+    `;
+  }
+
   function render(panel){
     if(!panel) return;
+
+    ensureCompatibleMarkup(panel);
 
     panel.querySelectorAll('[data-yt-geo-tab]').forEach(button => {
       const isActive = String(button.dataset.ytGeoTab || '') === activeTab;
@@ -286,6 +337,13 @@
       if(changed) window.setTimeout(renderAll, 0);
     }).observe(focusShell, {childList:true, subtree:true});
   }
+
+  document.addEventListener('controlroom:screenchange', event => {
+    if(event && event.detail && event.detail.screen === 'youtube'){
+      geo = window.SkyrScoutGeographyState || geo;
+      window.setTimeout(renderAll, 0);
+    }
+  });
 
   ensureStyle();
   renderAll();
