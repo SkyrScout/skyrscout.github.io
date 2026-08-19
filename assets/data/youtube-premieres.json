@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-08-18T17:20:02Z",
+    "updated_utc": "2026-08-19T10:49:11Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "_v_Q-5GKHEI": {
-      "status": "upcoming",
-      "scheduled_start": "2026-08-19T10:00:00Z",
-      "title": "Salah Eddine Oulad M'Hand (2003) – Riga FC | Virsliga, Latvia",
-      "profiles": [
-        {
-          "player_slug": "salah-eddine-oulad-mhand",
-          "kind": "main",
-          "main_video_id": "_v_Q-5GKHEI"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
