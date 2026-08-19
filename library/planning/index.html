@@ -1,0 +1,55 @@
+---
+layout: null
+permalink: /library/planning/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Planning | Scoutland Yard Library</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css' | relative_url }}?v=20260819-rooms3">
+</head>
+<body>
+  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking"><div class="staff-room-auth-card"><span class="staff-room-auth-dot"></span><strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong></div></div>
+  <main class="planning-room" id="staffProtectedRoom" hidden>
+    <img class="library-bg" src="{{ '/assets/images/scoutland-library-room.webp' | relative_url }}" alt="">
+    <header class="room-topbar">
+      <a class="room-brand" href="/library/"><span class="room-seal">SY</span><span class="room-brand-copy"><span>Library · Planning</span><strong>Scoutland Yard</strong></span></a>
+      <div class="room-session"><span class="room-session-copy"><strong data-staff-identity>SkyrScout Staff</strong><span data-staff-role>Staff</span></span><button type="button" data-staff-signout>Sign out</button></div>
+    </header>
+    <section class="planning-shell">
+      <div class="roadmap-nav"><a href="/library/">← Library</a><a href="/foyer/">Foyer</a></div>
+      <article class="roadmap-paper">
+        <header class="roadmap-header">
+          <div><span class="library-kicker">Planning</span><h1>Scoutland Yard Roadmap</h1><p>Recovered master list from 19 August 2026. This is a draft for review. Status and priority are not treated as approved until Bon Scout approves them.</p></div>
+          <span class="draft-badge">Draft · awaiting approval</span>
+        </header>
+        <div class="roadmap-body">
+          <section class="roadmap-section"><h2>Status key</h2><ul><li><strong>IN PROGRESS</strong> — actively being worked on</li><li><strong>NEXT</strong> — agreed next work</li><li><strong>WAITING</strong> — needs time/data before judgement</li><li><strong>BACKLOG</strong> — worth keeping, not next</li><li><strong>DECIDE</strong> — explicitly choose to do, postpone, or reject</li><li><strong>DONE</strong> — completed</li><li><strong>REJECTED</strong> — actively chosen not to pursue</li></ul></section>
+
+          <section class="roadmap-section"><h2>In progress</h2><h3>YouTube / Control Room</h3><ul><li><strong>Geography console: COUNTRIES | CITIES tabs</strong><ul><li>Countries as default</li><li>Clicking a country opens Cities</li><li>Cities view shows Top Cities + Top Videos</li><li>Current issue in recovered list: latest Geography UI change had not visibly appeared live</li></ul></li><li><strong>Hese-Fredrik public widget: browser-profile bug</strong><ul><li>Works in ScoutOfThisWorld Chrome profile</li><li>Works in Incognito</li><li>Does not work in normal private Chrome profile</li><li>Not caused by Mute</li><li>Investigate profile-specific blocking/state, especially extensions, site data, permissions and Apps Script request</li></ul></li><li><strong>Most Likes: 24H | 7D | LIFETIME</strong><ul><li>24H default</li><li>Hourly local like snapshots, no extra YouTube polling</li><li>Lifetime works</li><li>24H / 7D building history</li></ul></li></ul></section>
+
+          <section class="roadmap-section"><h2>Waiting</h2><ul><li><strong>Validate Most Likes 24H</strong><ul><li>Check after enough real like changes have occurred</li><li>Full 24H window available after 24 hours</li></ul></li><li><strong>Validate Most Likes 7D</strong><ul><li>Full 7D window available after 7 days</li></ul></li><li><strong>Hese-Fredrik type-aware thresholds</strong><ul><li>Keep observing Shorts vs Long behaviour in real spikes before retuning</li></ul></li></ul></section>
+
+          <section class="roadmap-section"><h2>Next</h2><h3>Control Room / YouTube tab</h3><ul><li>Wire remaining real YouTube Analytics data console by console</li><li>Performance: real watch-time / duration metrics where available</li><li>Reach / Discovery: impressions and CTR where available</li><li>Traffic Sources: real source breakdown</li><li>Drill-down: External sites/apps and YouTube search terms</li><li>Audience: subscriber status and age / audience data where available</li><li>Keep freshness labels strict: LIVE, RECENT, LATEST AVAILABLE</li><li>Never fabricate time-series bars or unavailable metrics</li></ul><h3>Control Room / Overview</h3><ul><li>Improve lower Selected Video area with deeper useful selected-video detail</li><li>Remove/replace unhelpful BUILDING / STANDBY presentation</li><li>Preserve world map prominence and current pulsing traffic lights</li><li>All console boxes should support Focus / pop-out consistently</li></ul><h3>Reliability</h3><ul><li>Verify exact ZIP contents before delivery</li><li>Verify cache-bust chain</li><li>Preserve unrelated working files/features</li><li>Distinguish clearly between GitHub package and VPS file</li><li>No user-side debugging when the package itself can be checked directly</li></ul></section>
+
+          <section class="roadmap-section"><h2>Backlog</h2><h3>Geography</h3><ul><li>Better country-focused detail UX</li><li>City-light concept on map if a lawful/reliable geocoding route is chosen</li><li>Keep slower Geography data clearly labelled as latest available, not live</li></ul><h3>Website / Scoutland Yard</h3><ul><li>Premiere board / status panel</li><li>Hese-Fredrik widget/status board</li><li>Feed/deployment health checks for important JSON/assets</li><li>Library area</li><li>Speilsalen</li><li>Scoutland One</li></ul><h3>Hese-Fredrik</h3><ul><li>Possible future transfer-alert use, low priority</li><li>Continue tuning only from observed real behaviour, not theoretical thresholds</li></ul></section>
+
+          <section class="roadmap-section"><h2>Decide</h2><ul><li>Which remaining YouTube Analytics console should be wired first after current bugs are cleared?</li><li>Whether city lights add enough value to justify geocoding work</li><li>Whether Premiere / Website health belongs in Control Room now or later</li><li>Whether Library / Speilsalen should begin before the YouTube tab is substantially complete</li></ul></section>
+
+          <section class="roadmap-section"><h2>Done / locked</h2><ul><li>Always-on VPS collector running server-side</li><li>Official YouTube Data API collector, no browser/session-cookie dependency</li><li>SQLite history</li><li>Apps Script relay</li><li>Authenticated Staff backend for Control Room</li><li>Realtime Monitor with all channel videos</li><li>Hese-Fredrik public + internal state</li><li>Type-aware Hese-Fredrik rules for Long / Short</li><li>Public Hese-Fredrik profile + YouTube action buttons</li><li>Homepage / Hese-Fredrik flag emoji fix</li><li>World Traffic map restored and visible</li><li>Geography Analytics feed with country/city/top-video data</li><li>YouTube tab visual structure established</li><li>Most Likes Lifetime console</li><li>Most Likes hourly history collection for 24H / 7D</li></ul></section>
+
+          <section class="roadmap-section"><h2>Rejected / do not reopen</h2><ul><li>Browser-extension / private-PC collector dependency</li><li>Risky YouTube Studio scraping using cookies/session replay</li><li>Old Apps Script polling as the live collector</li><li>Connecting ScoutOfThisWorld Trello/Atlassian to the private ChatGPT account</li></ul><div class="roadmap-rule"><strong>Working rule:</strong> New ideas go to INBOX / BACKLOG first. If a new idea replaces something in NEXT, the displaced item must be moved explicitly rather than forgotten. Abandoned ideas go to REJECTED with the reason.</div></section>
+        </div>
+      </article>
+    </section>
+  </main>
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js' | relative_url }}?v=20260819-rooms3"></script>
+</body>
+</html>

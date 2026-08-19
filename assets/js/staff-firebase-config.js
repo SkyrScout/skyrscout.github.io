@@ -1,10 +1,4 @@
-/*
- * Scoutland Yard Staff Entrance — Firebase web configuration.
- *
- * Firebase's web config object contains project identifiers, not a server secret.
- * Do not put service-account keys, OAuth client secrets, YouTube API keys or other
- * private credentials in this public file.
- */
+/* Scoutland Yard Staff Entrance — Firebase web configuration. */
 export const firebaseConfig = Object.freeze({
   apiKey: "AIzaSyB7wUJ43HlV3q4ZhxdOKRU3KkQVVNB9JNM",
   authDomain: "scoutland-yard.firebaseapp.com",
@@ -17,9 +11,9 @@ export const firebaseConfig = Object.freeze({
 export const staffAccessConfig = Object.freeze({
   allowlistCollection: "staff_allowlist",
   entrancePath: "/staff/",
-  defaultTarget: "/foajeen/",
+  defaultTarget: "/foyer/",
   roomRoots: Object.freeze([
-    "/foajeen/",
+    "/foyer/",
     "/library/",
     "/control-room/"
   ])

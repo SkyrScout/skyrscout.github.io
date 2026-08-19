@@ -1,0 +1,36 @@
+---
+layout: null
+permalink: /foyer/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Foyer | Scoutland Yard</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css' | relative_url }}?v=20260819-rooms3">
+</head>
+<body>
+  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking"><div class="staff-room-auth-card"><span class="staff-room-auth-dot"></span><strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong></div></div>
+  <main class="foyer-room" id="staffProtectedRoom" hidden>
+    <header class="room-topbar">
+      <a class="room-brand" href="/foyer/"><span class="room-seal">SY</span><span class="room-brand-copy"><span>SkyrScout internal building</span><strong>Scoutland Yard</strong></span></a>
+      <div class="room-session"><span class="room-session-copy"><strong data-staff-identity>SkyrScout Staff</strong><span data-staff-role>Staff</span></span><button type="button" data-staff-signout>Sign out</button></div>
+    </header>
+    <section class="foyer-stage" aria-labelledby="foyerTitle">
+      <img src="{{ '/assets/images/scoutland-yard-foyer.webp' | relative_url }}" alt="Scoutland Yard foyer">
+      <div class="foyer-caption"><span>Scoutland Yard · Staff only</span><strong id="foyerTitle">Foyer</strong></div>
+      <nav class="foyer-directory" aria-label="Scoutland Yard rooms">
+        <a class="foyer-link" href="/library/"><b>L</b><span><strong>Library</strong><small>Research, sources, archive &amp; planning</small></span></a>
+        <a class="foyer-link" href="/control-room/"><b>C</b><span><strong>Control Room</strong><small>Monitoring &amp; intelligence</small></span></a>
+      </nav>
+    </section>
+  </main>
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js' | relative_url }}?v=20260819-rooms3"></script>
+</body>
+</html>

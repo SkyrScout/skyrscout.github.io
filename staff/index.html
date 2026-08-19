@@ -24,7 +24,6 @@ sitemap: false
         <p>Private access point for SkyrScout staff. Only approved personnel may enter the internal Scoutland Yard tools.</p>
       </div>
     </section>
-
     <section class="staff-entrance-panel" aria-labelledby="staffSignInTitle">
       <div class="staff-signin-card">
         <header class="staff-signin-header">
@@ -32,48 +31,23 @@ sitemap: false
           <h2 id="staffSignInTitle">Personnel only</h2>
           <p>Sign in with the Google account approved for your SkyrScout staff identity.</p>
         </header>
-
         <div class="staff-signin-body">
-          <div class="staff-lock-row" aria-hidden="true">
-            <span class="staff-lock-icon">S</span>
-            <div>
-              <strong>OnlyScout</strong>
-              <span>No fans. No public access.</span>
-            </div>
-          </div>
-
-          <div class="staff-auth-status" id="staffAuthStatus" role="status" aria-live="polite">
-            <span class="staff-status-dot"></span>
-            <span id="staffAuthStatusText">Checking staff session…</span>
-          </div>
-
+          <div class="staff-lock-row" aria-hidden="true"><span class="staff-lock-icon">S</span><div><strong>OnlyScout</strong><span>No fans. No public access.</span></div></div>
+          <div class="staff-auth-status" id="staffAuthStatus" role="status" aria-live="polite"><span class="staff-status-dot"></span><span id="staffAuthStatusText">Checking staff session…</span></div>
           <div class="staff-auth-error" id="staffAuthError" role="alert" hidden></div>
-
-          <button class="staff-google-button" id="staffGoogleSignIn" type="button" disabled>
-            <span class="staff-google-mark" aria-hidden="true">G</span>
-            <span>Sign in with Google</span>
-          </button>
-
-          <button class="staff-enter-button" id="staffEnterYard" type="button" hidden>
-            Enter Scoutland Yard
-          </button>
-
-          <button class="staff-signout-button" id="staffSignOut" type="button" hidden>
-            Use another Google account
-          </button>
-
+          <button class="staff-google-button" id="staffGoogleSignIn" type="button" disabled><span class="staff-google-mark" aria-hidden="true">G</span><span>Sign in with Google</span></button>
+          <button class="staff-enter-button" id="staffEnterYard" type="button" hidden>Enter Scoutland Yard</button>
+          <button class="staff-signout-button" id="staffSignOut" type="button" hidden>Use another Google account</button>
           <div class="staff-access-notes">
             <div><strong>Google sign-in required</strong><span>Firebase Authentication verifies the Google session.</span></div>
             <div><strong>Explicit staff allowlist</strong><span>Authentication alone is not enough. The account must also be approved.</span></div>
-            <div><strong>Private internal tools</strong><span>Control Room data is loaded only after staff access is granted.</span></div>
+            <div><strong>Private internal tools</strong><span>Foyer, Library and Control Room stay behind the same staff entrance.</span></div>
           </div>
-
           <p class="staff-footer-note">Scoutland Yard is an internal SkyrScout workspace.</p>
         </div>
       </div>
     </section>
   </main>
-
-  <script type="module" src="{{ '/assets/js/staff-entrance.js' | relative_url }}?v=20260819-rooms1"></script>
+  <script type="module" src="{{ '/assets/js/staff-entrance.js' | relative_url }}?v=20260819-rooms3"></script>
 </body>
 </html>

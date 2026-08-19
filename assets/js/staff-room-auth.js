@@ -2,7 +2,7 @@ import {
   getAuthorizedStaffSession,
   signOutStaff,
   staffAccessConfig
-} from "./staff-access.js?v=20260819-rooms1";
+} from "./staff-access.js?v=20260819-rooms3";
 
 const room = document.getElementById("staffProtectedRoom");
 const gate = document.getElementById("staffRoomAuthGate");
@@ -17,28 +17,20 @@ function entranceUrl() {
 }
 
 async function authorizeRoom() {
-  if (gate) {
-    gate.hidden = false;
-    gate.dataset.state = "checking";
-  }
+  if (gate) { gate.hidden = false; gate.dataset.state = "checking"; }
   if (gateText) gateText.textContent = "Checking SkyrScout staff access…";
-
   const session = await getAuthorizedStaffSession();
-
   if (session.status !== "authorized") {
     if (session.status === "not-configured") {
       if (gate) gate.dataset.state = "error";
       if (gateText) gateText.textContent = "Staff Entrance is not connected to Firebase.";
       return;
     }
-
     window.location.replace(entranceUrl());
     return;
   }
-
   identityEls.forEach((el) => { el.textContent = session.profile.scoutName; });
   roleEls.forEach((el) => { el.textContent = session.profile.role; });
-
   if (room) room.hidden = false;
   if (gate) gate.hidden = true;
 }

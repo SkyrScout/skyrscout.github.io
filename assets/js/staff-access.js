@@ -17,7 +17,7 @@ import {
   firebaseConfig,
   firebaseIsConfigured,
   staffAccessConfig
-} from "./staff-firebase-config.js?v=20260819-rooms1";
+} from "./staff-firebase-config.js?v=20260819-rooms3";
 
 let servicesPromise = null;
 
@@ -152,7 +152,7 @@ export function safeStaffTarget(rawTarget) {
 
     const allowedRoots = Array.isArray(staffAccessConfig.roomRoots)
       ? staffAccessConfig.roomRoots
-      : ["/foajeen/", "/library/", "/control-room/"];
+      : ["/foyer/", "/library/", "/control-room/"];
 
     const allowed = allowedRoots.some((root) =>
       url.pathname === root || url.pathname.startsWith(root)
