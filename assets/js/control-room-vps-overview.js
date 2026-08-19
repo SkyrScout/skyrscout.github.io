@@ -831,10 +831,8 @@
     ]) || '';
   }
 
-  function normalizeGeography(payload){
-    const root = findGeographyRoot(payload);
-
-    if(!root){
+  function normalizeGeographyRoot(root){
+    if(!root || typeof root !== 'object' || Array.isArray(root)){
       return null;
     }
 
@@ -847,6 +845,9 @@
 
     return {
       root,
+      key: root.key ? String(root.key) : '',
+      label: root.label ? String(root.label) : '',
+      days: numberOrNull(root.days),
       startDate: root.startDate ? String(root.startDate) : '',
       endDate: root.endDate ? String(root.endDate) : String(date || ''),
       date,
@@ -854,6 +855,50 @@
       videos: normalizeBreakdownRows(root, 'video'),
       cities: normalizeBreakdownRows(root, 'city')
     };
+  }
+
+  function normalizeGeography(payload){
+    const root = findGeographyRoot(payload);
+
+    if(!root){
+      return null;
+    }
+
+    // The top-level Geography fields remain the backward-compatible 2D window
+    // used by the working Overview map.
+    const normalized = normalizeGeographyRoot(root);
+    if(!normalized){
+      return null;
+    }
+
+    // Geography v3 adds independent 2D/7D/28D/90D windows.
+    // Normalize and share them with the YouTube console without changing
+    // the map's existing 2D behaviour.
+    const windows = {};
+
+    if(root.windows && typeof root.windows === 'object' && !Array.isArray(root.windows)){
+      Object.entries(root.windows).forEach(([key, windowRoot]) => {
+        const windowGeo = normalizeGeographyRoot(windowRoot);
+        if(!windowGeo){
+          return;
+        }
+
+        windowGeo.key = windowGeo.key || String(key);
+        windowGeo.label = windowGeo.label || String(key).toUpperCase();
+        windows[String(key)] = windowGeo;
+      });
+    }
+
+    normalized.windows = windows;
+    normalized.defaultWindow = String(root.defaultWindow || '2d');
+    normalized.latestAvailableDate = String(
+      root.latestAvailableDate ||
+      normalized.endDate ||
+      normalized.date ||
+      ''
+    );
+
+    return normalized;
   }
 
   function ensureGeoStyle(){

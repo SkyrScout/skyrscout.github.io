@@ -15,7 +15,7 @@ sitemap: false
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260819-0110-mostlikes2">
 </head>
-  <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260819-2324-mapgeo-restore1"></script>
+  <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
 <body>
 <div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
   <div class="staff-auth-gate-card">
@@ -337,9 +337,20 @@ sitemap: false
       </div>
     </div>
     <div class="yt-panel-body yt-geography-body" data-yt-geography-body>
-      <div class="yt-geo-tabs" role="tablist" aria-label="Geography level">
+      <div class="yt-geo-rangebar">
+        <span class="yt-geo-range-label">TRAFFIC WINDOW</span>
+        <div class="yt-geo-ranges" role="tablist" aria-label="Geography traffic window">
+          <button class="yt-geo-range active" type="button" data-yt-geo-range="2d">2D</button>
+          <button class="yt-geo-range" type="button" data-yt-geo-range="7d">7D</button>
+          <button class="yt-geo-range" type="button" data-yt-geo-range="28d">28D</button>
+          <button class="yt-geo-range" type="button" data-yt-geo-range="90d">90D</button>
+        </div>
+      </div>
+
+      <div class="yt-geo-tabs" role="tablist" aria-label="Geography detail">
         <button class="yt-geo-tab active" type="button" role="tab" aria-selected="true" data-yt-geo-tab="countries">COUNTRIES</button>
         <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="cities">CITIES</button>
+        <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="videos">TOP VIDEOS</button>
       </div>
 
       <div class="yt-geo-view" data-yt-geo-view="countries">
@@ -347,28 +358,38 @@ sitemap: false
           <strong>Countries</strong>
           <span data-yt-geo-period>Latest available YouTube Analytics geography.</span>
         </div>
+        <div class="yt-geo-selected-note">
+          Selected: <strong data-yt-geo-selected-inline>—</strong>
+          <span>Choose a country, then open Cities or Top Videos.</span>
+        </div>
         <div class="yt-geo-country-list" data-yt-geo-countries>
           <div class="yt-geo-empty">Waiting for geography data…</div>
         </div>
       </div>
 
       <div class="yt-geo-view" data-yt-geo-view="cities" hidden>
-        <div class="yt-geo-city-head">
+        <div class="yt-geo-detail-head">
           <div>
-            <span>SELECTED COUNTRY</span>
+            <span>TOP CITIES IN</span>
             <strong data-yt-geo-selected-country>—</strong>
           </div>
           <b data-yt-geo-selected-total>—</b>
         </div>
-        <div class="yt-geo-city-grid">
-          <section class="yt-geo-breakdown">
-            <h4>TOP CITIES</h4>
-            <div data-yt-geo-cities><div class="yt-geo-empty">Choose a country first.</div></div>
-          </section>
-          <section class="yt-geo-breakdown">
-            <h4>TOP VIDEOS</h4>
-            <div data-yt-geo-videos><div class="yt-geo-empty">Choose a country first.</div></div>
-          </section>
+        <div class="yt-geo-detail-scroll" data-yt-geo-cities>
+          <div class="yt-geo-empty">Choose a country first.</div>
+        </div>
+      </div>
+
+      <div class="yt-geo-view" data-yt-geo-view="videos" hidden>
+        <div class="yt-geo-detail-head">
+          <div>
+            <span>TOP VIDEOS IN</span>
+            <strong data-yt-geo-selected-country>—</strong>
+          </div>
+          <b data-yt-geo-selected-total>—</b>
+        </div>
+        <div class="yt-geo-detail-scroll" data-yt-geo-videos>
+          <div class="yt-geo-empty">Choose a country first.</div>
         </div>
       </div>
     </div>
@@ -522,7 +543,7 @@ sitemap: false
 </div>
 
 <script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260819-0134-likeswindows1"></script>
-<script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0035-geo-sync1"></script>
+<script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
 <script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260819-0201-likesloading3"></script>
 </body>
 </html>
