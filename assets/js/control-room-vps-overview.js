@@ -1403,6 +1403,16 @@
 
     state.geography = geo;
 
+    // Share the already-normalized Analytics geography with the YouTube console.
+    // Same backend response, no extra YouTube/Analytics polling.
+    window.SkyrScoutGeographyState = geo;
+    document.dispatchEvent(
+      new CustomEvent(
+        'controlroom:geographydata',
+        {detail:geo}
+      )
+    );
+
     const geoBody =
       document.querySelector(
         '[data-screen="overview"] ' +
