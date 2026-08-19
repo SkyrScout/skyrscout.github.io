@@ -1,0 +1,132 @@
+---
+layout: null
+permalink: /library/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Library | Scoutland Yard</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css' | relative_url }}?v=20260819-rooms1">
+</head>
+<body>
+  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking">
+    <div class="staff-room-auth-card">
+      <span class="staff-room-auth-dot"></span>
+      <strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong>
+    </div>
+  </div>
+
+  <main class="library-room" id="staffProtectedRoom" hidden>
+    <img class="library-bg" src="{{ '/assets/images/scoutland-library-room.webp' | relative_url }}" alt="">
+
+    <header class="room-topbar">
+      <a class="room-brand" href="/foajeen/" aria-label="Back to Scoutland Yard Foajeen">
+        <span class="room-seal">SY</span>
+        <span class="room-brand-copy"><span>Back to Foajeen</span><strong>Scoutland Yard</strong></span>
+      </a>
+      <div class="room-session">
+        <span class="room-session-copy"><strong data-staff-identity>SkyrScout Staff</strong><span data-staff-role>Staff</span></span>
+        <button type="button" data-staff-signout>Sign out</button>
+      </div>
+    </header>
+
+    <section class="library-shell">
+      <aside class="library-side">
+        <div>
+          <span class="library-kicker">Scoutland Yard</span>
+          <h1>Library</h1>
+        </div>
+        <p>The quieter room for planning, research, source work, player material and archive work. It is separate from Control Room analytics.</p>
+        <a class="library-back" href="/foajeen/">← Return to Foajeen</a>
+
+        <section class="arch-card" aria-labelledby="lockedArchitectureTitle">
+          <h2 id="lockedArchitectureTitle">Locked architecture</h2>
+          <ul>
+            <li>Staff-only through the existing Google / Firebase entrance.</li>
+            <li>Google Drive is the document/storage backend.</li>
+            <li>Only the SkyrScout Library root folder is fixed.</li>
+            <li>Child folders are discovered dynamically, not hard-coded into GitHub.</li>
+            <li>No Drive credentials or private tokens belong in the public site.</li>
+          </ul>
+        </section>
+
+        <div class="arch-note">The room shell is live first. Drive browsing/search/write workflows come only after the roadmap below is approved.</div>
+      </aside>
+
+      <section class="library-main" aria-labelledby="roadmapTitle">
+        <header class="roadmap-head">
+          <div>
+            <span class="library-kicker">Project planning desk</span>
+            <h2 id="roadmapTitle">Scoutland Yard Roadmap</h2>
+            <p>Draft reconstructed from the surviving master list and today's recovered Library decisions. This page deliberately does not treat the proposed ordering as approved.</p>
+          </div>
+          <span class="roadmap-state">Draft · awaiting Bon Scout approval</span>
+        </header>
+
+        <div class="roadmap-scroll">
+          <div class="roadmap-grid">
+            <section class="roadmap-column">
+              <div class="roadmap-column-head"><h3>Now</h3><span class="status-chip">In progress</span></div>
+              <div class="roadmap-list">
+                <article class="roadmap-item current"><strong>Scoutland Yard room structure</strong><span>/staff → /foajeen → Library or Control Room. Keep the rooms separate and reuse the same staff session.</span></article>
+                <article class="roadmap-item current"><strong>Library shell + approval desk</strong><span>Establish this room visually and use it as the place where the project roadmap is reviewed before deeper Library functionality is wired.</span></article>
+                <article class="roadmap-item current"><strong>Geography COUNTRIES | CITIES</strong><span>Verify the current YouTube Geography console behaviour and finish the country-to-city drill-down without fake data.</span></article>
+                <article class="roadmap-item current"><strong>Hese-Fredrik browser-profile issue</strong><span>Investigate why the public widget works in ScoutOfThisWorld and Incognito but not the normal private Chrome profile.</span></article>
+              </div>
+            </section>
+
+            <section class="roadmap-column">
+              <div class="roadmap-column-head"><h3>Waiting</h3><span class="status-chip">Needs real data</span></div>
+              <div class="roadmap-list">
+                <article class="roadmap-item waiting"><strong>Most Likes 24H</strong><span>Hourly local like history is collecting. Judge the ranking only after real like movement and a full 24-hour window exist.</span></article>
+                <article class="roadmap-item waiting"><strong>Most Likes 7D</strong><span>Do not tune or judge the seven-day view until enough history exists.</span></article>
+                <article class="roadmap-item waiting"><strong>Hese-Fredrik Long vs Short thresholds</strong><span>Retune only from observed real spikes, not theoretical thresholds.</span></article>
+              </div>
+            </section>
+
+            <section class="roadmap-column wide">
+              <div class="roadmap-column-head"><h3>Proposed next</h3><span class="status-chip">Needs approval</span></div>
+              <div class="roadmap-list">
+                <article class="roadmap-item"><strong>1. Connect Library to its Google Drive root</strong><span>Backend exposes only allowed content from the configured SkyrScout Library root. Child folders are discovered dynamically so Drive remains the source of truth.</span></article>
+                <article class="roadmap-item"><strong>2. Build Library browse + search before write tools</strong><span>First useful version should let staff navigate folders, read material and search without creating a second document store.</span></article>
+                <article class="roadmap-item"><strong>3. Wire remaining YouTube Analytics consoles</strong><span>Performance, Reach / Discovery, Traffic Sources, External sites/apps, Search terms and Audience, always labelled LIVE / RECENT / LATEST AVAILABLE honestly.</span></article>
+                <article class="roadmap-item"><strong>4. Improve Overview Selected Video area</strong><span>Replace unhelpful BUILDING / STANDBY presentation with deeper selected-video detail and keep Focus / pop-out consistent.</span></article>
+              </div>
+            </section>
+
+            <section class="roadmap-column">
+              <div class="roadmap-column-head"><h3>Decide later</h3><span class="status-chip">Explicit choice</span></div>
+              <div class="roadmap-list">
+                <article class="roadmap-item decide"><strong>City lights on the world map</strong><span>Only if lawful/reliable geocoding adds enough value.</span></article>
+                <article class="roadmap-item decide"><strong>Premiere / website health panels</strong><span>Choose whether these belong in Control Room now or later.</span></article>
+                <article class="roadmap-item decide"><strong>Speilsalen and Scoutland One</strong><span>Keep as future rooms until we actively choose to promote them.</span></article>
+              </div>
+            </section>
+
+            <section class="roadmap-column">
+              <div class="roadmap-column-head"><h3>Locked / done</h3><span class="status-chip">Do not reopen casually</span></div>
+              <div class="roadmap-list">
+                <article class="roadmap-item"><strong>Server-side VPS collector + SQLite + Apps Script relay</strong><span>No dependency on a logged-in private PC or browser extension.</span></article>
+                <article class="roadmap-item"><strong>Firebase staff entrance + allowlist</strong><span>Google authentication plus explicit staff authorization remains the building entrance.</span></article>
+                <article class="roadmap-item"><strong>World Traffic + Geography feed</strong><span>Keep the real map, pulsing traffic lights and slower Analytics geography clearly separated from live counters.</span></article>
+                <article class="roadmap-item"><strong>No risky Studio cookie/session scraping</strong><span>Do not reopen the rejected path using cookies, SAPISIDHASH or session replay.</span></article>
+              </div>
+            </section>
+          </div>
+
+          <div class="approval-note"><strong>Approval point:</strong> this ordering is a proposal. The next update to the persistent master roadmap should happen only after Bon Scout has approved, moved or rejected the proposed items.</div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js' | relative_url }}?v=20260819-rooms1"></script>
+</body>
+</html>

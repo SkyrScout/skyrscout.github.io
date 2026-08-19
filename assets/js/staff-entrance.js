@@ -3,7 +3,7 @@ import {
   safeStaffTarget,
   signInApprovedGoogleAccount,
   signOutStaff
-} from "./staff-access.js";
+} from "./staff-access.js?v=20260819-rooms1";
 
 const signInButton = document.getElementById("staffGoogleSignIn");
 const enterButton = document.getElementById("staffEnterYard");

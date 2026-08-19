@@ -17,7 +17,7 @@ import {
   firebaseConfig,
   firebaseIsConfigured,
   staffAccessConfig
-} from "./staff-firebase-config.js";
+} from "./staff-firebase-config.js?v=20260819-rooms1";
 
 let servicesPromise = null;
 
@@ -149,7 +149,16 @@ export function safeStaffTarget(rawTarget) {
   try {
     const url = new URL(rawTarget, window.location.origin);
     if (url.origin !== window.location.origin) return fallback;
-    if (!url.pathname.startsWith("/control-room/")) return fallback;
+
+    const allowedRoots = Array.isArray(staffAccessConfig.roomRoots)
+      ? staffAccessConfig.roomRoots
+      : ["/foajeen/", "/library/", "/control-room/"];
+
+    const allowed = allowedRoots.some((root) =>
+      url.pathname === root || url.pathname.startsWith(root)
+    );
+
+    if (!allowed) return fallback;
     return url.pathname + url.search + url.hash;
   } catch (error) {
     return fallback;
