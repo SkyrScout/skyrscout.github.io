@@ -278,11 +278,79 @@
     }
   }
 
+  function hasGeoShape(obj){
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj)){
+      return false;
+    }
+
+    // Verified current shape: countries[] plus optional ISO-2 detail objects.
+    if(Array.isArray(obj.countries) && obj.countries.length){
+      return true;
+    }
+
+    const keys = Object.keys(obj).map(key => key.toLowerCase());
+    const hasCountryKey = keys.some(key => key.includes('countr'));
+    const hasGeoKey = keys.some(key => key.includes('geograph'));
+    const hasRows = Object.values(obj).some(
+      value => Array.isArray(value) && value.length
+    );
+
+    return (hasCountryKey || hasGeoKey) && hasRows;
+  }
+
   function findGeographyRoot(payload){
-    const root = payload && payload.geography;
-    return root && typeof root === 'object' && !Array.isArray(root)
-      ? root
-      : null;
+    const preferred = [
+      payload && payload.geography,
+      payload && payload.geographySnapshot,
+      payload && payload.youtubeAnalyticsGeography,
+      payload && payload.analyticsGeography,
+      payload && payload.analytics && payload.analytics.geography,
+      payload && payload.youtubeAnalytics && payload.youtubeAnalytics.geography
+    ].filter(Boolean);
+
+    for(const candidate of preferred){
+      if(candidate && typeof candidate === 'object' && hasGeoShape(candidate)){
+        return candidate;
+      }
+    }
+
+    // Do not assume the Firebase/function wrapper will always keep Geography
+    // at payload.geography. Search only likely analytics/geography branches.
+    const seen = new Set();
+
+    function walk(value, depth){
+      if(
+        !value ||
+        typeof value !== 'object' ||
+        depth > 5 ||
+        seen.has(value)
+      ){
+        return null;
+      }
+
+      seen.add(value);
+
+      if(hasGeoShape(value)){
+        return value;
+      }
+
+      for(const [key, child] of Object.entries(value)){
+        if(!child || typeof child !== 'object'){
+          continue;
+        }
+
+        if(/geograph|countr|audience|analytics|snapshot|debug|payload/i.test(key)){
+          const hit = walk(child, depth + 1);
+          if(hit){
+            return hit;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    return walk(payload, 0);
   }
 
   function arrayFrom(root, names){
@@ -418,48 +486,124 @@
   }
 
   function normalizeCountries(root){
-    const rows = Array.isArray(root && root.countries)
+    const directRows = Array.isArray(root && root.countries)
       ? root.countries
       : [];
 
-    const normalized = rows.map(row => {
-      if(!row || typeof row !== 'object' || Array.isArray(row)){
-        return null;
+    let rows = directRows;
+    let schema = [];
+
+    if(!rows.length){
+      rows = arrayFrom(root, [
+        'countryRows',
+        'geographyRows',
+        'countryData',
+        'topCountries',
+        'latestCountryRows',
+        'geographyCountryRows'
+      ]);
+
+      schema = schemaFrom(root, [
+        'countrySchema',
+        'countryRowSchema',
+        'geographySchema',
+        'countryColumns',
+        'geographyColumns',
+        'countryColumnHeaders'
+      ]);
+    }
+
+    if(!rows.length && root && root.country && typeof root.country === 'object'){
+      rows = Array.isArray(root.country.rows) ? root.country.rows : [];
+      schema = schema.length ? schema : (
+        root.country.schema ||
+        root.country.columns ||
+        root.country.columnHeaders ||
+        []
+      );
+    }
+
+    if(
+      !rows.length &&
+      root &&
+      root.countries &&
+      !Array.isArray(root.countries) &&
+      Array.isArray(root.countries.rows)
+    ){
+      rows = root.countries.rows;
+      schema = schema.length ? schema : (
+        root.countries.schema ||
+        root.countries.columns ||
+        root.countries.columnHeaders ||
+        []
+      );
+    }
+
+    const normalized = [];
+
+    rows.forEach(row => {
+      const obj = rowObject(row, schema);
+
+      let rawCountry = firstValue(obj, [
+        'country','countryCode','country_code','code','iso','iso2',
+        'name','countryName','country_name'
+      ]);
+      let views = numberOrNull(firstValue(obj, [
+        'views','viewCount','view_count','count','value','traffic'
+      ]));
+      let share = numberOrNull(firstValue(obj, [
+        'share','percentage','percent','pct','ratio'
+      ]));
+      let display = firstValue(obj, [
+        'display','displayName','countryName','country_name','label'
+      ]);
+
+      if(Array.isArray(row) && !schema.length){
+        rawCountry = row[0];
+        views = numberOrNull(row[1]);
+        if(row.length > 2){
+          share = numberOrNull(row[2]);
+        }
       }
 
-      const rawCountry = String(row.country || '').trim();
-      const views = numberOrNull(row.views);
-      if(!rawCountry || views === null){
-        return null;
+      if(!rawCountry){
+        return;
       }
 
       const mapName = mapCountryName(rawCountry);
       if(!mapName){
-        return null;
+        return;
       }
 
-      return {
-        raw: rawCountry,
+      normalized.push({
+        raw: String(rawCountry),
         mapName,
         key: countryKey(mapName),
-        display: displayCountryName(mapName, ''),
+        display: displayCountryName(mapName, display),
         views,
-        share: null
-      };
-    }).filter(Boolean);
+        share
+      });
+    });
 
     const totalViews = normalized.reduce(
-      (sum, item) => sum + item.views,
+      (sum, item) => sum + (item.views || 0),
       0
     );
 
     normalized.forEach(item => {
-      item.share = totalViews > 0
-        ? item.views / totalViews * 100
-        : null;
+      if(item.share !== null){
+        if(item.share > 0 && item.share <= 1){
+          item.share *= 100;
+        }
+      }else if(totalViews > 0 && item.views !== null){
+        item.share = item.views / totalViews * 100;
+      }
     });
 
-    normalized.sort((a,b) => b.views - a.views);
+    normalized.sort(
+      (a,b) => (b.views || b.share || 0) - (a.views || a.share || 0)
+    );
+
     return normalized;
   }
 
@@ -494,71 +638,197 @@
   }
 
   function normalizeBreakdownRows(root, kind){
-    const detailRoot = findCountryDetailRoot(root);
-    const out = new Map();
-    if(!detailRoot){
-      return out;
-    }
-
     const isVideo = kind === 'video';
+    const out = new Map();
 
-    Object.entries(detailRoot).forEach(([countryCode, detail]) => {
-      if(
-        !/^[A-Z]{2}$/.test(String(countryCode)) ||
-        !detail ||
-        typeof detail !== 'object' ||
-        Array.isArray(detail)
-      ){
-        return;
-      }
-
-      const source = isVideo ? detail.topVideos : detail.cities;
-      if(!Array.isArray(source)){
-        return;
-      }
-
-      const key = countryKey(countryCode);
-      const list = source.map(item => {
-        if(!item || typeof item !== 'object' || Array.isArray(item)){
-          return null;
+    // 1) Verified current payload: ISO-2 keys with topVideos[] / cities[].
+    const detailRoot = findCountryDetailRoot(root);
+    if(detailRoot){
+      Object.entries(detailRoot).forEach(([countryCode, detail]) => {
+        if(
+          !/^[A-Z]{2}$/i.test(String(countryCode)) ||
+          !detail ||
+          typeof detail !== 'object' ||
+          Array.isArray(detail)
+        ){
+          return;
         }
 
-        if(isVideo){
-          const videoId = String(item.videoId || '').trim();
-          const views = numberOrNull(item.views);
-          if(!videoId || views === null){
+        const source = isVideo ? detail.topVideos : detail.cities;
+        if(!Array.isArray(source)){
+          return;
+        }
+
+        const key = countryKey(countryCode);
+        const list = source.map(item => {
+          if(!item || typeof item !== 'object' || Array.isArray(item)){
             return null;
           }
-          return {
-            name: '',
-            videoId,
-            views
-          };
-        }
 
-        const city = String(item.city || '').trim();
-        const views = numberOrNull(item.views);
-        if(!city || views === null){
-          return null;
-        }
-        return {
-          name: city,
-          videoId: '',
-          views
-        };
-      }).filter(Boolean);
+          if(isVideo){
+            const videoId = String(item.videoId || item.id || '').trim();
+            const views = numberOrNull(
+              item.views !== undefined ? item.views : item.viewCount
+            );
+            if(!videoId){
+              return null;
+            }
+            return {
+              name: String(item.title || item.videoTitle || ''),
+              videoId,
+              views
+            };
+          }
 
-      list.sort((a,b) => b.views - a.views);
-      out.set(key, list);
+          const city = String(item.city || item.cityName || item.name || '').trim();
+          const views = numberOrNull(
+            item.views !== undefined ? item.views : item.viewCount
+          );
+          if(!city){
+            return null;
+          }
+          return {name:city, videoId:'', views};
+        }).filter(Boolean);
+
+        list.sort((a,b) => (b.views || 0) - (a.views || 0));
+        out.set(key, list);
+      });
+    }
+
+    // 2) Fallback row/schema payloads from earlier Analytics bridge versions.
+    const rowNames = isVideo
+      ? ['countryVideoRows','videoCountryRows','videosByCountryRows','topVideoRows','geographyVideoRows']
+      : ['countryCityRows','cityCountryRows','citiesByCountryRows','cityRows','geographyCityRows'];
+
+    const schemaNames = isVideo
+      ? ['countryVideoSchema','videoCountrySchema','videoSchema','videoColumns','countryVideoColumns']
+      : ['countryCitySchema','cityCountrySchema','citySchema','cityColumns','countryCityColumns'];
+
+    const rows = arrayFrom(root, rowNames);
+    const schema = schemaFrom(root, schemaNames);
+
+    rows.forEach(row => {
+      const obj = rowObject(row, schema);
+      let country = firstValue(obj, [
+        'country','countryCode','country_code','code','iso','countryName'
+      ]);
+      let views = numberOrNull(firstValue(obj, [
+        'views','viewCount','view_count','count','value'
+      ]));
+      let name = firstValue(
+        obj,
+        isVideo
+          ? ['title','videoTitle','video_title','name','videoId','video_id']
+          : ['city','cityName','city_name','name','label']
+      );
+      let videoId = isVideo
+        ? firstValue(obj, ['videoId','video_id','id'])
+        : null;
+
+      if(Array.isArray(row) && !schema.length){
+        country = row[0];
+        if(isVideo){
+          videoId = row[1];
+          name = row[2] || row[1];
+          views = numberOrNull(row[3] !== undefined ? row[3] : row[2]);
+        }else{
+          name = row[1];
+          views = numberOrNull(row[2]);
+        }
+      }
+
+      if(!country || !name){
+        return;
+      }
+
+      const key = countryKey(country);
+      const target = out.get(key) || [];
+      target.push({
+        name:String(name),
+        videoId:videoId ? String(videoId) : '',
+        views
+      });
+      out.set(key,target);
     });
+
+    // 3) Fallback object maps keyed by country.
+    const objectNames = isVideo
+      ? ['videosByCountry','topVideosByCountry','countryVideos']
+      : ['citiesByCountry','countryCities','cityBreakdownByCountry'];
+
+    objectNames.forEach(name => {
+      const obj = root && root[name];
+      if(!obj || typeof obj !== 'object' || Array.isArray(obj)){
+        return;
+      }
+
+      Object.entries(obj).forEach(([country,list]) => {
+        if(!Array.isArray(list)){
+          return;
+        }
+
+        const key = countryKey(country);
+        const target = out.get(key) || [];
+
+        list.forEach(item => {
+          if(item == null){
+            return;
+          }
+
+          if(typeof item === 'string'){
+            target.push({name:item, videoId:'', views:null});
+            return;
+          }
+
+          if(Array.isArray(item)){
+            target.push({
+              name:String(item[isVideo ? 1 : 0] || item[0] || ''),
+              videoId:isVideo ? String(item[0] || '') : '',
+              views:numberOrNull(item[isVideo ? 2 : 1])
+            });
+            return;
+          }
+
+          if(typeof item === 'object'){
+            target.push({
+              name:String(
+                firstValue(
+                  item,
+                  isVideo
+                    ? ['title','videoTitle','name','videoId']
+                    : ['city','cityName','name']
+                ) || ''
+              ),
+              videoId:isVideo
+                ? String(firstValue(item,['videoId','id']) || '')
+                : '',
+              views:numberOrNull(
+                firstValue(item,['views','viewCount','count','value'])
+              )
+            });
+          }
+        });
+
+        out.set(key,target);
+      });
+    });
+
+    out.forEach(list => list.sort(
+      (a,b) => (b.views || 0) - (a.views || 0)
+    ));
 
     return out;
   }
 
   function latestGeoDate(root){
-    return root && root.endDate
-      ? String(root.endDate)
-      : '';
+    if(root && root.endDate){
+      return String(root.endDate);
+    }
+
+    return firstValue(root || {}, [
+      'latestAvailableDate','latestDate','dataThrough','availableThrough',
+      'throughDate','countryDate','geographyDate','reportDate','date'
+    ]) || '';
   }
 
   function normalizeGeography(payload){
@@ -568,29 +838,21 @@
       return null;
     }
 
-    const countries =
-      normalizeCountries(root);
-
+    const countries = normalizeCountries(root);
     if(!countries.length){
       return null;
     }
 
+    const date = latestGeoDate(root);
+
     return {
       root,
       startDate: root.startDate ? String(root.startDate) : '',
-      endDate: root.endDate ? String(root.endDate) : '',
-      date: latestGeoDate(root),
+      endDate: root.endDate ? String(root.endDate) : String(date || ''),
+      date,
       countries,
-      videos:
-        normalizeBreakdownRows(
-          root,
-          'video'
-        ),
-      cities:
-        normalizeBreakdownRows(
-          root,
-          'city'
-        )
+      videos: normalizeBreakdownRows(root, 'video'),
+      cities: normalizeBreakdownRows(root, 'city')
     };
   }
 
