@@ -1,22 +1,8 @@
-import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-  getFirestore
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-import {
-  firebaseConfig,
+  getAuthorizedStaffSession,
+  signOutStaff,
   staffAccessConfig
-} from "./staff-firebase-config.js";
-
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+} from "./staff-access.js?v=20260820-roomauth3";
 
 const gate = document.getElementById("staffRoomAuthGate");
 const gateText = document.getElementById("staffRoomAuthGateText");
@@ -30,64 +16,33 @@ function entranceUrl() {
   return `${staffAccessConfig.entrancePath}?next=${encodeURIComponent(next)}`;
 }
 
-function redirectToEntrance() {
-  window.location.replace(entranceUrl());
-}
-
 function setGateError(message) {
   if (gate) gate.dataset.state = "error";
   if (gateText) gateText.textContent = message;
 }
 
-function waitForInitialAuthState() {
-  return new Promise((resolve, reject) => {
-    let unsubscribe = () => {};
-    unsubscribe = onAuthStateChanged(
-      auth,
-      (user) => {
-        unsubscribe();
-        resolve(user || null);
-      },
-      (error) => {
-        unsubscribe();
-        reject(error);
-      }
-    );
-  });
-}
-
 async function boot() {
   try {
-    // Wait for Firebase to restore the persisted Google session before deciding
-    // whether the visitor is signed out. This avoids redirect loops on page load.
-    const user = await waitForInitialAuthState();
+    // Use the exact same Staff session/allowlist check as Staff Entrance and Control Room.
+    const session = await getAuthorizedStaffSession();
 
-    if (!user) {
-      redirectToEntrance();
+    if (session.status !== "authorized") {
+      if (session.status === "not-configured") {
+        setGateError("Scoutland Yard authentication is not configured.");
+        return;
+      }
+
+      if (session.status === "error") {
+        setGateError("Could not verify SkyrScout staff access.");
+        return;
+      }
+
+      window.location.replace(entranceUrl());
       return;
     }
 
-    const email = String(user.email || "").trim().toLowerCase();
-
-    if (!email || user.emailVerified !== true) {
-      redirectToEntrance();
-      return;
-    }
-
-    const staffRef = doc(db, staffAccessConfig.allowlistCollection, email);
-    const staffSnapshot = await getDoc(staffRef);
-    const profile = staffSnapshot.exists() ? (staffSnapshot.data() || {}) : null;
-
-    if (!profile || profile.active !== true) {
-      redirectToEntrance();
-      return;
-    }
-
-    const scoutName =
-      profile.scout_name ||
-      profile.scoutName ||
-      user.displayName ||
-      "SkyrScout Staff";
+    const profile = session.profile || {};
+    const scoutName = profile.scoutName || "SkyrScout Staff";
     const role = profile.role || "Staff";
 
     identityTargets.forEach((target) => {
@@ -112,7 +67,7 @@ async function boot() {
 signOutTargets.forEach((button) => {
   button.addEventListener("click", async () => {
     try {
-      await signOut(auth);
+      await signOutStaff();
     } finally {
       window.location.replace(staffAccessConfig.entrancePath);
     }
