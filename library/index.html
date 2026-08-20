@@ -11,34 +11,81 @@ sitemap: false
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="dark">
-  <title>Library | Scoutland Yard</title>
+  <title>Scoutland Yard Library</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css' | relative_url }}?v=20260819-rooms3">
+  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css?v=20260819-rooms3' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/library-drive.css?v=20260820-library1' | relative_url }}">
 </head>
-<body>
-  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking"><div class="staff-room-auth-card"><span class="staff-room-auth-dot"></span><strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong></div></div>
-  <main class="library-room" id="staffProtectedRoom" hidden>
-    <img class="library-bg" src="{{ '/assets/images/scoutland-library-room.webp' | relative_url }}" alt="">
-    <header class="room-topbar">
-      <a class="room-brand" href="/foyer/"><span class="room-seal">SY</span><span class="room-brand-copy"><span>Back to Foyer</span><strong>Scoutland Yard</strong></span></a>
-      <div class="room-session"><span class="room-session-copy"><strong data-staff-identity>SkyrScout Staff</strong><span data-staff-role>Staff</span></span><button type="button" data-staff-signout>Sign out</button></div>
-    </header>
-    <section class="library-landing">
-      <div class="library-title">
-        <span class="library-kicker">Scoutland Yard</span>
-        <h1>Library</h1>
-        <p>The quiet room for research, player material, sources, archive work and planning. Control Room analytics stay in Control Room.</p>
+<body class="library-drive-page">
+  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking">
+    <div class="staff-room-auth-card">
+      <span class="staff-room-auth-dot"></span>
+      <strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong>
+    </div>
+  </div>
+
+  <main class="library-drive-shell" id="staffProtectedRoom" hidden>
+    <div class="library-drive-backdrop" aria-hidden="true"></div>
+    <div class="library-drive-vignette" aria-hidden="true"></div>
+
+    <header class="library-drive-topbar">
+      <a class="library-drive-foyer" href="/foyer/">← Back to Foyer</a>
+      <div class="library-drive-session">
+        <span class="library-drive-session-dot" aria-hidden="true"></span>
+        <div>
+          <strong data-staff-identity>SkyrScout Staff</strong>
+          <span data-staff-role>Staff</span>
+        </div>
+        <button type="button" data-staff-signout>Sign out</button>
       </div>
-      <nav class="library-shelves" aria-label="Library areas">
-        <div class="library-shelf pending"><strong>Research</strong><span>Drive-backed research material after the Library connection is wired.</span></div>
-        <div class="library-shelf pending"><strong>Player Reports</strong><span>Internal report material and player research.</span></div>
-        <div class="library-shelf pending"><strong>Sources</strong><span>Saved sources, notes and research shortcuts.</span></div>
-        <div class="library-shelf pending"><strong>Archive</strong><span>Older internal material and reference files.</span></div>
-        <a class="library-shelf active" href="/library/planning/"><strong>Planning</strong><span>Open the Scoutland Yard Roadmap draft for Bon Scout approval.</span></a>
-      </nav>
-      <div class="library-footnote"><b>Architecture locked:</b> Google Drive remains the Library storage layer. Only its root is fixed; child folders will be discovered dynamically when the backend is connected.</div>
+    </header>
+
+    <section class="library-drive-room" aria-labelledby="libraryDriveTitle">
+      <div class="library-drive-heading">
+        <div>
+          <p class="library-drive-kicker">Scoutland Yard</p>
+          <h1 id="libraryDriveTitle">Library</h1>
+          <p class="library-drive-intro">Research, reports, planning and internal material from the SkyrScout Google Drive library.</p>
+        </div>
+        <div class="library-drive-connection" id="libraryDriveConnection" data-state="loading">
+          <span></span>
+          <strong id="libraryDriveConnectionText">Connecting to Library…</strong>
+        </div>
+      </div>
+
+      <section class="library-drive-browser" aria-label="SkyrScout Library browser">
+        <div class="library-drive-browserbar">
+          <nav class="library-drive-breadcrumbs" id="libraryDriveBreadcrumbs" aria-label="Library path">
+            <span>SkyrScout Library</span>
+          </nav>
+
+          <div class="library-drive-actions">
+            <a id="libraryDriveOpenDrive" class="library-drive-action" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in Drive</a>
+            <button id="libraryDriveRefresh" class="library-drive-action" type="button">Refresh</button>
+          </div>
+        </div>
+
+        <div class="library-drive-toolbar">
+          <label class="library-drive-search">
+            <span class="sr-only">Filter current folder</span>
+            <input id="libraryDriveSearch" type="search" autocomplete="off" placeholder="Filter this folder…">
+          </label>
+          <div class="library-drive-count" id="libraryDriveCount">Loading…</div>
+        </div>
+
+        <div class="library-drive-content" id="libraryDriveContent" aria-live="polite">
+          <div class="library-drive-loading">
+            <span class="library-drive-spinner" aria-hidden="true"></span>
+            <strong>Opening SkyrScout Library…</strong>
+          </div>
+        </div>
+      </section>
+
+      <p class="library-drive-footnote">Folder structure is read live from Google Drive. Only the SkyrScout Library root is fixed.</p>
     </section>
   </main>
-  <script type="module" src="{{ '/assets/js/staff-room-auth.js' | relative_url }}?v=20260819-rooms3"></script>
+
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js?v=20260820-library1' | relative_url }}"></script>
+  <script type="module" src="{{ '/assets/js/library-drive.js?v=20260820-library1' | relative_url }}"></script>
 </body>
 </html>

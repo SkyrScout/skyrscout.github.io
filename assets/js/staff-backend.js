@@ -10,9 +10,16 @@ import {
 
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const functions = getFunctions(app, staffBackendConfig.functionsRegion);
+
 const controlRoomFeed = httpsCallable(
   functions,
   staffBackendConfig.controlRoomFunction,
+  { timeout: 20000 }
+);
+
+const libraryFeed = httpsCallable(
+  functions,
+  "libraryFeed",
   { timeout: 20000 }
 );
 
@@ -23,6 +30,7 @@ async function fetchHeseFredrik(mode = "debug") {
   });
 
   const data = response?.data || {};
+
   if (!data.payload || data.payload.ok === false) {
     throw new Error("INVALID_HESE_FREDRIK_PAYLOAD");
   }
@@ -30,6 +38,22 @@ async function fetchHeseFredrik(mode = "debug") {
   return data.payload;
 }
 
+async function fetchLibraryFolder(folderId = null) {
+  const response = await libraryFeed({
+    action: "list-folder",
+    folderId: folderId || null
+  });
+
+  const data = response?.data || {};
+
+  if (!data.payload || data.payload.ok !== true) {
+    throw new Error(data?.payload?.error || "INVALID_LIBRARY_PAYLOAD");
+  }
+
+  return data.payload;
+}
+
 window.SkyrScoutStaffBackend = Object.freeze({
-  fetchHeseFredrik
+  fetchHeseFredrik,
+  fetchLibraryFolder
 });
