@@ -1,860 +1,240 @@
 ---
-layout: "default"
-title: "Scoutland Yard"
-description: "Scoutland Yard is the SkyrScout control room, featuring the latest scouting reports, player updates, podcast episodes and original music."
+layout: null
+permalink: /library/
+sitemap: false
 ---
-
-<style>
-    /* Homepage Shorts: keep the complete title and its emoji visible.
-       Removing the 3D text layer also avoids emoji disappearing in some
-       Chromium/Windows compositing combinations. */
-    #yard-latest-shorts .signature-short-card-copy {
-        transform: none;
-    }
-
-    #yard-latest-shorts .signature-short-card-copy h3 {
-        display: block;
-        overflow: visible;
-        -webkit-box-orient: initial;
-        -webkit-line-clamp: unset;
-        font-family: Arial, Helvetica, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-        font-variant-emoji: emoji;
-    }
-
-    @media (max-width: 759px) {
-        .yard-report-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 12px !important;
-        }
-
-        .yard-report-card,
-        #yard-latest-shorts .signature-short-card {
-            width: 100%;
-            min-width: 0;
-        }
-
-        .yard-report-card {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .yard-report-image {
-            width: 100%;
-        }
-
-        .yard-report-image img {
-            display: block;
-            width: 100%;
-            height: auto;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-        }
-
-        .yard-report-content {
-            padding: 12px;
-        }
-
-        .yard-report-added {
-            margin-bottom: 6px;
-            font-size: 0.72rem;
-        }
-
-        .yard-report-content h3 {
-            margin-bottom: 8px;
-            font-size: 1rem;
-            line-height: 1.18;
-            overflow-wrap: anywhere;
-        }
-
-        .yard-report-details,
-        .yard-report-date {
-            font-size: 0.75rem;
-            line-height: 1.35;
-        }
-
-        .yard-card-action {
-            padding: 8px 10px;
-            font-size: 0.75rem;
-        }
-
-        #yard-latest-shorts .signature-short-card-frame {
-            height: 100%;
-        }
-
-        #yard-latest-shorts .signature-short-card-topline {
-            gap: 6px;
-            font-size: 0.62rem;
-        }
-
-        #yard-latest-shorts .signature-short-card-copy h3 {
-            font-size: 0.88rem;
-            line-height: 1.18;
-            overflow-wrap: anywhere;
-        }
-
-        #yard-latest-shorts .signature-short-card-footer {
-            font-size: 0.68rem;
-        }
-    }
-</style>
-
-
-<main class="page-background">
-
-        <section class="yard-page">
-
-            <header class="yard-header">
-
-                <p class="yard-label">
-                    The SkyrScout control room
-                </p>
-
-                <h1>Scoutland Yard</h1>
-
-                <p class="yard-intro">
-                    The front desk for SkyrScout. Find our latest scouting
-                    reports, player updates and episodes of Scout of This World.
-                </p>
-
-            </header>
-
-           {% assign chronological_updates = site.update_posts
-    | sort: "published_at"
-    | reverse
-%}
-{% assign pinned_updates = chronological_updates | where: "pinned", true %}
-{% assign regular_updates = chronological_updates | where_exp: "update", "update.pinned != true" %}
-{% assign latest_updates = pinned_updates | concat: regular_updates %}
-
-<section class="yard-marquee">
-
-    <div class="yard-marquee-label">
-        LATEST UPDATES
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Scoutland Yard Library</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css?v=20260819-rooms3' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/library-drive.css?v=20260820-library1' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/library-workspace.css?v=20260821-workspace1' | relative_url }}">
+</head>
+<body class="library-drive-page">
+  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking">
+    <div class="staff-room-auth-card">
+      <span class="staff-room-auth-dot"></span>
+      <strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong>
     </div>
+  </div>
 
-    <div class="yard-marquee-items">
+  <main class="library-drive-shell" id="staffProtectedRoom" hidden>
+    <div class="library-drive-backdrop" aria-hidden="true"></div>
+    <div class="library-drive-vignette" aria-hidden="true"></div>
 
-        {% for update in latest_updates limit: 3 %}
-
-            <a
-                class="yard-marquee-item"
-                href="{{ update.url }}"
-            >
-                {% if update.pinned %}
-                    <span class="yard-update-pin-badge">PINNED</span>
-                {% endif %}
-                {{ update.title }}
-            </a>
-
-        {% endfor %}
-
-    </div>
-
-</section>
-
-            {% include hese-fredrik.html %}
-
-            <section class="yard-section">
-
-                <div class="yard-section-heading">
-
-                    <div>
-                        <p class="yard-section-label">
-                            Scouting
-                        </p>
-
-                        <h2>Latest reports added</h2>
-
-                        <p>
-                            The most recently added scouting reports. The report
-                            date shown on each profile tells you when the
-                            assessment was originally written.
-                        </p>
-                    </div>
-
-                    <a href="/players/">
-                        View all players
-                    </a>
-
-                </div>
-
-                <div
-                    class="yard-report-grid"
-                    id="yard-report-grid"
-                >
-
-                    {% for player in site.players %}
-
-                        {% assign title_parts = player.title | split: ' – ' %}
-
-                        {% assign youtube_id = player.youtube
-                            | split: 'v='
-                            | last
-                            | split: '&'
-                            | first
-                            | split: '/'
-                            | last
-                        %}
-
-                        <article
-    class="yard-report-card"
-    data-site-added="{{ player.site_added | escape }}"
-    data-report-date="{{ player.report_date | escape }}"
->
-
-                            <a
-                                class="yard-report-image"
-                                href="{{ player.url }}"
-                                aria-label="View {{ title_parts[0] }}"
-                            >
-                                {% if player.youtube %}
-                                    <img
-                                        src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                        alt="{{ title_parts[0] }}"
-                                        loading="lazy"
-                                    >
-                                {% endif %}
-                            </a>
-
-                            <div class="yard-report-content">
-
-                                <p class="yard-report-added">
-                                    Added {{ player.site_added }}
-                                </p>
-
-                                <h3>
-                                    <a href="{{ player.url }}">
-                                        {{ title_parts[0] }}
-                                    </a>
-                                </h3>
-
-                                <p class="yard-report-details">
-                                    {% if player.position %}
-                                        {{ player.position }}
-                                    {% endif %}
-
-                                    {% if player.position and title_parts[1] %}
-                                        •
-                                    {% endif %}
-
-                                    {% if title_parts[1] %}
-                                        {{ title_parts[1] }}
-                                    {% endif %}
-                                </p>
-
-                                {% if player.report_date %}
-                                    <p class="yard-report-date">
-                                        Report date: {{ player.report_date }}
-                                    </p>
-                                {% endif %}
-
-                                <a
-                                    class="yard-card-action"
-                                    href="{{ player.url }}"
-                                >
-                                    View report
-                                </a>
-
-                            </div>
-
-                        </article>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-<section class="yard-section">
-
-    <div class="yard-section-heading">
+    <header class="library-drive-topbar">
+      <a class="library-drive-foyer" href="/foyer/">← Back to Foyer</a>
+      <div class="library-drive-session">
+        <span class="library-drive-session-dot" aria-hidden="true"></span>
         <div>
-            <p class="yard-section-label">Video</p>
-            <h2>Latest Shorts</h2>
-            <p>Quick scouting clips and standout individual actions.</p>
+          <strong data-staff-identity>SkyrScout Staff</strong>
+          <span data-staff-role>Staff</span>
         </div>
+        <button type="button" data-staff-signout>Sign out</button>
+      </div>
+    </header>
 
-        <a href="/shorts/">View all Shorts</a>
-    </div>
+    <section class="library-drive-room library-workspace-room" aria-labelledby="libraryDriveTitle">
+      <div class="library-drive-heading library-workspace-heading">
+        <div>
+          <p class="library-drive-kicker">Scoutland Yard</p>
+          <h1 id="libraryDriveTitle">Library</h1>
+          <p class="library-drive-intro">A private workspace for research, planning, player work and internal material.</p>
+        </div>
+      </div>
 
-    <div
-        class="yard-report-grid"
-        id="yard-latest-shorts"
-    >
+      <nav class="library-workspace-tabs" role="tablist" aria-label="Library areas">
+        <button class="library-workspace-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="libraryOverview" id="libraryTabOverview" data-library-tab="overview">Overview</button>
+        <button class="library-workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="libraryProjectBoard" id="libraryTabProjectBoard" data-library-tab="project-board">Project Board</button>
+        <button class="library-workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="libraryDrive" id="libraryTabDrive" data-library-tab="drive">Drive</button>
+      </nav>
 
-        {% for short in site.shorts %}
-
-            {% assign youtube_id = short.youtube
-                | split: "shorts/"
-                | last
-                | split: "?"
-                | first
-            %}
-
-            <article
-                class="signature-short-card"
-                data-site-added="{{ short.site_added | escape }}"
-                data-report-date="{{ short.report_date | escape }}"
-                data-short-title="{{ short.title | downcase | escape }}"
-            >
-                <a
-                    class="signature-short-card-link"
-                    href="{{ short.url | relative_url }}"
-                    aria-label="Watch {{ short.title }}"
-                ></a>
-
-                <div class="signature-short-card-frame" aria-hidden="true">
-                    <span class="signature-short-card-shine"></span>
-
-                    <div class="signature-short-card-topline">
-                        <span>Signature Short</span>
-                        {% if short.report_date %}
-                            <time>{{ short.report_date }}</time>
-                        {% endif %}
-                    </div>
-
-                    <div class="signature-short-card-image">
-                        {% if short.youtube %}
-                            <img
-                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                alt=""
-                                loading="lazy"
-                            >
-                        {% endif %}
-
-                        <span class="signature-short-card-badge">Short</span>
-                    </div>
-
-                    <div class="signature-short-card-copy">
-                        <h3>{{ short.title }}</h3>
-                    </div>
-
-                    <div class="signature-short-card-footer">
-                        <span>SkyrScout</span>
-                        <strong>Watch →</strong>
-                    </div>
-                </div>
+      <div class="library-workspace-panels">
+        <section class="library-workspace-panel is-active" id="libraryOverview" role="tabpanel" aria-labelledby="libraryTabOverview" data-library-panel="overview">
+          <div class="library-workspace-overview-grid">
+            <article class="library-workspace-card library-workspace-card-primary">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Project Board</span>
+                <span class="library-workspace-badge">Next</span>
+              </div>
+              <h2>Work, ideas and decisions</h2>
+              <p>One place for what is in progress, what comes next, what is waiting, what was rejected and why.</p>
+              <div class="library-workspace-status-row" aria-label="Project Board status model">
+                <span>IN PROGRESS</span>
+                <span>NEXT</span>
+                <span>WAITING</span>
+                <span>BACKLOG</span>
+                <span>DECIDE</span>
+                <span>DONE</span>
+                <span>REJECTED</span>
+              </div>
+              <button class="library-workspace-card-action" type="button" data-library-open-tab="project-board">Open board preview →</button>
             </article>
 
-        {% endfor %}
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Google Drive</span>
+                <span class="library-workspace-badge library-workspace-badge-live">Live</span>
+              </div>
+              <h2>Files & folders</h2>
+              <p>The working Drive browser stays intact, but it is now one Library tool instead of the whole room.</p>
+              <button class="library-workspace-card-action" type="button" data-library-open-tab="drive">Browse Drive →</button>
+            </article>
 
-    </div>
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Research</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Area</span>
+              </div>
+              <h2>Research desk</h2>
+              <p>Source notes, player discovery and longer internal digging can grow here without changing the Drive structure.</p>
+            </article>
 
-</section>
-            <section class="yard-section">
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Players</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Area</span>
+              </div>
+              <h2>Player work</h2>
+              <p>Internal route to reports, profiles, videos and player-related material. Exact shape can be decided later.</p>
+            </article>
 
-                <div class="yard-section-heading">
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Sources</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Planned</span>
+              </div>
+              <h2>Sources & shortcuts</h2>
+              <p>Saved resources, recurring sources and research shortcuts. This does not need to mirror a Drive folder.</p>
+            </article>
 
-                    <div>
-                        <p class="yard-section-label">
-                            Newsroom
-                        </p>
-
-                        <h2>Latest updates</h2>
-
-                        <p>
-                            News, rumours and confirmed developments involving
-                            players featured by SkyrScout.
-                        </p>
-                    </div>
-
-                    <a href="/updates/">
-                        View all updates
-                    </a>
-
-                </div>
-
-                <div class="yard-update-list">
-
-                    {% assign sorted_updates = latest_updates %}
-
-                    {% for update in sorted_updates limit: 3 %}
-
-                        {% assign update_filename = update.path
-                            | split: "/"
-                            | last
-                        %}
-
-                        {% assign update_date = update_filename
-                            | slice: 0, 10
-                            | split: "-"
-                        %}
-
-                        <article class="yard-update-card">
-
-                            <p class="yard-update-date">
-                                {% if update.pinned %}
-                                    <span class="yard-update-pin-badge">PINNED</span>
-                                {% endif %}
-                                {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
-                            </p>
-
-                            <h3>
-                                <a href="{{ update.url }}">
-                                    {{ update.title }}
-                                </a>
-                            </h3>
-
-                            <p>
-                                {{ update.content
-                                    | strip_html
-                                    | truncatewords: 28
-                                }}
-                            </p>
-
-                            <a
-                                class="yard-text-link"
-                                href="{{ update.url }}"
-                            >
-                                Read update
-                            </a>
-
-                        </article>
-
-                    {% else %}
-
-                        <p class="yard-empty">
-                            No updates have been published yet.
-                        </p>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-            <section class="yard-section">
-
-                <div class="yard-section-heading">
-
-                    <div>
-                        <p class="yard-section-label">
-                            Podcast
-                        </p>
-
-                        <h2>Latest episode</h2>
-
-                        <p>
-                            The latest episode of our Norwegian-language
-                            scouting podcast, Scout of This World.
-                        </p>
-                    </div>
-
-                    <a href="/podcast/">
-                        Explore the podcast
-                    </a>
-
-                </div>
-
-                <div
-                    class="yard-podcast"
-                    id="yard-latest-podcast"
-                >
-                    <p class="yard-loading">
-                        Loading latest episode...
-                    </p>
-                </div>
-
-            </section>
-
-            <aside class="yard-music">
-
-                <div
-                    class="yard-music-image"
-                    id="yard-music-image"
-                ></div>
-
-                <div class="yard-music-content">
-
-                    <p class="yard-section-label">
-                        From 404 Bon Blondes
-                    </p>
-
-                    <h2 id="yard-music-title">
-                        Original music from the SkyrScout universe
-                    </h2>
-
-                    <p>
-                        404 Bon Blondes provides most of the original music
-                        featured in SkyrScout videos.
-                    </p>
-
-                    <div class="yard-music-actions">
-
-                        <a
-                            class="yard-card-action"
-                            id="yard-music-video-link"
-                            href="/music/"
-                        >
-                            Latest release
-                        </a>
-
-                        <a
-                            class="yard-text-link"
-                            href="/music/"
-                        >
-                            Explore Music
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </aside>
-
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Planning & Podcast</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Drive</span>
+              </div>
+              <h2>Existing material</h2>
+              <p>Planning, Podcast, Archive and Player Reports remain in Drive and can later gain dedicated Library views if useful.</p>
+              <button class="library-workspace-card-action" type="button" data-library-open-tab="drive">Open Drive →</button>
+            </article>
+          </div>
         </section>
 
-    </main>
-
-    <script>
-        function convertNorwegianDate(dateText) {
-            if (!dateText) {
-                return 0;
-            }
-
-            const parts = dateText.split(".");
-
-            if (parts.length !== 3) {
-                return 0;
-            }
-
-            const day = Number(parts[0]);
-            const month = Number(parts[1]) - 1;
-            const year = Number(parts[2]);
-
-            return new Date(year, month, day).getTime();
-        }
-
-       function sortLatestReports() {
-    const reportGrid = document.querySelector("#yard-report-grid");
-
-    if (!reportGrid) {
-        return;
-    }
-
-    const cards = Array.from(
-        reportGrid.querySelectorAll(".yard-report-card")
-    );
-
-    const newestReports = [...cards]
-        .sort(function (a, b) {
-            return (
-                convertNorwegianDate(b.dataset.reportDate) -
-                convertNorwegianDate(a.dataset.reportDate)
-            );
-        })
-        .slice(0, 3);
-
-    const remainingCards = cards
-        .filter(function (card) {
-            return !newestReports.includes(card);
-        })
-        .sort(function (a, b) {
-            return (
-                convertNorwegianDate(b.dataset.siteAdded) -
-                convertNorwegianDate(a.dataset.siteAdded)
-            );
-        });
-
-    const sortedCards = [
-        ...newestReports,
-        ...remainingCards
-    ];
-
-    sortedCards.forEach(function (card, index) {
-        card.hidden = index >= 12;
-        reportGrid.appendChild(card);
-    });
-}
-
-        function sortLatestShorts() {
-            const shortsGrid = document.querySelector("#yard-latest-shorts");
-
-            if (!shortsGrid) {
-                return;
-            }
-
-            const cards = Array.from(
-                shortsGrid.querySelectorAll(".signature-short-card")
-            );
-
-            cards
-                .sort(function (a, b) {
-                    return (
-                        convertNorwegianDate(b.dataset.siteAdded) -
-                            convertNorwegianDate(a.dataset.siteAdded) ||
-                        convertNorwegianDate(b.dataset.reportDate) -
-                            convertNorwegianDate(a.dataset.reportDate) ||
-                        a.dataset.shortTitle.localeCompare(
-                            b.dataset.shortTitle
-                        )
-                    );
-                })
-                .forEach(function (card, index) {
-                    card.hidden = index >= 3;
-                    shortsGrid.appendChild(card);
-                });
-        }
-
-        function stripHtml(html) {
-            const temporaryElement = document.createElement("div");
-            temporaryElement.innerHTML = html || "";
-
-            return (
-                temporaryElement.textContent ||
-                temporaryElement.innerText ||
-                ""
-            )
-                .replace(/\s+/g, " ")
-                .trim();
-        }
-
-        function formatDuration(duration) {
-            if (!duration) {
-                return "";
-            }
-
-            const parts = duration.split(":").map(Number);
-
-            if (
-                parts.length === 3 &&
-                parts.every(Number.isFinite)
-            ) {
-                const hours = parts[0];
-                const minutes = parts[1];
-
-                if (hours > 0) {
-                    return `${hours} t ${minutes} min`;
-                }
-
-                return `${minutes} min`;
-            }
-
-            return duration;
-        }
-
-        async function loadLatestPodcast() {
-            const container = document.querySelector(
-                "#yard-latest-podcast"
-            );
-
-            try {
-                const response = await fetch(
-                    "/assets/data/podcast-episodes.json"
-                );
-
-                if (!response.ok) {
-                    throw new Error("Could not load podcast data.");
-                }
-
-                const data = await response.json();
-                const episode = data.episodes?.[0];
-
-                if (!episode) {
-                    throw new Error("No podcast episodes found.");
-                }
-
-                const episodeUrl =
-                    episode.link || episode.audio_url || "/podcast/";
-
-                const publishedDate = episode.published
-                    ? new Date(episode.published)
-                    : null;
-
-                const description = stripHtml(
-                    episode.description
-                );
-
-                const metadata = [];
-
-                if (episode.season_number) {
-                    metadata.push(
-                        `Season ${episode.season_number}`
-                    );
-                }
-
-                if (episode.episode_number) {
-                    metadata.push(
-                        `Episode ${episode.episode_number}`
-                    );
-                }
-
-                if (publishedDate) {
-                    metadata.push(
-                        publishedDate.toLocaleDateString(
-                            "nb-NO",
-                            {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric"
-                            }
-                        )
-                    );
-                }
-
-                const duration = formatDuration(
-                    episode.duration
-                );
-
-                if (duration) {
-                    metadata.push(duration);
-                }
-
-                container.innerHTML = `
-                    <a
-                        class="yard-podcast-image"
-                        href="${episodeUrl}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        ${
-                            episode.image
-                                ? `
-                                    <img
-                                        src="${episode.image}"
-                                        alt="${episode.title || "Scout of This World"}"
-                                    >
-                                `
-                                : ""
-                        }
-                    </a>
-
-                    <div class="yard-podcast-content">
-
-                        <p class="yard-podcast-meta">
-                            ${metadata.join(" • ")}
-                        </p>
-
-                        <h3>
-                            <a
-                                href="${episodeUrl}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                ${episode.title || "Scout of This World"}
-                            </a>
-                        </h3>
-
-                        ${
-                            description
-                                ? `
-                                    <p class="yard-podcast-description">
-                                        ${description}
-                                    </p>
-                                `
-                                : ""
-                        }
-
-                        <a
-                            class="yard-card-action"
-                            href="${episodeUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Open on Spotify
-                        </a>
-
-                    </div>
-                `;
-
-            } catch (error) {
-                console.error(error);
-
-                container.innerHTML = `
-                    <p class="yard-empty">
-                        The latest podcast episode could not be loaded.
-                    </p>
-                `;
-            }
-        }
-
-        async function loadLatestMusic() {
-            const imageContainer = document.querySelector(
-                "#yard-music-image"
-            );
-
-            const title = document.querySelector(
-                "#yard-music-title"
-            );
-
-            const videoLink = document.querySelector(
-                "#yard-music-video-link"
-            );
-
-            try {
-                const response = await fetch(
-                    "/assets/data/music-videos.json"
-                );
-
-                if (!response.ok) {
-                    throw new Error("Could not load music data.");
-                }
-
-                const data = await response.json();
-                const video = data.videos?.[0];
-
-                if (!video) {
-                    return;
-                }
-
-                title.textContent =
-                    video.title || "Latest release";
-
-                videoLink.href = video.url || "/music/";
-                videoLink.target = "_blank";
-                videoLink.rel = "noopener noreferrer";
-
-                if (video.thumbnail) {
-                    imageContainer.innerHTML = `
-                        <a
-                            href="${video.url || "/music/"}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <img
-                                src="${video.thumbnail}"
-                                alt="${video.title || "404 Bon Blondes"}"
-                            >
-                        </a>
-                    `;
-                }
-
-            } catch (error) {
-                console.error(error);
-            }
-        }
-const marqueeItems = document.querySelector(".yard-marquee-items");
-
-if (marqueeItems) {
-    marqueeItems.innerHTML += marqueeItems.innerHTML;
-}
-        sortLatestReports();
-        sortLatestShorts();
-        loadLatestPodcast();
-        loadLatestMusic();
-    </script>
-
-<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
-<script>
-(function () {
-    "use strict";
-
-    if (!window.twemoji) {
-        return;
-    }
-
-    const twemojiOptions = {
-        folder: "svg",
-        ext: ".svg"
-    };
-
-    const shortGrid = document.querySelector("#yard-latest-shorts");
-    if (shortGrid) {
-        twemoji.parse(shortGrid, twemojiOptions);
-    }
-
-    const heseTitle = document.querySelector("#hese-fredrik-title");
-    if (heseTitle) {
-        twemoji.parse(heseTitle, twemojiOptions);
-    }
-})();
-</script>
+        <section class="library-workspace-panel" id="libraryProjectBoard" role="tabpanel" aria-labelledby="libraryTabProjectBoard" data-library-panel="project-board" hidden>
+          <div class="library-project-board-head">
+            <div>
+              <p class="library-drive-kicker">Project Board</p>
+              <h2>Scoutland Yard roadmap</h2>
+              <p>This is a visual preview of the board structure. Google Sheets and AppSheet are not connected yet.</p>
+            </div>
+            <span class="library-workspace-badge">Preview</span>
+          </div>
+
+          <div class="library-project-board" aria-label="Project Board preview">
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>IN PROGRESS</strong></header>
+              <article class="library-project-ticket">
+                <span>Library</span>
+                <strong>Reshape Library home</strong>
+                <p>Keep Drive, but make room for the rest of Library.</p>
+              </article>
+              <article class="library-project-ticket">
+                <span>Planning</span>
+                <strong>Roadmap cleanup</strong>
+                <p>Update completed work and flag uncertain status.</p>
+              </article>
+            </section>
+
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>NEXT</strong></header>
+              <article class="library-project-ticket">
+                <span>Project Board</span>
+                <strong>Google Sheets source</strong>
+                <p>Turn the cleaned roadmap into the editable task table.</p>
+              </article>
+              <article class="library-project-ticket">
+                <span>Project Board</span>
+                <strong>AppSheet Kanban</strong>
+                <p>Add the Trello-style view on top of the same Sheet.</p>
+              </article>
+            </section>
+
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>WAITING</strong></header>
+              <article class="library-project-ticket">
+                <span>Control Room</span>
+                <strong>Most Likes 24H / 7D</strong>
+                <p>Needs trustworthy history and real changes before validation.</p>
+              </article>
+            </section>
+
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>DECIDE</strong></header>
+              <article class="library-project-ticket">
+                <span>Library</span>
+                <strong>Dedicated views</strong>
+                <p>Decide which Drive-backed areas deserve their own Library interface.</p>
+              </article>
+            </section>
+          </div>
+
+          <p class="library-project-board-note">Preview only. The real board will use the cleaned Google Sheet as its source of truth.</p>
+        </section>
+
+        <section class="library-workspace-panel" id="libraryDrive" role="tabpanel" aria-labelledby="libraryTabDrive" data-library-panel="drive" hidden>
+          <div class="library-workspace-drive-head">
+            <div>
+              <p class="library-drive-kicker">Files & folders</p>
+              <h2>Google Drive</h2>
+              <p>Folder structure is read live from Google Drive. Only the SkyrScout Library root is fixed.</p>
+            </div>
+            <div class="library-drive-connection" id="libraryDriveConnection" data-state="loading">
+              <span></span>
+              <strong id="libraryDriveConnectionText">Connecting to Library…</strong>
+            </div>
+          </div>
+
+          <section class="library-drive-browser" aria-label="SkyrScout Library browser">
+            <div class="library-drive-browserbar">
+              <nav class="library-drive-breadcrumbs" id="libraryDriveBreadcrumbs" aria-label="Library path">
+                <span>SkyrScout Library</span>
+              </nav>
+
+              <div class="library-drive-actions">
+                <a id="libraryDriveOpenDrive" class="library-drive-action" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in Drive</a>
+                <button id="libraryDriveRefresh" class="library-drive-action" type="button">Refresh</button>
+              </div>
+            </div>
+
+            <div class="library-drive-toolbar">
+              <label class="library-drive-search">
+                <span class="sr-only">Filter current folder</span>
+                <input id="libraryDriveSearch" type="search" autocomplete="off" placeholder="Filter this folder…">
+              </label>
+              <div class="library-drive-count" id="libraryDriveCount">Loading…</div>
+            </div>
+
+            <div class="library-drive-content" id="libraryDriveContent" aria-live="polite">
+              <div class="library-drive-loading">
+                <span class="library-drive-spinner" aria-hidden="true"></span>
+                <strong>Opening SkyrScout Library…</strong>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js?v=20260820-library2' | relative_url }}"></script>
+  <script type="module" src="{{ '/assets/js/library-drive.js?v=20260820-library1' | relative_url }}"></script>
+  <script src="{{ '/assets/js/library-workspace.js?v=20260821-workspace1' | relative_url }}"></script>
+</body>
+</html>
