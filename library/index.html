@@ -15,6 +15,7 @@ sitemap: false
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css?v=20260819-rooms3' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/library-drive.css?v=20260820-library1' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/library-workspace.css?v=20260821-workspace1' | relative_url }}">
 </head>
 <body class="library-drive-page">
   <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking">
@@ -40,52 +41,200 @@ sitemap: false
       </div>
     </header>
 
-    <section class="library-drive-room" aria-labelledby="libraryDriveTitle">
-      <div class="library-drive-heading">
+    <section class="library-drive-room library-workspace-room" aria-labelledby="libraryDriveTitle">
+      <div class="library-drive-heading library-workspace-heading">
         <div>
           <p class="library-drive-kicker">Scoutland Yard</p>
           <h1 id="libraryDriveTitle">Library</h1>
-          <p class="library-drive-intro">Research, reports, planning and internal material from the SkyrScout Google Drive library.</p>
-        </div>
-        <div class="library-drive-connection" id="libraryDriveConnection" data-state="loading">
-          <span></span>
-          <strong id="libraryDriveConnectionText">Connecting to Library…</strong>
+          <p class="library-drive-intro">A private workspace for research, planning, player work and internal material.</p>
         </div>
       </div>
 
-      <section class="library-drive-browser" aria-label="SkyrScout Library browser">
-        <div class="library-drive-browserbar">
-          <nav class="library-drive-breadcrumbs" id="libraryDriveBreadcrumbs" aria-label="Library path">
-            <span>SkyrScout Library</span>
-          </nav>
+      <nav class="library-workspace-tabs" role="tablist" aria-label="Library areas">
+        <button class="library-workspace-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="libraryOverview" id="libraryTabOverview" data-library-tab="overview">Overview</button>
+        <button class="library-workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="libraryProjectBoard" id="libraryTabProjectBoard" data-library-tab="project-board">Project Board</button>
+        <button class="library-workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="libraryDrive" id="libraryTabDrive" data-library-tab="drive">Drive</button>
+      </nav>
 
-          <div class="library-drive-actions">
-            <a id="libraryDriveOpenDrive" class="library-drive-action" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in Drive</a>
-            <button id="libraryDriveRefresh" class="library-drive-action" type="button">Refresh</button>
+      <div class="library-workspace-panels">
+        <section class="library-workspace-panel is-active" id="libraryOverview" role="tabpanel" aria-labelledby="libraryTabOverview" data-library-panel="overview">
+          <div class="library-workspace-overview-grid">
+            <article class="library-workspace-card library-workspace-card-primary">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Project Board</span>
+                <span class="library-workspace-badge">Next</span>
+              </div>
+              <h2>Work, ideas and decisions</h2>
+              <p>One place for what is in progress, what comes next, what is waiting, what was rejected and why.</p>
+              <div class="library-workspace-status-row" aria-label="Project Board status model">
+                <span>IN PROGRESS</span>
+                <span>NEXT</span>
+                <span>WAITING</span>
+                <span>BACKLOG</span>
+                <span>DECIDE</span>
+                <span>DONE</span>
+                <span>REJECTED</span>
+              </div>
+              <button class="library-workspace-card-action" type="button" data-library-open-tab="project-board">Open board preview →</button>
+            </article>
+
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Google Drive</span>
+                <span class="library-workspace-badge library-workspace-badge-live">Live</span>
+              </div>
+              <h2>Files & folders</h2>
+              <p>The working Drive browser stays intact, but it is now one Library tool instead of the whole room.</p>
+              <button class="library-workspace-card-action" type="button" data-library-open-tab="drive">Browse Drive →</button>
+            </article>
+
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Research</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Area</span>
+              </div>
+              <h2>Research desk</h2>
+              <p>Source notes, player discovery and longer internal digging can grow here without changing the Drive structure.</p>
+            </article>
+
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Players</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Area</span>
+              </div>
+              <h2>Player work</h2>
+              <p>Internal route to reports, profiles, videos and player-related material. Exact shape can be decided later.</p>
+            </article>
+
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Sources</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Planned</span>
+              </div>
+              <h2>Sources & shortcuts</h2>
+              <p>Saved resources, recurring sources and research shortcuts. This does not need to mirror a Drive folder.</p>
+            </article>
+
+            <article class="library-workspace-card">
+              <div class="library-workspace-card-topline">
+                <span class="library-workspace-eyebrow">Planning & Podcast</span>
+                <span class="library-workspace-badge library-workspace-badge-muted">Drive</span>
+              </div>
+              <h2>Existing material</h2>
+              <p>Planning, Podcast, Archive and Player Reports remain in Drive and can later gain dedicated Library views if useful.</p>
+              <button class="library-workspace-card-action" type="button" data-library-open-tab="drive">Open Drive →</button>
+            </article>
           </div>
-        </div>
+        </section>
 
-        <div class="library-drive-toolbar">
-          <label class="library-drive-search">
-            <span class="sr-only">Filter current folder</span>
-            <input id="libraryDriveSearch" type="search" autocomplete="off" placeholder="Filter this folder…">
-          </label>
-          <div class="library-drive-count" id="libraryDriveCount">Loading…</div>
-        </div>
-
-        <div class="library-drive-content" id="libraryDriveContent" aria-live="polite">
-          <div class="library-drive-loading">
-            <span class="library-drive-spinner" aria-hidden="true"></span>
-            <strong>Opening SkyrScout Library…</strong>
+        <section class="library-workspace-panel" id="libraryProjectBoard" role="tabpanel" aria-labelledby="libraryTabProjectBoard" data-library-panel="project-board" hidden>
+          <div class="library-project-board-head">
+            <div>
+              <p class="library-drive-kicker">Project Board</p>
+              <h2>Scoutland Yard roadmap</h2>
+              <p>This is a visual preview of the board structure. Google Sheets and AppSheet are not connected yet.</p>
+            </div>
+            <span class="library-workspace-badge">Preview</span>
           </div>
-        </div>
-      </section>
 
-      <p class="library-drive-footnote">Folder structure is read live from Google Drive. Only the SkyrScout Library root is fixed.</p>
+          <div class="library-project-board" aria-label="Project Board preview">
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>IN PROGRESS</strong></header>
+              <article class="library-project-ticket">
+                <span>Library</span>
+                <strong>Reshape Library home</strong>
+                <p>Keep Drive, but make room for the rest of Library.</p>
+              </article>
+              <article class="library-project-ticket">
+                <span>Planning</span>
+                <strong>Roadmap cleanup</strong>
+                <p>Update completed work and flag uncertain status.</p>
+              </article>
+            </section>
+
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>NEXT</strong></header>
+              <article class="library-project-ticket">
+                <span>Project Board</span>
+                <strong>Google Sheets source</strong>
+                <p>Turn the cleaned roadmap into the editable task table.</p>
+              </article>
+              <article class="library-project-ticket">
+                <span>Project Board</span>
+                <strong>AppSheet Kanban</strong>
+                <p>Add the Trello-style view on top of the same Sheet.</p>
+              </article>
+            </section>
+
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>WAITING</strong></header>
+              <article class="library-project-ticket">
+                <span>Control Room</span>
+                <strong>Most Likes 24H / 7D</strong>
+                <p>Needs trustworthy history and real changes before validation.</p>
+              </article>
+            </section>
+
+            <section class="library-project-column">
+              <header><span class="library-project-dot"></span><strong>DECIDE</strong></header>
+              <article class="library-project-ticket">
+                <span>Library</span>
+                <strong>Dedicated views</strong>
+                <p>Decide which Drive-backed areas deserve their own Library interface.</p>
+              </article>
+            </section>
+          </div>
+
+          <p class="library-project-board-note">Preview only. The real board will use the cleaned Google Sheet as its source of truth.</p>
+        </section>
+
+        <section class="library-workspace-panel" id="libraryDrive" role="tabpanel" aria-labelledby="libraryTabDrive" data-library-panel="drive" hidden>
+          <div class="library-workspace-drive-head">
+            <div>
+              <p class="library-drive-kicker">Files & folders</p>
+              <h2>Google Drive</h2>
+              <p>Folder structure is read live from Google Drive. Only the SkyrScout Library root is fixed.</p>
+            </div>
+            <div class="library-drive-connection" id="libraryDriveConnection" data-state="loading">
+              <span></span>
+              <strong id="libraryDriveConnectionText">Connecting to Library…</strong>
+            </div>
+          </div>
+
+          <section class="library-drive-browser" aria-label="SkyrScout Library browser">
+            <div class="library-drive-browserbar">
+              <nav class="library-drive-breadcrumbs" id="libraryDriveBreadcrumbs" aria-label="Library path">
+                <span>SkyrScout Library</span>
+              </nav>
+
+              <div class="library-drive-actions">
+                <a id="libraryDriveOpenDrive" class="library-drive-action" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in Drive</a>
+                <button id="libraryDriveRefresh" class="library-drive-action" type="button">Refresh</button>
+              </div>
+            </div>
+
+            <div class="library-drive-toolbar">
+              <label class="library-drive-search">
+                <span class="sr-only">Filter current folder</span>
+                <input id="libraryDriveSearch" type="search" autocomplete="off" placeholder="Filter this folder…">
+              </label>
+              <div class="library-drive-count" id="libraryDriveCount">Loading…</div>
+            </div>
+
+            <div class="library-drive-content" id="libraryDriveContent" aria-live="polite">
+              <div class="library-drive-loading">
+                <span class="library-drive-spinner" aria-hidden="true"></span>
+                <strong>Opening SkyrScout Library…</strong>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
     </section>
   </main>
 
-  <script type="module" src="{{ '/assets/js/staff-room-auth.js?v=20260820-roomauth3' | relative_url }}"></script>
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js?v=20260820-library2' | relative_url }}"></script>
   <script type="module" src="{{ '/assets/js/library-drive.js?v=20260820-library1' | relative_url }}"></script>
+  <script src="{{ '/assets/js/library-workspace.js?v=20260821-workspace1' | relative_url }}"></script>
 </body>
 </html>

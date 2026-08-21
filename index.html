@@ -5,6 +5,22 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
 ---
 
 <style>
+    /* Homepage Shorts: keep the complete title and its emoji visible.
+       Removing the 3D text layer also avoids emoji disappearing in some
+       Chromium/Windows compositing combinations. */
+    #yard-latest-shorts .signature-short-card-copy {
+        transform: none;
+    }
+
+    #yard-latest-shorts .signature-short-card-copy h3 {
+        display: block;
+        overflow: visible;
+        -webkit-box-orient: initial;
+        -webkit-line-clamp: unset;
+        font-family: Arial, Helvetica, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+        font-variant-emoji: emoji;
+    }
+
     @media (max-width: 759px) {
         .yard-report-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -816,3 +832,29 @@ if (marqueeItems) {
         loadLatestPodcast();
         loadLatestMusic();
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    if (!window.twemoji) {
+        return;
+    }
+
+    const twemojiOptions = {
+        folder: "svg",
+        ext: ".svg"
+    };
+
+    const shortGrid = document.querySelector("#yard-latest-shorts");
+    if (shortGrid) {
+        twemoji.parse(shortGrid, twemojiOptions);
+    }
+
+    const heseTitle = document.querySelector("#hese-fredrik-title");
+    if (heseTitle) {
+        twemoji.parse(heseTitle, twemojiOptions);
+    }
+})();
+</script>
