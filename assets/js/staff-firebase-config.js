@@ -7,7 +7,6 @@ export const firebaseConfig = Object.freeze({
   messagingSenderId: "2416126710",
   appId: "1:2416126710:web:3775c10f0c1523c1675ad7"
 });
-
 export const staffAccessConfig = Object.freeze({
   allowlistCollection: "staff_allowlist",
   entrancePath: "/staff/",
@@ -15,7 +14,8 @@ export const staffAccessConfig = Object.freeze({
   roomRoots: Object.freeze([
     "/foyer/",
     "/library/",
-    "/control-room/"
+    "/control-room/",
+    "/speilsalen/"
   ])
 });
 
@@ -23,7 +23,6 @@ export const staffBackendConfig = Object.freeze({
   functionsRegion: "europe-west1",
   controlRoomFunction: "controlRoomFeed"
 });
-
 export function firebaseIsConfigured() {
   return Boolean(
     firebaseConfig.apiKey &&

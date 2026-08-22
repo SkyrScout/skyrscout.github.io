@@ -1,0 +1,63 @@
+---
+layout: null
+permalink: /speilsalen/
+sitemap: false
+---
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Speilsalen | Scoutland Yard</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css' | relative_url }}?v=20260819-rooms3">
+  <link rel="stylesheet" href="{{ '/assets/css/speilsalen.css' | relative_url }}?v=20260823-speilsalen1">
+</head>
+<body>
+  <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking">
+    <div class="staff-room-auth-card">
+      <span class="staff-room-auth-dot"></span>
+      <strong id="staffRoomAuthGateText">Checking SkyrScout staff access…</strong>
+    </div>
+  </div>
+
+  <main class="speilsalen-room" id="staffProtectedRoom" hidden>
+    <img class="speilsalen-bg" src="{{ '/assets/images/scoutland-yard-speilsalen.webp' | relative_url }}" alt="Speilsalen i Scoutland Yard">
+    <div class="speilsalen-vignette" aria-hidden="true"></div>
+
+    <header class="room-topbar speilsalen-topbar">
+      <a class="room-brand" href="/foyer/">
+        <span class="room-seal">SY</span>
+        <span class="room-brand-copy"><span>SkyrScout internal building</span><strong>Scoutland Yard</strong></span>
+      </a>
+
+      <nav class="speilsalen-nav" aria-label="Scoutland Yard rooms">
+        <a href="/foyer/">Foyer</a>
+        <a href="/library/">Library</a>
+        <a href="/control-room/">Control Room</a>
+        <a class="active" href="/speilsalen/" aria-current="page">Speilsalen</a>
+      </nav>
+
+      <div class="room-session">
+        <span class="room-session-copy"><strong data-staff-identity>SkyrScout Staff</strong><span data-staff-role>Staff</span></span>
+        <button type="button" data-staff-signout>Sign out</button>
+      </div>
+    </header>
+
+    <section class="speilsalen-stage" aria-labelledby="speilsalenTitle">
+      <div class="speilsalen-title-card">
+        <span class="speilsalen-kicker">Scoutland Yard · Staff only</span>
+        <h1 id="speilsalenTitle">Speilsalen</h1>
+        <div class="speilsalen-rule" aria-hidden="true"></div>
+        <p>Rommet er på plass. Innhold kommer etter hvert.</p>
+        <span class="speilsalen-status">UNDER DEVELOPMENT</span>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="{{ '/assets/js/staff-room-auth.js?v=20260820-roomauth3' | relative_url }}"></script>
+</body>
+</html>

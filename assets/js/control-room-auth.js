@@ -27,6 +27,40 @@ function loadClassicScript(src) {
   });
 }
 
+function makeRoomLink(node, href, smallText) {
+  if (!node) return null;
+  const link = document.createElement("a");
+  link.className = node.className;
+  link.href = href;
+  link.innerHTML = node.innerHTML;
+  link.style.color = "inherit";
+  link.style.textDecoration = "none";
+  if (smallText) {
+    const small = link.querySelector("small");
+    if (small) small.textContent = smallText;
+  }
+  node.replaceWith(link);
+  return link;
+}
+
+function wireScoutlandRoomNavigation() {
+  const rooms = [...document.querySelectorAll(".sidebar .room")];
+  const byName = (name) => rooms.find((node) => node.querySelector("strong")?.textContent.trim() === name);
+
+  makeRoomLink(byName("Library"), "/library/", "Research & documents");
+  const speilsalen = makeRoomLink(byName("Speilsalen"), "/speilsalen/", "Reflection & strategy");
+
+  if (speilsalen && !document.querySelector('.sidebar .room[href="/foyer/"]')) {
+    const foyer = document.createElement("a");
+    foyer.className = "room";
+    foyer.href = "/foyer/";
+    foyer.style.color = "inherit";
+    foyer.style.textDecoration = "none";
+    foyer.innerHTML = "<strong>Foyer</strong><small>Back to Scoutland Yard</small>";
+    speilsalen.insertAdjacentElement("afterend", foyer);
+  }
+}
+
 async function startControlRoom() {
   // Load the authenticated Firebase data bridge before any Control Room
   // script is allowed to request live data. The browser must never call
@@ -56,6 +90,7 @@ async function authorizeControlRoom() {
   if (identity) identity.textContent = session.profile.scoutName;
   if (role) role.textContent = session.profile.role;
 
+  wireScoutlandRoomNavigation();
   app.hidden = false;
   gate.hidden = true;
 
