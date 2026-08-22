@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-08-21T10:21:05Z",
+    "updated_utc": "2026-08-22T10:08:16Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "hayVCUQBRHA": {
-      "status": "upcoming",
-      "scheduled_start": "2026-08-22T10:00:00Z",
-      "title": "Aron Benjaminsen (2007) – Víkingur Gøta | Meistaradeildin, Faroe Islands",
-      "profiles": [
-        {
-          "player_slug": "aron-benjaminsen",
-          "kind": "main",
-          "main_video_id": "hayVCUQBRHA"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
