@@ -28,3 +28,7 @@ BACKGROUND:
 The supplied Christmas Speilsalen source was used only as architectural source material.
 The deployed background in this package contains no person, Christmas trees, table setting,
 red ornaments or other Christmas decoration.
+
+BACKGROUND
+- assets/images/scoutland-yard-speilsalen.webp is the approved permanent, non-Christmas Speilsalen room image selected 2026-08-23.
+- No UI or text is baked into the background image.
