@@ -57,6 +57,8 @@
     geographyWindowKey: '2d',
     selectedCountryKey: null,
     cityMode: false,
+    realtimeMonitor: null,
+    realtimeWindowKey: '48h',
     observer: null
   };
 
@@ -258,32 +260,263 @@
     renderTraffic(item);
   }
 
-  function updateRealtimeSummary(payload){
-    const panel = document.querySelector(
-      '[data-screen="overview"] .topgrid .side .sidepanel'
+  function realtimePanels(){
+    return Array.from(
+      document.querySelectorAll('.realtime-monitor-panel')
+    );
+  }
+
+  function realtimeWindowLabel(key){
+    return key === '60m' ? '60M' : '48H';
+  }
+
+  function realtimeWindowCopy(key){
+    return key === '60m'
+      ? {
+          sub:'Rolling public counter movement · last 60 minutes',
+          xStart:'60m ago'
+        }
+      : {
+          sub:'Rolling public counter movement · last 48 hours',
+          xStart:'48h ago'
+        };
+  }
+
+  function niceRealtimeCeil(value){
+    const n = Math.max(0, Number(value) || 0);
+    if(n <= 0) return 1;
+    const power = Math.pow(10, Math.floor(Math.log10(n)));
+    const scaled = n / power;
+    const nice = scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 5 ? 5 : 10;
+    return nice * power;
+  }
+
+  function niceRealtimeFloor(value){
+    const n = Math.min(0, Number(value) || 0);
+    if(n >= 0) return 0;
+    return -niceRealtimeCeil(Math.abs(n));
+  }
+
+  function fmtRealtimeAxis(value){
+    const n = Number(value);
+    if(!Number.isFinite(n)) return '—';
+    if(Math.abs(n) >= 1000){
+      const compact = n / 1000;
+      return (Math.round(compact * 10) / 10).toLocaleString('en-US') + 'k';
+    }
+    return Math.round(n).toLocaleString('en-US');
+  }
+
+  function buildRealtimeChart(values){
+    const safe = Array.isArray(values)
+      ? values.map(value => numberOrNull(value))
+      : [];
+
+    const finite = safe.filter(value => value !== null);
+    if(!finite.length){
+      return {
+        line:'', area:'', ticks:['—','—','—','—'], zero:null
+      };
+    }
+
+    const rawMax = Math.max(0, ...finite);
+    const rawMin = Math.min(0, ...finite);
+    let yMax = niceRealtimeCeil(rawMax);
+    let yMin = niceRealtimeFloor(rawMin);
+
+    if(yMax === yMin){
+      yMax = yMin + 1;
+    }
+
+    const width = 1000;
+    const height = 300;
+    const span = yMax - yMin;
+    const xFor = index => safe.length <= 1
+      ? width / 2
+      : (index / (safe.length - 1)) * width;
+    const yFor = value => ((yMax - value) / span) * height;
+    const zeroY = yFor(0);
+
+    const lineParts = [];
+    const areaParts = [];
+    let run = [];
+
+    function flushRun(){
+      if(!run.length) return;
+      lineParts.push(
+        run.map((point,index) =>
+          (index ? 'L' : 'M') + point.x.toFixed(2) + ',' + point.y.toFixed(2)
+        ).join(' ')
+      );
+      areaParts.push(
+        'M' + run[0].x.toFixed(2) + ',' + zeroY.toFixed(2) + ' ' +
+        run.map(point =>
+          'L' + point.x.toFixed(2) + ',' + point.y.toFixed(2)
+        ).join(' ') + ' ' +
+        'L' + run[run.length - 1].x.toFixed(2) + ',' + zeroY.toFixed(2) + ' Z'
+      );
+      run = [];
+    }
+
+    safe.forEach((value,index) => {
+      if(value === null){
+        flushRun();
+        return;
+      }
+      run.push({x:xFor(index),y:yFor(value)});
+    });
+    flushRun();
+
+    const ticks = [0,1,2,3].map(index =>
+      yMax - ((span / 3) * index)
     );
 
+    return {
+      line:lineParts.join(' '),
+      area:areaParts.join(' '),
+      ticks:ticks.map(fmtRealtimeAxis),
+      zero:(rawMin < 0 && rawMax > 0)
+        ? Math.max(0, Math.min(100, (zeroY / height) * 100))
+        : (rawMin < 0 && rawMax === 0 ? 0 : null)
+    };
+  }
+
+  function renderRealtimePanel(panel,windowData,key){
     if(!panel) return;
 
-    const big = panel.querySelector('.big');
-    const sub = panel.querySelector('.sub');
+    const label = realtimeWindowLabel(key);
+    const copy = realtimeWindowCopy(key);
+    const total = panel.querySelector('[data-realtime-total]');
+    const sub = panel.querySelector('[data-realtime-sub]');
+    const status = panel.querySelector('[data-realtime-status]');
+    const topTitle = panel.querySelector('[data-realtime-top-title]');
+    const topList = panel.querySelector('[data-realtime-top-list]');
+    const xStart = panel.querySelector('[data-realtime-x-start]');
+    const line = panel.querySelector('[data-realtime-line]');
+    const area = panel.querySelector('[data-realtime-area]');
+    const yscale = panel.querySelector('[data-realtime-yscale]');
+    const zeroLine = panel.querySelector('[data-realtime-zero-line]');
 
-    if(big){
-      big.textContent = fmtNumber(payload && payload.videosPolled);
+    panel.querySelectorAll('[data-realtime-window]').forEach(button => {
+      const active = button.dataset.realtimeWindow === key;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',active ? 'true' : 'false');
+    });
+
+    if(sub) sub.textContent = copy.sub;
+    if(xStart) xStart.textContent = copy.xStart;
+    if(topTitle) topTitle.textContent = 'TOP VIDEOS · ' + label;
+
+    if(!windowData || typeof windowData !== 'object'){
+      if(total) total.textContent = '—';
+      if(status) status.textContent = 'Waiting for sampled public-counter history…';
+      if(line) line.setAttribute('d','');
+      if(area) area.setAttribute('d','');
+      if(yscale) yscale.querySelectorAll('span').forEach(node => { node.textContent = '—'; });
+      if(zeroLine) zeroLine.hidden = true;
+      if(topList) topList.innerHTML = '<div class="hf-empty">Waiting for Realtime Monitor data…</div>';
+      return;
     }
 
-    if(sub){
-      sub.textContent =
-        'videos monitored · official YouTube Data API';
+    const complete = windowData.complete === true;
+    const views = numberOrNull(windowData.views);
+    const partialViews = numberOrNull(windowData.partialViews);
+    const missing = numberOrNull(windowData.missingBaselines) || 0;
+    const seriesMatches = windowData.seriesMatchesTotal;
+
+    if(total){
+      total.textContent = complete && views !== null
+        ? fmtNumber(views)
+        : '—';
+      total.title = complete
+        ? label + ' sampled public-counter movement'
+        : (partialViews !== null
+            ? 'Incomplete window · partial movement ' + fmtNumber(partialViews)
+            : 'Incomplete window');
     }
 
-    const badge = document.getElementById('crRealtimeBadge');
-    if(
-      badge &&
-      (!badge.textContent || /connecting|pending/i.test(badge.textContent))
-    ){
-      badge.textContent = 'VPS LIVE';
+    if(status){
+      if(!complete){
+        status.textContent = 'INCOMPLETE · ' + fmtNumber(missing) + ' BASELINE' + (missing === 1 ? '' : 'S') + ' MISSING';
+        status.className = 'realtime-window-status is-warning';
+      }else if(seriesMatches === false){
+        status.textContent = 'CHECK DATA · SERIES/TOTAL MISMATCH';
+        status.className = 'realtime-window-status is-warning';
+      }else{
+        const rollbackCount = Array.isArray(windowData.rollbackBuckets)
+          ? windowData.rollbackBuckets.length
+          : 0;
+        status.textContent = rollbackCount
+          ? 'COMPLETE · PUBLIC COUNTER CORRECTIONS PRESERVED'
+          : 'COMPLETE · ROLLING WINDOW';
+        status.className = 'realtime-window-status is-ok';
+      }
     }
+
+    const chart = buildRealtimeChart(windowData.values);
+    if(line) line.setAttribute('d',chart.line);
+    if(area) area.setAttribute('d',chart.area);
+    if(yscale){
+      const labels = yscale.querySelectorAll('span');
+      chart.ticks.forEach((tick,index) => {
+        if(labels[index]) labels[index].textContent = tick;
+      });
+    }
+    if(zeroLine){
+      if(chart.zero === null){
+        zeroLine.hidden = true;
+        zeroLine.style.top = '';
+      }else{
+        zeroLine.hidden = false;
+        zeroLine.style.top = chart.zero.toFixed(2) + '%';
+      }
+    }
+
+    if(topList){
+      topList.innerHTML = '';
+      const rows = Array.isArray(windowData.top) ? windowData.top : [];
+      if(!rows.length){
+        const empty = document.createElement('div');
+        empty.className = 'hf-empty';
+        empty.textContent = 'No positive public-counter movement in this window.';
+        topList.appendChild(empty);
+      }else{
+        rows.forEach((row,index) => {
+          const videoId = Array.isArray(row) ? String(row[0] || '') : '';
+          const delta = Array.isArray(row) ? numberOrNull(row[1]) : null;
+          const title = Array.isArray(row) ? String(row[2] || videoId || 'YouTube video') : 'YouTube video';
+          const item = document.createElement('div');
+          item.className = 'rtrow realtime-top-row';
+          item.dataset.rank = String(index + 1);
+          if(videoId) item.dataset.videoId = videoId;
+          const name = document.createElement('span');
+          name.textContent = title;
+          name.title = title;
+          const value = document.createElement('b');
+          value.textContent = delta === null ? '—' : fmtNumber(delta);
+          value.title = label + ' public-counter movement';
+          item.append(name,value);
+          topList.appendChild(item);
+        });
+      }
+    }
+  }
+
+  function renderRealtimeMonitor(){
+    const monitor = state.realtimeMonitor;
+    const windows = monitor && monitor.windows && typeof monitor.windows === 'object'
+      ? monitor.windows
+      : {};
+    const key = state.realtimeWindowKey === '60m' ? '60m' : '48h';
+    const windowData = windows[key] || null;
+    realtimePanels().forEach(panel => renderRealtimePanel(panel,windowData,key));
+  }
+
+  function updateRealtimeSummary(payload){
+    state.realtimeMonitor = payload && payload.realtimeMonitor && typeof payload.realtimeMonitor === 'object'
+      ? payload.realtimeMonitor
+      : null;
+    renderRealtimeMonitor();
   }
 
   function hasGeoShape(obj){
@@ -2509,6 +2742,18 @@
   document.addEventListener(
     'click',
     event => {
+      const realtimeButton =
+        event.target && event.target.closest
+          ? event.target.closest('[data-realtime-window]')
+          : null;
+
+      if(realtimeButton){
+        const key = realtimeButton.dataset.realtimeWindow === '60m' ? '60m' : '48h';
+        state.realtimeWindowKey = key;
+        renderRealtimeMonitor();
+        return;
+      }
+
       const windowButton =
         event.target && event.target.closest
           ? event.target.closest('[data-vps-geo-window]')
