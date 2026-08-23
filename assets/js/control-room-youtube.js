@@ -333,6 +333,19 @@
       return;
     }
 
+    const clearButton = event.target.closest('[data-yt-video-clear]');
+    if(clearButton && isYouTubeUi(clearButton)){
+      event.preventDefault();
+      event.stopPropagation();
+      const panel = clearButton.closest('.yt-video-selector-panel');
+      if(panel){
+        setSelectorState(panel,{query:''});
+        const input = panel.querySelector('[data-yt-video-search]');
+        if(input) input.focus();
+      }
+      return;
+    }
+
     const sortButton = event.target.closest('[data-yt-video-sort]');
     if(sortButton && isYouTubeUi(sortButton)){
       event.preventDefault();

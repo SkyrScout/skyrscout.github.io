@@ -473,6 +473,10 @@ window.controlRoomSnapRows=snapRows;
     const club = row.dataset.playerClub || '';
     const videoId = row.dataset.youtubeId || '';
     const reportDate = row.dataset.reportDate || '';
+    const publishedAtMs = Number(row.dataset.youtubePublishedAt || 0);
+    const publishedText = Number.isFinite(publishedAtMs) && publishedAtMs > 0
+      ? new Date(publishedAtMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'})
+      : '';
 
     const badge = document.getElementById('selectedPlayerBadge');
     const thumb = document.getElementById('selectedPlayerThumb');
@@ -484,7 +488,12 @@ window.controlRoomSnapRows=snapRows;
     if(badge) badge.textContent = name.replace(/\s*\(\d{4}\)\s*$/, '');
     if(thumb && videoId) thumb.src = 'https://i.ytimg.com/vi/' + encodeURIComponent(videoId) + '/mqdefault.jpg';
     if(title) title.textContent = name;
-    if(meta) meta.innerHTML = (club ? escapeHtml(club) + '<br>' : '') + 'Report ' + escapeHtml(formatReportDate(reportDate));
+    if(meta){
+      const dateLine = publishedText
+        ? 'Published ' + escapeHtml(publishedText)
+        : 'Report ' + escapeHtml(formatReportDate(reportDate));
+      meta.innerHTML = (club ? escapeHtml(club) + '<br>' : '') + dateLine;
+    }
     if(trafficTitle) trafficTitle.textContent = name.replace(/\s*\(\d{4}\)\s*$/, '') + ' // Traffic / Audience';
 
     if(panel){

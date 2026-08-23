@@ -1929,7 +1929,10 @@ body.hf-alert-flash::after{
   color:#94aab5;
   min-width:58px;
   padding:4px 8px;
-  font:900 7px/1 inherit;
+  font-family:inherit;
+  font-size:7px;
+  font-weight:900;
+  line-height:1;
   letter-spacing:.04em;
   cursor:pointer;
   white-space:nowrap;
@@ -1951,17 +1954,52 @@ body.hf-alert-flash::after{
   gap:7px;
   align-items:center;
 }
+.video-library-search-wrap,
+.yt-video-search-wrap{
+  position:relative;
+  min-width:0;
+}
 .video-library-search,
 .yt-video-search{
   width:100%;min-width:0;height:25px;
   border:1px solid #172c36;border-radius:6px;
   background:#010405;color:#dce8ed;
-  padding:0 8px;
-  font:500 8px/1.2 inherit;
+  padding:0 28px 0 8px;
+  font-family:inherit;
+  font-size:8px;
+  font-weight:500;
+  line-height:1.2;
   outline:0;
 }
 .video-library-search::placeholder,.yt-video-search::placeholder{color:#526975}
 .video-library-search:focus,.yt-video-search:focus{border-color:#258dbb;box-shadow:0 0 0 1px rgba(29,158,216,.08)}
+.video-library-search-clear,
+.yt-video-search-clear{
+  position:absolute;
+  top:50%;right:5px;
+  width:18px;height:18px;
+  transform:translateY(-50%);
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:#9eb1ba;
+  padding:0;
+  font-family:inherit;
+  font-size:15px;
+  font-weight:700;
+  line-height:18px;
+  text-align:center;
+  cursor:pointer;
+  z-index:2;
+}
+.video-library-search:placeholder-shown + .video-library-search-clear,
+.yt-video-search:placeholder-shown + .yt-video-search-clear{opacity:0;pointer-events:none}
+.video-library-search-clear:hover,.video-library-search-clear:focus-visible{
+  color:#e5f8ff;background:rgba(38,139,184,.12);outline:0;
+}
+.yt-video-search-clear:hover,.yt-video-search-clear:focus-visible{
+  color:#fff;background:rgba(173,72,67,.14);outline:0;
+}
 .video-library-count,
 .yt-video-count{
   color:#627d8a;
@@ -2004,9 +2042,10 @@ body.hf-alert-flash::after{
   grid-template-columns:minmax(320px,1fr) auto;
   gap:14px;
 }
+.console-focus-shell.players-focus .video-library-search-wrap{width:100%}
 .console-focus-shell.players-focus .video-library-search{
   height:38px!important;
-  padding:0 14px!important;
+  padding:0 34px 0 14px!important;
   font-size:14px!important;
 }
 .console-focus-shell.players-focus .video-library-count{font-size:11px!important}
@@ -2098,8 +2137,9 @@ body.hf-alert-flash::after{
   grid-template-columns:minmax(360px,1fr) auto auto;
   gap:12px;
 }
+.console-focus-shell .yt-video-selector-panel .yt-video-search-wrap{width:100%}
 .console-focus-shell .yt-video-selector-panel .yt-video-search{
-  height:40px!important;padding:0 14px!important;font-size:14px!important;
+  height:40px!important;padding:0 34px 0 14px!important;font-size:14px!important;
 }
 .console-focus-shell .yt-video-selector-panel .yt-video-sort{
   min-width:94px!important;padding:8px 13px!important;font-size:11px!important;
@@ -2187,3 +2227,6 @@ body.hf-alert-flash::after{
   .console-focus-shell .yt-video-selector-panel .yt-video-copy strong{font-size:14px!important}
   .console-focus-shell .yt-video-selector-panel .yt-video-copy small{font-size:11px!important}
 }
+
+/* Selected Traffic/Audience stays Analytics-only until a real selected-video Analytics feed exists. */
+.selected-analytics-note{margin-top:8px;padding-top:8px;border-top:1px solid #10232c}

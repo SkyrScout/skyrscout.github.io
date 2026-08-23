@@ -55,7 +55,10 @@ sitemap: false
 </div>
 <div class="body video-library-body">
   <div class="video-library-controls">
-    <input class="video-library-search" type="search" data-video-library-search placeholder="Search player, club or video…" aria-label="Search Video Library" autocomplete="off" spellcheck="false">
+    <div class="video-library-search-wrap">
+      <input class="video-library-search" type="text" data-video-library-search placeholder="Search player, club or video…" aria-label="Search Video Library" autocomplete="off" spellcheck="false">
+      <button class="video-library-search-clear" type="button" data-video-library-clear aria-label="Clear Video Library search" title="Clear search">×</button>
+    </div>
     <span class="video-library-count" data-video-library-count>{{ site.players | size }} VIDEOS</span>
   </div>
   <div class="video-library-pane" data-video-library-pane="long">
@@ -135,7 +138,10 @@ sitemap: false
         <strong data-yt-selected-type>LONG VIDEO</strong>
       </div>
       <div class="yt-selector-controls">
-        <input class="yt-video-search" type="search" data-yt-video-search placeholder="Search player, club or video…" aria-label="Search Video Selector" autocomplete="off" spellcheck="false">
+        <div class="yt-video-search-wrap">
+          <input class="yt-video-search" type="text" data-yt-video-search placeholder="Search player, club or video…" aria-label="Search Video Selector" autocomplete="off" spellcheck="false">
+          <button class="yt-video-search-clear" type="button" data-yt-video-clear aria-label="Clear Video Selector search" title="Clear search">×</button>
+        </div>
         <button class="yt-video-sort" type="button" data-yt-video-sort aria-label="Sort Video Selector oldest first" title="Sort by YouTube publication time">NEWEST</button>
         <span class="yt-video-count" data-yt-video-count>{{ site.players | size }} VIDEOS</span>
       </div>

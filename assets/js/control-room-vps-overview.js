@@ -207,13 +207,13 @@
     if(valueEl) valueEl.textContent = value;
   }
 
-  function renderTraffic(item){
+  function renderTraffic(){
     const panel = document.getElementById('selectedTrafficPanel');
     const body = document.getElementById('selectedTrafficBody');
     if(!panel || !body) return;
 
     const badge = panel.querySelector('.ph .badge');
-    if(badge) badge.textContent = 'LIVE ACTIVITY';
+    if(badge) badge.textContent = 'ANALYTICS PENDING';
     body.replaceChildren();
 
     function section(text){
@@ -223,26 +223,32 @@
       body.appendChild(el);
     }
 
-    function kv(label, value){
+    function kv(label){
       const el = document.createElement('div');
       el.className = 'kv';
       const a = document.createElement('span');
       const b = document.createElement('strong');
       a.textContent = label;
-      b.textContent = value;
+      b.textContent = '—';
       el.append(a,b);
       body.appendChild(el);
     }
 
-    section('LIVE ACTIVITY');
-    kv('Source', 'YouTube Data API v3');
-    kv('Last check', fmtCheckedAt(state.checkedAt));
-    kv('Total views', fmtNumber(item.totalViews));
-    kv('Since last poll', fmtDelta(item.deltaSincePoll));
-    kv('This clock hour', fmtNumber(item.currentHourViews));
-    kv('Previous clock hour', fmtHistory(item.previousHourViews));
-    kv('Last 48 h', fmtHistory(item.last48hViews));
-    kv('Status', fmtStatus(item.activityStatus));
+    section('TRAFFIC SOURCES');
+    kv('Channel pages');
+    kv('YouTube search');
+    kv('External');
+    kv('Suggested videos');
+    kv('Other YouTube features');
+    section('AUDIENCE');
+    kv('Top region');
+    kv('Age');
+    kv('Gender');
+
+    const note = document.createElement('div');
+    note.className = 'hf-empty selected-analytics-note';
+    note.textContent = 'Selected-video YouTube Analytics is not connected yet. Public-counter activity is not substituted here.';
+    body.appendChild(note);
   }
 
   function inferSelectedVideoId(){
@@ -275,8 +281,8 @@
 
     setMetric('views', 'Total views', fmtNumber(item.totalViews));
     setMetric('likes', 'Since last poll', fmtDelta(item.deltaSincePoll));
-    setMetric('ctr', 'This hour', fmtNumber(item.currentHourViews));
-    setMetric('avgViewDuration', 'Last hour', fmtHistory(item.previousHourViews));
+    setMetric('ctr', 'This clock hour', fmtNumber(item.currentHourViews));
+    setMetric('avgViewDuration', 'Previous clock hour', fmtHistory(item.previousHourViews));
     setMetric('watchTime', 'Last 48h', fmtHistory(item.last48hViews));
     setMetric('uniqueViewers', 'Status', fmtStatus(item.activityStatus));
 
@@ -284,12 +290,12 @@
     if(charts){
       charts.innerHTML =
         '<div class="hf-empty">' +
-        'Live view movement is supplied by the VPS collector. ' +
-        'Full YouTube Analytics charts are not connected on this panel.' +
+        'Public-counter activity above is supplied by the VPS collector. ' +
+        'Video-specific YouTube Analytics charts are not connected here yet.' +
         '</div>';
     }
 
-    renderTraffic(item);
+    renderTraffic();
   }
 
   function realtimePanels(){
@@ -314,19 +320,35 @@
         };
   }
 
-  function niceRealtimeCeil(value){
+  function niceRealtimeStep(value){
     const n = Math.max(0, Number(value) || 0);
     if(n <= 0) return 1;
     const power = Math.pow(10, Math.floor(Math.log10(n)));
     const scaled = n / power;
-    const nice = scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 5 ? 5 : 10;
+    const nice = scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 2.5 ? 2.5 : scaled <= 5 ? 5 : 10;
     return nice * power;
   }
 
-  function niceRealtimeFloor(value){
-    const n = Math.min(0, Number(value) || 0);
-    if(n >= 0) return 0;
-    return -niceRealtimeCeil(Math.abs(n));
+  function realtimeScale(rawMin, rawMax){
+    const intervals = 3;
+    if(rawMin >= 0){
+      const step = niceRealtimeStep(rawMax / intervals);
+      return {min:0, max:step * intervals, step:step};
+    }
+    if(rawMax <= 0){
+      const step = niceRealtimeStep(Math.abs(rawMin) / intervals);
+      return {min:-step * intervals, max:0, step:step};
+    }
+
+    let step = niceRealtimeStep((rawMax - rawMin) / intervals);
+    let min = Math.floor(rawMin / step) * step;
+    let max = min + step * intervals;
+    while(max < rawMax){
+      step = niceRealtimeStep(step * 1.01);
+      min = Math.floor(rawMin / step) * step;
+      max = min + step * intervals;
+    }
+    return {min:min, max:max, step:step};
   }
 
   function fmtRealtimeAxis(value){
@@ -353,8 +375,9 @@
 
     const rawMax = Math.max(0, ...finite);
     const rawMin = Math.min(0, ...finite);
-    let yMax = niceRealtimeCeil(rawMax);
-    let yMin = niceRealtimeFloor(rawMin);
+    const scale = realtimeScale(rawMin, rawMax);
+    let yMax = scale.max;
+    let yMin = scale.min;
 
     if(yMax === yMin){
       yMax = yMin + 1;
@@ -373,18 +396,23 @@
     const areaParts = [];
     let run = [];
 
+    function stepPath(points){
+      if(!points.length) return '';
+      let d = 'M' + points[0].x.toFixed(2) + ',' + points[0].y.toFixed(2);
+      for(let i = 1; i < points.length; i += 1){
+        d += ' L' + points[i].x.toFixed(2) + ',' + points[i - 1].y.toFixed(2);
+        d += ' L' + points[i].x.toFixed(2) + ',' + points[i].y.toFixed(2);
+      }
+      return d;
+    }
+
     function flushRun(){
       if(!run.length) return;
-      lineParts.push(
-        run.map((point,index) =>
-          (index ? 'L' : 'M') + point.x.toFixed(2) + ',' + point.y.toFixed(2)
-        ).join(' ')
-      );
+      const stepped = stepPath(run);
+      lineParts.push(stepped);
       areaParts.push(
         'M' + run[0].x.toFixed(2) + ',' + zeroY.toFixed(2) + ' ' +
-        run.map(point =>
-          'L' + point.x.toFixed(2) + ',' + point.y.toFixed(2)
-        ).join(' ') + ' ' +
+        stepped.replace(/^M/,'L') + ' ' +
         'L' + run[run.length - 1].x.toFixed(2) + ',' + zeroY.toFixed(2) + ' Z'
       );
       run = [];

@@ -251,6 +251,19 @@
         }
       }
 
+      const clearButton = event.target.closest('[data-video-library-clear]');
+      if(clearButton){
+        const panel = clearButton.closest('.video-library-panel');
+        if(panel){
+          event.preventDefault();
+          event.stopPropagation();
+          setVideoLibraryState(panel,{query:''});
+          const input = panel.querySelector('[data-video-library-search]');
+          if(input) input.focus();
+          return;
+        }
+      }
+
       const sortButton = event.target.closest('[data-video-library-sort]');
       if(sortButton){
         const panel = sortButton.closest('.video-library-panel');
