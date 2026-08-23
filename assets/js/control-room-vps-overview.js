@@ -1133,7 +1133,25 @@
       }
 
       .vps-city-node{
-        pointer-events:visiblePainted
+        pointer-events:visiblePainted;
+        cursor:default
+      }
+
+      .map-hover-label.vps-city-hover{
+        font-size:11px;
+        line-height:1.2;
+        font-weight:800;
+        padding:6px 9px;
+        border-color:#4adfff;
+        box-shadow:
+          0 8px 20px rgba(0,0,0,.68),
+          0 0 14px rgba(74,220,255,.16)
+      }
+
+      .console-focus-shell.map-focus .map-hover-label.vps-city-hover{
+        font-size:14px!important;
+        line-height:1.2;
+        padding:8px 11px!important
       }
 
       .vps-city-node .vps-city-halo{
@@ -1302,6 +1320,117 @@
     };
   }
 
+  function svgPointInside(hit,x,y){
+    if(!hit || typeof hit.isPointInFill !== 'function'){
+      return null;
+    }
+
+    try{
+      const svg = hit.ownerSVGElement;
+      if(!svg || typeof svg.createSVGPoint !== 'function'){
+        return null;
+      }
+
+      const point = svg.createSVGPoint();
+      point.x = x;
+      point.y = y;
+      return !!hit.isPointInFill(point);
+    }catch(_){
+      return null;
+    }
+  }
+
+  function visualCityPoint(svg,mapName,point){
+    const hit = findMapHit(svg,mapName);
+    if(!hit){
+      return point;
+    }
+
+    const inside = svgPointInside(hit,point.x,point.y);
+    if(inside !== false){
+      return point;
+    }
+
+    const centerRaw = hit.dataset.detailCenter || '';
+    const center = centerRaw.split(/[ ,]+/).map(Number);
+    if(
+      center.length < 2 ||
+      !Number.isFinite(center[0]) ||
+      !Number.isFinite(center[1])
+    ){
+      return point;
+    }
+
+    const dx = center[0] - point.x;
+    const dy = center[1] - point.y;
+    const distance = Math.hypot(dx,dy);
+    if(!distance){
+      return point;
+    }
+
+    // The map deliberately uses simplified country outlines. Coastal cities can
+    // therefore project a few SVG units outside the drawn land polygon even when
+    // the real lat/lng is correct. Keep the real coordinates untouched and nudge
+    // only the visual marker, by at most 10 SVG units, toward the country centre.
+    const maxNudge = Math.min(10,distance);
+    for(let moved = .5; moved <= maxNudge; moved += .5){
+      const ratio = moved / distance;
+      const candidate = {
+        x:point.x + dx * ratio,
+        y:point.y + dy * ratio
+      };
+      if(svgPointInside(hit,candidate.x,candidate.y) === true){
+        return candidate;
+      }
+    }
+
+    return point;
+  }
+
+  function showCityHover(event,node){
+    const body = node && node.closest ? node.closest('.mapbody') : null;
+    if(!body){
+      return;
+    }
+
+    const label = body.querySelector('.map-hover-label');
+    if(!label){
+      return;
+    }
+
+    const rect = body.getBoundingClientRect();
+    const text = String(node.dataset.vpsCityLabel || '').trim();
+    if(!text){
+      return;
+    }
+
+    label.textContent = text;
+    label.classList.add('vps-city-hover');
+    label.style.left = Math.min(
+      Math.max(8,rect.width - 190),
+      Math.max(8,event.clientX - rect.left + 14)
+    ) + 'px';
+    label.style.top = Math.min(
+      Math.max(8,rect.height - 44),
+      Math.max(8,event.clientY - rect.top + 14)
+    ) + 'px';
+    label.style.display = 'block';
+  }
+
+  function hideCityHover(body){
+    if(!body){
+      return;
+    }
+
+    const label = body.querySelector('.map-hover-label');
+    if(!label){
+      return;
+    }
+
+    label.classList.remove('vps-city-hover');
+    label.style.display = 'none';
+  }
+
   function renderCityTraffic(body){
     body.querySelectorAll('.vps-city-nodes').forEach(el => el.remove());
     body.classList.toggle(
@@ -1337,14 +1466,20 @@
     );
     group.setAttribute('class','vps-city-nodes');
 
+    const selectedCountry = geo.countries.find(
+      country => country.key === state.selectedCountryKey
+    );
+    const mapName = selectedCountry ? selectedCountry.mapName : '';
+
     cities.forEach(city => {
-      const point = projectCity(Number(city.lat),Number(city.lng));
+      const projected = projectCity(Number(city.lat),Number(city.lng));
+      const point = mapName
+        ? visualCityPoint(svg,mapName,projected)
+        : projected;
       const t = Math.max(.18,Math.min(1,(city.views || 0) / maxViews));
       const g = document.createElementNS('http://www.w3.org/2000/svg','g');
       g.setAttribute('class','vps-city-node');
-
-      const title = document.createElementNS('http://www.w3.org/2000/svg','title');
-      title.textContent = city.name + (
+      g.dataset.vpsCityLabel = city.name + (
         city.views === null
           ? ''
           : ' · ' + fmtNumber(city.views) + ' views'
@@ -1362,16 +1497,13 @@
       core.setAttribute('cy',point.y.toFixed(3));
       core.setAttribute('r',(.28 + .34 * t).toFixed(2));
 
-      g.append(title,halo,core);
+      g.append(halo,core);
       group.appendChild(g);
     });
 
-    const hitGroup = svg.querySelector('.detail-hit-zones');
-    if(hitGroup){
-      svg.insertBefore(group,hitGroup);
-    }else{
-      svg.appendChild(group);
-    }
+    // Keep city markers above the transparent country hit-zones so the city
+    // points themselves receive pointer events and can show readable labels.
+    svg.appendChild(group);
   }
 
   function renderMapTraffic(){
@@ -2295,6 +2427,41 @@
         () => renderSelected(id),
         0
       );
+    }
+  );
+
+  document.addEventListener(
+    'mousemove',
+    event => {
+      const cityNode =
+        event.target && event.target.closest
+          ? event.target.closest('.vps-city-node')
+          : null;
+
+      if(cityNode){
+        showCityHover(event,cityNode);
+      }
+    }
+  );
+
+  document.addEventListener(
+    'mouseout',
+    event => {
+      const cityNode =
+        event.target && event.target.closest
+          ? event.target.closest('.vps-city-node')
+          : null;
+
+      if(!cityNode){
+        return;
+      }
+
+      const related = event.relatedTarget;
+      if(related && cityNode.contains(related)){
+        return;
+      }
+
+      hideCityHover(cityNode.closest('.mapbody'));
     }
   );
 
