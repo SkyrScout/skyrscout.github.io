@@ -113,6 +113,7 @@ window.controlRoomSnapRows=snapRows;
   panels.forEach(addFocusButton);
 
   closeBtn.addEventListener('click', closeFocus);
+  document.addEventListener('controlroom:closefocus', closeFocus);
   overlay.addEventListener('click', function(e){
     if(e.target === overlay) closeFocus();
   });

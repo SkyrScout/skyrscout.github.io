@@ -2233,3 +2233,40 @@ body.hf-alert-flash::after{
 
 /* Overview Video Library is intentionally fixed to newest-first. */
 .video-library-panel [data-video-library-sort]{display:none!important}
+
+/* === Realtime Monitor v3: bucket histogram + explicit unsampled buckets === */
+.realtime-yscale span{
+  position:absolute!important;
+  right:0!important;
+  top:auto;
+  bottom:auto;
+  transform:translateY(-50%);
+  line-height:1;
+}
+.realtime-yscale span.is-top{transform:none}
+.realtime-yscale span.is-bottom{transform:translateY(-100%)}
+.realtime-gridlines{position:absolute;inset:0;pointer-events:none;z-index:1}
+.realtime-gridline.dynamic{
+  position:absolute;
+  left:0;
+  right:0;
+  height:1px;
+  background:#1d2b33;
+}
+.realtime-gridline.dynamic.is-zero{background:#31505f}
+.realtime-bucket{
+  fill:#28b9f2;
+  opacity:.78;
+  shape-rendering:crispEdges;
+}
+.realtime-bucket.is-negative{opacity:.48}
+.realtime-gap-band{
+  fill:rgba(122,151,164,.045);
+  stroke:rgba(122,151,164,.34);
+  stroke-width:1.2;
+  stroke-dasharray:7 7;
+  vector-effect:non-scaling-stroke;
+}
+.console-focus-shell.realtime-focus .realtime-bucket{opacity:.82}
+.console-focus-shell.realtime-focus .realtime-gap-band{stroke-width:1.5}
+.realtime-yscale span{bottom:auto!important}

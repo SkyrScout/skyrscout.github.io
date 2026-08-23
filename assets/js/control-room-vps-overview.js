@@ -330,25 +330,29 @@
   }
 
   function realtimeScale(rawMin, rawMax){
-    const intervals = 3;
-    if(rawMin >= 0){
-      const step = niceRealtimeStep(rawMax / intervals);
-      return {min:0, max:step * intervals, step:step};
-    }
-    if(rawMax <= 0){
-      const step = niceRealtimeStep(Math.abs(rawMin) / intervals);
-      return {min:-step * intervals, max:0, step:step};
+    const positiveMax = Math.max(0, Number(rawMax) || 0);
+    const negativeMin = Math.min(0, Number(rawMin) || 0);
+
+    if(positiveMax <= 0){
+      const negStep = niceRealtimeStep(Math.abs(negativeMin) / 3);
+      const min = -negStep * 3;
+      return {min:min, max:0, ticks:[0,-negStep,-negStep*2,min]};
     }
 
-    let step = niceRealtimeStep((rawMax - rawMin) / intervals);
-    let min = Math.floor(rawMin / step) * step;
-    let max = min + step * intervals;
-    while(max < rawMax){
-      step = niceRealtimeStep(step * 1.01);
-      min = Math.floor(rawMin / step) * step;
-      max = min + step * intervals;
+    // Build the readable part of the axis from 0 upward in three clean steps.
+    // Small negative public-counter corrections get only the space they need,
+    // instead of forcing an enormous symmetric negative axis.
+    const posStep = niceRealtimeStep(positiveMax / 3);
+    const max = posStep * 3;
+    let min = 0;
+    const ticks = [max, max-posStep, max-(posStep*2), 0];
+
+    if(negativeMin < 0){
+      const negStep = niceRealtimeStep(Math.abs(negativeMin));
+      min = -negStep;
+      ticks.push(min);
     }
-    return {min:min, max:max, step:step};
+    return {min:min, max:max, ticks:ticks};
   }
 
   function fmtRealtimeAxis(value){
@@ -368,78 +372,117 @@
 
     const finite = safe.filter(value => value !== null);
     if(!finite.length){
-      return {
-        line:'', area:'', ticks:['—','—','—','—'], zero:null
-      };
+      return {bars:[], gaps:[], ticks:[], zero:null};
     }
 
     const rawMax = Math.max(0, ...finite);
     const rawMin = Math.min(0, ...finite);
     const scale = realtimeScale(rawMin, rawMax);
-    let yMax = scale.max;
-    let yMin = scale.min;
-
-    if(yMax === yMin){
-      yMax = yMin + 1;
-    }
-
+    const yMax = scale.max;
+    const yMin = scale.min;
     const width = 1000;
     const height = 300;
-    const span = yMax - yMin;
-    const xFor = index => safe.length <= 1
-      ? width / 2
-      : (index / (safe.length - 1)) * width;
+    const span = Math.max(1, yMax - yMin);
+    const zeroY = ((yMax - 0) / span) * height;
     const yFor = value => ((yMax - value) / span) * height;
-    const zeroY = yFor(0);
-
-    const lineParts = [];
-    const areaParts = [];
-    let run = [];
-
-    function stepPath(points){
-      if(!points.length) return '';
-      let d = 'M' + points[0].x.toFixed(2) + ',' + points[0].y.toFixed(2);
-      for(let i = 1; i < points.length; i += 1){
-        d += ' L' + points[i].x.toFixed(2) + ',' + points[i - 1].y.toFixed(2);
-        d += ' L' + points[i].x.toFixed(2) + ',' + points[i].y.toFixed(2);
-      }
-      return d;
-    }
-
-    function flushRun(){
-      if(!run.length) return;
-      const stepped = stepPath(run);
-      lineParts.push(stepped);
-      areaParts.push(
-        'M' + run[0].x.toFixed(2) + ',' + zeroY.toFixed(2) + ' ' +
-        stepped.replace(/^M/,'L') + ' ' +
-        'L' + run[run.length - 1].x.toFixed(2) + ',' + zeroY.toFixed(2) + ' Z'
-      );
-      run = [];
-    }
+    const slot = safe.length ? width / safe.length : width;
+    const inset = Math.max(1.5, slot * 0.12);
+    const barWidth = Math.max(2, slot - inset * 2);
+    const bars = [];
+    const gaps = [];
 
     safe.forEach((value,index) => {
+      const x = index * slot + inset;
       if(value === null){
-        flushRun();
+        gaps.push({x:index * slot + 1, width:Math.max(2,slot - 2), index:index});
         return;
       }
-      run.push({x:xFor(index),y:yFor(value)});
+      const yValue = yFor(value);
+      const negative = value < 0;
+      const y = negative ? zeroY : yValue;
+      const h = Math.max(1.2, Math.abs(yValue - zeroY));
+      bars.push({x:x, y:y, width:barWidth, height:h, value:value, negative:negative, index:index});
     });
-    flushRun();
 
-    const ticks = [0,1,2,3].map(index =>
-      yMax - ((span / 3) * index)
-    );
+    const ticks = scale.ticks.map(value => ({
+      value:value,
+      label:fmtRealtimeAxis(value),
+      top:Math.max(0, Math.min(100, (yFor(value) / height) * 100))
+    }));
 
     return {
-      line:lineParts.join(' '),
-      area:areaParts.join(' '),
-      ticks:ticks.map(fmtRealtimeAxis),
-      zero:(rawMin < 0 && rawMax > 0)
-        ? Math.max(0, Math.min(100, (zeroY / height) * 100))
-        : (rawMin < 0 && rawMax === 0 ? 0 : null)
+      bars:bars,
+      gaps:gaps,
+      ticks:ticks,
+      zero:Math.max(0, Math.min(100, (zeroY / height) * 100))
     };
   }
+
+  function renderRealtimeChart(panel, chart, key){
+    const barsGroup = panel.querySelector('[data-realtime-bars]');
+    const gapsGroup = panel.querySelector('[data-realtime-gap-bands]');
+    const yscale = panel.querySelector('[data-realtime-yscale]');
+    const gridlines = panel.querySelector('[data-realtime-gridlines]');
+    const zeroLine = panel.querySelector('[data-realtime-zero-line]');
+    const svgNS = 'http://www.w3.org/2000/svg';
+
+    if(barsGroup){
+      barsGroup.replaceChildren();
+      chart.bars.forEach(bar => {
+        const rect = document.createElementNS(svgNS,'rect');
+        rect.setAttribute('x',bar.x.toFixed(2));
+        rect.setAttribute('y',bar.y.toFixed(2));
+        rect.setAttribute('width',bar.width.toFixed(2));
+        rect.setAttribute('height',bar.height.toFixed(2));
+        rect.setAttribute('class','realtime-bucket' + (bar.negative ? ' is-negative' : ''));
+        const title = document.createElementNS(svgNS,'title');
+        title.textContent = (key === '60m' ? '5-minute bucket: ' : 'Hourly bucket: ') + fmtNumber(bar.value) + ' views';
+        rect.appendChild(title);
+        barsGroup.appendChild(rect);
+      });
+    }
+
+    if(gapsGroup){
+      gapsGroup.replaceChildren();
+      chart.gaps.forEach(gap => {
+        const rect = document.createElementNS(svgNS,'rect');
+        rect.setAttribute('x',gap.x.toFixed(2));
+        rect.setAttribute('y','1');
+        rect.setAttribute('width',gap.width.toFixed(2));
+        rect.setAttribute('height','298');
+        rect.setAttribute('class','realtime-gap-band');
+        const title = document.createElementNS(svgNS,'title');
+        title.textContent = 'Unsampled bucket';
+        rect.appendChild(title);
+        gapsGroup.appendChild(rect);
+      });
+    }
+
+    if(yscale){
+      yscale.replaceChildren();
+      chart.ticks.forEach(tick => {
+        const node = document.createElement('span');
+        node.textContent = tick.label;
+        node.style.top = tick.top.toFixed(2) + '%';
+        if(tick.top <= 1) node.classList.add('is-top');
+        if(tick.top >= 99) node.classList.add('is-bottom');
+        yscale.appendChild(node);
+      });
+    }
+
+    if(gridlines){
+      gridlines.replaceChildren();
+      chart.ticks.forEach(tick => {
+        const line = document.createElement('i');
+        line.className = 'realtime-gridline dynamic' + (tick.value === 0 ? ' is-zero' : '');
+        line.style.top = tick.top.toFixed(2) + '%';
+        gridlines.appendChild(line);
+      });
+    }
+
+    if(zeroLine) zeroLine.hidden = true;
+  }
+
 
   function renderRealtimePanel(panel,windowData,key){
     if(!panel) return;
@@ -452,10 +495,6 @@
     const topTitle = panel.querySelector('[data-realtime-top-title]');
     const topList = panel.querySelector('[data-realtime-top-list]');
     const xStart = panel.querySelector('[data-realtime-x-start]');
-    const line = panel.querySelector('[data-realtime-line]');
-    const area = panel.querySelector('[data-realtime-area]');
-    const yscale = panel.querySelector('[data-realtime-yscale]');
-    const zeroLine = panel.querySelector('[data-realtime-zero-line]');
 
     panel.querySelectorAll('[data-realtime-window]').forEach(button => {
       const active = button.dataset.realtimeWindow === key;
@@ -470,10 +509,7 @@
     if(!windowData || typeof windowData !== 'object'){
       if(total) total.textContent = '—';
       if(status) status.textContent = 'Waiting for sampled public-counter history…';
-      if(line) line.setAttribute('d','');
-      if(area) area.setAttribute('d','');
-      if(yscale) yscale.querySelectorAll('span').forEach(node => { node.textContent = '—'; });
-      if(zeroLine) zeroLine.hidden = true;
+      renderRealtimeChart(panel,{bars:[],gaps:[],ticks:[],zero:null},key);
       if(topList) topList.innerHTML = '<div class="hf-empty">Waiting for Realtime Monitor data…</div>';
       return;
     }
@@ -496,8 +532,15 @@
     }
 
     if(status){
+      const incompleteBuckets = Array.isArray(windowData.incompleteBuckets)
+        ? windowData.incompleteBuckets.length
+        : 0;
       if(!complete){
         status.textContent = 'INCOMPLETE · ' + fmtNumber(missing) + ' BASELINE' + (missing === 1 ? '' : 'S') + ' MISSING';
+        status.className = 'realtime-window-status is-warning';
+      }else if(incompleteBuckets){
+        const unit = key === '60m' ? '5-MIN BUCKET' : 'HOURLY BUCKET';
+        status.textContent = 'TOTAL COMPLETE · ' + incompleteBuckets + ' ' + unit + (incompleteBuckets === 1 ? '' : 'S') + ' UNSAMPLED';
         status.className = 'realtime-window-status is-warning';
       }else if(seriesMatches === false){
         status.textContent = 'CHECK DATA · SERIES/TOTAL MISMATCH';
@@ -514,23 +557,7 @@
     }
 
     const chart = buildRealtimeChart(windowData.values);
-    if(line) line.setAttribute('d',chart.line);
-    if(area) area.setAttribute('d',chart.area);
-    if(yscale){
-      const labels = yscale.querySelectorAll('span');
-      chart.ticks.forEach((tick,index) => {
-        if(labels[index]) labels[index].textContent = tick;
-      });
-    }
-    if(zeroLine){
-      if(chart.zero === null){
-        zeroLine.hidden = true;
-        zeroLine.style.top = '';
-      }else{
-        zeroLine.hidden = false;
-        zeroLine.style.top = chart.zero.toFixed(2) + '%';
-      }
-    }
+    renderRealtimeChart(panel,chart,key);
 
     if(topList){
       topList.innerHTML = '';
