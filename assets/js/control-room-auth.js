@@ -10,7 +10,6 @@ const gateText = document.getElementById("staffAuthGateText");
 const identity = document.getElementById("staffIdentity");
 const role = document.getElementById("staffRole");
 const signOutButton = document.getElementById("staffControlRoomSignOut");
-
 function entranceUrl() {
   const next = window.location.pathname + window.location.search + window.location.hash;
   return `${staffAccessConfig.entrancePath}?next=${encodeURIComponent(next)}`;
@@ -26,7 +25,6 @@ function loadClassicScript(src) {
     document.head.appendChild(script);
   });
 }
-
 function makeRoomLink(node, href, smallText) {
   if (!node) return null;
   const link = document.createElement("a");
@@ -42,14 +40,12 @@ function makeRoomLink(node, href, smallText) {
   node.replaceWith(link);
   return link;
 }
-
 function wireScoutlandRoomNavigation() {
   const rooms = [...document.querySelectorAll(".sidebar .room")];
   const byName = (name) => rooms.find((node) => node.querySelector("strong")?.textContent.trim() === name);
 
   makeRoomLink(byName("Library"), "/library/", "Research & documents");
   const speilsalen = makeRoomLink(byName("Speilsalen"), "/speilsalen/", "Reflection & strategy");
-
   if (speilsalen && !document.querySelector('.sidebar .room[href="/foyer/"]')) {
     const foyer = document.createElement("a");
     foyer.className = "room";
@@ -60,16 +56,15 @@ function wireScoutlandRoomNavigation() {
     speilsalen.insertAdjacentElement("afterend", foyer);
   }
 }
-
 async function startControlRoom() {
   // Load the authenticated Firebase data bridge before any Control Room
   // script is allowed to request live data. The browser must never call
   // Apps Script directly; the callable function does that server-side.
   await import("/assets/js/staff-backend.js");
   await loadClassicScript("/assets/js/control-room.js?v=20260818-2214-yt5");
+  await loadClassicScript("/assets/js/control-room-map-cities.js?v=20260823-0235-citymap1");
   await loadClassicScript("/assets/js/control-room-live.js?v=20260819-0201-likesloading3");
 }
-
 async function authorizeControlRoom() {
   gate.hidden = false;
   gateText.textContent = "Checking SkyrScout staff access…";
@@ -86,7 +81,6 @@ async function authorizeControlRoom() {
     window.location.replace(entranceUrl());
     return;
   }
-
   if (identity) identity.textContent = session.profile.scoutName;
   if (role) role.textContent = session.profile.role;
 
@@ -102,7 +96,6 @@ async function authorizeControlRoom() {
     gateText.textContent = "Staff access is valid, but the Control Room scripts could not be loaded.";
   }
 }
-
 signOutButton?.addEventListener("click", async () => {
   await signOutStaff();
   window.location.replace(staffAccessConfig.entrancePath);
