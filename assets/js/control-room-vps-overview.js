@@ -25,7 +25,7 @@
     ID:'Indonesia', MY:'Malaysia', SG:'Singapore', TH:'Thailand', VN:'Vietnam',
     PH:'Philippines', ZA:'South Africa', NG:'Nigeria', GH:'Ghana', CI:"Côte d'Ivoire",
     SN:'Senegal', MA:'Morocco', DZ:'Algeria', TN:'Tunisia', EG:'Egypt', KE:'Kenya',
-    TZ:'Tanzania', UG:'Uganda', CM:'Cameroon', GA:'Gabon', CD:'Democratic Republic of the Congo',
+    TZ:'Tanzania', UG:'Uganda', CM:'Cameroon', GA:'Gabon', ET:'Ethiopia', SO:'Somalia', CD:'Democratic Republic of the Congo',
     CG:'Republic of the Congo', AO:'Angola', ZM:'Zambia', ZW:'Zimbabwe',
     TR:'Turkey', GR:'Greece', HR:'Croatia', RS:'Serbia', SI:'Slovenia',
     SK:'Slovakia', CZ:'Czechia', AT:'Austria', CH:'Switzerland', HU:'Hungary',
@@ -40,6 +40,12 @@
     "Côte d'Ivoire":"Ivory Coast"
   };
 
+  const REGION_NAMES =
+    typeof Intl !== 'undefined' &&
+    typeof Intl.DisplayNames === 'function'
+      ? new Intl.DisplayNames(['en'], {type:'region'})
+      : null;
+
   const state = {
     byVideoId: new Map(),
     checkedAt: null,
@@ -48,7 +54,9 @@
     timer: null,
     loading: false,
     geography: null,
+    geographyWindowKey: '2d',
     selectedCountryKey: null,
+    cityMode: false,
     observer: null
   };
 
@@ -460,6 +468,17 @@
       return ISO_TO_MAP[upper];
     }
 
+    if(/^[A-Z]{2}$/.test(upper) && REGION_NAMES){
+      const resolved = REGION_NAMES.of(upper);
+      if(resolved && resolved !== upper){
+        const clean = String(resolved).replace(/’/g, "'");
+        if(clean === 'United States'){
+          return 'United States of America';
+        }
+        return clean;
+      }
+    }
+
     if(/^USA?$/i.test(s)){
       return 'United States of America';
     }
@@ -687,7 +706,13 @@
           if(!city){
             return null;
           }
-          return {name:city, videoId:'', views};
+          return {
+            name:city,
+            videoId:'',
+            views,
+            lat:numberOrNull(item.lat),
+            lng:numberOrNull(item.lng)
+          };
         }).filter(Boolean);
 
         list.sort((a,b) => (b.views || 0) - (a.views || 0));
@@ -901,6 +926,64 @@
     return normalized;
   }
 
+  function activeGeography(){
+    if(!state.geography){
+      return null;
+    }
+
+    const key = String(
+      state.geographyWindowKey ||
+      state.geography.defaultWindow ||
+      '2d'
+    ).toLowerCase();
+
+    const windows = state.geography.windows || {};
+    return windows[key] || state.geography;
+  }
+
+  function setGeographyWindow(key){
+    if(!state.geography){
+      return;
+    }
+
+    const nextKey = String(key || '').toLowerCase();
+    const windows = state.geography.windows || {};
+    const next = windows[nextKey] || (
+      nextKey === String(state.geography.defaultWindow || '2d').toLowerCase()
+        ? state.geography
+        : null
+    );
+
+    if(!next){
+      return;
+    }
+
+    state.geographyWindowKey = nextKey;
+
+    if(
+      state.selectedCountryKey &&
+      !next.countries.some(country => country.key === state.selectedCountryKey)
+    ){
+      state.selectedCountryKey = null;
+      state.cityMode = false;
+      const world = document.querySelector(
+        '[data-screen="overview"] .map-world-btn'
+      );
+      if(world){
+        window.setTimeout(() => world.click(), 0);
+      }
+    }
+
+    geographyBodies().forEach(renderGeoOverview);
+    renderMapTraffic();
+
+    if(state.selectedCountryKey){
+      renderGeoDetails(state.selectedCountryKey);
+    }else{
+      setMapScopeBadge(null);
+    }
+  }
+
   function ensureGeoStyle(){
     if(document.getElementById('vpsGeoStyle')){
       return;
@@ -992,6 +1075,105 @@
         stroke:rgba(86,205,250,.72)!important
       }
 
+      .vps-map-window-nav{
+        position:absolute;
+        z-index:9;
+        top:12px;
+        right:12px;
+        display:flex;
+        gap:5px;
+        padding:3px;
+        border:1px solid rgba(28,83,109,.65);
+        border-radius:8px;
+        background:rgba(0,4,7,.86);
+        box-shadow:0 6px 18px rgba(0,0,0,.42)
+      }
+
+      .vps-map-window-nav button{
+        height:24px;
+        min-width:31px;
+        padding:0 6px;
+        border:1px solid transparent;
+        border-radius:6px;
+        background:transparent;
+        color:#688695;
+        font:800 8px/1 Arial,sans-serif;
+        cursor:pointer
+      }
+
+      .vps-map-window-nav button:hover{
+        color:#dff7ff;
+        border-color:#1c536d
+      }
+
+      .vps-map-window-nav button.active{
+        color:#eefaff;
+        border-color:#39b7ee;
+        background:#061923
+      }
+
+      .vps-map-city-toggle.active{
+        color:#eefaff!important;
+        border-color:#39b7ee!important;
+        background:#061923!important
+      }
+
+      .vps-map-city-toggle:disabled{
+        opacity:.34;
+        cursor:default
+      }
+
+      .mapbody.vps-city-mode .detail-layer .vps-geo-nodes{
+        opacity:0;
+        pointer-events:none
+      }
+
+      .vps-city-nodes{
+        pointer-events:none
+      }
+
+      .vps-city-node{
+        pointer-events:visiblePainted
+      }
+
+      .vps-city-node .vps-city-halo{
+        fill:rgba(74,220,255,.08);
+        stroke:rgba(91,224,255,.62);
+        stroke-width:.20;
+        vector-effect:non-scaling-stroke;
+        transform-box:fill-box;
+        transform-origin:center;
+        filter:drop-shadow(0 0 2px rgba(70,210,255,.78));
+        animation:vpsCityTrafficPulse 3.8s ease-in-out infinite
+      }
+
+      .vps-city-node .vps-city-core{
+        fill:#dffcff;
+        stroke:#62e0ff;
+        stroke-width:.20;
+        vector-effect:non-scaling-stroke;
+        filter:
+          drop-shadow(0 0 1.5px rgba(225,253,255,1))
+          drop-shadow(0 0 3px rgba(56,197,241,.92))
+      }
+
+      .vps-map-delay-note{
+        position:absolute;
+        z-index:7;
+        left:12px;
+        bottom:9px;
+        color:#49626e;
+        font:700 7px/1.2 Arial,sans-serif;
+        letter-spacing:.04em;
+        text-transform:uppercase;
+        pointer-events:none
+      }
+
+      @keyframes vpsCityTrafficPulse{
+        0%,100%{opacity:.66;transform:scale(.82)}
+        50%{opacity:.18;transform:scale(1.42)}
+      }
+
       @keyframes vpsGeoTrafficPulse{
         0%{opacity:.78;transform:scale(.52)}
         58%{opacity:.14;transform:scale(1.50)}
@@ -1000,6 +1182,7 @@
 
       @media (prefers-reduced-motion: reduce){
         .vps-geo-node .vps-geo-halo{animation:none;opacity:.24}
+        .vps-city-node .vps-city-halo{animation:none;opacity:.34}
       }
     `;
 
@@ -1041,6 +1224,156 @@
     }) || null;
   }
 
+  function ensureMapControls(body){
+    if(!body){
+      return;
+    }
+
+    let windowNav = body.querySelector('.vps-map-window-nav');
+    if(!windowNav){
+      windowNav = document.createElement('div');
+      windowNav.className = 'vps-map-window-nav';
+      windowNav.setAttribute('aria-label','Geography traffic window');
+      ['2d','7d','28d','90d'].forEach(key => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.vpsGeoWindow = key;
+        button.textContent = key.toUpperCase();
+        windowNav.appendChild(button);
+      });
+      body.appendChild(windowNav);
+    }
+
+    windowNav.querySelectorAll('[data-vps-geo-window]').forEach(button => {
+      const active = String(button.dataset.vpsGeoWindow || '').toLowerCase() ===
+        String(state.geographyWindowKey || '2d').toLowerCase();
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',active ? 'true' : 'false');
+    });
+
+    const nav = body.querySelector('.map-nav');
+    if(nav){
+      let cityButton = nav.querySelector('.vps-map-city-toggle');
+      if(!cityButton){
+        cityButton = document.createElement('button');
+        cityButton.type = 'button';
+        cityButton.className = 'vps-map-city-toggle';
+        cityButton.dataset.vpsCityToggle = '1';
+        const world = nav.querySelector('.map-world-btn');
+        if(world){
+          world.insertAdjacentElement('afterend',cityButton);
+        }else{
+          nav.prepend(cityButton);
+        }
+      }
+
+      const geo = activeGeography();
+      const cities = geo && state.selectedCountryKey
+        ? (geo.cities.get(state.selectedCountryKey) || [])
+        : [];
+      const resolved = cities.filter(city =>
+        city.lat !== null && city.lng !== null
+      );
+      const enabled = body.classList.contains('is-detail') && resolved.length > 0;
+      cityButton.disabled = !enabled;
+      cityButton.classList.toggle('active',state.cityMode && enabled);
+      cityButton.textContent = state.cityMode && enabled ? 'COUNTRY' : 'CITIES';
+      cityButton.title = enabled
+        ? (state.cityMode ? 'Return to country traffic' : 'Show city traffic')
+        : 'No mapped city data for this country and period';
+    }
+
+    let note = body.querySelector('.vps-map-delay-note');
+    if(!note){
+      note = document.createElement('div');
+      note.className = 'vps-map-delay-note';
+      note.textContent = 'Geography is delayed · city data may be incomplete';
+      body.appendChild(note);
+    }
+  }
+
+  function projectCity(lat,lng){
+    const width = 1036.8;
+    const clampedLat = Math.max(-85.05112878,Math.min(85.05112878,lat));
+    const latRad = clampedLat * Math.PI / 180;
+    return {
+      x:(lng + 180) / 360 * width,
+      y:(1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2 * width
+    };
+  }
+
+  function renderCityTraffic(body){
+    body.querySelectorAll('.vps-city-nodes').forEach(el => el.remove());
+    body.classList.toggle(
+      'vps-city-mode',
+      !!state.cityMode && body.classList.contains('is-detail')
+    );
+
+    if(!state.cityMode || !body.classList.contains('is-detail')){
+      return;
+    }
+
+    const geo = activeGeography();
+    if(!geo || !state.selectedCountryKey){
+      return;
+    }
+
+    const cities = (geo.cities.get(state.selectedCountryKey) || [])
+      .filter(city => city.lat !== null && city.lng !== null);
+
+    if(!cities.length){
+      return;
+    }
+
+    const svg = body.querySelector('.detail-layer');
+    if(!svg){
+      return;
+    }
+
+    const maxViews = Math.max(1,...cities.map(city => city.views || 0));
+    const group = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'g'
+    );
+    group.setAttribute('class','vps-city-nodes');
+
+    cities.forEach(city => {
+      const point = projectCity(Number(city.lat),Number(city.lng));
+      const t = Math.max(.18,Math.min(1,(city.views || 0) / maxViews));
+      const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('class','vps-city-node');
+
+      const title = document.createElementNS('http://www.w3.org/2000/svg','title');
+      title.textContent = city.name + (
+        city.views === null
+          ? ''
+          : ' · ' + fmtNumber(city.views) + ' views'
+      );
+
+      const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      halo.setAttribute('class','vps-city-halo');
+      halo.setAttribute('cx',point.x.toFixed(3));
+      halo.setAttribute('cy',point.y.toFixed(3));
+      halo.setAttribute('r',(.70 + .80 * t).toFixed(2));
+
+      const core = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      core.setAttribute('class','vps-city-core');
+      core.setAttribute('cx',point.x.toFixed(3));
+      core.setAttribute('cy',point.y.toFixed(3));
+      core.setAttribute('r',(.28 + .34 * t).toFixed(2));
+
+      g.append(title,halo,core);
+      group.appendChild(g);
+    });
+
+    const hitGroup = svg.querySelector('.detail-hit-zones');
+    if(hitGroup){
+      svg.insertBefore(group,hitGroup);
+    }else{
+      svg.appendChild(group);
+    }
+  }
+
   function renderMapTraffic(){
     if(!state.geography){
       return;
@@ -1048,8 +1381,13 @@
 
     ensureGeoStyle();
 
+    const geo = activeGeography();
+    if(!geo){
+      return;
+    }
+
     const countries =
-      state.geography.countries;
+      geo.countries;
 
     const max = Math.max(
       1,
@@ -1062,6 +1400,8 @@
     );
 
     mapBodies().forEach(body => {
+      ensureMapControls(body);
+
       body.querySelectorAll(
         '.map-layer'
       ).forEach(svg => {
@@ -1287,11 +1627,15 @@
           svg.appendChild(group);
         }
       });
+
+      renderCityTraffic(body);
+      ensureMapControls(body);
     });
   }
 
   function renderGeoOverview(panel){
-    if(!state.geography){
+    const geo = activeGeography();
+    if(!geo){
       return;
     }
 
@@ -1345,11 +1689,12 @@
       }
     }
 
-    if(state.geography.endDate){
-      const period = state.geography.startDate
-        ? fmtDate(state.geography.startDate) + ' → ' + fmtDate(state.geography.endDate)
-        : fmtDate(state.geography.endDate);
-      date.textContent = 'YouTube Analytics · ' + period;
+    if(geo.endDate){
+      const period = geo.startDate
+        ? fmtDate(geo.startDate) + ' → ' + fmtDate(geo.endDate)
+        : fmtDate(geo.endDate);
+      date.textContent = String(state.geographyWindowKey || '2d').toUpperCase() +
+        ' · YouTube Analytics · ' + period;
     }else{
       date.textContent = 'Latest available YouTube Analytics geography';
     }
@@ -1358,12 +1703,12 @@
 
     const maxShare = Math.max(
       1,
-      ...state.geography.countries.map(
+      ...geo.countries.map(
         c => c.share || 0
       )
     );
 
-    state.geography.countries
+    geo.countries
       .forEach(country => {
         const button =
           document.createElement(
@@ -1498,23 +1843,26 @@
   }
 
   function setMapScopeBadge(countryDisplay){
-    if(!state.geography){
+    const geo = activeGeography();
+    if(!geo){
       return;
     }
 
-    const latest = state.geography.endDate
-      ? 'LATEST AVAILABLE · ' + fmtDate(state.geography.endDate)
+    const latest = geo.endDate
+      ? 'LATEST AVAILABLE · ' + fmtDate(geo.endDate)
       : 'LATEST AVAILABLE';
+    const period = String(state.geographyWindowKey || '2d').toUpperCase();
 
     document.querySelectorAll('.map-scope-badge').forEach(badge => {
       badge.textContent = countryDisplay
-        ? countryDisplay + ' · ' + latest
-        : latest;
+        ? countryDisplay + ' · ' + period + ' · ' + latest
+        : period + ' · ' + latest;
     });
   }
 
   function renderGeoDetails(countryValue){
-    if(!state.geography){
+    const geo = activeGeography();
+    if(!geo){
       return;
     }
 
@@ -1522,7 +1870,7 @@
       countryKey(countryValue);
 
     const country =
-      state.geography.countries
+      geo.countries
         .find(c => c.key === key);
 
     if(!country){
@@ -1604,7 +1952,7 @@
 
         if(videoBox){
           const videos =
-            state.geography.videos
+            geo.videos
               .get(key) || [];
 
           if(videos.length){
@@ -1661,7 +2009,7 @@
 
         if(cityBox){
           const cities =
-            state.geography.cities
+            geo.cities
               .get(key) || [];
 
           if(cities.length){
@@ -1698,6 +2046,8 @@
           }
         }
       });
+
+    renderMapTraffic();
   }
 
   function renderGeography(payload){
@@ -1709,6 +2059,15 @@
     }
 
     state.geography = geo;
+
+    const requestedWindow = String(
+      state.geographyWindowKey ||
+      geo.defaultWindow ||
+      '2d'
+    ).toLowerCase();
+    state.geographyWindowKey = geo.windows && geo.windows[requestedWindow]
+      ? requestedWindow
+      : String(geo.defaultWindow || '2d').toLowerCase();
 
     // Share the already-normalized Analytics geography with the YouTube console.
     // Same backend response, no extra YouTube/Analytics polling.
@@ -1742,9 +2101,10 @@
         );
 
       if(badge){
-        badge.textContent = geo.endDate
-          ? 'LATEST AVAILABLE · ' + fmtDate(geo.endDate)
-          : 'LATEST AVAILABLE';
+        const active = activeGeography();
+        badge.textContent = active && active.endDate
+          ? String(state.geographyWindowKey || '2d').toUpperCase() + ' · ' + fmtDate(active.endDate)
+          : String(state.geographyWindowKey || '2d').toUpperCase();
       }
     }
 
@@ -1941,6 +2301,33 @@
   document.addEventListener(
     'click',
     event => {
+      const windowButton =
+        event.target && event.target.closest
+          ? event.target.closest('[data-vps-geo-window]')
+          : null;
+
+      if(windowButton){
+        event.preventDefault();
+        event.stopPropagation();
+        setGeographyWindow(windowButton.dataset.vpsGeoWindow);
+        return;
+      }
+
+      const cityButton =
+        event.target && event.target.closest
+          ? event.target.closest('[data-vps-city-toggle]')
+          : null;
+
+      if(cityButton){
+        event.preventDefault();
+        event.stopPropagation();
+        if(!cityButton.disabled){
+          state.cityMode = !state.cityMode;
+          renderMapTraffic();
+        }
+        return;
+      }
+
       const row =
         event.target &&
         event.target.closest
@@ -1985,6 +2372,7 @@
           );
 
         if(country){
+          state.cityMode = false;
           window.setTimeout(
             () =>
               renderGeoDetails(
@@ -2016,6 +2404,7 @@
           );
 
         if(country){
+          state.cityMode = false;
           window.setTimeout(
             () =>
               renderGeoDetails(
@@ -2037,6 +2426,8 @@
 
       if(world){
         state.selectedCountryKey = null;
+        state.cityMode = false;
+        renderMapTraffic();
 
         window.setTimeout(
           () => {
