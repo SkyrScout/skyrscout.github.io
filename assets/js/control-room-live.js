@@ -50,12 +50,11 @@
     return Number.isFinite(n) && n > 0 ? n : null;
   }
 
-  function sortVideoLibraryPane(pane, direction){
+  function sortVideoLibraryPane(pane){
     if(!pane) return;
     const scroll = pane.querySelector('.player-scroll');
     if(!scroll) return;
 
-    const oldestFirst = direction === 'oldest';
     const rows = Array.from(scroll.querySelectorAll('[data-video-library-row]'));
     rows.sort((a,b) => {
       const aDate = publishedMs(a);
@@ -63,7 +62,7 @@
       if(aDate === null && bDate !== null) return 1;
       if(aDate !== null && bDate === null) return -1;
       if(aDate !== null && bDate !== null && aDate !== bDate){
-        return oldestFirst ? aDate - bDate : bDate - aDate;
+        return bDate - aDate;
       }
       const aTitle = String(a.dataset.playerDisplay || a.dataset.videoTitle || '');
       const bTitle = String(b.dataset.playerDisplay || b.dataset.videoTitle || '');
@@ -93,9 +92,8 @@
     const pane = panel.querySelector('[data-video-library-pane="' + format + '"]');
     if(!pane) return;
 
-    const direction = panel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest';
     const query = String(panel.dataset.videoLibraryQuery || '').trim().toLocaleLowerCase('en');
-    sortVideoLibraryPane(pane, direction);
+    sortVideoLibraryPane(pane);
 
     const rows = Array.from(pane.querySelectorAll('[data-video-library-row]'));
     let shown = 0;
@@ -111,14 +109,6 @@
       count.textContent = query ? (shown + ' / ' + rows.length) : (rows.length + ' ' + noun);
     }
 
-    const sortButton = panel.querySelector('[data-video-library-sort]');
-    if(sortButton){
-      sortButton.textContent = direction === 'oldest' ? 'OLDEST' : 'NEWEST';
-      sortButton.setAttribute('aria-label', direction === 'oldest'
-        ? 'Sort Video Library newest first'
-        : 'Sort Video Library oldest first');
-      sortButton.title = 'Sort by YouTube publication time';
-    }
   }
 
   function videoLibraryPanels(){
@@ -131,11 +121,9 @@
     if(!sourcePanel) return;
 
     const format = patch.format || activeVideoLibraryFormat(sourcePanel) || 'long';
-    const sort = patch.sort || sourcePanel.dataset.videoLibrarySort || 'newest';
     const query = patch.query !== undefined ? patch.query : (sourcePanel.dataset.videoLibraryQuery || '');
 
     panels.forEach(panel => {
-      panel.dataset.videoLibrarySort = sort === 'oldest' ? 'oldest' : 'newest';
       panel.dataset.videoLibraryQuery = query;
       panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
         const active = button.dataset.videoLibraryTab === format;
@@ -264,17 +252,6 @@
         }
       }
 
-      const sortButton = event.target.closest('[data-video-library-sort]');
-      if(sortButton){
-        const panel = sortButton.closest('.video-library-panel');
-        if(panel){
-          event.preventDefault();
-          event.stopPropagation();
-          const sort = panel.dataset.videoLibrarySort === 'oldest' ? 'newest' : 'oldest';
-          setVideoLibraryState(panel,{sort});
-          return;
-        }
-      }
 
       const row = event.target.closest('[data-video-library-row]');
       if(row && row.closest('.video-library-panel')){
@@ -303,7 +280,7 @@
       videoLibraryPanels().forEach(applyVideoLibraryPanel);
     });
 
-    setVideoLibraryState(videoLibraryPanels()[0] || null,{format:'long',sort:'newest',query:''});
+    setVideoLibraryState(videoLibraryPanels()[0] || null,{format:'long',query:''});
   }
 
   let activeRequestToken = 0;

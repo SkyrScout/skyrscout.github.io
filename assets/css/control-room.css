@@ -2230,3 +2230,6 @@ body.hf-alert-flash::after{
 
 /* Selected Traffic/Audience stays Analytics-only until a real selected-video Analytics feed exists. */
 .selected-analytics-note{margin-top:8px;padding-top:8px;border-top:1px solid #10232c}
+
+/* Overview Video Library is intentionally fixed to newest-first. */
+.video-library-panel [data-video-library-sort]{display:none!important}
