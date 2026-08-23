@@ -1,860 +1,549 @@
 ---
-layout: "default"
-title: "Scoutland Yard"
-description: "Scoutland Yard is the SkyrScout control room, featuring the latest scouting reports, player updates, podcast episodes and original music."
+layout: null
+permalink: /control-room/
+sitemap: false
 ---
-
-<style>
-    /* Homepage Shorts: keep the complete title and its emoji visible.
-       Removing the 3D text layer also avoids emoji disappearing in some
-       Chromium/Windows compositing combinations. */
-    #yard-latest-shorts .signature-short-card-copy {
-        transform: none;
-    }
-
-    #yard-latest-shorts .signature-short-card-copy h3 {
-        display: block;
-        overflow: visible;
-        -webkit-box-orient: initial;
-        -webkit-line-clamp: unset;
-        font-family: Arial, Helvetica, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-        font-variant-emoji: emoji;
-    }
-
-    @media (max-width: 759px) {
-        .yard-report-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 12px !important;
-        }
-
-        .yard-report-card,
-        #yard-latest-shorts .signature-short-card {
-            width: 100%;
-            min-width: 0;
-        }
-
-        .yard-report-card {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .yard-report-image {
-            width: 100%;
-        }
-
-        .yard-report-image img {
-            display: block;
-            width: 100%;
-            height: auto;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-        }
-
-        .yard-report-content {
-            padding: 12px;
-        }
-
-        .yard-report-added {
-            margin-bottom: 6px;
-            font-size: 0.72rem;
-        }
-
-        .yard-report-content h3 {
-            margin-bottom: 8px;
-            font-size: 1rem;
-            line-height: 1.18;
-            overflow-wrap: anywhere;
-        }
-
-        .yard-report-details,
-        .yard-report-date {
-            font-size: 0.75rem;
-            line-height: 1.35;
-        }
-
-        .yard-card-action {
-            padding: 8px 10px;
-            font-size: 0.75rem;
-        }
-
-        #yard-latest-shorts .signature-short-card-frame {
-            height: 100%;
-        }
-
-        #yard-latest-shorts .signature-short-card-topline {
-            gap: 6px;
-            font-size: 0.62rem;
-        }
-
-        #yard-latest-shorts .signature-short-card-copy h3 {
-            font-size: 0.88rem;
-            line-height: 1.18;
-            overflow-wrap: anywhere;
-        }
-
-        #yard-latest-shorts .signature-short-card-footer {
-            font-size: 0.68rem;
-        }
-    }
-</style>
-
-
-<main class="page-background">
-
-        <section class="yard-page">
-
-            <header class="yard-header">
-
-                <p class="yard-label">
-                    The SkyrScout control room
-                </p>
-
-                <h1>Scoutland Yard</h1>
-
-                <p class="yard-intro">
-                    The front desk for SkyrScout. Find our latest scouting
-                    reports, player updates and episodes of Scout of This World.
-                </p>
-
-            </header>
-
-           {% assign chronological_updates = site.update_posts
-    | sort: "published_at"
-    | reverse
-%}
-{% assign pinned_updates = chronological_updates | where: "pinned", true %}
-{% assign regular_updates = chronological_updates | where_exp: "update", "update.pinned != true" %}
-{% assign latest_updates = pinned_updates | concat: regular_updates %}
-
-<section class="yard-marquee">
-
-    <div class="yard-marquee-label">
-        LATEST UPDATES
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <title>Scoutland Yard Control Room</title>
+  <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260823-1416-realtime-monitor1">
+</head>
+  <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260823-1416-realtime-monitor1"></script>
+<body>
+<div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
+  <div class="staff-auth-gate-card">
+    <span class="staff-auth-gate-dot"></span>
+    <strong id="staffAuthGateText">Checking SkyrScout staff access…</strong>
+  </div>
+</div>
+<div class="app" id="staffProtectedApp" hidden><aside class="sidebar"><div class="kicker">Scoutland Yard</div><div class="brand">CONTROL<br/>ROOM</div><div class="room active"><strong>Control Room</strong><small>Monitoring &amp; intelligence</small></div><div class="room"><strong>Library</strong><small>Research &amp; documents</small></div><div class="room"><strong>Speilsalen</strong><small>Later</small></div><div class="foot"><div class="footbox" id="controlRoomDataStatus"><span class="dot" id="controlRoomDataDot"></span>Data link checking…</div><div class="footbox staff-session-box"><strong id="staffIdentity">SkyrScout Staff</strong><br/><span id="staffRole" style="color:#647987">Staff</span><button id="staffControlRoomSignOut" class="staff-session-signout" type="button">Sign out</button></div></div></aside><main class="main"><header class="header"><div><h1>Control Room</h1><p id="controlRoomScreenSubtitle">POV workstation. Overview screen.</p></div><div class="tabs"><button aria-pressed="true" class="tab active" data-screen-target="overview" type="button">Overview</button><button aria-pressed="false" class="tab" data-screen-target="youtube" type="button">YouTube</button><button aria-pressed="false" class="tab" data-screen-target="website" type="button">Website</button><button aria-pressed="false" class="tab" data-screen-target="hese-fredrik" type="button">Hese-Fredrik</button></div></header><div class="dashboard control-screen active" data-screen="overview">
+<section class="topgrid"><div class="side"><section class="panel sidepanel realtime-monitor-panel"><div class="ph"><div class="pt">Realtime Monitor</div><div class="realtime-header-tools"><div class="realtime-window-tabs" role="group" aria-label="Realtime window"><button class="realtime-window-btn active" type="button" data-realtime-window="48h" aria-pressed="true">48H</button><button class="realtime-window-btn" type="button" data-realtime-window="60m" aria-pressed="false">60M</button></div><span class="badge realtime-source-badge">PUBLIC</span></div></div><div class="sidebody rtbody realtime-monitor-body"><div class="realtime-main"><div class="big" data-realtime-total>—</div><div class="sub" data-realtime-sub>Rolling public counter movement · last 48 hours</div><div class="realtime-chart" data-realtime-chart><div class="realtime-yscale" data-realtime-yscale><span>—</span><span>—</span><span>—</span><span>—</span></div><div class="realtime-plot"><i class="realtime-gridline a"></i><i class="realtime-gridline b"></i><i class="realtime-gridline c"></i><i class="realtime-gridline d"></i><i class="realtime-zero-line" data-realtime-zero-line hidden></i><svg viewBox="0 0 1000 300" preserveAspectRatio="none" aria-label="Realtime public counter chart"><path class="realtime-area" data-realtime-area d=""></path><path class="realtime-line" data-realtime-line d=""></path></svg></div><div class="realtime-xscale"><span data-realtime-x-start>48h ago</span><span>Now</span></div></div><div class="realtime-window-status" data-realtime-status>Waiting for sampled public-counter history…</div></div><div class="realtime-top"><div class="mini-title" data-realtime-top-title>TOP VIDEOS · 48H</div><div class="rtlist realtime-top-list" data-realtime-top-list><div class="hf-empty">Waiting for Realtime Monitor data…</div></div><div class="realtime-source-note">VPS · PUBLIC YOUTUBE COUNTERS</div></div></div></section>
+<section class="panel sidepanel"><div class="ph"><div class="pt">Geography</div><span class="badge">48 H</span></div>
+<div class="sidebody geography-panel-body">
+<div class="geo-overview-state">
+<div class="mini-title" style="margin-bottom:5px">Top countries</div>
+<div class="geolist"><div class="hf-empty">Geography will populate from the Analytics feed. No placeholder percentages are shown.</div></div>
+</div>
+<div class="geo-country-state" hidden="">
+<div class="geo-country-toolbar"><button class="geo-world-view" type="button">← World view</button><span class="geo-country-share"></span></div>
+<div class="geo-country-title"></div>
+<div class="mini-title geo-country-section-title">Top videos from this country</div>
+<div class="geo-country-info">Video breakdown will populate here when the YouTube Analytics geography feed is connected.</div>
+<div class="mini-title geo-country-section-title">City breakdown</div>
+<div class="geo-city-status">City-level data will appear when YouTube returns enough data for the selected scope.</div>
+<div class="geo-delay-note">Geography may lag behind Realtime activity.</div>
+</div>
+</div></section></div>
+<section class="panel mappanel"><div class="ph"><div class="pt">World Traffic</div><span class="badge map-scope-badge">MAP READY · DATA PENDING</span></div>{% include control-room-map.html %}</section></section>
+<section class="lower"><section class="panel lowerpanel video-library-panel">
+<div class="ph video-library-head">
+  <div class="video-library-heading">
+    <div class="pt">Video Library</div>
+    <div class="video-library-tabs" role="tablist" aria-label="Video library format">
+      <button class="video-library-tab active" type="button" role="tab" aria-selected="true" data-video-library-tab="long">LONG VIDEOS</button>
+      <button class="video-library-tab" type="button" role="tab" aria-selected="false" data-video-library-tab="short">SHORT VIDEOS</button>
     </div>
-
-    <div class="yard-marquee-items">
-
-        {% for update in latest_updates limit: 3 %}
-
-            <a
-                class="yard-marquee-item"
-                href="{{ update.url }}"
-            >
-                {% if update.pinned %}
-                    <span class="yard-update-pin-badge">PINNED</span>
-                {% endif %}
-                {{ update.title }}
-            </a>
-
-        {% endfor %}
-
+  </div>
+  <span class="badge" id="videoLibrarySortBadge">Newest first</span>
+</div>
+<div class="body video-library-body">
+  <div class="video-library-pane" data-video-library-pane="long">
+    <div class="player-scroll" id="playerScroll">
+      <div class="toolbar">{{ site.players | size }} long videos · newest added first · scroll inside this console</div>
+      {% for player in site.players %}
+      {% assign control_title_main = player.title | split: ' | ' | first %}
+      {% assign control_title_parts = control_title_main | split: ' – ' %}
+      {% assign control_player_name = control_title_parts[0] | strip %}
+      {% assign control_player_club = control_title_parts[1] | default: '' | strip %}
+      {% assign control_youtube_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+      <div class="video-row"
+           data-player-row
+           data-video-library-row
+           data-video-format="long"
+           data-player-name="{{ control_player_name | escape }}"
+           data-player-display="{{ control_title_main | escape }}"
+           data-player-club="{{ control_player_club | escape }}"
+           data-youtube-id="{{ control_youtube_id | escape }}"
+           data-report-date="{{ player.report_date | escape }}"
+           data-site-added="{{ player.site_added | escape }}"
+           data-player-url="{{ player.url | relative_url }}">
+        <img src="https://i.ytimg.com/vi/{{ control_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="vmeta"><strong>{{ control_title_main }}</strong><small>{{ player.site_added }}</small></div>
+        <b data-player-live-value>—</b>
+      </div>
+      {% endfor %}
     </div>
+  </div>
 
-</section>
-
-            {% include hese-fredrik.html %}
-
-            <section class="yard-section">
-
-                <div class="yard-section-heading">
-
-                    <div>
-                        <p class="yard-section-label">
-                            Scouting
-                        </p>
-
-                        <h2>Latest reports added</h2>
-
-                        <p>
-                            The most recently added scouting reports. The report
-                            date shown on each profile tells you when the
-                            assessment was originally written.
-                        </p>
-                    </div>
-
-                    <a href="/players/">
-                        View all players
-                    </a>
-
-                </div>
-
-                <div
-                    class="yard-report-grid"
-                    id="yard-report-grid"
-                >
-
-                    {% for player in site.players %}
-
-                        {% assign title_parts = player.title | split: ' – ' %}
-
-                        {% assign youtube_id = player.youtube
-                            | split: 'v='
-                            | last
-                            | split: '&'
-                            | first
-                            | split: '/'
-                            | last
-                        %}
-
-                        <article
-    class="yard-report-card"
-    data-site-added="{{ player.site_added | escape }}"
-    data-report-date="{{ player.report_date | escape }}"
->
-
-                            <a
-                                class="yard-report-image"
-                                href="{{ player.url }}"
-                                aria-label="View {{ title_parts[0] }}"
-                            >
-                                {% if player.youtube %}
-                                    <img
-                                        src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                        alt="{{ title_parts[0] }}"
-                                        loading="lazy"
-                                    >
-                                {% endif %}
-                            </a>
-
-                            <div class="yard-report-content">
-
-                                <p class="yard-report-added">
-                                    Added {{ player.site_added }}
-                                </p>
-
-                                <h3>
-                                    <a href="{{ player.url }}">
-                                        {{ title_parts[0] }}
-                                    </a>
-                                </h3>
-
-                                <p class="yard-report-details">
-                                    {% if player.position %}
-                                        {{ player.position }}
-                                    {% endif %}
-
-                                    {% if player.position and title_parts[1] %}
-                                        •
-                                    {% endif %}
-
-                                    {% if title_parts[1] %}
-                                        {{ title_parts[1] }}
-                                    {% endif %}
-                                </p>
-
-                                {% if player.report_date %}
-                                    <p class="yard-report-date">
-                                        Report date: {{ player.report_date }}
-                                    </p>
-                                {% endif %}
-
-                                <a
-                                    class="yard-card-action"
-                                    href="{{ player.url }}"
-                                >
-                                    View report
-                                </a>
-
-                            </div>
-
-                        </article>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-<section class="yard-section">
-
-    <div class="yard-section-heading">
-        <div>
-            <p class="yard-section-label">Video</p>
-            <h2>Latest Shorts</h2>
-            <p>Quick scouting clips and standout individual actions.</p>
+  <div class="video-library-pane" data-video-library-pane="short" hidden>
+    <div class="player-scroll" id="shortScroll">
+      <div class="toolbar">{{ site.shorts | size }} Shorts · newest added first · scroll inside this console</div>
+      {% for short in site.shorts %}
+      {% assign control_short_youtube_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+      <div class="video-row"
+           data-short-row
+           data-video-library-row
+           data-video-format="short"
+           data-video-title="{{ short.title | escape }}"
+           data-youtube-id="{{ control_short_youtube_id | escape }}"
+           data-report-date="{{ short.report_date | escape }}"
+           data-site-added="{{ short.site_added | escape }}"
+           data-video-url="{{ short.url | relative_url }}">
+        <img src="https://i.ytimg.com/vi/{{ control_short_youtube_id }}/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ control_short_youtube_id }}/mqdefault.jpg';">
+        <div class="vmeta"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></div>
+        <b data-short-live-value>—</b>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div></section>
+<section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Video</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Report 8 Aug 2026</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">—</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">—</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">—</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">—</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">—</b></div><div class="metric" data-selected-metric-card="uniqueViewers"><span>Unique viewers</span><b data-selected-metric="uniqueViewers">—</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="hf-empty">YouTube Analytics connection pending. Charts will remain empty until real data is available.</div></div></div></section>
+<section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected video data</div></div><span class="badge">DATA PENDING</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">YouTube Analytics</div><div class="kv"><span>Views · last 48 h</span><strong>—</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>—</strong></div><div class="kv"><span>YouTube search</span><strong>—</strong></div><div class="kv"><span>External</span><strong>—</strong></div><div class="kv"><span>Suggested videos</span><strong>—</strong></div><div class="kv"><span>Other YouTube features</span><strong>—</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>—</strong></div><div class="kv"><span>Age</span><strong>—</strong></div><div class="kv"><span>Gender</span><strong>—</strong></div></div></section></section>
+</div><section class="control-screen youtube-screen youtube-screen-v1" data-screen="youtube" hidden="">
+<div class="yt-screen-grid">
+  <section class="panel youtube-panel yt-video-selector-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">01</span><div class="pt">Video Selector</div></div>
+      <div class="yt-header-tools">
+        <div class="yt-format-tabs" role="tablist" aria-label="YouTube video format">
+          <button class="yt-format-tab active" type="button" role="tab" aria-selected="true" data-yt-format-tab="long">LONG VIDEOS</button>
+          <button class="yt-format-tab" type="button" role="tab" aria-selected="false" data-yt-format-tab="short">SHORTS</button>
         </div>
-
-        <a href="/shorts/">View all Shorts</a>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Video Selector data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>SkyrScout site catalogue</span></div>
+            <div><strong>Freshness</strong><span>Changes when the site catalogue changes</span></div>
+            <div><strong>Meaning</strong><span>Selecting a video drives every YouTube console on this screen.</span></div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div
-        class="yard-report-grid"
-        id="yard-latest-shorts"
-    >
-
-        {% for short in site.shorts %}
-
-            {% assign youtube_id = short.youtube
-                | split: "shorts/"
-                | last
-                | split: "?"
-                | first
-            %}
-
-            <article
-                class="signature-short-card"
-                data-site-added="{{ short.site_added | escape }}"
-                data-report-date="{{ short.report_date | escape }}"
-                data-short-title="{{ short.title | downcase | escape }}"
-            >
-                <a
-                    class="signature-short-card-link"
-                    href="{{ short.url | relative_url }}"
-                    aria-label="Watch {{ short.title }}"
-                ></a>
-
-                <div class="signature-short-card-frame" aria-hidden="true">
-                    <span class="signature-short-card-shine"></span>
-
-                    <div class="signature-short-card-topline">
-                        <span>Signature Short</span>
-                        {% if short.report_date %}
-                            <time>{{ short.report_date }}</time>
-                        {% endif %}
-                    </div>
-
-                    <div class="signature-short-card-image">
-                        {% if short.youtube %}
-                            <img
-                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
-                                alt=""
-                                loading="lazy"
-                            >
-                        {% endif %}
-
-                        <span class="signature-short-card-badge">Short</span>
-                    </div>
-
-                    <div class="signature-short-card-copy">
-                        <h3>{{ short.title }}</h3>
-                    </div>
-
-                    <div class="signature-short-card-footer">
-                        <span>SkyrScout</span>
-                        <strong>Watch →</strong>
-                    </div>
-                </div>
-            </article>
-
-        {% endfor %}
-
+    <div class="yt-panel-body yt-selector-body">
+      <div class="yt-selector-context">
+        <span>Selected video drives every console to the right.</span>
+        <strong data-yt-selected-type>LONG VIDEO</strong>
+      </div>
+      <div class="yt-video-pane" data-yt-video-pane="long">
+        <div class="yt-video-list">
+          {% for player in site.players %}
+          {% assign yt_title_main = player.title | split: ' | ' | first %}
+          {% assign yt_title_parts = yt_title_main | split: ' – ' %}
+          {% assign yt_player_name = yt_title_parts[0] | strip %}
+          {% assign yt_player_club = yt_title_parts[1] | default: '' | strip %}
+          {% assign yt_video_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+          <button class="yt-video-row" type="button"
+                  data-yt-video-row
+                  data-yt-video-format="long"
+                  data-yt-video-id="{{ yt_video_id | escape }}"
+                  data-yt-video-title="{{ yt_title_main | escape }}"
+                  data-yt-video-name="{{ yt_player_name | escape }}"
+                  data-yt-video-meta="{{ yt_player_club | escape }}"
+                  data-yt-video-date="{{ player.site_added | escape }}">
+            <img src="https://i.ytimg.com/vi/{{ yt_video_id }}/mqdefault.jpg" alt="" loading="lazy">
+            <span class="yt-video-copy"><strong>{{ yt_title_main }}</strong><small>{{ player.site_added }}</small></span>
+            <span class="yt-row-arrow">›</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="yt-video-pane" data-yt-video-pane="short" hidden>
+        <div class="yt-video-list">
+          {% for short in site.shorts %}
+          {% assign yt_short_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+          <button class="yt-video-row yt-short-row" type="button"
+                  data-yt-video-row
+                  data-yt-video-format="short"
+                  data-yt-video-id="{{ yt_short_id | escape }}"
+                  data-yt-video-title="{{ short.title | escape }}"
+                  data-yt-video-name="{{ short.title | escape }}"
+                  data-yt-video-meta="YouTube Short"
+                  data-yt-video-date="{{ short.site_added | escape }}">
+            <img src="https://i.ytimg.com/vi/{{ yt_short_id }}/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ yt_short_id }}/mqdefault.jpg';">
+            <span class="yt-video-copy"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></span>
+            <span class="yt-row-arrow">›</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
     </div>
+  </section>
 
+  <section class="panel youtube-panel yt-performance-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">02</span><div class="pt">Performance</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Performance data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest fully processed Analytics data.</span></div>
+            <div><strong>Meaning</strong><span>Performance for the selected video, including views, watch time and audience metrics when available.</span></div>
+            <div><strong>Lag</strong><span>Newer activity may not yet be included. The latest available date is shown when supplied.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-performance-body">
+      <div class="yt-selected-head">
+        <img data-yt-selected-thumb src="" alt="">
+        <div><strong data-yt-selected-title>Select a video</strong><span data-yt-selected-meta>Performance overview</span></div>
+      </div>
+      <div class="yt-metric-grid">
+        <div class="yt-metric"><span>Views</span><strong>—</strong><small>Since publishing</small></div>
+        <div class="yt-metric"><span>Watch time</span><strong>—</strong><small>Hours</small></div>
+        <div class="yt-metric"><span>Avg. view duration</span><strong>—</strong><small>Since publishing</small></div>
+        <div class="yt-metric"><span>Unique viewers</span><strong>—</strong><small>Latest available</small></div>
+        <div class="yt-metric"><span>Subscribers</span><strong>—</strong><small>From this video</small></div>
+      </div>
+      <div class="yt-chart-shell">
+        <div class="yt-chart-head"><span>Performance since publishing</span><b>DATA PENDING</b></div>
+        <div class="yt-line-placeholder"><span>Analytics series will populate here.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-realtime-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">03</span><div class="pt">Realtime</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-live">LIVE</span>
+        <span class="badge yt-freshness yt-freshness-recent">RECENT</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Realtime data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>VPS collector / YouTube Data API</span></div>
+            <div><strong>Freshness</strong><span>LIVE is current movement. RECENT is completed short-window history.</span></div>
+            <div><strong>Meaning</strong><span>This panel is for the freshest reliable activity we can measure.</span></div>
+            <div><strong>Rule</strong><span>No missing period is filled with zero and no unsupported series is invented.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-realtime-body">
+      <div class="yt-info-strip"><span class="yt-info-dot">i</span><span>Fresh data and completed Analytics data are labelled separately. No missing period is shown as zero.</span></div>
+      <div class="yt-realtime-kpis">
+        <div><span>This hour</span><strong>—</strong><small>LIVE · VPS</small></div>
+        <div><span>Previous hour</span><strong>—</strong><small>RECENT · VPS</small></div>
+        <div><span>Last 48 h</span><strong>—</strong><small>RECENT · VPS</small></div>
+      </div>
+      <div class="yt-chart-shell yt-realtime-chart-shell">
+        <div class="yt-chart-head"><span>48-hour activity</span><b>NO FAKE BARS</b></div>
+        <div class="yt-bars-placeholder"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="yt-panel-note">Exact hourly history is shown only when the backend can supply it reliably.</div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-reach-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">04</span><div class="pt">Reach / Discovery</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Reach and Discovery data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed Analytics data.</span></div>
+            <div><strong>Meaning</strong><span>Shows how viewers discover the selected video, including impressions CTR and discovery mix.</span></div>
+            <div><strong>Lag</strong><span>Discovery data may trail current live movement.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-reach-body">
+      <div class="yt-feature-metric"><span>Impressions click-through rate</span><strong>—</strong><small>Latest available</small></div>
+      <div class="yt-section-label">How viewers find this video</div>
+      <div class="yt-source-stack" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="yt-mini-source-list">
+        <div><span>External</span><strong>—</strong></div>
+        <div><span>YouTube Search</span><strong>—</strong></div>
+        <div><span>Channel pages</span><strong>—</strong></div>
+        <div><span>Direct or unknown</span><strong>—</strong></div>
+        <div><span>Suggested videos</span><strong>—</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-traffic-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">05</span><div class="pt">Traffic Sources</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Traffic Sources data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed Analytics data.</span></div>
+            <div><strong>Meaning</strong><span>Shows which source categories sent viewers to the selected video. Choose one to continue into the Drill-down console.</span></div>
+            <div><strong>Lag</strong><span>Source attribution may update after live view movement.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-traffic-body">
+      <div class="yt-source-intro">Choose a source to open the natural drill-down in the console to the right.</div>
+      <div class="yt-source-buttons">
+        <button class="yt-source-button active" type="button" data-yt-source="external"><span>External</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="search"><span>YouTube Search</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="channel"><span>Channel pages</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="suggested"><span>Suggested videos</span><strong>—</strong><b>›</b></button>
+        <button class="yt-source-button" type="button" data-yt-source="direct"><span>Direct or unknown</span><strong>—</strong><b>›</b></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-detail-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">06</span><div class="pt" id="ytDetailTitle">External sites / apps</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Drill-down data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed detail available for the selected source.</span></div>
+            <div><strong>Meaning</strong><span>Expands the Traffic Sources console into external sites, search terms or other source-specific detail.</span></div>
+            <div><strong>Lag</strong><span>Detailed attribution can be less complete than the headline source totals.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-detail-body" id="ytDetailBody"></div>
+  </section>
+
+  <section class="panel youtube-panel yt-geography-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">07</span><div class="pt">Geography</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Geography data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest fully processed geography period.</span></div>
+            <div><strong>Meaning</strong><span>Shows where viewers of the selected video are located, with country and city detail when YouTube returns it.</span></div>
+            <div><strong>Lag</strong><span>Geography is not realtime and may lag behind current traffic.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-geography-body" data-yt-geography-body>
+      <div class="yt-geo-rangebar">
+        <span class="yt-geo-range-label">TRAFFIC WINDOW</span>
+        <div class="yt-geo-ranges" role="tablist" aria-label="Geography traffic window">
+          <button class="yt-geo-range active" type="button" data-yt-geo-range="2d">2D</button>
+          <button class="yt-geo-range" type="button" data-yt-geo-range="7d">7D</button>
+          <button class="yt-geo-range" type="button" data-yt-geo-range="28d">28D</button>
+          <button class="yt-geo-range" type="button" data-yt-geo-range="90d">90D</button>
+        </div>
+      </div>
+
+      <div class="yt-geo-tabs" role="tablist" aria-label="Geography detail">
+        <button class="yt-geo-tab active" type="button" role="tab" aria-selected="true" data-yt-geo-tab="countries">COUNTRIES</button>
+        <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="cities">CITIES</button>
+        <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="videos">TOP VIDEOS</button>
+      </div>
+
+      <div class="yt-geo-view" data-yt-geo-view="countries">
+        <div class="yt-geo-copy">
+          <strong>Countries</strong>
+          <span data-yt-geo-period>Latest available YouTube Analytics geography.</span>
+        </div>
+        <div class="yt-geo-selected-note">
+          Selected: <strong data-yt-geo-selected-inline>—</strong>
+          <span>Choose a country, then open Cities or Top Videos.</span>
+        </div>
+        <div class="yt-geo-country-list" data-yt-geo-countries>
+          <div class="yt-geo-empty">Waiting for geography data…</div>
+        </div>
+      </div>
+
+      <div class="yt-geo-view" data-yt-geo-view="cities" hidden>
+        <div class="yt-geo-detail-head">
+          <div>
+            <span>TOP CITIES IN</span>
+            <strong data-yt-geo-selected-country>—</strong>
+          </div>
+          <b data-yt-geo-selected-total>—</b>
+        </div>
+        <div class="yt-geo-detail-scroll" data-yt-geo-cities>
+          <div class="yt-geo-empty">Choose a country first.</div>
+        </div>
+      </div>
+
+      <div class="yt-geo-view" data-yt-geo-view="videos" hidden>
+        <div class="yt-geo-detail-head">
+          <div>
+            <span>TOP VIDEOS IN</span>
+            <strong data-yt-geo-selected-country>—</strong>
+          </div>
+          <b data-yt-geo-selected-total>—</b>
+        </div>
+        <div class="yt-geo-detail-scroll" data-yt-geo-videos>
+          <div class="yt-geo-empty">Choose a country first.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-audience-panel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">08</span><div class="pt">Audience</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Audience data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed audience data.</span></div>
+            <div><strong>Meaning</strong><span>Shows subscriber mix and demographic breakdowns when YouTube has enough data to report them.</span></div>
+            <div><strong>Lag</strong><span>Privacy thresholds and processing delays can leave some values unavailable.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-audience-body">
+      <div class="yt-audience-split">
+        <div class="yt-audience-card"><span>Watch time from subscribers</span><div><strong>Not subscribed</strong><b>—</b></div><div><strong>Subscribed</strong><b>—</b></div></div>
+        <div class="yt-audience-card"><span>Age</span><div><strong>13–17</strong><b>—</b></div><div><strong>18–24</strong><b>—</b></div><div><strong>25–34</strong><b>—</b></div><div><strong>35–44</strong><b>—</b></div><div><strong>45–54</strong><b>—</b></div></div>
+      </div>
+      <div class="yt-panel-note">Audience values stay empty when YouTube does not return enough data.</div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-most-liked-panel" data-console="09" data-youtube-console="09">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">09</span><div class="pt">Most Likes</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-live">LIVE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Most Likes data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>VPS collector / YouTube Data API</span></div>
+            <div><strong>Freshness</strong><span>Current like totals use the normal VPS poll. 24H and 7D baselines use one local snapshot per hour.</span></div>
+            <div><strong>Meaning</strong><span>24H and 7D rank net likes gained. Lifetime ranks the current public like total.</span></div>
+            <div><strong>Rule</strong><span>No extra YouTube poll is made for like history.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-most-liked-body">
+      <div class="yt-like-tabs" role="tablist" aria-label="Most Likes time range">
+        <button class="yt-like-tab active" type="button" role="tab" aria-selected="true" data-yt-like-window="24h">24H</button>
+        <button class="yt-like-tab" type="button" role="tab" aria-selected="false" data-yt-like-window="7d">7D</button>
+        <button class="yt-like-tab" type="button" role="tab" aria-selected="false" data-yt-like-window="lifetime">LIFETIME</button>
+      </div>
+      <div class="yt-most-liked-list" id="ytMostLikedList" data-yt-most-liked-list>
+        <div class="yt-most-liked-empty">Building like history…</div>
+      </div>
+      <div class="yt-panel-note" data-yt-most-liked-note>BUILDING HISTORY · 0H / 24H</div>
+    </div>
+  </section>
+</div>
 </section>
-            <section class="yard-section">
 
-                <div class="yard-section-heading">
-
-                    <div>
-                        <p class="yard-section-label">
-                            Newsroom
-                        </p>
-
-                        <h2>Latest updates</h2>
-
-                        <p>
-                            News, rumours and confirmed developments involving
-                            players featured by SkyrScout.
-                        </p>
-                    </div>
-
-                    <a href="/updates/">
-                        View all updates
-                    </a>
-
-                </div>
-
-                <div class="yard-update-list">
-
-                    {% assign sorted_updates = latest_updates %}
-
-                    {% for update in sorted_updates limit: 3 %}
-
-                        {% assign update_filename = update.path
-                            | split: "/"
-                            | last
-                        %}
-
-                        {% assign update_date = update_filename
-                            | slice: 0, 10
-                            | split: "-"
-                        %}
-
-                        <article class="yard-update-card">
-
-                            <p class="yard-update-date">
-                                {% if update.pinned %}
-                                    <span class="yard-update-pin-badge">PINNED</span>
-                                {% endif %}
-                                {{ update_date[2] }}.{{ update_date[1] }}.{{ update_date[0] }}
-                            </p>
-
-                            <h3>
-                                <a href="{{ update.url }}">
-                                    {{ update.title }}
-                                </a>
-                            </h3>
-
-                            <p>
-                                {{ update.content
-                                    | strip_html
-                                    | truncatewords: 28
-                                }}
-                            </p>
-
-                            <a
-                                class="yard-text-link"
-                                href="{{ update.url }}"
-                            >
-                                Read update
-                            </a>
-
-                        </article>
-
-                    {% else %}
-
-                        <p class="yard-empty">
-                            No updates have been published yet.
-                        </p>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-            <section class="yard-section">
-
-                <div class="yard-section-heading">
-
-                    <div>
-                        <p class="yard-section-label">
-                            Podcast
-                        </p>
-
-                        <h2>Latest episode</h2>
-
-                        <p>
-                            The latest episode of our Norwegian-language
-                            scouting podcast, Scout of This World.
-                        </p>
-                    </div>
-
-                    <a href="/podcast/">
-                        Explore the podcast
-                    </a>
-
-                </div>
-
-                <div
-                    class="yard-podcast"
-                    id="yard-latest-podcast"
-                >
-                    <p class="yard-loading">
-                        Loading latest episode...
-                    </p>
-                </div>
-
-            </section>
-
-            <aside class="yard-music">
-
-                <div
-                    class="yard-music-image"
-                    id="yard-music-image"
-                ></div>
-
-                <div class="yard-music-content">
-
-                    <p class="yard-section-label">
-                        From 404 Bon Blondes
-                    </p>
-
-                    <h2 id="yard-music-title">
-                        Original music from the SkyrScout universe
-                    </h2>
-
-                    <p>
-                        404 Bon Blondes provides most of the original music
-                        featured in SkyrScout videos.
-                    </p>
-
-                    <div class="yard-music-actions">
-
-                        <a
-                            class="yard-card-action"
-                            id="yard-music-video-link"
-                            href="/music/"
-                        >
-                            Latest release
-                        </a>
-
-                        <a
-                            class="yard-text-link"
-                            href="/music/"
-                        >
-                            Explore Music
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </aside>
-
-        </section>
-
-    </main>
-
-    <script>
-        function convertNorwegianDate(dateText) {
-            if (!dateText) {
-                return 0;
-            }
-
-            const parts = dateText.split(".");
-
-            if (parts.length !== 3) {
-                return 0;
-            }
-
-            const day = Number(parts[0]);
-            const month = Number(parts[1]) - 1;
-            const year = Number(parts[2]);
-
-            return new Date(year, month, day).getTime();
-        }
-
-       function sortLatestReports() {
-    const reportGrid = document.querySelector("#yard-report-grid");
-
-    if (!reportGrid) {
-        return;
-    }
-
-    const cards = Array.from(
-        reportGrid.querySelectorAll(".yard-report-card")
-    );
-
-    const newestReports = [...cards]
-        .sort(function (a, b) {
-            return (
-                convertNorwegianDate(b.dataset.reportDate) -
-                convertNorwegianDate(a.dataset.reportDate)
-            );
-        })
-        .slice(0, 3);
-
-    const remainingCards = cards
-        .filter(function (card) {
-            return !newestReports.includes(card);
-        })
-        .sort(function (a, b) {
-            return (
-                convertNorwegianDate(b.dataset.siteAdded) -
-                convertNorwegianDate(a.dataset.siteAdded)
-            );
-        });
-
-    const sortedCards = [
-        ...newestReports,
-        ...remainingCards
-    ];
-
-    sortedCards.forEach(function (card, index) {
-        card.hidden = index >= 12;
-        reportGrid.appendChild(card);
-    });
-}
-
-        function sortLatestShorts() {
-            const shortsGrid = document.querySelector("#yard-latest-shorts");
-
-            if (!shortsGrid) {
-                return;
-            }
-
-            const cards = Array.from(
-                shortsGrid.querySelectorAll(".signature-short-card")
-            );
-
-            cards
-                .sort(function (a, b) {
-                    return (
-                        convertNorwegianDate(b.dataset.siteAdded) -
-                            convertNorwegianDate(a.dataset.siteAdded) ||
-                        convertNorwegianDate(b.dataset.reportDate) -
-                            convertNorwegianDate(a.dataset.reportDate) ||
-                        a.dataset.shortTitle.localeCompare(
-                            b.dataset.shortTitle
-                        )
-                    );
-                })
-                .forEach(function (card, index) {
-                    card.hidden = index >= 3;
-                    shortsGrid.appendChild(card);
-                });
-        }
-
-        function stripHtml(html) {
-            const temporaryElement = document.createElement("div");
-            temporaryElement.innerHTML = html || "";
-
-            return (
-                temporaryElement.textContent ||
-                temporaryElement.innerText ||
-                ""
-            )
-                .replace(/\s+/g, " ")
-                .trim();
-        }
-
-        function formatDuration(duration) {
-            if (!duration) {
-                return "";
-            }
-
-            const parts = duration.split(":").map(Number);
-
-            if (
-                parts.length === 3 &&
-                parts.every(Number.isFinite)
-            ) {
-                const hours = parts[0];
-                const minutes = parts[1];
-
-                if (hours > 0) {
-                    return `${hours} t ${minutes} min`;
-                }
-
-                return `${minutes} min`;
-            }
-
-            return duration;
-        }
-
-        async function loadLatestPodcast() {
-            const container = document.querySelector(
-                "#yard-latest-podcast"
-            );
-
-            try {
-                const response = await fetch(
-                    "/assets/data/podcast-episodes.json"
-                );
-
-                if (!response.ok) {
-                    throw new Error("Could not load podcast data.");
-                }
-
-                const data = await response.json();
-                const episode = data.episodes?.[0];
-
-                if (!episode) {
-                    throw new Error("No podcast episodes found.");
-                }
-
-                const episodeUrl =
-                    episode.link || episode.audio_url || "/podcast/";
-
-                const publishedDate = episode.published
-                    ? new Date(episode.published)
-                    : null;
-
-                const description = stripHtml(
-                    episode.description
-                );
-
-                const metadata = [];
-
-                if (episode.season_number) {
-                    metadata.push(
-                        `Season ${episode.season_number}`
-                    );
-                }
-
-                if (episode.episode_number) {
-                    metadata.push(
-                        `Episode ${episode.episode_number}`
-                    );
-                }
-
-                if (publishedDate) {
-                    metadata.push(
-                        publishedDate.toLocaleDateString(
-                            "nb-NO",
-                            {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric"
-                            }
-                        )
-                    );
-                }
-
-                const duration = formatDuration(
-                    episode.duration
-                );
-
-                if (duration) {
-                    metadata.push(duration);
-                }
-
-                container.innerHTML = `
-                    <a
-                        class="yard-podcast-image"
-                        href="${episodeUrl}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        ${
-                            episode.image
-                                ? `
-                                    <img
-                                        src="${episode.image}"
-                                        alt="${episode.title || "Scout of This World"}"
-                                    >
-                                `
-                                : ""
-                        }
-                    </a>
-
-                    <div class="yard-podcast-content">
-
-                        <p class="yard-podcast-meta">
-                            ${metadata.join(" • ")}
-                        </p>
-
-                        <h3>
-                            <a
-                                href="${episodeUrl}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                ${episode.title || "Scout of This World"}
-                            </a>
-                        </h3>
-
-                        ${
-                            description
-                                ? `
-                                    <p class="yard-podcast-description">
-                                        ${description}
-                                    </p>
-                                `
-                                : ""
-                        }
-
-                        <a
-                            class="yard-card-action"
-                            href="${episodeUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Open on Spotify
-                        </a>
-
-                    </div>
-                `;
-
-            } catch (error) {
-                console.error(error);
-
-                container.innerHTML = `
-                    <p class="yard-empty">
-                        The latest podcast episode could not be loaded.
-                    </p>
-                `;
-            }
-        }
-
-        async function loadLatestMusic() {
-            const imageContainer = document.querySelector(
-                "#yard-music-image"
-            );
-
-            const title = document.querySelector(
-                "#yard-music-title"
-            );
-
-            const videoLink = document.querySelector(
-                "#yard-music-video-link"
-            );
-
-            try {
-                const response = await fetch(
-                    "/assets/data/music-videos.json"
-                );
-
-                if (!response.ok) {
-                    throw new Error("Could not load music data.");
-                }
-
-                const data = await response.json();
-                const video = data.videos?.[0];
-
-                if (!video) {
-                    return;
-                }
-
-                title.textContent =
-                    video.title || "Latest release";
-
-                videoLink.href = video.url || "/music/";
-                videoLink.target = "_blank";
-                videoLink.rel = "noopener noreferrer";
-
-                if (video.thumbnail) {
-                    imageContainer.innerHTML = `
-                        <a
-                            href="${video.url || "/music/"}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <img
-                                src="${video.thumbnail}"
-                                alt="${video.title || "404 Bon Blondes"}"
-                            >
-                        </a>
-                    `;
-                }
-
-            } catch (error) {
-                console.error(error);
-            }
-        }
-const marqueeItems = document.querySelector(".yard-marquee-items");
-
-if (marqueeItems) {
-    marqueeItems.innerHTML += marqueeItems.innerHTML;
-}
-        sortLatestReports();
-        sortLatestShorts();
-        loadLatestPodcast();
-        loadLatestMusic();
-    </script>
-
-<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js"></script>
-<script>
-(function () {
-    "use strict";
-
-    if (!window.twemoji) {
-        return;
-    }
-
-    const twemojiOptions = {
-        folder: "svg",
-        ext: ".svg"
-    };
-
-    const shortGrid = document.querySelector("#yard-latest-shorts");
-    if (shortGrid) {
-        twemoji.parse(shortGrid, twemojiOptions);
-    }
-
-    const heseTitle = document.querySelector("#hese-fredrik-title");
-    if (heseTitle) {
-        twemoji.parse(heseTitle, twemojiOptions);
-    }
-})();
-</script>
+<section class="control-screen system-screen" data-screen="website" hidden="">
+<div class="system-placeholder-wrap">
+<section class="panel system-placeholder-panel">
+<div class="ph"><div class="pt">Website</div><span class="badge">Connection stage</span></div>
+<div class="system-placeholder-body">
+<div class="system-placeholder-kicker">Next data link</div>
+<h2>Website intelligence</h2>
+<p>This screen is reserved for site traffic, player-page activity and referral analysis. It is deliberately not populated with invented metrics.</p>
+</div>
+</section>
+</div>
+</section><section class="control-screen system-screen" data-screen="hese-fredrik" hidden="">
+<div class="hf-screen-v3">
+<section class="panel hf-command-panel hf-focus-panel">
+<div class="ph"><div class="pt">Hese-Fredrik</div><span class="badge" id="hfConnectionBadge">Connecting…</span></div>
+<div class="hf-command-body">
+<div class="hf-command-copy">
+<div class="hf-status-kicker">Live YouTube activity radar</div>
+<strong id="hfLiveSummary">Waiting for Hese-Fredrik…</strong>
+<p>Clock-hour movement from stored YouTube counter snapshots. Suspicious activity and confirmed alarms are shown separately.</p>
+</div>
+<div class="hf-stat-grid">
+<div class="hf-stat"><span>Videos polled</span><strong id="hfVideosPolled">—</strong></div>
+<div class="hf-stat suspicious"><span>Suspicious</span><strong id="hfSuspiciousCount">—</strong></div>
+<div class="hf-stat alarm"><span>Alarms</span><strong id="hfActiveAlerts">—</strong></div>
+<div class="hf-stat"><span>Last check</span><strong id="hfCheckedAt">—</strong></div>
+</div>
+<div class="hf-filter-wrap">
+<span>Activity radar</span>
+<div class="hf-filter-group" role="group" aria-label="Filter Hese-Fredrik activity radar">
+<button class="hf-filter active" data-hf-filter="all" type="button">ALL</button>
+<button class="hf-filter" data-hf-filter="video" type="button">VIDEOS</button>
+<button class="hf-filter" data-hf-filter="short" type="button">SHORTS</button>
+</div>
+</div>
+</div>
+</section>
+
+<section class="panel hf-active-panel hf-signals-panel hf-focus-panel">
+<div class="ph"><div class="pt">Signals</div><span class="badge" id="hfAlertBadge">Standby</span></div>
+<div class="hf-active-list" id="hfActiveAlertList">
+<div class="hf-empty">No suspicious activity or Hese-Fredrik alarm.</div>
+</div>
+</section>
+
+<div class="hf-work-grid">
+<section class="panel hf-movers-panel hf-focus-panel">
+<div class="ph"><div class="pt">Activity radar</div><span class="badge" id="hfMoverCount">—</span></div>
+<div class="hf-movers-head"><span>Video</span><span>Total</span><span>Last poll</span><span>This hr</span><span>Last hr</span><span>Status</span></div>
+<div class="hf-movers-list" id="hfMoversList">
+<div class="hf-empty">Waiting for live Hese-Fredrik data…</div>
+</div>
+</section>
+
+<section class="panel hf-detail-panel hf-focus-panel" id="hfDetailPanel">
+<div class="ph"><div class="pt">Selected signal</div><span class="badge" id="hfSelectedTypeBadge">—</span></div>
+<div class="hf-detail-body" id="hfDetailBody">
+<div class="hf-empty">Select a video from the activity radar or Signals.</div>
+</div>
+</section>
+</div>
+
+<section class="panel hf-rules-panel hf-focus-panel">
+<div class="ph"><div class="pt">Signal logic</div><span class="badge">Current backend</span></div>
+<div class="hf-rules-body" id="hfRulesBody">
+<div class="hf-empty">Waiting for backend rules…</div>
+</div>
+</section>
+
+<div id="hfVideoTypeCatalog" hidden>
+{% for player in site.players %}
+{% if player.youtube %}
+{% assign hf_catalog_player_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+<i data-hf-video-id="{{ hf_catalog_player_id | escape }}" data-hf-video-type="video"></i>
+{% endif %}
+{% endfor %}
+{% for short in site.shorts %}
+{% if short.youtube %}
+{% assign hf_catalog_short_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+<i data-hf-video-id="{{ hf_catalog_short_id | escape }}" data-hf-video-type="short"></i>
+{% endif %}
+{% endfor %}
+</div>
+</div>
+</section></main></div>
+<div id="consoleFocusOverlay" class="console-focus-overlay" aria-hidden="true">
+  <div id="consoleFocusShell" class="console-focus-shell" role="dialog" aria-modal="true" aria-label="Focused console">
+    <button id="consoleFocusClose" class="console-focus-close" type="button" aria-label="Close focused console" title="Close">×</button>
+  </div>
+</div>
+
+<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260819-0134-likeswindows1"></script>
+<script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260819-0201-likesloading3"></script>
+</body>
+</html>
