@@ -1,5 +1,9 @@
 
-function snapRows(){const s=document.getElementById('playerScroll');if(!s)return;const toolbar=s.querySelector('.toolbar');const rowH=52;const usable=s.clientHeight-(toolbar?toolbar.offsetHeight:0);const count=Math.max(1,Math.floor(usable/rowH));const exact=(toolbar?toolbar.offsetHeight:0)+count*rowH;s.style.height=exact+'px';}
+function snapRows(){
+  document.querySelectorAll('.video-library-panel .player-scroll').forEach(scroller => {
+    scroller.style.removeProperty('height');
+  });
+}
 window.addEventListener('load',snapRows);window.addEventListener('resize',snapRows);
 
 window.controlRoomSnapRows=snapRows;
@@ -76,8 +80,8 @@ window.controlRoomSnapRows=snapRows;
     if(focusTitle.includes('realtime monitor')) shell.classList.add('realtime-focus');
     if(focusTitle.includes('geography')) shell.classList.add('geo-focus');
     if(focusTitle.includes('traffic / audience')) shell.classList.add('traffic-focus');
-    if(focusTitle.includes('all player videos')) shell.classList.add('players-focus');
-    if(focusTitle.includes('selected player')) shell.classList.add('selected-focus');
+    if(focusTitle.includes('video library')) shell.classList.add('players-focus');
+    if(focusTitle.includes('selected video')) shell.classList.add('selected-focus');
 
     const clone = panel.cloneNode(true);
     clone.classList.remove('console-focusable');
@@ -448,22 +452,6 @@ window.controlRoomSnapRows=snapRows;
     if(tab){ switchScreen(tab.dataset.screenTarget); }
   });
 
-  function parseDMY(value){
-    const m = String(value || '').trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if(!m) return 0;
-    return Date.UTC(Number(m[3]), Number(m[2])-1, Number(m[1]));
-  }
-
-  function sortPlayerRows(){
-    const scroller = document.getElementById('playerScroll');
-    if(!scroller) return;
-    const rows = Array.from(scroller.querySelectorAll('[data-player-row]'));
-    rows.sort((a,b) => {
-      const d = parseDMY(b.dataset.siteAdded) - parseDMY(a.dataset.siteAdded);
-      return d || String(a.dataset.playerDisplay || '').localeCompare(String(b.dataset.playerDisplay || ''), 'en');
-    });
-    rows.forEach(row => scroller.appendChild(row));
-  }
 
   const coltonReference = {
     youtubeId: 'zPDOV79nRE4'
@@ -525,7 +513,6 @@ window.controlRoomSnapRows=snapRows;
     if(row) updateSelectedPlayer(row);
   });
 
-  sortPlayerRows();
   const defaultRow = Array.from(document.querySelectorAll('[data-player-row]')).find(row => row.dataset.youtubeId === coltonReference.youtubeId);
   if(defaultRow) updateSelectedPlayer(defaultRow);
 

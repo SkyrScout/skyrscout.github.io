@@ -13,9 +13,9 @@ sitemap: false
   <meta name="color-scheme" content="dark">
   <title>Scoutland Yard Control Room</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260823-1416-realtime-monitor1">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260823-1800-video-library-v2">
 </head>
-  <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260823-1416-realtime-monitor1"></script>
+  <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260823-1800-video-library-v2"></script>
 <body>
 <div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
   <div class="staff-auth-gate-card">
@@ -42,7 +42,7 @@ sitemap: false
 </div>
 </div></section></div>
 <section class="panel mappanel"><div class="ph"><div class="pt">World Traffic</div><span class="badge map-scope-badge">MAP READY · DATA PENDING</span></div>{% include control-room-map.html %}</section></section>
-<section class="lower"><section class="panel lowerpanel video-library-panel">
+<section class="lower"><section class="panel lowerpanel video-library-panel" data-video-library-sort="newest">
 <div class="ph video-library-head">
   <div class="video-library-heading">
     <div class="pt">Video Library</div>
@@ -51,12 +51,15 @@ sitemap: false
       <button class="video-library-tab" type="button" role="tab" aria-selected="false" data-video-library-tab="short">SHORT VIDEOS</button>
     </div>
   </div>
-  <span class="badge" id="videoLibrarySortBadge">Newest first</span>
+  <button class="video-library-sort" type="button" data-video-library-sort aria-label="Sort Video Library oldest first" title="Sort by YouTube publication time">NEWEST</button>
 </div>
 <div class="body video-library-body">
+  <div class="video-library-controls">
+    <input class="video-library-search" type="search" data-video-library-search placeholder="Search player, club or video…" aria-label="Search Video Library" autocomplete="off" spellcheck="false">
+    <span class="video-library-count" data-video-library-count>{{ site.players | size }} VIDEOS</span>
+  </div>
   <div class="video-library-pane" data-video-library-pane="long">
     <div class="player-scroll" id="playerScroll">
-      <div class="toolbar">{{ site.players | size }} long videos · newest added first · scroll inside this console</div>
       {% for player in site.players %}
       {% assign control_title_main = player.title | split: ' | ' | first %}
       {% assign control_title_parts = control_title_main | split: ' – ' %}
@@ -75,7 +78,7 @@ sitemap: false
            data-site-added="{{ player.site_added | escape }}"
            data-player-url="{{ player.url | relative_url }}">
         <img src="https://i.ytimg.com/vi/{{ control_youtube_id }}/mqdefault.jpg" alt="" loading="lazy">
-        <div class="vmeta"><strong>{{ control_title_main }}</strong><small>{{ player.site_added }}</small></div>
+        <div class="vmeta"><strong>{{ control_title_main }}</strong><small data-video-published-date>Published date loading…</small></div>
         <b data-player-live-value>—</b>
       </div>
       {% endfor %}
@@ -84,7 +87,6 @@ sitemap: false
 
   <div class="video-library-pane" data-video-library-pane="short" hidden>
     <div class="player-scroll" id="shortScroll">
-      <div class="toolbar">{{ site.shorts | size }} Shorts · newest added first · scroll inside this console</div>
       {% for short in site.shorts %}
       {% assign control_short_youtube_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
       <div class="video-row"
@@ -97,7 +99,7 @@ sitemap: false
            data-site-added="{{ short.site_added | escape }}"
            data-video-url="{{ short.url | relative_url }}">
         <img src="https://i.ytimg.com/vi/{{ control_short_youtube_id }}/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ control_short_youtube_id }}/mqdefault.jpg';">
-        <div class="vmeta"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></div>
+        <div class="vmeta"><strong>{{ short.title }}</strong><small data-video-published-date>Published date loading…</small></div>
         <b data-short-live-value>—</b>
       </div>
       {% endfor %}
@@ -108,7 +110,7 @@ sitemap: false
 <section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected video data</div></div><span class="badge">DATA PENDING</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">YouTube Analytics</div><div class="kv"><span>Views · last 48 h</span><strong>—</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>—</strong></div><div class="kv"><span>YouTube search</span><strong>—</strong></div><div class="kv"><span>External</span><strong>—</strong></div><div class="kv"><span>Suggested videos</span><strong>—</strong></div><div class="kv"><span>Other YouTube features</span><strong>—</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>—</strong></div><div class="kv"><span>Age</span><strong>—</strong></div><div class="kv"><span>Gender</span><strong>—</strong></div></div></section></section>
 </div><section class="control-screen youtube-screen youtube-screen-v1" data-screen="youtube" hidden="">
 <div class="yt-screen-grid">
-  <section class="panel youtube-panel yt-video-selector-panel">
+  <section class="panel youtube-panel yt-video-selector-panel" data-yt-video-sort="newest">
     <div class="ph">
       <div class="yt-panel-heading"><span class="yt-step">01</span><div class="pt">Video Selector</div></div>
       <div class="yt-header-tools">
@@ -119,17 +121,23 @@ sitemap: false
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Video Selector data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
-            <div><strong>Source</strong><span>SkyrScout site catalogue</span></div>
-            <div><strong>Freshness</strong><span>Changes when the site catalogue changes</span></div>
-            <div><strong>Meaning</strong><span>Selecting a video drives every YouTube console on this screen.</span></div>
+            <div><strong>Source</strong><span>YouTube Data API v3 via the SkyrScout VPS collector.</span></div>
+            <div><strong>Freshness</strong><span>Publication timestamps refresh with the channel uploads catalogue.</span></div>
+            <div><strong>Meaning</strong><span>Selects the working video for video-specific panels. Channel-wide Geography and Most Likes remain independent.</span></div>
+            <div><strong>Rule</strong><span>Newest / Oldest uses YouTube videoPublishedAt, never SkyrScout site-added date.</span></div>
           </div>
         </div>
       </div>
     </div>
     <div class="yt-panel-body yt-selector-body">
       <div class="yt-selector-context">
-        <span>Selected video drives every console to the right.</span>
+        <span>Select a video for the video-specific panels. Channel-wide panels remain independent.</span>
         <strong data-yt-selected-type>LONG VIDEO</strong>
+      </div>
+      <div class="yt-selector-controls">
+        <input class="yt-video-search" type="search" data-yt-video-search placeholder="Search player, club or video…" aria-label="Search Video Selector" autocomplete="off" spellcheck="false">
+        <button class="yt-video-sort" type="button" data-yt-video-sort aria-label="Sort Video Selector oldest first" title="Sort by YouTube publication time">NEWEST</button>
+        <span class="yt-video-count" data-yt-video-count>{{ site.players | size }} VIDEOS</span>
       </div>
       <div class="yt-video-pane" data-yt-video-pane="long">
         <div class="yt-video-list">
@@ -145,10 +153,9 @@ sitemap: false
                   data-yt-video-id="{{ yt_video_id | escape }}"
                   data-yt-video-title="{{ yt_title_main | escape }}"
                   data-yt-video-name="{{ yt_player_name | escape }}"
-                  data-yt-video-meta="{{ yt_player_club | escape }}"
-                  data-yt-video-date="{{ player.site_added | escape }}">
+                  data-yt-video-meta="{{ yt_player_club | escape }}">
             <img src="https://i.ytimg.com/vi/{{ yt_video_id }}/mqdefault.jpg" alt="" loading="lazy">
-            <span class="yt-video-copy"><strong>{{ yt_title_main }}</strong><small>{{ player.site_added }}</small></span>
+            <span class="yt-video-copy"><strong>{{ yt_title_main }}</strong><small data-video-published-date>Published date loading…</small></span>
             <span class="yt-row-arrow">›</span>
           </button>
           {% endfor %}
@@ -164,10 +171,9 @@ sitemap: false
                   data-yt-video-id="{{ yt_short_id | escape }}"
                   data-yt-video-title="{{ short.title | escape }}"
                   data-yt-video-name="{{ short.title | escape }}"
-                  data-yt-video-meta="YouTube Short"
-                  data-yt-video-date="{{ short.site_added | escape }}">
+                  data-yt-video-meta="SkyrScout Short">
             <img src="https://i.ytimg.com/vi/{{ yt_short_id }}/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ yt_short_id }}/mqdefault.jpg';">
-            <span class="yt-video-copy"><strong>{{ short.title }}</strong><small>{{ short.site_added }}</small></span>
+            <span class="yt-video-copy"><strong>{{ short.title }}</strong><small data-video-published-date>Published date loading…</small></span>
             <span class="yt-row-arrow">›</span>
           </button>
           {% endfor %}
@@ -175,7 +181,6 @@ sitemap: false
       </div>
     </div>
   </section>
-
   <section class="panel youtube-panel yt-performance-panel">
     <div class="ph">
       <div class="yt-panel-heading"><span class="yt-step">02</span><div class="pt">Performance</div></div>
@@ -542,8 +547,8 @@ sitemap: false
   </div>
 </div>
 
-<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260819-0134-likeswindows1"></script>
+<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260823-1800-video-library-v2"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260819-0201-likesloading3"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260823-1800-video-library-v2"></script>
 </body>
 </html>

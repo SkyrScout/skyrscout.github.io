@@ -45,33 +45,110 @@
     likeWindow: '24h'
   };
 
-  function parseLibraryDate(value){
-    const raw = String(value || '').trim();
-    if(!raw) return 0;
-
-    const dmy = raw.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
-    if(dmy){
-      return Date.UTC(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]));
-    }
-
-    const iso = Date.parse(raw);
-    return Number.isFinite(iso) ? iso : 0;
+  function publishedMs(row){
+    const n = Number(row && row.dataset ? row.dataset.youtubePublishedAt : NaN);
+    return Number.isFinite(n) && n > 0 ? n : null;
   }
 
-  function sortVideoLibraryPane(pane){
+  function sortVideoLibraryPane(pane, direction){
     if(!pane) return;
     const scroll = pane.querySelector('.player-scroll');
     if(!scroll) return;
 
+    const oldestFirst = direction === 'oldest';
     const rows = Array.from(scroll.querySelectorAll('[data-video-library-row]'));
     rows.sort((a,b) => {
-      const byDate = parseLibraryDate(b.dataset.siteAdded) - parseLibraryDate(a.dataset.siteAdded);
-      if(byDate) return byDate;
+      const aDate = publishedMs(a);
+      const bDate = publishedMs(b);
+      if(aDate === null && bDate !== null) return 1;
+      if(aDate !== null && bDate === null) return -1;
+      if(aDate !== null && bDate !== null && aDate !== bDate){
+        return oldestFirst ? aDate - bDate : bDate - aDate;
+      }
       const aTitle = String(a.dataset.playerDisplay || a.dataset.videoTitle || '');
       const bTitle = String(b.dataset.playerDisplay || b.dataset.videoTitle || '');
       return aTitle.localeCompare(bTitle, 'en');
     });
     rows.forEach(row => scroll.appendChild(row));
+  }
+
+  function videoLibrarySearchText(row){
+    return [
+      row.dataset.playerName,
+      row.dataset.playerDisplay,
+      row.dataset.playerClub,
+      row.dataset.videoTitle,
+      row.querySelector('[data-video-published-date]')?.textContent
+    ].filter(Boolean).join(' ').toLocaleLowerCase('en');
+  }
+
+  function activeVideoLibraryFormat(panel){
+    const active = panel && panel.querySelector('[data-video-library-tab].active');
+    return active && active.dataset.videoLibraryTab === 'short' ? 'short' : 'long';
+  }
+
+  function applyVideoLibraryPanel(panel){
+    if(!panel) return;
+    const format = activeVideoLibraryFormat(panel);
+    const pane = panel.querySelector('[data-video-library-pane="' + format + '"]');
+    if(!pane) return;
+
+    const direction = panel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest';
+    const query = String(panel.dataset.videoLibraryQuery || '').trim().toLocaleLowerCase('en');
+    sortVideoLibraryPane(pane, direction);
+
+    const rows = Array.from(pane.querySelectorAll('[data-video-library-row]'));
+    let shown = 0;
+    rows.forEach(row => {
+      const match = !query || videoLibrarySearchText(row).includes(query);
+      row.hidden = !match;
+      if(match) shown += 1;
+    });
+
+    const count = panel.querySelector('[data-video-library-count]');
+    if(count){
+      const noun = format === 'short' ? 'SHORTS' : 'VIDEOS';
+      count.textContent = query ? (shown + ' / ' + rows.length) : (rows.length + ' ' + noun);
+    }
+
+    const sortButton = panel.querySelector('[data-video-library-sort]');
+    if(sortButton){
+      sortButton.textContent = direction === 'oldest' ? 'OLDEST' : 'NEWEST';
+      sortButton.setAttribute('aria-label', direction === 'oldest'
+        ? 'Sort Video Library newest first'
+        : 'Sort Video Library oldest first');
+      sortButton.title = 'Sort by YouTube publication time';
+    }
+  }
+
+  function videoLibraryPanels(){
+    return Array.from(document.querySelectorAll('.video-library-panel'));
+  }
+
+  function setVideoLibraryState(sourcePanel, patch){
+    const panels = videoLibraryPanels();
+    if(!sourcePanel) sourcePanel = panels[0] || null;
+    if(!sourcePanel) return;
+
+    const format = patch.format || activeVideoLibraryFormat(sourcePanel) || 'long';
+    const sort = patch.sort || sourcePanel.dataset.videoLibrarySort || 'newest';
+    const query = patch.query !== undefined ? patch.query : (sourcePanel.dataset.videoLibraryQuery || '');
+
+    panels.forEach(panel => {
+      panel.dataset.videoLibrarySort = sort === 'oldest' ? 'oldest' : 'newest';
+      panel.dataset.videoLibraryQuery = query;
+      panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
+        const active = button.dataset.videoLibraryTab === format;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panel.querySelectorAll('[data-video-library-pane]').forEach(pane => {
+        pane.hidden = pane.dataset.videoLibraryPane !== format;
+      });
+      const input = panel.querySelector('[data-video-library-search]');
+      if(input && input.value !== query) input.value = query;
+      applyVideoLibraryPanel(panel);
+    });
   }
 
   function dispatchVideoLibrarySelection(row){
@@ -88,7 +165,7 @@
         videoId:String(row.dataset.youtubeId || ''),
         format:format,
         title:String(row.dataset.playerDisplay || row.dataset.videoTitle || ''),
-        siteAdded:String(row.dataset.siteAdded || ''),
+        publishedAtMs:publishedMs(row),
         url:String(row.dataset.playerUrl || row.dataset.videoUrl || '')
       }
     }));
@@ -97,12 +174,9 @@
   function selectShortInOverview(row){
     if(!row) return;
 
-    document.querySelectorAll('[data-video-library-row].selected').forEach(item => item.classList.remove('selected'));
-    row.classList.add('selected');
-
     const title = String(row.dataset.videoTitle || 'SkyrScout Short');
     const videoId = String(row.dataset.youtubeId || '');
-    const siteAdded = String(row.dataset.siteAdded || '');
+    const published = row.querySelector('[data-video-published-date]')?.textContent || '';
     const badgeEl = document.getElementById('selectedPlayerBadge');
     const thumbEl = document.getElementById('selectedPlayerThumb');
     const nameEl = document.getElementById('selectedPlayerName');
@@ -120,40 +194,51 @@
       thumbEl.alt = title + ' thumbnail';
     }
     if(nameEl) nameEl.textContent = title;
-    if(metaEl) metaEl.innerHTML = 'YouTube Short' + (siteAdded ? '<br/>Added ' + siteAdded : '');
+    if(metaEl) metaEl.innerHTML = 'YouTube Short' + (published ? '<br/>' + published : '');
     if(trafficTitle) trafficTitle.textContent = title + ' // Traffic / Audience';
 
     document.querySelectorAll('[data-selected-metric]').forEach(el => { el.textContent = '—'; });
   }
 
-  function activateVideoLibraryPanel(panel, format){
-    if(!panel) return;
-    const next = format === 'short' ? 'short' : 'long';
-    panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
-      const active = button.dataset.videoLibraryTab === next;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-selected', active ? 'true' : 'false');
+  function markVideoLibrarySelection(videoId){
+    document.querySelectorAll('[data-video-library-row]').forEach(item => {
+      item.classList.toggle('selected', String(item.dataset.youtubeId || '') === videoId);
     });
-    panel.querySelectorAll('[data-video-library-pane]').forEach(pane => {
-      pane.hidden = pane.dataset.videoLibraryPane !== next;
-    });
+  }
+
+  function guideToSelectedVideo(sourceRow){
+    const cameFromFocus = !!sourceRow.closest('#consoleFocusShell');
+    if(cameFromFocus){
+      const close = document.getElementById('consoleFocusClose');
+      if(close) close.click();
+    }
+
+    window.setTimeout(() => {
+      const panel = document.getElementById('selectedPlayerPanel');
+      if(!panel) return;
+      panel.classList.remove('selection-arrival');
+      void panel.offsetWidth;
+      panel.classList.add('selection-arrival');
+      panel.scrollIntoView({behavior:'smooth', block:'nearest', inline:'nearest'});
+      window.setTimeout(() => panel.classList.remove('selection-arrival'), 1100);
+    }, cameFromFocus ? 90 : 0);
   }
 
   function chooseVideoLibraryRow(row){
     if(!row) return;
+    const videoId = String(row.dataset.youtubeId || '');
+    markVideoLibrarySelection(videoId);
     dispatchVideoLibrarySelection(row);
     if(row.dataset.videoFormat === 'short') selectShortInOverview(row);
+    guideToSelectedVideo(row);
   }
 
   function initVideoLibrary(){
-    document.querySelectorAll('.video-library-panel [data-video-library-pane]').forEach(sortVideoLibraryPane);
     document.querySelectorAll('.video-library-panel [data-video-library-row]').forEach(row => {
       row.setAttribute('tabindex','0');
       row.setAttribute('role','button');
     });
 
-    // Focus Mode clones panels with cloneNode(true), which does not copy element-level
-    // event listeners. Delegate from document so tabs and rows keep working in clones.
     document.addEventListener('click', event => {
       const tab = event.target.closest('[data-video-library-tab]');
       if(tab){
@@ -161,7 +246,19 @@
         if(panel){
           event.preventDefault();
           event.stopPropagation();
-          activateVideoLibraryPanel(panel, tab.dataset.videoLibraryTab);
+          setVideoLibraryState(panel,{format:tab.dataset.videoLibraryTab});
+          return;
+        }
+      }
+
+      const sortButton = event.target.closest('[data-video-library-sort]');
+      if(sortButton){
+        const panel = sortButton.closest('.video-library-panel');
+        if(panel){
+          event.preventDefault();
+          event.stopPropagation();
+          const sort = panel.dataset.videoLibrarySort === 'oldest' ? 'newest' : 'oldest';
+          setVideoLibraryState(panel,{sort});
           return;
         }
       }
@@ -170,6 +267,14 @@
       if(row && row.closest('.video-library-panel')){
         chooseVideoLibraryRow(row);
       }
+    });
+
+    document.addEventListener('input', event => {
+      const search = event.target.closest && event.target.closest('[data-video-library-search]');
+      if(!search) return;
+      const panel = search.closest('.video-library-panel');
+      if(!panel) return;
+      setVideoLibraryState(panel,{query:search.value || ''});
     });
 
     document.addEventListener('keydown', event => {
@@ -181,9 +286,11 @@
       }
     });
 
-    document.querySelectorAll('.video-library-panel').forEach(panel => {
-      activateVideoLibraryPanel(panel, 'long');
+    document.addEventListener('controlroom:videometadataupdated', () => {
+      videoLibraryPanels().forEach(applyVideoLibraryPanel);
     });
+
+    setVideoLibraryState(videoLibraryPanels()[0] || null,{format:'long',sort:'newest',query:''});
   }
 
   let activeRequestToken = 0;

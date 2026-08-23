@@ -9,7 +9,9 @@
     'currentHourViews',
     'previousHourViews',
     'last48hViews',
-    'activityStatus'
+    'activityStatus',
+    'videoType',
+    'publishedAtMs'
   ];
 
   const ISO_TO_MAP = {
@@ -151,19 +153,49 @@
         currentHourViews: numberOrNull(get('currentHourViews')),
         previousHourViews: numberOrNull(get('previousHourViews')),
         last48hViews: numberOrNull(get('last48hViews')),
-        activityStatus: String(get('activityStatus') || '')
+        activityStatus: String(get('activityStatus') || ''),
+        videoType: String(get('videoType') || ''),
+        publishedAtMs: numberOrNull(get('publishedAtMs'))
       });
     });
     return out;
   }
 
+  function fmtPublishedDate(value){
+    const n = numberOrNull(value);
+    if(n === null) return 'Publish date unavailable';
+    const d = new Date(n);
+    if(Number.isNaN(d.getTime())) return 'Publish date unavailable';
+    try{
+      return 'Published ' + new Intl.DateTimeFormat('en-GB',{
+        day:'numeric', month:'short', year:'numeric'
+      }).format(d);
+    }catch(_){
+      return 'Published ' + d.toISOString().slice(0,10);
+    }
+  }
+
   function populateLibrary(){
-    document.querySelectorAll('[data-video-library-row]').forEach(row => {
-      const videoId = String(row.dataset.youtubeId || '').trim();
+    document.querySelectorAll('[data-video-library-row], [data-yt-video-row]').forEach(row => {
+      const videoId = String(row.dataset.youtubeId || row.dataset.ytVideoId || '').trim();
+      if(!videoId) return;
       const item = state.byVideoId.get(videoId);
+      if(item && item.publishedAtMs !== null){
+        row.dataset.youtubePublishedAt = String(item.publishedAtMs);
+      }else{
+        delete row.dataset.youtubePublishedAt;
+      }
+
+      const published = row.querySelector('[data-video-published-date]');
+      if(published) published.textContent = item ? fmtPublishedDate(item.publishedAtMs) : 'Publish date unavailable';
+
       const value = row.querySelector('[data-player-live-value], [data-short-live-value]');
       if(value) value.textContent = item ? fmtNumber(item.totalViews) : '—';
     });
+
+    document.dispatchEvent(new CustomEvent('controlroom:videometadataupdated',{
+      detail:{checkedAt:state.checkedAt}
+    }));
   }
 
   function setMetric(cardKey, label, value){

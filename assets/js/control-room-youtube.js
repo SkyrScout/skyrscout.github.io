@@ -111,21 +111,114 @@
   function qa(sel, root){ return Array.from((root || screen).querySelectorAll(sel)); }
   function isYouTubeUi(node){ return !!(node && (screen.contains(node) || node.closest('#consoleFocusShell'))); }
 
+
+  function publishedMs(row){
+    const n = Number(row && row.dataset ? row.dataset.youtubePublishedAt : NaN);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }
+
+  function publishedLabel(row){
+    const small = row && row.querySelector ? row.querySelector('[data-video-published-date]') : null;
+    return small ? String(small.textContent || '') : '';
+  }
+
+  function selectorSearchText(row){
+    return [
+      row.dataset.ytVideoTitle,
+      row.dataset.ytVideoName,
+      row.dataset.ytVideoMeta,
+      publishedLabel(row)
+    ].filter(Boolean).join(' ').toLocaleLowerCase('en');
+  }
+
+  function selectorPanels(){
+    return Array.from(document.querySelectorAll('.yt-video-selector-panel'));
+  }
+
+  function activeSelectorFormat(panel){
+    const active = panel && panel.querySelector('[data-yt-format-tab].active');
+    return active && active.dataset.ytFormatTab === 'short' ? 'short' : 'long';
+  }
+
+  function applySelectorPanel(panel){
+    if(!panel) return;
+    const format = activeSelectorFormat(panel);
+    const pane = panel.querySelector('[data-yt-video-pane="' + format + '"]');
+    if(!pane) return;
+
+    const direction = panel.dataset.ytVideoSort === 'oldest' ? 'oldest' : 'newest';
+    const query = String(panel.dataset.ytVideoQuery || '').trim().toLocaleLowerCase('en');
+    const list = pane.querySelector('.yt-video-list');
+    const rows = Array.from(pane.querySelectorAll('[data-yt-video-row]'));
+
+    rows.sort((a,b) => {
+      const aDate = publishedMs(a);
+      const bDate = publishedMs(b);
+      if(aDate === null && bDate !== null) return 1;
+      if(aDate !== null && bDate === null) return -1;
+      if(aDate !== null && bDate !== null && aDate !== bDate){
+        return direction === 'oldest' ? aDate - bDate : bDate - aDate;
+      }
+      return String(a.dataset.ytVideoTitle || '').localeCompare(String(b.dataset.ytVideoTitle || ''), 'en');
+    });
+    if(list) rows.forEach(row => list.appendChild(row));
+
+    let shown = 0;
+    rows.forEach(row => {
+      const match = !query || selectorSearchText(row).includes(query);
+      row.hidden = !match;
+      if(match) shown += 1;
+    });
+
+    const count = panel.querySelector('[data-yt-video-count]');
+    if(count){
+      const noun = format === 'short' ? 'SHORTS' : 'VIDEOS';
+      count.textContent = query ? (shown + ' / ' + rows.length) : (rows.length + ' ' + noun);
+    }
+
+    const sortButton = panel.querySelector('[data-yt-video-sort]');
+    if(sortButton){
+      sortButton.textContent = direction === 'oldest' ? 'OLDEST' : 'NEWEST';
+      sortButton.setAttribute('aria-label', direction === 'oldest'
+        ? 'Sort Video Selector newest first'
+        : 'Sort Video Selector oldest first');
+      sortButton.title = 'Sort by YouTube publication time';
+    }
+  }
+
+  function setSelectorState(sourcePanel, patch){
+    if(!sourcePanel) sourcePanel = selectorPanels()[0] || null;
+    if(!sourcePanel) return;
+    const format = patch.format || activeSelectorFormat(sourcePanel) || 'long';
+    const sort = patch.sort || sourcePanel.dataset.ytVideoSort || 'newest';
+    const query = patch.query !== undefined ? patch.query : (sourcePanel.dataset.ytVideoQuery || '');
+
+    selectorPanels().forEach(panel => {
+      panel.dataset.ytVideoSort = sort === 'oldest' ? 'oldest' : 'newest';
+      panel.dataset.ytVideoQuery = query;
+      panel.querySelectorAll('[data-yt-format-tab]').forEach(btn => {
+        const active = btn.dataset.ytFormatTab === format;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panel.querySelectorAll('[data-yt-video-pane]').forEach(pane => {
+        pane.hidden = pane.dataset.ytVideoPane !== format;
+      });
+      const input = panel.querySelector('[data-yt-video-search]');
+      if(input && input.value !== query) input.value = query;
+      applySelectorPanel(panel);
+    });
+  }
+
   function setFormat(format){
     const next = format === 'short' ? 'short' : 'long';
-    qa('[data-yt-format-tab]').forEach(btn => {
-      const active = btn.dataset.ytFormatTab === next;
-      btn.classList.toggle('active', active);
-      btn.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-    qa('[data-yt-video-pane]').forEach(pane => {
-      pane.hidden = pane.dataset.ytVideoPane !== next;
-    });
+    setSelectorState(selectorPanels()[0] || null,{format:next});
+
     const type = q('[data-yt-selected-type]');
     if(type) type.textContent = next === 'short' ? 'SHORT' : 'LONG VIDEO';
 
     const selectedInPane = q('[data-yt-video-pane="' + next + '"] [data-yt-video-row].selected');
-    const firstInPane = q('[data-yt-video-pane="' + next + '"] [data-yt-video-row]');
+    const firstInPane = q('[data-yt-video-pane="' + next + '"] [data-yt-video-row]:not([hidden])');
     selectVideo(selectedInPane || firstInPane);
   }
 
@@ -137,12 +230,12 @@
     const id = String(row.dataset.ytVideoId || '');
     const title = String(row.dataset.ytVideoTitle || row.dataset.ytVideoName || 'Selected video');
     const meta = String(row.dataset.ytVideoMeta || '');
-    const date = String(row.dataset.ytVideoDate || '');
+    const publishText = publishedLabel(row);
     const format = row.dataset.ytVideoFormat === 'short' ? 'short' : 'long';
 
     qa('[data-yt-selected-title]').forEach(el => { el.textContent = title; });
     qa('[data-yt-selected-meta]').forEach(el => {
-      el.textContent = [meta, date ? 'Added ' + date : ''].filter(Boolean).join(' · ');
+      el.textContent = [meta, publishText].filter(Boolean).join(' · ');
     });
     qa('[data-yt-selected-type]').forEach(el => { el.textContent = format === 'short' ? 'SHORT' : 'LONG VIDEO'; });
     qa('[data-yt-selected-thumb]').forEach(img => {
@@ -237,16 +330,17 @@
       event.preventDefault();
       event.stopPropagation();
       setFormat(formatTab.dataset.ytFormatTab);
-      const clonePanel = formatTab.closest('#consoleFocusShell .youtube-panel');
-      if(clonePanel){
-        clonePanel.querySelectorAll('[data-yt-format-tab]').forEach(btn => {
-          const active = btn.dataset.ytFormatTab === (formatTab.dataset.ytFormatTab === 'short' ? 'short' : 'long');
-          btn.classList.toggle('active', active);
-          btn.setAttribute('aria-selected', active ? 'true' : 'false');
-        });
-        clonePanel.querySelectorAll('[data-yt-video-pane]').forEach(pane => {
-          pane.hidden = pane.dataset.ytVideoPane !== (formatTab.dataset.ytFormatTab === 'short' ? 'short' : 'long');
-        });
+      return;
+    }
+
+    const sortButton = event.target.closest('[data-yt-video-sort]');
+    if(sortButton && isYouTubeUi(sortButton)){
+      event.preventDefault();
+      event.stopPropagation();
+      const panel = sortButton.closest('.yt-video-selector-panel');
+      if(panel){
+        const sort = panel.dataset.ytVideoSort === 'oldest' ? 'newest' : 'oldest';
+        setSelectorState(panel,{sort});
       }
       return;
     }
@@ -276,10 +370,25 @@
     }
   });
 
+
+  document.addEventListener('input', event => {
+    const search = event.target.closest && event.target.closest('[data-yt-video-search]');
+    if(!search || !isYouTubeUi(search)) return;
+    const panel = search.closest('.yt-video-selector-panel');
+    if(panel) setSelectorState(panel,{query:search.value || ''});
+  });
+
+  document.addEventListener('controlroom:videometadataupdated', () => {
+    selectorPanels().forEach(applySelectorPanel);
+    const selected = q('[data-yt-video-row].selected');
+    if(selected) selectVideo(selected);
+  });
+
   window.SkyrScoutYouTubeUi = Object.freeze({
     setLatestAvailable: setLatestAvailableLabel
   });
 
+  selectorPanels().forEach(panel => { panel.dataset.ytVideoSort = 'newest'; panel.dataset.ytVideoQuery = ''; });
   renderDetail('external');
   setFormat('long');
 })();
