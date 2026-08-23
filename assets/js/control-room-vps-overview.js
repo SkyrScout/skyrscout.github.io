@@ -1129,11 +1129,12 @@
       }
 
       .vps-city-nodes{
-        pointer-events:none
+        pointer-events:all
       }
 
-      .vps-city-node{
-        pointer-events:visiblePainted;
+      .vps-city-node,
+      .vps-city-node *{
+        pointer-events:all;
         cursor:default
       }
 
@@ -1257,6 +1258,19 @@
         button.type = 'button';
         button.dataset.vpsGeoWindow = key;
         button.textContent = key.toUpperCase();
+
+        // The map's own pointerdown handler starts drag/pointer-capture on any
+        // control that is not inside .map-nav. Keep period controls completely
+        // outside that drag lifecycle so 7D/28D/90D clicks are reliable.
+        button.addEventListener('pointerdown', event => {
+          event.stopPropagation();
+        });
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+          setGeographyWindow(key);
+        });
+
         windowNav.appendChild(button);
       });
       body.appendChild(windowNav);
@@ -1277,6 +1291,18 @@
         cityButton.type = 'button';
         cityButton.className = 'vps-map-city-toggle';
         cityButton.dataset.vpsCityToggle = '1';
+        cityButton.addEventListener('pointerdown', event => {
+          event.stopPropagation();
+        });
+        cityButton.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+          if(cityButton.disabled){
+            return;
+          }
+          state.cityMode = !state.cityMode;
+          renderMapTraffic();
+        });
         const world = nav.querySelector('.map-world-btn');
         if(world){
           world.insertAdjacentElement('afterend',cityButton);
@@ -1484,6 +1510,21 @@
           ? ''
           : ' · ' + fmtNumber(city.views) + ' views'
       );
+
+      // Handle city hover on the marker itself and stop the map's older
+      // country-hover handler from immediately hiding the same label.
+      g.addEventListener('mousemove', event => {
+        event.stopPropagation();
+        showCityHover(event,g);
+      });
+      g.addEventListener('mouseenter', event => {
+        event.stopPropagation();
+        showCityHover(event,g);
+      });
+      g.addEventListener('mouseleave', event => {
+        event.stopPropagation();
+        hideCityHover(body);
+      });
 
       const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
       halo.setAttribute('class','vps-city-halo');
