@@ -45,6 +45,15 @@
     likeWindow: '24h'
   };
 
+  // Video Library interaction state is deliberately kept outside the DOM.
+  // Only the explicit NEWEST/OLDEST button may change `sort`.
+  // Search, clear, row selection, LONG/SHORT tabs and Focus Mode never mutate it.
+  const videoLibraryState = {
+    format: 'long',
+    sort: 'newest',
+    query: ''
+  };
+
   function publishedMs(row){
     const n = Number(row && row.dataset ? row.dataset.youtubePublishedAt : NaN);
     return Number.isFinite(n) && n > 0 ? n : null;
@@ -60,8 +69,7 @@
     rows.sort((a,b) => {
       const aDate = publishedMs(a);
       const bDate = publishedMs(b);
-      // Rows without a YouTube publication timestamp stay at the bottom in
-      // either direction; they must never jump to the top as "oldest".
+      // Missing YouTube publication timestamps always stay at the bottom.
       if(aDate === null && bDate !== null) return 1;
       if(aDate !== null && bDate === null) return -1;
       if(aDate !== null && bDate !== null && aDate !== bDate){
@@ -84,28 +92,49 @@
     ].filter(Boolean).join(' ').toLocaleLowerCase('en');
   }
 
-  function activeVideoLibraryFormat(panel){
-    const active = panel && panel.querySelector('[data-video-library-tab].active');
-    return active && active.dataset.videoLibraryTab === 'short' ? 'short' : 'long';
+  function videoLibraryPanels(){
+    return Array.from(document.querySelectorAll('.video-library-panel'));
   }
 
-  function applyVideoLibraryPanel(panel){
+  function renderVideoLibraryPanel(panel){
     if(!panel) return;
-    const format = activeVideoLibraryFormat(panel);
-    const pane = panel.querySelector('[data-video-library-pane="' + format + '"]');
-    if(!pane) return;
 
-    const query = String(panel.dataset.videoLibraryQuery || '').trim().toLocaleLowerCase('en');
-    const sortDirection = panel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest';
-    sortVideoLibraryPane(pane, sortDirection);
+    const format = videoLibraryState.format === 'short' ? 'short' : 'long';
+    const direction = videoLibraryState.sort === 'oldest' ? 'oldest' : 'newest';
+    const query = String(videoLibraryState.query || '').trim().toLocaleLowerCase('en');
+
+    // DOM data mirrors state for diagnostics only. No handler reads these values
+    // to decide whether sort should change.
+    panel.dataset.videoLibrarySort = direction;
+    panel.dataset.videoLibraryQuery = videoLibraryState.query;
+
+    panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
+      const active = button.dataset.videoLibraryTab === format;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    panel.querySelectorAll('[data-video-library-pane]').forEach(pane => {
+      pane.hidden = pane.dataset.videoLibraryPane !== format;
+    });
+
+    const input = panel.querySelector('[data-video-library-search]');
+    if(input && input.value !== videoLibraryState.query) input.value = videoLibraryState.query;
 
     panel.querySelectorAll('[data-video-library-sort]').forEach(button => {
-      button.textContent = sortDirection === 'oldest' ? 'OLDEST' : 'NEWEST';
-      const next = sortDirection === 'oldest' ? 'newest' : 'oldest';
-      button.setAttribute('aria-label','Sort Video Library ' + next + ' first');
-      button.title = 'Sort by YouTube publication time · ' + (sortDirection === 'oldest' ? 'oldest first' : 'newest first');
-      button.setAttribute('aria-pressed', sortDirection === 'oldest' ? 'true' : 'false');
+      button.textContent = direction === 'oldest' ? 'OLDEST' : 'NEWEST';
+      button.setAttribute('aria-label', direction === 'oldest'
+        ? 'Video Library sorted oldest first. Click for newest first.'
+        : 'Video Library sorted newest first. Click for oldest first.');
+      button.title = direction === 'oldest'
+        ? 'Oldest first · click for newest first'
+        : 'Newest first · click for oldest first';
+      button.setAttribute('aria-pressed', direction === 'oldest' ? 'true' : 'false');
     });
+
+    const pane = panel.querySelector('[data-video-library-pane="' + format + '"]');
+    if(!pane) return;
+    sortVideoLibraryPane(pane, direction);
 
     const rows = Array.from(pane.querySelectorAll('[data-video-library-row]'));
     let shown = 0;
@@ -120,39 +149,10 @@
       const noun = format === 'short' ? 'SHORTS' : 'VIDEOS';
       count.textContent = query ? (shown + ' / ' + rows.length) : (rows.length + ' ' + noun);
     }
-
   }
 
-  function videoLibraryPanels(){
-    return Array.from(document.querySelectorAll('.video-library-panel'));
-  }
-
-  function setVideoLibraryState(sourcePanel, patch){
-    const panels = videoLibraryPanels();
-    if(!sourcePanel) sourcePanel = panels[0] || null;
-    if(!sourcePanel) return;
-
-    const format = patch.format || activeVideoLibraryFormat(sourcePanel) || 'long';
-    const query = patch.query !== undefined ? patch.query : (sourcePanel.dataset.videoLibraryQuery || '');
-    const sortDirection = patch.sort !== undefined
-      ? (patch.sort === 'oldest' ? 'oldest' : 'newest')
-      : (sourcePanel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest');
-
-    panels.forEach(panel => {
-      panel.dataset.videoLibraryQuery = query;
-      panel.dataset.videoLibrarySort = sortDirection;
-      panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
-        const active = button.dataset.videoLibraryTab === format;
-        button.classList.toggle('active', active);
-        button.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      panel.querySelectorAll('[data-video-library-pane]').forEach(pane => {
-        pane.hidden = pane.dataset.videoLibraryPane !== format;
-      });
-      const input = panel.querySelector('[data-video-library-search]');
-      if(input && input.value !== query) input.value = query;
-      applyVideoLibraryPanel(panel);
-    });
+  function renderVideoLibrary(){
+    videoLibraryPanels().forEach(renderVideoLibraryPanel);
   }
 
   function dispatchVideoLibrarySelection(row){
@@ -213,10 +213,10 @@
   function guideToSelectedVideo(sourceRow){
     const cameFromFocus = !!sourceRow.closest('#consoleFocusShell');
     if(cameFromFocus){
-      // Close through the focus controller itself. The button click remains a
-      // fallback for older cached control-room.js versions.
       document.dispatchEvent(new CustomEvent('controlroom:closefocus'));
       const close = document.getElementById('consoleFocusClose');
+      // Compatibility fallback. This button is outside the Video Library panel,
+      // so it cannot be interpreted as a sort action.
       if(close && document.body.classList.contains('console-focus-open')) close.click();
     }
 
@@ -226,8 +226,6 @@
       panel.classList.remove('selection-arrival');
       void panel.offsetWidth;
       panel.classList.add('selection-arrival');
-      // Desktop Overview already shows Selected Video beside the Library.
-      // Scroll only when returning from Focus Mode or on a narrow layout.
       if(cameFromFocus || window.matchMedia('(max-width: 900px)').matches){
         panel.scrollIntoView({behavior:'smooth', block:'nearest', inline:'nearest'});
       }
@@ -239,6 +237,15 @@
     if(!row) return;
     const videoId = String(row.dataset.youtubeId || '');
     markVideoLibrarySelection(videoId);
+
+    // Long-form rows use the established Selected Video updater. In Focus Mode,
+    // resolve the corresponding Overview row so the canonical DOM remains source.
+    if(row.dataset.videoFormat !== 'short' && window.SkyrScoutControlRoom && typeof window.SkyrScoutControlRoom.updateSelectedPlayer === 'function'){
+      const original = Array.from(document.querySelectorAll('.dashboard [data-player-row]'))
+        .find(item => String(item.dataset.youtubeId || '') === videoId);
+      window.SkyrScoutControlRoom.updateSelectedPlayer(original || row);
+    }
+
     dispatchVideoLibrarySelection(row);
     if(row.dataset.videoFormat === 'short') selectShortInOverview(row);
     guideToSelectedVideo(row);
@@ -252,71 +259,51 @@
       });
     });
 
-    function refreshVideoLibrary(){
-      videoLibraryPanels().forEach(applyVideoLibraryPanel);
-    }
-
-    // Capture phase is deliberate: only the explicit sort button is allowed to
-    // change sort direction. Row clicks and the search X are fully consumed here
-    // before any older/bubble-phase handler can mistake them for a sort action.
+    // Normal bubble-phase delegation. It coexists with Control Room Focus Mode
+    // instead of intercepting the entire console in capture phase.
     document.addEventListener('click', event => {
       const target = event.target && event.target.closest ? event.target : null;
       if(!target) return;
-      const panel = target.closest('.video-library-panel');
-      if(!panel) return;
 
-      const sortButton = target.closest('[data-video-library-sort]');
-      if(sortButton){
+      const sortButton = target.closest('button[data-video-library-sort]');
+      if(sortButton && sortButton.closest('.video-library-panel')){
         event.preventDefault();
-        event.stopImmediatePropagation();
-        const current = panel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest';
-        setVideoLibraryState(panel,{sort:current === 'newest' ? 'oldest' : 'newest'});
+        // THIS IS THE ONLY USER INTERACTION THAT MAY CHANGE SORT.
+        videoLibraryState.sort = videoLibraryState.sort === 'newest' ? 'oldest' : 'newest';
+        renderVideoLibrary();
         return;
       }
 
-      const tab = target.closest('[data-video-library-tab]');
-      if(tab){
+      const tab = target.closest('button[data-video-library-tab]');
+      if(tab && tab.closest('.video-library-panel')){
         event.preventDefault();
-        event.stopImmediatePropagation();
-        setVideoLibraryState(panel,{format:tab.dataset.videoLibraryTab});
+        videoLibraryState.format = tab.dataset.videoLibraryTab === 'short' ? 'short' : 'long';
+        renderVideoLibrary();
         return;
       }
 
-      const clearButton = target.closest('[data-video-library-clear]');
-      if(clearButton){
+      const clearButton = target.closest('button[data-video-library-clear]');
+      if(clearButton && clearButton.closest('.video-library-panel')){
         event.preventDefault();
-        event.stopImmediatePropagation();
-        setVideoLibraryState(panel,{query:''});
-        const input = panel.querySelector('[data-video-library-search]');
+        videoLibraryState.query = '';
+        renderVideoLibrary();
+        const input = clearButton.closest('.video-library-panel')?.querySelector('[data-video-library-search]');
         if(input) input.focus();
         return;
       }
 
       const row = target.closest('[data-video-library-row]');
-      if(row){
+      if(row && row.closest('.video-library-panel')){
         event.preventDefault();
-        event.stopImmediatePropagation();
-
-        // For long videos use the established Selected Video updater on the
-        // original Overview row so title/club/thumbnail remain correct.
-        if(row.dataset.videoFormat !== 'short' && window.SkyrScoutControlRoom && typeof window.SkyrScoutControlRoom.updateSelectedPlayer === 'function'){
-          const id = String(row.dataset.youtubeId || '');
-          const original = Array.from(document.querySelectorAll('.dashboard [data-player-row]'))
-            .find(item => String(item.dataset.youtubeId || '') === id);
-          window.SkyrScoutControlRoom.updateSelectedPlayer(original || row);
-        }
-
         chooseVideoLibraryRow(row);
-        return;
       }
-    }, true);
+    });
 
     document.addEventListener('input', event => {
       const search = event.target.closest && event.target.closest('[data-video-library-search]');
-      if(!search) return;
-      const panel = search.closest('.video-library-panel');
-      if(!panel) return;
-      setVideoLibraryState(panel,{query:search.value || ''});
+      if(!search || !search.closest('.video-library-panel')) return;
+      videoLibraryState.query = search.value || '';
+      renderVideoLibrary();
     });
 
     document.addEventListener('keydown', event => {
@@ -324,14 +311,12 @@
       if(!row || !row.closest('.video-library-panel')) return;
       if(event.key === 'Enter' || event.key === ' '){
         event.preventDefault();
-        event.stopImmediatePropagation();
         chooseVideoLibraryRow(row);
       }
-    }, true);
+    });
 
-    document.addEventListener('controlroom:videometadataupdated', refreshVideoLibrary);
-
-    setVideoLibraryState(videoLibraryPanels()[0] || null,{format:'long',query:'',sort:'newest'});
+    document.addEventListener('controlroom:videometadataupdated', renderVideoLibrary);
+    renderVideoLibrary();
   }
 
   let activeRequestToken = 0;
