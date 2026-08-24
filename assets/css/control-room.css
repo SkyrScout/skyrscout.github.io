@@ -2231,10 +2231,10 @@ body.hf-alert-flash::after{
 /* Selected Traffic/Audience stays Analytics-only until a real selected-video Analytics feed exists. */
 .selected-analytics-note{margin-top:8px;padding-top:8px;border-top:1px solid #10232c}
 
-/* Overview Video Library is intentionally fixed to newest-first. */
-.video-library-panel [data-video-library-sort]{display:none!important}
+/* Video Library sort control remains visible in Overview and Focus Mode. */
+.video-library-head .video-library-sort{margin-left:auto;flex:0 0 auto}
 
-/* === Realtime Monitor v3: bucket histogram + explicit unsampled buckets === */
+/* === Realtime Monitor v4: bucket histogram + partial-bucket visibility === */
 .realtime-yscale span{
   position:absolute!important;
   right:0!important;
@@ -2259,7 +2259,13 @@ body.hf-alert-flash::after{
   opacity:.78;
   shape-rendering:crispEdges;
 }
+.realtime-bucket.is-partial{
+  fill:#d8a963;
+  opacity:.9;
+}
 .realtime-bucket.is-negative{opacity:.48}
+.realtime-bucket.is-partial.is-negative{opacity:.68}
+.realtime-main [data-realtime-total].is-partial{color:#d8a963}
 .realtime-gap-band{
   fill:rgba(122,151,164,.045);
   stroke:rgba(122,151,164,.34);

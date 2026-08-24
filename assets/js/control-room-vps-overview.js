@@ -365,14 +365,57 @@
     return Math.round(n).toLocaleString('en-US');
   }
 
-  function buildRealtimeChart(values){
-    const safe = Array.isArray(values)
-      ? values.map(value => numberOrNull(value))
+  function buildRealtimeChart(windowData){
+    const exact = Array.isArray(windowData && windowData.values)
+      ? windowData.values.map(value => numberOrNull(value))
       : [];
+    const partial = Array.isArray(windowData && windowData.partialValues)
+      ? windowData.partialValues.map(value => numberOrNull(value))
+      : [];
+    const sampled = Array.isArray(windowData && windowData.bucketSampledVideos)
+      ? windowData.bucketSampledVideos.map(value => numberOrNull(value))
+      : [];
+    const missing = Array.isArray(windowData && windowData.bucketMissingVideos)
+      ? windowData.bucketMissingVideos.map(value => numberOrNull(value))
+      : [];
+    const incomplete = new Set(
+      Array.isArray(windowData && windowData.incompleteBuckets)
+        ? windowData.incompleteBuckets.map(Number).filter(Number.isInteger)
+        : []
+    );
+    const expectedVideos = numberOrNull(windowData && windowData.expectedVideos);
+    const count = Math.max(exact.length, partial.length, sampled.length, missing.length);
 
-    const finite = safe.filter(value => value !== null);
+    const buckets = Array.from({length:count}, (_,index) => {
+      const exactValue = index < exact.length ? exact[index] : null;
+      if(exactValue !== null){
+        return {
+          value:exactValue,
+          partial:false,
+          sampled:index < sampled.length ? sampled[index] : expectedVideos,
+          missing:index < missing.length ? missing[index] : 0
+        };
+      }
+
+      const partialValue = index < partial.length ? partial[index] : null;
+      const sampledCount = index < sampled.length ? sampled[index] : null;
+      const missingCount = index < missing.length ? missing[index] : null;
+      const hasKnownSubtotal = incomplete.has(index) && partialValue !== null && sampledCount !== null && sampledCount > 0;
+      if(hasKnownSubtotal){
+        return {
+          value:partialValue,
+          partial:true,
+          sampled:sampledCount,
+          missing:missingCount
+        };
+      }
+
+      return {value:null,partial:false,sampled:sampledCount,missing:missingCount};
+    });
+
+    const finite = buckets.map(bucket => bucket.value).filter(value => value !== null);
     if(!finite.length){
-      return {bars:[], gaps:[], ticks:[], zero:null};
+      return {bars:[], gaps:[], ticks:[], zero:null, expectedVideos:expectedVideos};
     }
 
     const rawMax = Math.max(0, ...finite);
@@ -385,23 +428,35 @@
     const span = Math.max(1, yMax - yMin);
     const zeroY = ((yMax - 0) / span) * height;
     const yFor = value => ((yMax - value) / span) * height;
-    const slot = safe.length ? width / safe.length : width;
+    const slot = buckets.length ? width / buckets.length : width;
     const inset = Math.max(1.5, slot * 0.12);
     const barWidth = Math.max(2, slot - inset * 2);
     const bars = [];
     const gaps = [];
 
-    safe.forEach((value,index) => {
+    buckets.forEach((bucket,index) => {
       const x = index * slot + inset;
-      if(value === null){
+      if(bucket.value === null){
         gaps.push({x:index * slot + 1, width:Math.max(2,slot - 2), index:index});
         return;
       }
-      const yValue = yFor(value);
-      const negative = value < 0;
+      const yValue = yFor(bucket.value);
+      const negative = bucket.value < 0;
       const y = negative ? zeroY : yValue;
       const h = Math.max(1.2, Math.abs(yValue - zeroY));
-      bars.push({x:x, y:y, width:barWidth, height:h, value:value, negative:negative, index:index});
+      bars.push({
+        x:x,
+        y:y,
+        width:barWidth,
+        height:h,
+        value:bucket.value,
+        negative:negative,
+        partial:bucket.partial,
+        sampled:bucket.sampled,
+        missing:bucket.missing,
+        expectedVideos:expectedVideos,
+        index:index
+      });
     });
 
     const ticks = scale.ticks.map(value => ({
@@ -414,7 +469,8 @@
       bars:bars,
       gaps:gaps,
       ticks:ticks,
-      zero:Math.max(0, Math.min(100, (zeroY / height) * 100))
+      zero:Math.max(0, Math.min(100, (zeroY / height) * 100)),
+      expectedVideos:expectedVideos
     };
   }
 
@@ -434,9 +490,17 @@
         rect.setAttribute('y',bar.y.toFixed(2));
         rect.setAttribute('width',bar.width.toFixed(2));
         rect.setAttribute('height',bar.height.toFixed(2));
-        rect.setAttribute('class','realtime-bucket' + (bar.negative ? ' is-negative' : ''));
+        rect.setAttribute('class','realtime-bucket' + (bar.negative ? ' is-negative' : '') + (bar.partial ? ' is-partial' : ''));
         const title = document.createElementNS(svgNS,'title');
-        title.textContent = (key === '60m' ? '5-minute bucket: ' : 'Hourly bucket: ') + fmtNumber(bar.value) + ' views';
+        const bucketLabel = key === '60m' ? '5-minute bucket: ' : 'Hourly bucket: ';
+        if(bar.partial){
+          const sampledText = bar.sampled !== null && bar.expectedVideos !== null
+            ? ' · ' + fmtNumber(bar.sampled) + '/' + fmtNumber(bar.expectedVideos) + ' videos sampled'
+            : '';
+          title.textContent = bucketLabel + fmtNumber(bar.value) + ' known views · PARTIAL' + sampledText;
+        }else{
+          title.textContent = bucketLabel + fmtNumber(bar.value) + ' views';
+        }
         rect.appendChild(title);
         barsGroup.appendChild(rect);
       });
@@ -521,26 +585,41 @@
     const seriesMatches = windowData.seriesMatchesTotal;
 
     if(total){
-      total.textContent = complete && views !== null
-        ? fmtNumber(views)
-        : '—';
+      const shownTotal = complete && views !== null ? views : partialViews;
+      total.textContent = shownTotal !== null ? fmtNumber(shownTotal) : '—';
+      total.classList.toggle('is-partial', !complete && partialViews !== null);
       total.title = complete
         ? label + ' sampled public-counter movement'
         : (partialViews !== null
-            ? 'Incomplete window · partial movement ' + fmtNumber(partialViews)
+            ? 'Partial known movement · ' + fmtNumber(partialViews) + ' views · ' + fmtNumber(missing) + ' baseline' + (missing === 1 ? '' : 's') + ' missing'
             : 'Incomplete window');
     }
 
     if(status){
-      const incompleteBuckets = Array.isArray(windowData.incompleteBuckets)
-        ? windowData.incompleteBuckets.length
-        : 0;
+      const incompleteIndexes = Array.isArray(windowData.incompleteBuckets)
+        ? windowData.incompleteBuckets.map(Number).filter(Number.isInteger)
+        : [];
+      const partialValues = Array.isArray(windowData.partialValues) ? windowData.partialValues : [];
+      const sampledCounts = Array.isArray(windowData.bucketSampledVideos) ? windowData.bucketSampledVideos : [];
+      const partialBucketCount = incompleteIndexes.filter(index => {
+        const value = numberOrNull(partialValues[index]);
+        const sampledCount = numberOrNull(sampledCounts[index]);
+        return value !== null && sampledCount !== null && sampledCount > 0;
+      }).length;
+      const unsampledBucketCount = Math.max(0, incompleteIndexes.length - partialBucketCount);
+      const unit = key === '60m' ? '5-MIN BUCKET' : 'HOURLY BUCKET';
+
       if(!complete){
-        status.textContent = 'INCOMPLETE · ' + fmtNumber(missing) + ' BASELINE' + (missing === 1 ? '' : 'S') + ' MISSING';
+        const bucketNote = partialBucketCount
+          ? ' · ' + partialBucketCount + ' PARTIAL ' + unit + (partialBucketCount === 1 ? '' : 'S')
+          : '';
+        status.textContent = 'PARTIAL WINDOW · ' + fmtNumber(missing) + ' BASELINE' + (missing === 1 ? '' : 'S') + ' MISSING' + bucketNote;
         status.className = 'realtime-window-status is-warning';
-      }else if(incompleteBuckets){
-        const unit = key === '60m' ? '5-MIN BUCKET' : 'HOURLY BUCKET';
-        status.textContent = 'TOTAL COMPLETE · ' + incompleteBuckets + ' ' + unit + (incompleteBuckets === 1 ? '' : 'S') + ' UNSAMPLED';
+      }else if(incompleteIndexes.length){
+        const parts = ['TOTAL COMPLETE'];
+        if(partialBucketCount) parts.push(partialBucketCount + ' PARTIAL ' + unit + (partialBucketCount === 1 ? '' : 'S'));
+        if(unsampledBucketCount) parts.push(unsampledBucketCount + ' UNSAMPLED');
+        status.textContent = parts.join(' · ');
         status.className = 'realtime-window-status is-warning';
       }else if(seriesMatches === false){
         status.textContent = 'CHECK DATA · SERIES/TOTAL MISMATCH';
@@ -556,7 +635,7 @@
       }
     }
 
-    const chart = buildRealtimeChart(windowData.values);
+    const chart = buildRealtimeChart(windowData);
     renderRealtimeChart(panel,chart,key);
 
     if(topList){

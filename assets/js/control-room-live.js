@@ -50,19 +50,22 @@
     return Number.isFinite(n) && n > 0 ? n : null;
   }
 
-  function sortVideoLibraryPane(pane){
+  function sortVideoLibraryPane(pane, direction){
     if(!pane) return;
     const scroll = pane.querySelector('.player-scroll');
     if(!scroll) return;
 
+    const oldestFirst = direction === 'oldest';
     const rows = Array.from(scroll.querySelectorAll('[data-video-library-row]'));
     rows.sort((a,b) => {
       const aDate = publishedMs(a);
       const bDate = publishedMs(b);
+      // Rows without a YouTube publication timestamp stay at the bottom in
+      // either direction; they must never jump to the top as "oldest".
       if(aDate === null && bDate !== null) return 1;
       if(aDate !== null && bDate === null) return -1;
       if(aDate !== null && bDate !== null && aDate !== bDate){
-        return bDate - aDate;
+        return oldestFirst ? aDate - bDate : bDate - aDate;
       }
       const aTitle = String(a.dataset.playerDisplay || a.dataset.videoTitle || '');
       const bTitle = String(b.dataset.playerDisplay || b.dataset.videoTitle || '');
@@ -93,7 +96,16 @@
     if(!pane) return;
 
     const query = String(panel.dataset.videoLibraryQuery || '').trim().toLocaleLowerCase('en');
-    sortVideoLibraryPane(pane);
+    const sortDirection = panel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest';
+    sortVideoLibraryPane(pane, sortDirection);
+
+    panel.querySelectorAll('[data-video-library-sort]').forEach(button => {
+      button.textContent = sortDirection === 'oldest' ? 'OLDEST' : 'NEWEST';
+      const next = sortDirection === 'oldest' ? 'newest' : 'oldest';
+      button.setAttribute('aria-label','Sort Video Library ' + next + ' first');
+      button.title = 'Sort by YouTube publication time · ' + (sortDirection === 'oldest' ? 'oldest first' : 'newest first');
+      button.setAttribute('aria-pressed', sortDirection === 'oldest' ? 'true' : 'false');
+    });
 
     const rows = Array.from(pane.querySelectorAll('[data-video-library-row]'));
     let shown = 0;
@@ -122,9 +134,13 @@
 
     const format = patch.format || activeVideoLibraryFormat(sourcePanel) || 'long';
     const query = patch.query !== undefined ? patch.query : (sourcePanel.dataset.videoLibraryQuery || '');
+    const sortDirection = patch.sort !== undefined
+      ? (patch.sort === 'oldest' ? 'oldest' : 'newest')
+      : (sourcePanel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest');
 
     panels.forEach(panel => {
       panel.dataset.videoLibraryQuery = query;
+      panel.dataset.videoLibrarySort = sortDirection;
       panel.querySelectorAll('[data-video-library-tab]').forEach(button => {
         const active = button.dataset.videoLibraryTab === format;
         button.classList.toggle('active', active);
@@ -229,39 +245,40 @@
   }
 
   function initVideoLibrary(){
-    // Overview Video Library is deliberately NEWEST-first only. Remove any
-    // legacy sort controls/state that may survive from an older cached page.
-    document.querySelectorAll('.video-library-panel [data-video-library-sort]').forEach(node => node.remove());
     videoLibraryPanels().forEach(panel => {
-      delete panel.dataset.videoLibrarySort;
       panel.querySelectorAll('[data-video-library-row]').forEach(row => {
         row.setAttribute('tabindex','0');
         row.setAttribute('role','button');
       });
     });
 
-    function newestEverywhere(){
-      videoLibraryPanels().forEach(panel => {
-        delete panel.dataset.videoLibrarySort;
-        applyVideoLibraryPanel(panel);
-      });
+    function refreshVideoLibrary(){
+      videoLibraryPanels().forEach(applyVideoLibraryPanel);
     }
 
-    // Capture phase makes the Library deterministic even if an older cached
-    // bubble-phase handler is still present in the browser. Library actions are
-    // consumed here and cannot accidentally reach a legacy sort toggle.
+    // Capture phase is deliberate: only the explicit sort button is allowed to
+    // change sort direction. Row clicks and the search X are fully consumed here
+    // before any older/bubble-phase handler can mistake them for a sort action.
     document.addEventListener('click', event => {
       const target = event.target && event.target.closest ? event.target : null;
       if(!target) return;
       const panel = target.closest('.video-library-panel');
       if(!panel) return;
 
+      const sortButton = target.closest('[data-video-library-sort]');
+      if(sortButton){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const current = panel.dataset.videoLibrarySort === 'oldest' ? 'oldest' : 'newest';
+        setVideoLibraryState(panel,{sort:current === 'newest' ? 'oldest' : 'newest'});
+        return;
+      }
+
       const tab = target.closest('[data-video-library-tab]');
       if(tab){
         event.preventDefault();
         event.stopImmediatePropagation();
         setVideoLibraryState(panel,{format:tab.dataset.videoLibraryTab});
-        newestEverywhere();
         return;
       }
 
@@ -270,7 +287,6 @@
         event.preventDefault();
         event.stopImmediatePropagation();
         setVideoLibraryState(panel,{query:''});
-        newestEverywhere();
         const input = panel.querySelector('[data-video-library-search]');
         if(input) input.focus();
         return;
@@ -291,7 +307,6 @@
         }
 
         chooseVideoLibraryRow(row);
-        newestEverywhere();
         return;
       }
     }, true);
@@ -302,7 +317,6 @@
       const panel = search.closest('.video-library-panel');
       if(!panel) return;
       setVideoLibraryState(panel,{query:search.value || ''});
-      newestEverywhere();
     });
 
     document.addEventListener('keydown', event => {
@@ -312,14 +326,12 @@
         event.preventDefault();
         event.stopImmediatePropagation();
         chooseVideoLibraryRow(row);
-        newestEverywhere();
       }
     }, true);
 
-    document.addEventListener('controlroom:videometadataupdated', newestEverywhere);
+    document.addEventListener('controlroom:videometadataupdated', refreshVideoLibrary);
 
-    setVideoLibraryState(videoLibraryPanels()[0] || null,{format:'long',query:''});
-    newestEverywhere();
+    setVideoLibraryState(videoLibraryPanels()[0] || null,{format:'long',query:'',sort:'newest'});
   }
 
   let activeRequestToken = 0;
