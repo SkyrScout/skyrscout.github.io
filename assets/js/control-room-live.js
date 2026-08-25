@@ -29,6 +29,19 @@
     if(id && (type === 'video' || type === 'short')) typeCatalog.set(id, type);
   });
 
+  const siteLinkCatalog = new Map();
+  document.querySelectorAll('[data-video-library-row][data-youtube-id]').forEach(row => {
+    const id = String(row.dataset.youtubeId || '').trim();
+    const format = String(row.dataset.videoFormat || '').trim();
+    const url = String(row.dataset.playerUrl || row.dataset.videoUrl || '').trim();
+    if(id && url){
+      siteLinkCatalog.set(id, {
+        url,
+        label: format === 'short' ? 'SHORT PAGE' : 'PLAYER PROFILE'
+      });
+    }
+  });
+
   const state = {
     movers: [],
     alerts: [],
@@ -42,7 +55,11 @@
     mostLiked24h: [],
     mostLiked7d: [],
     likesHistory: {},
-    likeWindow: '24h'
+    likeWindow: '24h',
+    heseHistory: null,
+    radarMode: 'live',
+    historyWindow: '7d',
+    selectedHistoryEventId: null
   };
 
   // Video Library interaction state is deliberately kept outside the DOM.
@@ -348,6 +365,22 @@
     }
   }
 
+  function fmtDateTime(ms){
+    const n = Number(ms);
+    if(!Number.isFinite(n)) return '—';
+    try{
+      return new Intl.DateTimeFormat('nb-NO',{
+        day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'
+      }).format(new Date(n));
+    }catch(_){
+      return '—';
+    }
+  }
+
+  function siteLinkFor(videoId){
+    return siteLinkCatalog.get(String(videoId || '')) || null;
+  }
+
   function setStatus(kind, text){
     if(badge) badge.textContent = text;
     if(statusBox){
@@ -366,6 +399,9 @@
   }
 
   function videoType(item){
+    const explicit = String(item && item.videoType || '').toLowerCase();
+    if(explicit === 'short') return 'short';
+    if(explicit === 'long' || explicit === 'video') return 'video';
     const id = String(item && item.videoId || '');
     if(typeCatalog.has(id)) return typeCatalog.get(id);
     if(/\/shorts\//i.test(String(item && item.videoUrl || ''))) return 'short';
@@ -662,6 +698,56 @@
     return state.movers.filter(item => videoType(item) === state.filter);
   }
 
+  function historyWindowData(){
+    const history = state.heseHistory && state.heseHistory.windows;
+    return history && history[state.historyWindow] && typeof history[state.historyWindow] === 'object'
+      ? history[state.historyWindow]
+      : null;
+  }
+
+  function historyItems(mode){
+    const windowData = historyWindowData();
+    if(!windowData) return [];
+    const key = mode === 'alarm' ? 'alarm' : 'suspicious';
+    return Array.isArray(windowData[key]) ? windowData[key].slice() : [];
+  }
+
+  function filteredHistoryItems(mode){
+    const items = historyItems(mode).sort((a,b) => Number(b && b.firstSeenAt || 0) - Number(a && a.firstSeenAt || 0));
+    if(state.filter === 'all') return items;
+    return items.filter(item => videoType(item) === state.filter);
+  }
+
+  function historyEventById(eventId){
+    const target = Number(eventId);
+    if(!Number.isFinite(target)) return null;
+    for(const windowName of ['24h','7d','30d']){
+      const windows = state.heseHistory && state.heseHistory.windows;
+      const data = windows && windows[windowName];
+      if(!data) continue;
+      for(const key of ['suspicious','alarm']){
+        const found = (Array.isArray(data[key]) ? data[key] : []).find(item => Number(item && item.eventId) === target);
+        if(found) return found;
+      }
+    }
+    return null;
+  }
+
+  function historyStateLabel(item){
+    if(item && item.active === true) return 'ACTIVE';
+    if(item && item.trackingActive === true) return 'TRACKING';
+    return 'CLOSED';
+  }
+
+  function historyTriggerText(item){
+    const delta = numericOrNull(item && item.triggerDeltaViews);
+    const windowText = String(item && item.triggerWindowLabel || '').trim();
+    const parts = [];
+    if(delta !== null) parts.push(fmtDelta(delta));
+    if(windowText) parts.push(windowText);
+    return parts.length ? parts.join(' · ') : 'Signal detected';
+  }
+
   function updateFilterButtons(){
     filterButtons.forEach(button => {
       const active = button.dataset.hfFilter === state.filter;
@@ -670,13 +756,39 @@
     });
   }
 
-  function renderMovers(){
-    if(!moversList) return;
-    clear(moversList);
+  function radarPanels(){
+    return Array.from(document.querySelectorAll('.hf-movers-panel'));
+  }
+
+  function syncRadarPanelControls(panel){
+    panel.querySelectorAll('[data-hf-radar-mode]').forEach(button => {
+      const active = String(button.dataset.hfRadarMode || '') === state.radarMode;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    panel.querySelectorAll('[data-hf-history-window]').forEach(button => {
+      const active = String(button.dataset.hfHistoryWindow || '').toLowerCase() === state.historyWindow;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    const windowBar = panel.querySelector('[data-hf-history-window-bar]');
+    const liveHead = panel.querySelector('[data-hf-live-head]');
+    const historyHead = panel.querySelector('[data-hf-history-head]');
+    const live = state.radarMode === 'live';
+    if(windowBar) windowBar.hidden = live;
+    if(liveHead) liveHead.hidden = !live;
+    if(historyHead) historyHead.hidden = live;
+  }
+
+  function renderLiveRadarPanel(panel){
+    const list = panel.querySelector('[data-hf-radar-list]');
+    const count = panel.querySelector('[data-hf-radar-count]');
+    if(!list) return;
+    clear(list);
 
     const movers = filteredMovers();
-    if(moverCount){
-      moverCount.textContent = state.filter === 'all'
+    if(count){
+      count.textContent = state.filter === 'all'
         ? fmtNumber(state.movers.length) + ' active'
         : fmtNumber(movers.length) + ' of ' + fmtNumber(state.movers.length);
     }
@@ -687,16 +799,17 @@
       empty.textContent = state.filter === 'all'
         ? 'No activity in the current radar feed.'
         : 'No ' + (state.filter === 'short' ? 'Shorts' : 'videos') + ' in the current activity radar.';
-      moversList.appendChild(empty);
+      list.appendChild(empty);
       return;
     }
 
+    const focusClone = Boolean(panel.closest('#consoleFocusShell'));
     movers.forEach(item => {
       const status = activityStatus(item);
       const row = document.createElement('button');
       row.type = 'button';
       row.className = 'hf-mover';
-      if(state.selectedVideoId === item.videoId) row.classList.add('selected');
+      if(state.selectedVideoId === item.videoId && state.selectedHistoryEventId === null) row.classList.add('selected');
       if(status === 'ALARM') row.classList.add('is-alert');
       if(status === 'SUSPICIOUS') row.classList.add('is-suspicious');
       row.dataset.videoId = item.videoId || '';
@@ -745,9 +858,113 @@
       statusEl.textContent = status;
       row.appendChild(statusEl);
 
-      row.addEventListener('click', () => selectVideo(item.videoId));
-      moversList.appendChild(row);
+      if(!focusClone) row.addEventListener('click', () => selectVideo(item.videoId));
+      list.appendChild(row);
     });
+  }
+
+  function renderHistoryRadarPanel(panel){
+    const list = panel.querySelector('[data-hf-radar-list]');
+    const count = panel.querySelector('[data-hf-radar-count]');
+    if(!list) return;
+    clear(list);
+
+    const all = historyItems(state.radarMode);
+    const items = filteredHistoryItems(state.radarMode);
+    const level = state.radarMode === 'alarm' ? 'alarm' : 'suspicious';
+    if(count){
+      const base = fmtNumber(items.length) + ' ' + level;
+      count.textContent = state.filter === 'all' ? (base + ' · ' + state.historyWindow.toUpperCase()) : (base + ' of ' + fmtNumber(all.length));
+    }
+
+    if(!state.heseHistory){
+      const empty = document.createElement('div');
+      empty.className = 'hf-empty';
+      empty.textContent = 'Hese-Fredrik history is not available in the current feed.';
+      list.appendChild(empty);
+      return;
+    }
+
+    if(!items.length){
+      const empty = document.createElement('div');
+      empty.className = 'hf-empty';
+      empty.textContent = 'No ' + level + ' history in ' + state.historyWindow.toUpperCase() + (state.filter === 'all' ? '.' : ' for this format.');
+      list.appendChild(empty);
+      return;
+    }
+
+    const focusClone = Boolean(panel.closest('#consoleFocusShell'));
+    items.forEach(item => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'hf-history-row ' + (level === 'alarm' ? 'is-alarm' : 'is-suspicious');
+      row.dataset.videoId = item.videoId || '';
+      row.dataset.historyEventId = String(item.eventId || '');
+      if(Number(state.selectedHistoryEventId) === Number(item.eventId)) row.classList.add('selected');
+
+      const main = document.createElement('div');
+      main.className = 'hf-history-main';
+      const img = document.createElement('img');
+      img.src = item.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(item.videoId || '') + '/mqdefault.jpg');
+      img.alt = '';
+      img.loading = 'lazy';
+      const copy = document.createElement('div');
+      copy.className = 'hf-history-copy';
+      const strong = document.createElement('strong');
+      strong.textContent = item.title || item.videoId || 'YouTube video';
+      const meta = document.createElement('div');
+      meta.className = 'hf-history-meta';
+      const type = document.createElement('span');
+      type.className = 'hf-type-pill ' + videoType(item);
+      type.textContent = typeLabel(item);
+      const signalPill = document.createElement('span');
+      signalPill.className = level === 'alarm' ? 'hf-alert-pill' : 'hf-suspicious-pill';
+      signalPill.textContent = level.toUpperCase();
+      meta.append(type,signalPill);
+      if(item.escalatedToAlarm){
+        const escalated = document.createElement('span');
+        escalated.className = 'hf-history-escalated';
+        escalated.textContent = '→ ALARM';
+        meta.appendChild(escalated);
+      }
+      const when = document.createElement('small');
+      when.textContent = fmtDateTime(item.firstSeenAt) + ' · ' + historyTriggerText(item);
+      copy.append(strong,meta,when);
+      main.append(img,copy);
+      row.appendChild(main);
+
+      const start = document.createElement('div');
+      start.className = 'hf-history-value start';
+      start.textContent = fmtNumber(item.startViews);
+      const current = document.createElement('div');
+      current.className = 'hf-history-value current';
+      current.textContent = fmtNumber(item.currentViews);
+      const gained = document.createElement('div');
+      gained.className = 'hf-history-value gained';
+      gained.textContent = fmtDelta(Math.max(0, Number(item.viewsSinceSignal || 0)));
+      const status = document.createElement('div');
+      status.className = 'hf-history-status ' + historyStateLabel(item).toLowerCase();
+      status.textContent = item.escalatedToAlarm && level === 'suspicious' ? '→ ALARM' : historyStateLabel(item);
+      row.append(start,current,gained,status);
+
+      if(!focusClone) row.addEventListener('click', () => selectHistoryEvent(item.eventId));
+      list.appendChild(row);
+    });
+  }
+
+  function renderRadarPanel(panel){
+    if(!panel) return;
+    syncRadarPanelControls(panel);
+    if(state.radarMode === 'live') renderLiveRadarPanel(panel);
+    else renderHistoryRadarPanel(panel);
+  }
+
+  function renderRadar(){
+    radarPanels().forEach(renderRadarPanel);
+  }
+
+  function renderMovers(){
+    renderRadar();
   }
 
   function renderActiveAlerts(){
@@ -815,9 +1032,121 @@
     return box;
   }
 
+  function renderHistoryDetail(item){
+    if(!detailBody || !item) return;
+    clear(detailBody);
+
+    const level = String(item.signalType || state.radarMode || 'SUSPICIOUS').toUpperCase();
+    const type = typeLabel(item);
+    if(detailTypeBadge){
+      detailTypeBadge.textContent = type;
+      detailTypeBadge.classList.toggle('short', videoType(item) === 'short');
+    }
+
+    const head = document.createElement('div');
+    head.className = 'hf-detail-head';
+    const img = document.createElement('img');
+    img.src = item.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(item.videoId || '') + '/hqdefault.jpg');
+    img.alt = item.title || 'Historical Hese-Fredrik signal';
+    const copy = document.createElement('div');
+    copy.className = 'hf-detail-copy';
+    const h2 = document.createElement('h2');
+    h2.textContent = item.title || item.videoId || 'YouTube video';
+    const p = document.createElement('p');
+    p.textContent = level + ' · first seen ' + fmtDateTime(item.firstSeenAt);
+    const flags = document.createElement('div');
+    flags.className = 'hf-detail-flags';
+    const typePill = document.createElement('span');
+    typePill.className = 'hf-type-pill ' + videoType(item);
+    typePill.textContent = type;
+    const signalPill = document.createElement('span');
+    signalPill.className = level === 'ALARM' ? 'hf-alert-pill' : 'hf-suspicious-pill';
+    signalPill.textContent = level;
+    flags.append(typePill,signalPill);
+    if(item.escalatedToAlarm){
+      const escalated = document.createElement('span');
+      escalated.className = 'hf-history-escalated';
+      escalated.textContent = 'ESCALATED TO ALARM';
+      flags.appendChild(escalated);
+    }
+    copy.append(h2,p,flags);
+    head.append(img,copy);
+
+    const metrics = document.createElement('div');
+    metrics.className = 'hf-detail-metrics';
+    metrics.append(
+      metric('At signal', fmtNumber(item.startViews), false),
+      metric('Current views', fmtNumber(item.currentViews), false),
+      metric('Since signal', fmtDelta(Math.max(0, Number(item.viewsSinceSignal || 0))), true),
+      metric('Trigger movement', fmtDelta(item.triggerDeltaViews), false),
+      metric('Signal state', historyStateLabel(item), item.active === true),
+      metric('Tracking window', '7 DAYS', false)
+    );
+    detailBody.append(head,metrics);
+
+    const note = document.createElement('div');
+    note.className = 'hf-detail-note';
+    if(item.active === true){
+      note.textContent = 'Signal is active. The public total continues to be tracked for seven days from first detection.';
+    }else if(item.trackingActive === true){
+      note.textContent = 'Live signal has cleared, but accumulated public views are still tracked until ' + fmtDateTime(item.trackingUntilAt) + '.';
+    }else{
+      note.textContent = 'Seven-day tracking window is complete.';
+    }
+    detailBody.appendChild(note);
+
+    const signalBox = document.createElement('div');
+    signalBox.className = 'hf-detail-alert ' + (level === 'ALARM' ? 'alarm' : 'suspicious');
+    const signalTitle = document.createElement('strong');
+    signalTitle.textContent = level + ' · ' + historyTriggerText(item);
+    const signalNote = document.createElement('p');
+    const confidence = String(item.triggerConfidence || '').toUpperCase();
+    signalNote.textContent = 'Trigger: ' + String(item.triggerReason || 'signal') + (confidence ? ' · confidence ' + confidence : '');
+    signalBox.append(signalTitle,signalNote);
+    detailBody.appendChild(signalBox);
+
+    const actions = document.createElement('div');
+    actions.className = 'hf-detail-actions';
+    const siteLink = siteLinkFor(item.videoId);
+    if(siteLink){
+      const profile = document.createElement('a');
+      profile.className = 'hf-detail-link';
+      profile.href = siteLink.url;
+      profile.textContent = siteLink.label;
+      actions.appendChild(profile);
+    }
+    const youtube = document.createElement('a');
+    youtube.className = 'hf-detail-link';
+    youtube.href = item.videoUrl || ('https://www.youtube.com/watch?v=' + encodeURIComponent(item.videoId || ''));
+    youtube.target = '_blank';
+    youtube.rel = 'noopener noreferrer';
+    youtube.textContent = 'OPEN ON YOUTUBE';
+    actions.appendChild(youtube);
+    detailBody.appendChild(actions);
+  }
+
   function renderDetail(){
     if(!detailBody) return;
     clear(detailBody);
+
+    if(state.radarMode !== 'live'){
+      let historyItem = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
+      const visible = filteredHistoryItems(state.radarMode);
+      if(!historyItem || !visible.some(item => Number(item.eventId) === Number(historyItem.eventId))){
+        historyItem = visible[0] || null;
+        state.selectedHistoryEventId = historyItem ? Number(historyItem.eventId) : null;
+      }
+      if(historyItem){
+        renderHistoryDetail(historyItem);
+      }else{
+        if(detailTypeBadge) detailTypeBadge.textContent = '—';
+        const empty = document.createElement('div');
+        empty.className = 'hf-empty';
+        empty.textContent = 'No ' + state.radarMode + ' history in this view.';
+        detailBody.appendChild(empty);
+      }
+      return;
+    }
 
     let item = state.selectedVideoId ? mergedVideo(state.selectedVideoId) : null;
     if(!item){
@@ -899,6 +1228,14 @@
 
     const actions = document.createElement('div');
     actions.className = 'hf-detail-actions';
+    const siteLink = siteLinkFor(item.videoId);
+    if(siteLink){
+      const profile = document.createElement('a');
+      profile.className = 'hf-detail-link';
+      profile.href = siteLink.url;
+      profile.textContent = siteLink.label;
+      actions.appendChild(profile);
+    }
     const youtube = document.createElement('a');
     youtube.className = 'hf-detail-link';
     youtube.href = item.videoUrl || ('https://www.youtube.com/watch?v=' + encodeURIComponent(item.videoId || ''));
@@ -911,9 +1248,29 @@
 
   function selectVideo(videoId, options){
     if(!videoId) return;
+    state.selectedHistoryEventId = null;
     state.selectedVideoId = videoId;
     renderActiveAlerts();
-    renderMovers();
+    renderRadar();
+    renderDetail();
+
+    if(options && options.scroll && detailPanel){
+      window.setTimeout(() => {
+        try{
+          detailPanel.scrollIntoView({behavior:'smooth',block:'center'});
+        }catch(_){
+          detailPanel.scrollIntoView();
+        }
+      }, 20);
+    }
+  }
+
+  function selectHistoryEvent(eventId, options){
+    const item = historyEventById(eventId);
+    if(!item) return;
+    state.selectedHistoryEventId = Number(item.eventId);
+    state.selectedVideoId = item.videoId || state.selectedVideoId;
+    renderRadar();
     renderDetail();
 
     if(options && options.scroll && detailPanel){
@@ -1176,6 +1533,7 @@
     state.mostLiked24h = Array.isArray(payload.mostLiked24h) ? payload.mostLiked24h : [];
     state.mostLiked7d = Array.isArray(payload.mostLiked7d) ? payload.mostLiked7d : [];
     state.likesHistory = payload.likesHistory || {};
+    state.heseHistory = payload.heseHistory && typeof payload.heseHistory === 'object' ? payload.heseHistory : null;
     state.rules = payload.internalRules || {};
     state.checkedAt = payload.checkedAt;
     state.videosPolled = payload.videosPolled;
@@ -1195,14 +1553,23 @@
       }
     }
 
-    if(!state.selectedVideoId || !mergedVideo(state.selectedVideoId)){
-      const first = state.alerts[0] || state.suspicious[0] || state.movers[0] || null;
-      state.selectedVideoId = first ? first.videoId : null;
+    if(state.radarMode === 'live'){
+      if(!state.selectedVideoId || !mergedVideo(state.selectedVideoId)){
+        const first = state.alerts[0] || state.suspicious[0] || state.movers[0] || null;
+        state.selectedVideoId = first ? first.videoId : null;
+      }
+      state.selectedHistoryEventId = null;
+    }else{
+      const visibleHistory = filteredHistoryItems(state.radarMode);
+      const selectedHistory = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
+      if(!selectedHistory || !visibleHistory.some(item => Number(item.eventId) === Number(selectedHistory.eventId))){
+        state.selectedHistoryEventId = visibleHistory[0] ? Number(visibleHistory[0].eventId) : null;
+      }
     }
 
     updateFilterButtons();
     renderActiveAlerts();
-    renderMovers();
+    renderRadar();
     renderDetail();
     renderRules(state.rules);
     renderOverviewMovers(state.movers, state.alerts, state.suspicious);
@@ -1255,6 +1622,9 @@
     state.movers = [];
     state.alerts = [];
     state.suspicious = [];
+    state.heseHistory = null;
+    state.selectedHistoryEventId = null;
+    state.radarMode = 'live';
     state.checkedAt = payload.checkedAt;
     const suspiciousCount = document.getElementById('hfSuspiciousCount');
     if(suspiciousCount) suspiciousCount.textContent = '—';
@@ -1325,6 +1695,7 @@
       clone.querySelectorAll('.console-focus-btn').forEach(el => el.remove());
       shell.querySelectorAll('.panel').forEach(el => el.remove());
       shell.appendChild(clone);
+      if(panel.classList.contains('hf-movers-panel')) renderRadarPanel(clone);
       overlay.classList.add('open');
       overlay.setAttribute('aria-hidden','false');
       document.body.classList.add('console-focus-open');
@@ -1356,11 +1727,13 @@
       overlay.addEventListener('click', event => { if(event.target === overlay) closeFocus(); });
       document.addEventListener('keydown', event => { if(event.key === 'Escape' && shell.classList.contains('hese-focus')) closeFocus(); });
       shell.addEventListener('click', event => {
-        const row = event.target.closest('.hf-mover[data-video-id], .hf-active-card[data-video-id]');
+        const row = event.target.closest('.hf-mover[data-video-id], .hf-history-row[data-history-event-id], .hf-active-card[data-video-id]');
         if(!row || !shell.classList.contains('hese-focus')) return;
         const id = row.dataset.videoId;
+        const historyEventId = row.dataset.historyEventId;
         closeFocus();
-        if(id) selectVideo(id);
+        if(historyEventId) selectHistoryEvent(historyEventId);
+        else if(id) selectVideo(id);
       });
     }
   }
@@ -1408,6 +1781,46 @@
 
 
   document.addEventListener('click', event => {
+    const modeButton = event.target.closest('[data-hf-radar-mode]');
+    if(modeButton){
+      const next = String(modeButton.dataset.hfRadarMode || '').toLowerCase();
+      if(!['live','suspicious','alarm'].includes(next)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      state.radarMode = next;
+      if(next === 'live'){
+        state.selectedHistoryEventId = null;
+      }else{
+        const visible = filteredHistoryItems(next);
+        const current = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
+        if(!current || String(current.signalType || '').toLowerCase() !== next || !visible.some(item => Number(item.eventId) === Number(current.eventId))){
+          state.selectedHistoryEventId = visible[0] ? Number(visible[0].eventId) : null;
+        }
+      }
+      renderRadar();
+      renderDetail();
+      return;
+    }
+
+    const windowButton = event.target.closest('[data-hf-history-window]');
+    if(windowButton){
+      const next = String(windowButton.dataset.hfHistoryWindow || '').toLowerCase();
+      if(!['24h','7d','30d'].includes(next)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      state.historyWindow = next;
+      const visible = filteredHistoryItems(state.radarMode);
+      const current = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
+      if(!current || !visible.some(item => Number(item.eventId) === Number(current.eventId))){
+        state.selectedHistoryEventId = visible[0] ? Number(visible[0].eventId) : null;
+      }
+      renderRadar();
+      renderDetail();
+      return;
+    }
+  });
+
+  document.addEventListener('click', event => {
     const button = event.target.closest('[data-yt-like-window]');
     if(!button) return;
     const next = String(button.dataset.ytLikeWindow || '').toLowerCase();
@@ -1424,7 +1837,15 @@
       if(next !== 'all' && next !== 'video' && next !== 'short') return;
       state.filter = next;
       updateFilterButtons();
-      renderMovers();
+      if(state.radarMode !== 'live'){
+        const visible = filteredHistoryItems(state.radarMode);
+        const current = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
+        if(!current || !visible.some(item => Number(item.eventId) === Number(current.eventId))){
+          state.selectedHistoryEventId = visible[0] ? Number(visible[0].eventId) : null;
+        }
+      }
+      renderRadar();
+      renderDetail();
     });
   });
 

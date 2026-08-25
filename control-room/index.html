@@ -13,7 +13,7 @@ sitemap: false
   <meta name="color-scheme" content="dark">
   <title>Scoutland Yard Control Room</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260824-0135-polish-v4">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260825-hese-history-ui-v1">
 </head>
 <body>
 <div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
@@ -508,9 +508,28 @@ sitemap: false
 
 <div class="hf-work-grid">
 <section class="panel hf-movers-panel hf-focus-panel">
-<div class="ph"><div class="pt">Activity radar</div><span class="badge" id="hfMoverCount">—</span></div>
-<div class="hf-movers-head"><span>Video</span><span>Total</span><span>Last poll</span><span>This hr</span><span>Last hr</span><span>Status</span></div>
-<div class="hf-movers-list" id="hfMoversList">
+<div class="ph hf-radar-ph">
+<div class="pt">Activity radar</div>
+<div class="hf-radar-head-tools">
+<div class="hf-radar-tabs" role="tablist" aria-label="Hese-Fredrik radar view">
+<button class="hf-radar-tab active" type="button" role="tab" aria-selected="true" data-hf-radar-mode="live">LIVE</button>
+<button class="hf-radar-tab suspicious" type="button" role="tab" aria-selected="false" data-hf-radar-mode="suspicious">SUSPICIOUS</button>
+<button class="hf-radar-tab alarm" type="button" role="tab" aria-selected="false" data-hf-radar-mode="alarm">ALARM</button>
+</div>
+<span class="badge" id="hfMoverCount" data-hf-radar-count>—</span>
+</div>
+</div>
+<div class="hf-history-window-bar" data-hf-history-window-bar hidden>
+<span>History window</span>
+<div class="hf-history-window-tabs" role="group" aria-label="Hese-Fredrik history window">
+<button class="hf-history-window" type="button" data-hf-history-window="24h">24H</button>
+<button class="hf-history-window active" type="button" data-hf-history-window="7d">7D</button>
+<button class="hf-history-window" type="button" data-hf-history-window="30d">30D</button>
+</div>
+</div>
+<div class="hf-movers-head" data-hf-live-head><span>Video</span><span>Total</span><span>Last poll</span><span>This hr</span><span>Last hr</span><span>Status</span></div>
+<div class="hf-history-head" data-hf-history-head hidden><span>Video</span><span>At signal</span><span>Now</span><span>Since</span><span>State</span></div>
+<div class="hf-movers-list" id="hfMoversList" data-hf-radar-list>
 <div class="hf-empty">Waiting for live Hese-Fredrik data…</div>
 </div>
 </section>
@@ -555,6 +574,6 @@ sitemap: false
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260824-0135-polish-v4"></script>
 <script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260824-0055-polish-v3"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260824-0215-library-v5"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260825-hese-history-ui-v1"></script>
 </body>
 </html>

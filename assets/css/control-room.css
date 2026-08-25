@@ -1357,6 +1357,118 @@ body.hf-alert-flash::after{
 @media(max-width:900px){.control-screen[data-screen="hese-fredrik"]{height:auto;overflow:visible}.hf-screen-v3{height:auto;grid-template-rows:none}.hf-screen-v3 .hf-command-body{grid-template-columns:1fr}.hf-screen-v3 .hf-filter-wrap{grid-column:auto}.hf-screen-v3 .hf-work-grid{grid-template-columns:1fr}.hf-screen-v3 .hf-movers-panel{min-height:520px}.hf-screen-v3 .hf-detail-panel{min-height:420px}}
 @media(max-width:680px){.hf-screen-v3 .hf-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hf-screen-v3 .hf-movers-head{display:none}.hf-screen-v3 .hf-mover{grid-template-columns:minmax(0,1fr) repeat(2,58px);min-height:78px}.hf-screen-v3 .hf-mover-main{grid-column:1/-1}.hf-screen-v3 .hf-mover-value.total,.hf-screen-v3 .hf-mover-value.current,.hf-screen-v3 .hf-mover-value.previous{display:none}.hf-screen-v3 .hf-mover-status{display:flex;align-items:center;justify-content:flex-end}.console-focus-shell.hese-signals-focus .hf-active-list{grid-template-columns:1fr!important}}
 
+
+/* === Hese-Fredrik multi-day signal history ================================
+   Activity Radar keeps LIVE intact and adds SUSPICIOUS / ALARM history tabs.
+   History rows use the VPS heseHistory payload and the existing detail console. */
+.hf-screen-v3 .hf-movers-panel{grid-template-rows:34px auto auto minmax(0,1fr)}
+.hf-radar-ph{gap:8px}
+.hf-radar-head-tools{min-width:0;margin-left:auto;display:flex;align-items:center;gap:7px}
+.hf-radar-tabs{display:flex;align-items:center;gap:3px}
+.hf-radar-tab,
+.hf-history-window{
+  min-height:21px;
+  padding:0 7px;
+  border:1px solid #173848;
+  border-radius:999px;
+  background:#01070a;
+  color:#718794;
+  font:inherit;
+  font-size:6px;
+  font-weight:900;
+  letter-spacing:.055em;
+  cursor:pointer;
+}
+.hf-radar-tab:hover,.hf-history-window:hover{border-color:#277eaa;color:#dff6ff}
+.hf-radar-tab.active{border-color:#1e96cf;background:rgba(20,112,154,.14);color:#c9efff}
+.hf-radar-tab.suspicious.active{border-color:rgba(211,145,48,.62);background:rgba(132,81,14,.15);color:#e4ad58}
+.hf-radar-tab.alarm.active{border-color:rgba(239,93,70,.65);background:rgba(181,49,34,.16);color:#ff8b79}
+.hf-history-window-bar{
+  min-height:25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:3px 7px;
+  border-bottom:1px solid #10191e;
+  color:#687e8a;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.hf-history-window-tabs{display:flex;align-items:center;gap:3px}
+.hf-history-window{min-height:18px;padding:0 6px}
+.hf-history-window.active{border-color:#277eaa;background:rgba(20,112,154,.12);color:#c9efff}
+.hf-history-window-bar[hidden],
+.hf-movers-head[hidden],
+.hf-history-head[hidden]{display:none!important}
+.hf-history-head,
+.hf-history-row{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) 70px 70px 70px 78px;
+  gap:7px;
+  align-items:center;
+}
+.hf-history-head{
+  min-height:25px;
+  padding:0 7px;
+  border-bottom:1px solid #13232b;
+  color:#687e8a;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.hf-history-head span:not(:first-child){text-align:right}
+.hf-history-row{
+  width:100%;
+  min-height:59px;
+  padding:5px 2px;
+  border:0;
+  border-bottom:1px solid #10191e;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.hf-history-row:hover{background:rgba(22,127,175,.07)}
+.hf-history-row.selected{background:rgba(17,88,127,.14);box-shadow:inset 3px 0 0 var(--blue)}
+.hf-history-row.is-suspicious{background-image:linear-gradient(90deg,rgba(173,107,25,.055),transparent 34%)}
+.hf-history-row.is-alarm{background-image:linear-gradient(90deg,rgba(219,70,45,.075),transparent 34%)}
+.hf-history-main{min-width:0;display:grid;grid-template-columns:78px minmax(0,1fr);gap:9px;align-items:center}
+.hf-history-main img{display:block;width:78px;aspect-ratio:16/9;object-fit:cover;border-radius:5px;background:#000}
+.hf-history-copy{min-width:0}
+.hf-history-copy>strong{display:block;color:#f2f6f8;font-size:9px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hf-history-meta{display:flex;align-items:center;gap:4px;margin-top:4px;min-width:0}
+.hf-history-copy>small{display:block;margin-top:3px;color:#687e8a;font-size:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hf-history-escalated{display:inline-flex;align-items:center;min-height:16px;padding:0 5px;border:1px solid rgba(239,93,70,.42);border-radius:999px;color:#ff8b79;background:rgba(181,49,34,.09);font-size:6px;font-weight:900;letter-spacing:.05em}
+.hf-history-value{text-align:right;color:#a8bac3;font-size:8px;font-weight:800}
+.hf-history-value.gained{color:#d9b45b;font-size:10px;font-weight:900}
+.hf-history-row.is-alarm .hf-history-value.gained{color:#ff806f}
+.hf-history-status{text-align:right;font-size:7px;font-weight:900;letter-spacing:.04em}
+.hf-history-status.active{color:#ff806f}.hf-history-status.tracking{color:#8ed6f4}.hf-history-status.closed{color:#627984}
+
+.console-focus-shell.hese-radar-focus .panel{grid-template-rows:48px auto auto minmax(0,1fr)!important}
+.console-focus-shell.hese-radar-focus .hf-history-head,
+.console-focus-shell.hese-radar-focus .hf-history-row{grid-template-columns:minmax(360px,1fr) 100px 100px 100px 110px!important;font-size:11px!important}
+.console-focus-shell.hese-radar-focus .hf-history-row{min-height:76px!important;padding:7px 8px!important}
+.console-focus-shell.hese-radar-focus .hf-history-copy>strong{font-size:13px!important}
+.console-focus-shell.hese-radar-focus .hf-history-copy>small{font-size:9px!important}
+.console-focus-shell.hese-radar-focus .hf-history-value,.console-focus-shell.hese-radar-focus .hf-history-status{font-size:12px!important}
+.console-focus-shell.hese-radar-focus .hf-history-window-bar{min-height:34px;padding:5px 10px;font-size:10px}
+.console-focus-shell.hese-radar-focus .hf-radar-tab,.console-focus-shell.hese-radar-focus .hf-history-window{font-size:9px;min-height:24px;padding:0 9px}
+
+@media(max-width:1200px){
+  .hf-history-head,.hf-history-row{grid-template-columns:minmax(220px,1fr) 62px 62px 62px 70px}
+}
+@media(max-width:680px){
+  .hf-radar-head-tools{gap:4px}.hf-radar-tab{padding:0 5px;font-size:5px}
+  .hf-history-head{display:none}
+  .hf-history-row{grid-template-columns:minmax(0,1fr) repeat(2,58px);min-height:82px}
+  .hf-history-main{grid-column:1/-1}
+  .hf-history-value.start,.hf-history-value.current{display:none}
+  .hf-history-status{display:flex;align-items:center;justify-content:flex-end}
+}
+
 /* === YouTube Analytics screen v1 ===========================================
    Same Control Room language, but YouTube-red is the local accent.
    All panels remain Focus Mode capable and all long content scrolls internally. */
