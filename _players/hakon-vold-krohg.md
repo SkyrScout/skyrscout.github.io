@@ -38,7 +38,7 @@ report: |
 
   His pace is difficult to judge because of his relaxed running style, but he is capable of separating from opponents and appears to use whatever speed he has effectively.
 
-  There are also glimpses of good attacking instinct. Krohg can arrive in useful positions around the box and has shown that he can finish in different ways, including with his head despite standing 180 cm tall. These are useful additional qualities rather than something that should currently define his profile.
+  There are also glimpses of good attacking instinct. Krohg can arrive in useful positions around the box and has shown that he can finish in different ways. These are useful additional qualities rather than something that should currently define his profile.
 
   Physically, he still looks relatively lean and may benefit from adding strength as he develops.
 
