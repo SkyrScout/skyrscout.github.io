@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-08-25T14:04:04Z",
+    "updated_utc": "2026-08-26T13:25:55Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "uIPO5XMR4xw": {
-      "status": "upcoming",
-      "scheduled_start": "2026-08-26T13:00:00Z",
-      "title": "Håkon Vold Krohg (2006) – Moss FK | OBOS-ligaen, Norway (2nd Tier)",
-      "profiles": [
-        {
-          "player_slug": "hakon-vold-krohg",
-          "kind": "main",
-          "main_video_id": "uIPO5XMR4xw"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
