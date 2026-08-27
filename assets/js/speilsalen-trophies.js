@@ -43,6 +43,14 @@ function looksLikeRawVideoId(text) {
   return false;
 }
 
+function renderTitleEmoji(node) {
+  if (!node || !window.twemoji) return;
+  window.twemoji.parse(node, {
+    folder: "svg",
+    ext: ".svg"
+  });
+}
+
 function preferredTitle(siteTitle, liveTitle, videoId) {
   const site = String(siteTitle || '').trim();
   const live = String(liveTitle || '').trim();
@@ -306,6 +314,8 @@ function card(item) {
   const title = document.createElement("strong");
   title.textContent = item.title;
   title.title = item.title;
+  renderTitleEmoji(title);
+  renderTitleEmoji(title);
 
   const views = document.createElement("span");
   views.className = "speilsalen-card-views";

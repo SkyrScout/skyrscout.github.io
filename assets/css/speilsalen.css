@@ -930,3 +930,26 @@
 }
 
 /* Keep the dense medal shelf readable at smaller widths. */
+
+
+/* Trophy Cabinet v7 · Windows flag emoji rendering.
+   Critical: override generic card/record img rules so Twemoji flags remain inline icons. */
+.speilsalen-video-card img.emoji,
+.speilsalen-record-copy img.emoji {
+  display:inline-block !important;
+  width:1.08em !important;
+  height:1.08em !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:none !important;
+  max-height:none !important;
+  aspect-ratio:auto !important;
+  margin:0 .08em !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  object-fit:contain !important;
+  vertical-align:-.16em !important;
+  filter:none !important;
+}
