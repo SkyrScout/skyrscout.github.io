@@ -10,17 +10,20 @@ const SNAPSHOT_SCHEMA = [
   "last48hViews",
   "activityStatus",
   "videoType",
-  "publishedAtMs"
+  "publishedAtMs",
+  "title"
 ];
 
 const state = {
   started: false,
   loading: false,
   videos: [],
+  unclassified: [],
   timer: null
 };
 
 function numberOrNull(value) {
+  if (value === null || value === undefined || value === "") return null;
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
 }
@@ -31,17 +34,21 @@ function formatViews(value) {
   return new Intl.NumberFormat("en-GB").format(Math.max(0, Math.round(n)));
 }
 
-function catalog() {
-  return [...document.querySelectorAll("[data-trophy-video]")]
-    .map((node) => ({
-      videoId: String(node.dataset.videoId || "").trim(),
+function siteCatalog() {
+  const out = new Map();
+  document.querySelectorAll("[data-trophy-video]").forEach((node) => {
+    const videoId = String(node.dataset.videoId || "").trim();
+    if (!videoId) return;
+    out.set(videoId, {
+      videoId,
       format: String(node.dataset.format || "").trim() === "short" ? "short" : "long",
-      title: String(node.dataset.title || "YouTube video").trim(),
+      title: String(node.dataset.title || "").trim(),
       pageUrl: String(node.dataset.pageUrl || "").trim(),
       youtubeUrl: String(node.dataset.youtubeUrl || "").trim(),
       thumbnail: String(node.dataset.thumbnail || "").trim()
-    }))
-    .filter((item) => item.videoId);
+    });
+  });
+  return out;
 }
 
 function decodeSnapshot(payload) {
@@ -50,80 +57,208 @@ function decodeSnapshot(payload) {
     ? payload.videoSnapshotSchema.map(String)
     : SNAPSHOT_SCHEMA;
   const index = new Map(schema.map((name, i) => [name, i]));
-  const out = new Map();
+  const out = [];
 
   rows.forEach((row) => {
     if (!Array.isArray(row)) return;
-    const get = (name) => row[index.has(name) ? index.get(name) : SNAPSHOT_SCHEMA.indexOf(name)];
+    const get = (name) => {
+      if (index.has(name)) return row[index.get(name)];
+      const fallbackIndex = SNAPSHOT_SCHEMA.indexOf(name);
+      return fallbackIndex >= 0 ? row[fallbackIndex] : undefined;
+    };
     const videoId = String(get("videoId") || "").trim();
     if (!videoId) return;
-    out.set(videoId, {
+    out.push({
       videoId,
       totalViews: numberOrNull(get("totalViews")),
-      videoType: String(get("videoType") || "").toLowerCase()
+      videoType: String(get("videoType") || "").trim().toLowerCase(),
+      title: String(get("title") || "").trim()
     });
   });
 
   return out;
 }
 
-function mergedVideos(payload) {
-  const snapshot = decodeSnapshot(payload);
-  return catalog()
-    .map((item) => {
-      const live = snapshot.get(item.videoId);
-      if (!live || live.totalViews === null) return null;
-      return {
-        ...item,
-        totalViews: live.totalViews,
-        format: live.videoType === "short" ? "short" : item.format
-      };
-    })
-    .filter(Boolean)
-    .sort((a, b) => b.totalViews - a.totalViews || a.title.localeCompare(b.title));
+function youtubeUrl(videoId, format) {
+  const id = encodeURIComponent(videoId);
+  return format === "short"
+    ? `https://www.youtube.com/shorts/${id}`
+    : `https://www.youtube.com/watch?v=${id}`;
 }
 
-function tierFor(views) {
-  if (views >= 10000) return "crown";
-  if (views >= 5000) return "trophy";
-  if (views >= 1000) return "medal";
+function defaultThumbnail(videoId, format) {
+  const id = encodeURIComponent(videoId);
+  return format === "short"
+    ? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`
+    : `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+}
+
+function mergedVideos(payload) {
+  const catalog = siteCatalog();
+  const rows = decodeSnapshot(payload);
+  const merged = [];
+  const unclassified = [];
+
+  rows.forEach((live) => {
+    if (live.totalViews === null) return;
+    const site = catalog.get(live.videoId) || null;
+
+    let format = null;
+    if (live.videoType === "short") format = "short";
+    else if (live.videoType === "long") format = "long";
+    else if (site?.format) format = site.format;
+
+    if (!format) {
+      unclassified.push({ ...live, site });
+      return;
+    }
+
+    const title = live.title || site?.title || live.videoId;
+    merged.push({
+      videoId: live.videoId,
+      totalViews: live.totalViews,
+      format,
+      title,
+      pageUrl: site?.pageUrl || "",
+      youtubeUrl: site?.youtubeUrl || youtubeUrl(live.videoId, format),
+      thumbnail: site?.thumbnail || defaultThumbnail(live.videoId, format)
+    });
+  });
+
+  state.unclassified = unclassified;
+  return merged.sort((a, b) => b.totalViews - a.totalViews || a.title.localeCompare(b.title));
+}
+
+/*
+  Trophy exchange system.
+  Every whole 1,000 views creates one medal-unit.
+  5 medal-units = 1 trophy.
+  2 trophies = 1 crown.
+  The remainder is always normalized upward, so a video can never show
+  5 medals or 2 trophies at the same time.
+*/
+function trophyWallet(views) {
+  const totalViews = Math.max(0, Math.floor(Number(views) || 0));
+  const thousandUnits = Math.floor(totalViews / 1000);
+  const crowns = Math.floor(thousandUnits / 10);
+  const afterCrowns = thousandUnits % 10;
+  const trophies = Math.floor(afterCrowns / 5);
+  const medals = afterCrowns % 5;
+  return { crowns, trophies, medals, thousandUnits };
+}
+
+function highestTier(wallet) {
+  if (wallet.crowns > 0) return "crown";
+  if (wallet.trophies > 0) return "trophy";
+  if (wallet.medals > 0) return "medal";
   return null;
 }
 
+function awardSvg(kind) {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", kind === "crown" ? "0 0 64 50" : "0 0 64 64");
+  svg.setAttribute("aria-hidden", "true");
+
+  function path(d) {
+    const node = document.createElementNS(ns, "path");
+    node.setAttribute("d", d);
+    svg.appendChild(node);
+  }
+
+  if (kind === "crown") {
+    path("M8 38L4 13l15 12L31 6l13 19 16-12-5 25z");
+    path("M10 42h44");
+  } else if (kind === "trophy") {
+    path("M20 10h24v12c0 11-5 18-12 18s-12-7-12-18z");
+    path("M20 15H9c0 12 5 18 15 18M44 15h11c0 12-5 18-15 18");
+    path("M32 40v9M22 54h20");
+  } else {
+    path("M20 6l12 18L44 6");
+    const outer = document.createElementNS(ns, "circle");
+    outer.setAttribute("cx", "32");
+    outer.setAttribute("cy", "39");
+    outer.setAttribute("r", "14");
+    svg.appendChild(outer);
+    const inner = document.createElementNS(ns, "circle");
+    inner.setAttribute("cx", "32");
+    inner.setAttribute("cy", "39");
+    inner.setAttribute("r", "6");
+    svg.appendChild(inner);
+  }
+  return svg;
+}
+
+function inventoryItem(kind, count) {
+  if (!count) return null;
+  const item = document.createElement("span");
+  item.className = `speilsalen-inventory-item speilsalen-inventory-${kind}`;
+  item.appendChild(awardSvg(kind));
+  const value = document.createElement("b");
+  value.textContent = String(count);
+  item.appendChild(value);
+  return item;
+}
+
 function card(item) {
+  const wallet = trophyWallet(item.totalViews);
+  const tier = highestTier(wallet);
+
   const link = document.createElement("a");
-  link.className = "speilsalen-video-card";
+  link.className = `speilsalen-video-card speilsalen-video-card-${tier}`;
   link.href = item.youtubeUrl || item.pageUrl || "#";
   if (item.youtubeUrl) {
     link.target = "_blank";
     link.rel = "noopener noreferrer";
   }
 
+  const portrait = document.createElement("div");
+  portrait.className = "speilsalen-card-portrait";
+
   const img = document.createElement("img");
-  img.src = item.thumbnail;
+  img.src = item.thumbnail || defaultThumbnail(item.videoId, item.format);
   img.alt = "";
   img.loading = "lazy";
-  if (item.format === "short") {
-    img.addEventListener("error", () => {
-      if (img.dataset.fallbackApplied) return;
-      img.dataset.fallbackApplied = "1";
-      img.src = `https://i.ytimg.com/vi/${encodeURIComponent(item.videoId)}/mqdefault.jpg`;
-    });
-  }
+  img.addEventListener("error", () => {
+    if (img.dataset.fallbackApplied) return;
+    img.dataset.fallbackApplied = "1";
+    img.src = `https://i.ytimg.com/vi/${encodeURIComponent(item.videoId)}/mqdefault.jpg`;
+  });
+
+  const seal = document.createElement("span");
+  seal.className = "speilsalen-card-seal";
+  seal.appendChild(awardSvg(tier));
+  portrait.append(img, seal);
+
+  const plaque = document.createElement("div");
+  plaque.className = "speilsalen-card-plaque";
 
   const title = document.createElement("strong");
   title.textContent = item.title;
   title.title = item.title;
 
   const views = document.createElement("span");
+  views.className = "speilsalen-card-views";
   views.textContent = `${formatViews(item.totalViews)} views`;
 
-  link.append(img, title, views);
+  const inventory = document.createElement("div");
+  inventory.className = "speilsalen-trophy-inventory";
+  [
+    inventoryItem("crown", wallet.crowns),
+    inventoryItem("trophy", wallet.trophies),
+    inventoryItem("medal", wallet.medals)
+  ].filter(Boolean).forEach((node) => inventory.appendChild(node));
+
+  plaque.append(title, views, inventory);
+  link.append(portrait, plaque);
   return link;
 }
 
 function renderTier(format, tier) {
-  const items = state.videos.filter((item) => item.format === format && tierFor(item.totalViews) === tier);
+  const items = state.videos.filter((item) => {
+    if (item.format !== format) return false;
+    return highestTier(trophyWallet(item.totalViews)) === tier;
+  });
   const target = document.querySelector(`[data-tier-items="${format}:${tier}"]`);
   const count = document.querySelector(`[data-tier-count="${format}:${tier}"]`);
   if (!target || !count) return;
@@ -168,15 +303,13 @@ function renderRecord(format) {
 
   const img = document.createElement("img");
   img.className = "speilsalen-record-thumb";
-  img.src = item.thumbnail;
+  img.src = item.thumbnail || defaultThumbnail(item.videoId, item.format);
   img.alt = "";
-  if (format === "short") {
-    img.addEventListener("error", () => {
-      if (img.dataset.fallbackApplied) return;
-      img.dataset.fallbackApplied = "1";
-      img.src = `https://i.ytimg.com/vi/${encodeURIComponent(item.videoId)}/mqdefault.jpg`;
-    });
-  }
+  img.addEventListener("error", () => {
+    if (img.dataset.fallbackApplied) return;
+    img.dataset.fallbackApplied = "1";
+    img.src = `https://i.ytimg.com/vi/${encodeURIComponent(item.videoId)}/mqdefault.jpg`;
+  });
 
   const copy = document.createElement("div");
   copy.className = "speilsalen-record-copy";
@@ -194,6 +327,15 @@ function renderRecord(format) {
   suffix.textContent = "views";
   views.appendChild(suffix);
 
+  const wallet = trophyWallet(item.totalViews);
+  const inventory = document.createElement("div");
+  inventory.className = "speilsalen-record-inventory";
+  [
+    inventoryItem("crown", wallet.crowns),
+    inventoryItem("trophy", wallet.trophies),
+    inventoryItem("medal", wallet.medals)
+  ].filter(Boolean).forEach((node) => inventory.appendChild(node));
+
   const links = document.createElement("div");
   links.className = "speilsalen-record-links";
 
@@ -204,16 +346,14 @@ function renderRecord(format) {
     links.appendChild(pageLink);
   }
 
-  if (item.youtubeUrl) {
-    const youtubeLink = document.createElement("a");
-    youtubeLink.href = item.youtubeUrl;
-    youtubeLink.target = "_blank";
-    youtubeLink.rel = "noopener noreferrer";
-    youtubeLink.textContent = "YouTube";
-    links.appendChild(youtubeLink);
-  }
+  const youtubeLink = document.createElement("a");
+  youtubeLink.href = item.youtubeUrl || youtubeUrl(item.videoId, item.format);
+  youtubeLink.target = "_blank";
+  youtubeLink.rel = "noopener noreferrer";
+  youtubeLink.textContent = "YouTube";
+  links.appendChild(youtubeLink);
 
-  copy.append(label, title, views, links);
+  copy.append(label, title, views, inventory, links);
   target.append(img, copy);
 }
 
@@ -302,7 +442,13 @@ async function refresh() {
     const payload = await backend.fetchHeseFredrik("debug");
     state.videos = mergedVideos(payload || {});
     renderAll();
-    setStatus(`Live public views · ${state.videos.length} videos`, "live");
+
+    const totalRows = decodeSnapshot(payload || {}).length;
+    const unclassified = state.unclassified.length;
+    const statusText = unclassified
+      ? `Live public views · ${totalRows} videos · ${unclassified} unclassified`
+      : `Live public views · ${totalRows} videos`;
+    setStatus(statusText, unclassified ? "warning" : "live");
   } catch (error) {
     console.warn("Speilsalen trophies:", error);
     setStatus("Live view data unavailable", "error");
@@ -318,13 +464,14 @@ function start() {
   state.started = true;
   wireUi();
   setFormat("long");
-  renderRecord("long");
-  renderRecord("short");
   refresh();
 }
 
-if (window.SkyrScoutStaffAuthorized) {
-  start();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", start, { once: true });
 } else {
-  window.addEventListener("staffroom:authorized", start, { once: true });
+  start();
 }
+
+/* Exported only for browser-console diagnostics and regression checks. */
+window.SkyrScoutTrophyMath = Object.freeze({ trophyWallet, highestTier });

@@ -454,3 +454,255 @@
   .speilsalen-record-links{justify-content:center}
   .speilsalen-data-status{display:none}
 }
+
+/* =========================================================
+   Trophy Cabinet v2 · exchange wallet + display-card valours
+   ========================================================= */
+.speilsalen-data-status[data-state="warning"]{color:#d7a85e}
+
+/* Each column is a distinct display valour: gold, silver, bronze. */
+.speilsalen-tier[data-tier="crown"]{
+  --tier-metal:#e6bd62;
+  --tier-metal-hi:#ffe2a0;
+  --tier-metal-low:#79551d;
+  --tier-field:#1a1005;
+  border-color:rgba(230,189,98,.42);
+  background:
+    radial-gradient(circle at 50% 5%,rgba(238,191,89,.11),transparent 29%),
+    linear-gradient(180deg,rgba(31,20,8,.96),rgba(7,5,3,.94));
+}
+.speilsalen-tier[data-tier="trophy"]{
+  --tier-metal:#c8c8c2;
+  --tier-metal-hi:#f2f0e7;
+  --tier-metal-low:#646763;
+  --tier-field:#111311;
+  border-color:rgba(200,200,194,.30);
+  background:
+    radial-gradient(circle at 50% 5%,rgba(222,222,214,.08),transparent 29%),
+    linear-gradient(180deg,rgba(22,24,22,.95),rgba(6,6,5,.94));
+}
+.speilsalen-tier[data-tier="medal"]{
+  --tier-metal:#bd7848;
+  --tier-metal-hi:#e5ad7b;
+  --tier-metal-low:#60361f;
+  --tier-field:#160c08;
+  border-color:rgba(189,120,72,.34);
+  background:
+    radial-gradient(circle at 50% 5%,rgba(191,111,61,.09),transparent 29%),
+    linear-gradient(180deg,rgba(27,15,10,.95),rgba(7,5,4,.94));
+}
+.speilsalen-tier[data-tier] .speilsalen-tier-head{
+  border-bottom-color:color-mix(in srgb,var(--tier-metal-low) 72%,#160d07);
+  background:
+    radial-gradient(circle at 50% 32%,color-mix(in srgb,var(--tier-metal) 13%,transparent),transparent 54%),
+    linear-gradient(180deg,rgba(255,255,255,.018),rgba(0,0,0,.08));
+}
+.speilsalen-tier[data-tier] .speilsalen-award-symbol{
+  color:var(--tier-metal);
+  border-color:color-mix(in srgb,var(--tier-metal) 38%,transparent);
+  background:radial-gradient(circle, color-mix(in srgb,var(--tier-metal) 11%,transparent), rgba(0,0,0,.12));
+  box-shadow:0 0 22px color-mix(in srgb,var(--tier-metal) 8%,transparent);
+}
+.speilsalen-tier[data-tier] .speilsalen-award-symbol svg{stroke:currentColor}
+.speilsalen-tier[data-tier] .speilsalen-tier-count{
+  color:var(--tier-metal-hi);
+  border-color:color-mix(in srgb,var(--tier-metal) 30%,transparent);
+  background:rgba(4,3,2,.62);
+}
+
+/* The video itself is now an exhibit, not a Video Library row. */
+.speilsalen-video-card{
+  position:relative;
+  min-width:0;
+  display:block;
+  padding:7px;
+  border-radius:4px;
+  text-decoration:none;
+  overflow:hidden;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.speilsalen-video-card::before,
+.speilsalen-video-card::after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  width:14px;
+  height:14px;
+  pointer-events:none;
+  opacity:.80;
+}
+.speilsalen-video-card::before{left:3px;top:3px;border-left:1px solid currentColor;border-top:1px solid currentColor}
+.speilsalen-video-card::after{right:3px;bottom:3px;border-right:1px solid currentColor;border-bottom:1px solid currentColor}
+
+.speilsalen-video-card-crown{
+  color:#f2cc72;
+  border:1px solid rgba(225,180,76,.48);
+  background:
+    radial-gradient(circle at 50% -10%,rgba(245,202,100,.17),transparent 40%),
+    linear-gradient(150deg,#291906 0%,#110b05 58%,#211306 100%);
+  box-shadow:inset 0 0 0 2px rgba(112,72,20,.28),0 10px 24px rgba(0,0,0,.38);
+}
+.speilsalen-video-card-trophy{
+  color:#d6d6cf;
+  border:1px solid rgba(199,201,197,.36);
+  background:
+    radial-gradient(circle at 50% -10%,rgba(230,232,226,.11),transparent 40%),
+    linear-gradient(150deg,#242824 0%,#0d0f0d 58%,#1c201d 100%);
+  box-shadow:inset 0 0 0 2px rgba(102,107,103,.22),0 10px 24px rgba(0,0,0,.34);
+}
+.speilsalen-video-card-medal{
+  color:#cb8452;
+  border:1px solid rgba(190,113,63,.40);
+  background:
+    radial-gradient(circle at 50% -10%,rgba(202,119,69,.12),transparent 40%),
+    linear-gradient(150deg,#29160d 0%,#100907 58%,#211109 100%);
+  box-shadow:inset 0 0 0 2px rgba(105,53,29,.24),0 10px 24px rgba(0,0,0,.34);
+}
+.speilsalen-video-card:hover,
+.speilsalen-video-card:focus-visible{
+  transform:translateY(-2px);
+  outline:none;
+  border-color:currentColor;
+  background-color:transparent;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.035),0 13px 28px rgba(0,0,0,.48),0 0 18px color-mix(in srgb,currentColor 10%,transparent);
+}
+
+.speilsalen-card-portrait{
+  position:relative;
+  padding:5px;
+  border:1px solid color-mix(in srgb,currentColor 48%,#23180c);
+  background:#080604;
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.72),0 5px 12px rgba(0,0,0,.32);
+}
+.speilsalen-card-portrait::before{
+  content:"";
+  position:absolute;
+  inset:2px;
+  z-index:2;
+  pointer-events:none;
+  border:1px solid color-mix(in srgb,currentColor 24%,transparent);
+}
+.speilsalen-card-portrait img,
+[data-speilsalen-view="short"] .speilsalen-card-portrait img{
+  width:100%;
+  display:block;
+  object-fit:cover;
+  aspect-ratio:16/9;
+  border:0;
+  background:#15100a;
+  filter:saturate(.92) contrast(1.03);
+}
+[data-speilsalen-view="short"] .speilsalen-card-portrait img{
+  aspect-ratio:4/5;
+}
+.speilsalen-card-seal{
+  position:absolute;
+  z-index:4;
+  right:-4px;
+  bottom:-5px;
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border:1px solid color-mix(in srgb,currentColor 65%,#1b1208);
+  border-radius:50%;
+  color:inherit;
+  background:radial-gradient(circle at 40% 35%,color-mix(in srgb,currentColor 18%,#15100a),#090604 70%);
+  box-shadow:0 4px 9px rgba(0,0,0,.58),inset 0 0 0 2px rgba(0,0,0,.45);
+}
+.speilsalen-card-seal svg{
+  width:19px;
+  height:19px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.speilsalen-card-plaque{
+  position:relative;
+  margin:7px 2px 1px;
+  padding:7px 7px 6px;
+  border:1px solid color-mix(in srgb,currentColor 28%,rgba(50,38,25,.6));
+  border-radius:2px;
+  background:linear-gradient(180deg,rgba(8,7,5,.90),rgba(15,11,7,.96));
+  box-shadow:inset 0 1px rgba(255,255,255,.018);
+}
+.speilsalen-card-plaque strong{
+  display:block;
+  margin:0;
+  overflow:hidden;
+  color:#f0e6d8;
+  font:600 9px/1.25 Georgia,"Times New Roman",serif;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.speilsalen-card-views{
+  display:block;
+  margin-top:3px !important;
+  color:color-mix(in srgb,currentColor 76%,#d7c8b4) !important;
+  font-size:8px !important;
+  font-weight:780 !important;
+  letter-spacing:.02em;
+}
+
+/* Complete normalized wallet: crowns, trophies and medals remaining after exchange. */
+.speilsalen-trophy-inventory,
+.speilsalen-record-inventory{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:6px;
+}
+.speilsalen-inventory-item{
+  display:inline-flex !important;
+  align-items:center;
+  gap:2px;
+  min-width:27px;
+  margin:0 !important;
+  padding:2px 4px;
+  border:1px solid rgba(218,182,112,.16);
+  border-radius:999px;
+  background:rgba(0,0,0,.32);
+  color:#cdbb9c !important;
+  line-height:1;
+}
+.speilsalen-inventory-item svg{
+  width:13px;
+  height:13px;
+  flex:0 0 13px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.speilsalen-inventory-item b{
+  color:inherit;
+  font-size:8px;
+  font-weight:900;
+}
+.speilsalen-inventory-crown{color:#e8bc5e !important;border-color:rgba(232,188,94,.24)}
+.speilsalen-inventory-trophy{color:#cfd0ca !important;border-color:rgba(207,208,202,.20)}
+.speilsalen-inventory-medal{color:#c47b4b !important;border-color:rgba(196,123,75,.22)}
+
+.speilsalen-record-inventory{
+  margin-top:12px;
+}
+.speilsalen-record-inventory .speilsalen-inventory-item{
+  min-width:38px;
+  padding:4px 7px;
+}
+.speilsalen-record-inventory .speilsalen-inventory-item svg{
+  width:18px;
+  height:18px;
+  flex-basis:18px;
+}
+.speilsalen-record-inventory .speilsalen-inventory-item b{font-size:10px}
+
+@media(max-width:900px){
+  .speilsalen-tier-items{grid-template-columns:1fr}
+  .speilsalen-card-plaque strong{font-size:8px}
+}
