@@ -52,71 +52,405 @@
   background:rgba(216,171,98,.12);
   box-shadow:inset 0 0 0 1px rgba(240,198,118,.30);
 }
-.speilsalen-stage{
-  position:relative;
-  z-index:5;
-  min-height:100vh;
+
+/* The hall remains the visual focus. These are deliberately small room displays. */
+.speilsalen-displays{
+  position:fixed;
+  inset:0;
+  z-index:8;
+  pointer-events:none;
+}
+.speilsalen-display{
+  position:absolute;
+  pointer-events:auto;
   display:grid;
   place-items:center;
-  padding:96px 18px 40px;
+  margin:0;
+  padding:0;
+  border:1px solid rgba(224,182,91,.54);
+  background:
+    radial-gradient(circle at 35% 25%,rgba(255,229,159,.14),transparent 30%),
+    rgba(18,11,5,.78);
+  color:#dfb866;
+  box-shadow:
+    0 2px 9px rgba(0,0,0,.75),
+    inset 0 0 0 1px rgba(89,55,20,.50);
+  opacity:.70;
+  cursor:pointer;
+  transition:opacity .16s ease,transform .16s ease,box-shadow .16s ease;
 }
-.speilsalen-title-card{
-  width:min(620px,calc(100vw - 36px));
-  padding:30px 34px 28px;
-  border:1px solid rgba(216,171,98,.30);
+.speilsalen-display:hover,
+.speilsalen-display:focus-visible{
+  opacity:1;
+  transform:scale(1.08);
+  outline:none;
+  box-shadow:
+    0 3px 14px rgba(0,0,0,.80),
+    inset 0 0 0 1px rgba(108,70,25,.62),
+    0 0 12px rgba(210,166,76,.18);
+}
+.speilsalen-cabinet-display{
+  left:12.7%;
+  top:61%;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+}
+.speilsalen-cabinet-symbol{
+  position:absolute;
+  inset:8px 7px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;
+}
+.speilsalen-cabinet-symbol i{
+  border:1px solid currentColor;
+  border-radius:1px;
+}
+.speilsalen-record-display{
+  right:5.2%;
+  width:38px;
+  height:28px;
+  border-radius:3px;
+}
+.speilsalen-record-long{top:43.4%}
+.speilsalen-record-short{top:49%}
+.speilsalen-record-display svg{
+  width:21px;
+  height:17px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+}
+.speilsalen-record-display svg path{
+  fill:currentColor;
+  stroke:none;
+}
+
+.speilsalen-modal[hidden]{display:none}
+.speilsalen-modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+.speilsalen-modal-backdrop{
+  position:absolute;
+  inset:0;
+  border:0;
+  background:rgba(0,0,0,.76);
+  backdrop-filter:blur(3px);
+}
+.speilsalen-modal-panel{
+  position:relative;
+  z-index:2;
+  border:1px solid rgba(220,177,88,.50);
   border-radius:16px;
-  background:rgba(8,5,3,.60);
-  box-shadow:0 28px 90px rgba(0,0,0,.58);
-  backdrop-filter:blur(8px);
-  text-align:center;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(207,160,70,.12),transparent 32%),
+    linear-gradient(180deg,rgba(19,12,6,.99),rgba(6,4,2,.99));
+  box-shadow:
+    0 35px 100px rgba(0,0,0,.80),
+    inset 0 0 0 3px rgba(83,51,18,.35);
 }
-.speilsalen-kicker{
+.speilsalen-modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(215,168,78,.25);
+}
+.speilsalen-modal-kicker{
   display:block;
-  margin-bottom:8px;
-  color:#d8ab62;
-  font-size:8px;
-  font-weight:900;
-  letter-spacing:.16em;
+  color:#c89e4e;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.30em;
   text-transform:uppercase;
 }
-.speilsalen-title-card h1{
-  margin:0;
-  color:#fff7e9;
-  font:500 clamp(48px,7vw,86px)/.95 Georgia,"Times New Roman",serif;
-  letter-spacing:-.035em;
-  text-shadow:0 4px 24px #000;
+.speilsalen-modal-head h1{
+  margin:4px 0 0;
+  color:#fff6e6;
+  font:500 34px/1 Georgia,"Times New Roman",serif;
+  letter-spacing:.08em;
 }
-.speilsalen-rule{
-  width:120px;
-  height:1px;
-  margin:20px auto 16px;
-  background:linear-gradient(90deg,transparent,#d8ab62,transparent);
+.speilsalen-modal-close{
+  flex:0 0 auto;
+  width:38px;
+  height:38px;
+  border:1px solid rgba(220,179,91,.40);
+  border-radius:50%;
+  background:#0a0704;
+  color:#e8c474;
+  font-size:28px;
+  line-height:1;
+  cursor:pointer;
 }
-.speilsalen-title-card p{
-  margin:0;
-  color:#d8cbb9;
-  font-size:13px;
-  line-height:1.55;
+
+/* Trophy Cabinet: all three achievement columns remain visible at once. */
+.speilsalen-cabinet-panel{
+  width:min(1280px,95vw);
+  height:min(850px,89vh);
+  padding:20px;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:auto auto minmax(0,1fr);
+  gap:12px;
 }
-.speilsalen-status{
-  display:inline-block;
-  margin-top:22px;
-  padding:8px 12px;
-  border:1px solid rgba(240,198,118,.40);
+.speilsalen-format-tabs{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.speilsalen-format-tab{
+  border:1px solid rgba(211,169,82,.28);
   border-radius:999px;
-  color:#f0c676;
-  background:rgba(216,171,98,.08);
-  font-size:8px;
-  font-weight:900;
-  letter-spacing:.16em;
+  background:#0b0805;
+  color:#9f927c;
+  padding:8px 14px;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.12em;
+  cursor:pointer;
 }
+.speilsalen-format-tab.active{
+  color:#efd089;
+  border-color:#c69b49;
+  background:#1a1208;
+}
+.speilsalen-data-status{
+  margin-left:auto;
+  color:#8f806b;
+  font-size:9px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.speilsalen-data-status[data-state="live"]{color:#bfa35f}
+.speilsalen-data-status[data-state="error"]{color:#c77b68}
+.speilsalen-tier-grid{
+  min-height:0;
+  height:100%;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.speilsalen-tier-grid[hidden]{display:none}
+.speilsalen-tier{
+  min-width:0;
+  min-height:0;
+  border:1px solid rgba(207,164,76,.24);
+  background:linear-gradient(180deg,rgba(25,17,9,.82),rgba(7,5,3,.82));
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  overflow:hidden;
+}
+.speilsalen-tier-head{
+  position:relative;
+  min-height:74px;
+  display:grid;
+  place-items:center;
+  border-bottom:7px solid #28170d;
+  background:radial-gradient(circle at 50% 30%,rgba(197,148,57,.11),transparent 54%);
+}
+.speilsalen-award-symbol{
+  width:54px;
+  height:54px;
+  border:1px solid rgba(224,184,97,.26);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+}
+.speilsalen-award-symbol svg{
+  width:34px;
+  height:34px;
+  fill:none;
+  stroke:#dfba68;
+  stroke-width:2.4;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.speilsalen-tier-count{
+  position:absolute;
+  right:10px;
+  top:10px;
+  min-width:22px;
+  height:22px;
+  display:grid;
+  place-items:center;
+  padding:0 6px;
+  border:1px solid rgba(216,171,98,.25);
+  border-radius:999px;
+  color:#bba373;
+  background:rgba(4,3,2,.55);
+  font-size:9px;
+  font-weight:800;
+}
+.speilsalen-tier-items{
+  min-height:0;
+  overflow:auto;
+  padding:10px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  align-content:start;
+  scrollbar-width:thin;
+  scrollbar-color:#765726 #0c0805;
+}
+.speilsalen-video-card{
+  min-width:0;
+  display:block;
+  padding:7px;
+  border:1px solid rgba(216,175,91,.14);
+  background:rgba(5,5,4,.58);
+  color:#f0e4cf;
+  text-decoration:none;
+}
+.speilsalen-video-card:hover,
+.speilsalen-video-card:focus-visible{
+  border-color:rgba(230,190,104,.42);
+  outline:none;
+  background:rgba(216,171,98,.07);
+}
+.speilsalen-video-card img{
+  width:100%;
+  aspect-ratio:16/9;
+  display:block;
+  object-fit:cover;
+  border:1px solid rgba(255,255,255,.05);
+  background:#15100a;
+}
+[data-speilsalen-view="short"] .speilsalen-video-card img{
+  aspect-ratio:4/5;
+}
+.speilsalen-video-card strong{
+  display:block;
+  margin-top:6px;
+  overflow:hidden;
+  color:#eadfcf;
+  font-size:9px;
+  line-height:1.25;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.speilsalen-video-card span{
+  display:block;
+  margin-top:2px;
+  color:#b9a783;
+  font-size:9px;
+  font-weight:750;
+}
+.speilsalen-tier-empty{
+  grid-column:1/-1;
+  display:grid;
+  place-items:center;
+  min-height:82px;
+  color:#74695a;
+  font-size:9px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* Record holders live outside the cabinet and have separate pop-outs. */
+.speilsalen-record-panel{
+  width:min(760px,92vw);
+  padding:22px;
+}
+.speilsalen-record-content{
+  min-height:210px;
+  display:grid;
+  grid-template-columns:220px minmax(0,1fr);
+  gap:24px;
+  align-items:center;
+  padding:24px 4px 4px;
+}
+.speilsalen-record-thumb{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border:1px solid rgba(226,189,109,.23);
+  background:#15100a;
+  box-shadow:0 16px 35px rgba(0,0,0,.40);
+}
+.speilsalen-record-content[data-record-content="short"] .speilsalen-record-thumb{
+  width:150px;
+  aspect-ratio:4/5;
+  justify-self:center;
+}
+.speilsalen-record-copy small{
+  display:block;
+  color:#bc9147;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.23em;
+  text-transform:uppercase;
+}
+.speilsalen-record-copy h2{
+  margin:6px 0 12px;
+  color:#f2e8d5;
+  font:500 26px/1.08 Georgia,"Times New Roman",serif;
+}
+.speilsalen-record-views{
+  color:#edcb7f;
+  font-size:48px;
+  line-height:1;
+  font-weight:850;
+}
+.speilsalen-record-views span{
+  margin-left:7px;
+  color:#a99a81;
+  font-size:13px;
+  font-weight:600;
+}
+.speilsalen-record-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:16px;
+}
+.speilsalen-record-links a{
+  padding:7px 10px;
+  border:1px solid rgba(216,171,98,.28);
+  border-radius:999px;
+  background:rgba(216,171,98,.06);
+  color:#dfc790;
+  text-decoration:none;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.speilsalen-record-loading{
+  grid-column:1/-1;
+  color:#8e806c;
+  font-size:11px;
+  text-align:center;
+}
+
 @media(max-width:920px){
-  .speilsalen-nav{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:50;box-shadow:0 12px 40px #000a}
-  .speilsalen-stage{padding-bottom:90px}
+  .speilsalen-nav{
+    position:fixed;
+    left:50%;
+    bottom:14px;
+    transform:translateX(-50%);
+    z-index:50;
+    box-shadow:0 12px 40px #000a;
+  }
+  .speilsalen-cabinet-panel{height:92vh;padding:14px}
+  .speilsalen-tier-grid{
+    grid-template-columns:repeat(3,minmax(210px,1fr));
+    overflow-x:auto;
+  }
+  .speilsalen-cabinet-display{width:28px;height:28px}
+  .speilsalen-record-display{width:34px;height:25px}
 }
 @media(max-width:620px){
   .speilsalen-nav{width:calc(100% - 20px);justify-content:center}
   .speilsalen-nav a{flex:1;text-align:center;padding:7px 5px;font-size:8px}
-  .speilsalen-title-card{padding:25px 20px 23px}
-  .speilsalen-title-card p{font-size:12px}
+  .speilsalen-record-content{grid-template-columns:1fr;text-align:center}
+  .speilsalen-record-thumb{width:min(420px,90%);justify-self:center}
+  .speilsalen-record-links{justify-content:center}
+  .speilsalen-data-status{display:none}
 }

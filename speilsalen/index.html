@@ -14,7 +14,7 @@ sitemap: false
   <title>Speilsalen | Scoutland Yard</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/scoutland-rooms.css' | relative_url }}?v=20260819-rooms3">
-  <link rel="stylesheet" href="{{ '/assets/css/speilsalen.css' | relative_url }}?v=20260823-speilsalen1">
+  <link rel="stylesheet" href="{{ '/assets/css/speilsalen.css' | relative_url }}?v=20260827-trophies1">
 </head>
 <body>
   <div class="staff-room-auth-gate" id="staffRoomAuthGate" data-state="checking">
@@ -47,17 +47,156 @@ sitemap: false
       </div>
     </header>
 
-    <section class="speilsalen-stage" aria-labelledby="speilsalenTitle">
-      <div class="speilsalen-title-card">
-        <span class="speilsalen-kicker">Scoutland Yard · Staff only</span>
-        <h1 id="speilsalenTitle">Speilsalen</h1>
-        <div class="speilsalen-rule" aria-hidden="true"></div>
-        <p>Rommet er på plass. Innhold kommer etter hvert.</p>
-        <span class="speilsalen-status">UNDER DEVELOPMENT</span>
-      </div>
+    <section class="speilsalen-displays" aria-label="Speilsalen displays">
+      <button class="speilsalen-display speilsalen-cabinet-display" type="button" data-speilsalen-open="cabinet" aria-label="Åpne Troféskapet" title="Troféskapet">
+        <span class="speilsalen-cabinet-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+
+      <button class="speilsalen-display speilsalen-record-display speilsalen-record-long" type="button" data-speilsalen-open="long-record" aria-label="Åpne mest sette long form" title="Most viewed long form">
+        <svg viewBox="0 0 64 42" aria-hidden="true"><rect x="4" y="4" width="56" height="34" rx="4"></rect><path d="M27 14l13 7-13 7z"></path></svg>
+      </button>
+
+      <button class="speilsalen-display speilsalen-record-display speilsalen-record-short" type="button" data-speilsalen-open="short-record" aria-label="Åpne mest sette short" title="Most viewed short">
+        <svg viewBox="0 0 42 64" aria-hidden="true"><rect x="4" y="4" width="34" height="56" rx="4"></rect><path d="M17 24l12 8-12 8z"></path></svg>
+      </button>
     </section>
+
+    <div class="speilsalen-catalog" id="speilsalenVideoCatalog" hidden>
+      {% for player in site.players %}
+        {% if player.youtube %}
+          {% assign trophy_title_main = player.title | split: ' | ' | first %}
+          {% assign trophy_youtube_id = player.youtube | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+          <span data-trophy-video
+                data-format="long"
+                data-video-id="{{ trophy_youtube_id | escape }}"
+                data-title="{{ trophy_title_main | escape }}"
+                data-page-url="{{ player.url | relative_url }}"
+                data-youtube-url="https://www.youtube.com/watch?v={{ trophy_youtube_id | escape }}"
+                data-thumbnail="https://i.ytimg.com/vi/{{ trophy_youtube_id | escape }}/mqdefault.jpg"></span>
+        {% endif %}
+      {% endfor %}
+
+      {% for short in site.shorts %}
+        {% if short.youtube %}
+          {% assign trophy_short_id = short.youtube | split: 'shorts/' | last | split: 'v=' | last | split: '?' | first | split: '&' | first | split: '/' | last %}
+          <span data-trophy-video
+                data-format="short"
+                data-video-id="{{ trophy_short_id | escape }}"
+                data-title="{{ short.title | escape }}"
+                data-page-url="{{ short.url | relative_url }}"
+                data-youtube-url="https://www.youtube.com/shorts/{{ trophy_short_id | escape }}"
+                data-thumbnail="https://i.ytimg.com/vi/{{ trophy_short_id | escape }}/maxresdefault.jpg"></span>
+        {% endif %}
+      {% endfor %}
+    </div>
   </main>
 
+  <div class="speilsalen-modal" id="speilsalenCabinetModal" hidden>
+    <button class="speilsalen-modal-backdrop" type="button" data-speilsalen-close="speilsalenCabinetModal" aria-label="Lukk Troféskapet"></button>
+    <section class="speilsalen-modal-panel speilsalen-cabinet-panel" role="dialog" aria-modal="true" aria-labelledby="speilsalenCabinetTitle">
+      <header class="speilsalen-modal-head">
+        <div>
+          <span class="speilsalen-modal-kicker">Speilsalen</span>
+          <h1 id="speilsalenCabinetTitle">TROFÉSKAPET</h1>
+        </div>
+        <button class="speilsalen-modal-close" type="button" data-speilsalen-close="speilsalenCabinetModal" aria-label="Lukk">×</button>
+      </header>
+
+      <div class="speilsalen-format-tabs" role="tablist" aria-label="Videoformat">
+        <button class="speilsalen-format-tab active" type="button" data-speilsalen-format="long" role="tab" aria-selected="true">LONG FORM</button>
+        <button class="speilsalen-format-tab" type="button" data-speilsalen-format="short" role="tab" aria-selected="false">SHORTS</button>
+        <span class="speilsalen-data-status" data-speilsalen-status>Loading live views…</span>
+      </div>
+
+      <section class="speilsalen-tier-grid" data-speilsalen-view="long">
+        <article class="speilsalen-tier" data-tier="crown">
+          <header class="speilsalen-tier-head">
+            <span class="speilsalen-award-symbol" aria-label="10K plus">
+              <svg viewBox="0 0 64 50" aria-hidden="true"><path d="M8 38L4 13l15 12L31 6l13 19 16-12-5 25z"></path><path d="M10 42h44"></path></svg>
+            </span>
+            <span class="speilsalen-tier-count" data-tier-count="long:crown">0</span>
+          </header>
+          <div class="speilsalen-tier-items" data-tier-items="long:crown"></div>
+        </article>
+
+        <article class="speilsalen-tier" data-tier="trophy">
+          <header class="speilsalen-tier-head">
+            <span class="speilsalen-award-symbol" aria-label="5K plus">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h24v12c0 11-5 18-12 18s-12-7-12-18z"></path><path d="M20 15H9c0 12 5 18 15 18M44 15h11c0 12-5 18-15 18"></path><path d="M32 40v9M22 54h20"></path></svg>
+            </span>
+            <span class="speilsalen-tier-count" data-tier-count="long:trophy">0</span>
+          </header>
+          <div class="speilsalen-tier-items" data-tier-items="long:trophy"></div>
+        </article>
+
+        <article class="speilsalen-tier" data-tier="medal">
+          <header class="speilsalen-tier-head">
+            <span class="speilsalen-award-symbol" aria-label="1K plus">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 6l12 18L44 6"></path><circle cx="32" cy="39" r="14"></circle><circle cx="32" cy="39" r="6"></circle></svg>
+            </span>
+            <span class="speilsalen-tier-count" data-tier-count="long:medal">0</span>
+          </header>
+          <div class="speilsalen-tier-items" data-tier-items="long:medal"></div>
+        </article>
+      </section>
+
+      <section class="speilsalen-tier-grid" data-speilsalen-view="short" hidden>
+        <article class="speilsalen-tier" data-tier="crown">
+          <header class="speilsalen-tier-head">
+            <span class="speilsalen-award-symbol" aria-label="10K plus">
+              <svg viewBox="0 0 64 50" aria-hidden="true"><path d="M8 38L4 13l15 12L31 6l13 19 16-12-5 25z"></path><path d="M10 42h44"></path></svg>
+            </span>
+            <span class="speilsalen-tier-count" data-tier-count="short:crown">0</span>
+          </header>
+          <div class="speilsalen-tier-items" data-tier-items="short:crown"></div>
+        </article>
+
+        <article class="speilsalen-tier" data-tier="trophy">
+          <header class="speilsalen-tier-head">
+            <span class="speilsalen-award-symbol" aria-label="5K plus">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h24v12c0 11-5 18-12 18s-12-7-12-18z"></path><path d="M20 15H9c0 12 5 18 15 18M44 15h11c0 12-5 18-15 18"></path><path d="M32 40v9M22 54h20"></path></svg>
+            </span>
+            <span class="speilsalen-tier-count" data-tier-count="short:trophy">0</span>
+          </header>
+          <div class="speilsalen-tier-items" data-tier-items="short:trophy"></div>
+        </article>
+
+        <article class="speilsalen-tier" data-tier="medal">
+          <header class="speilsalen-tier-head">
+            <span class="speilsalen-award-symbol" aria-label="1K plus">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 6l12 18L44 6"></path><circle cx="32" cy="39" r="14"></circle><circle cx="32" cy="39" r="6"></circle></svg>
+            </span>
+            <span class="speilsalen-tier-count" data-tier-count="short:medal">0</span>
+          </header>
+          <div class="speilsalen-tier-items" data-tier-items="short:medal"></div>
+        </article>
+      </section>
+    </section>
+  </div>
+
+  <div class="speilsalen-modal" id="speilsalenLongRecordModal" hidden>
+    <button class="speilsalen-modal-backdrop" type="button" data-speilsalen-close="speilsalenLongRecordModal" aria-label="Lukk"></button>
+    <section class="speilsalen-modal-panel speilsalen-record-panel" role="dialog" aria-modal="true" aria-labelledby="speilsalenLongRecordTitle">
+      <header class="speilsalen-modal-head">
+        <div><span class="speilsalen-modal-kicker">Speilsalen · Record holder</span><h1 id="speilsalenLongRecordTitle">LONG FORM</h1></div>
+        <button class="speilsalen-modal-close" type="button" data-speilsalen-close="speilsalenLongRecordModal" aria-label="Lukk">×</button>
+      </header>
+      <div class="speilsalen-record-content" data-record-content="long"></div>
+    </section>
+  </div>
+
+  <div class="speilsalen-modal" id="speilsalenShortRecordModal" hidden>
+    <button class="speilsalen-modal-backdrop" type="button" data-speilsalen-close="speilsalenShortRecordModal" aria-label="Lukk"></button>
+    <section class="speilsalen-modal-panel speilsalen-record-panel" role="dialog" aria-modal="true" aria-labelledby="speilsalenShortRecordTitle">
+      <header class="speilsalen-modal-head">
+        <div><span class="speilsalen-modal-kicker">Speilsalen · Record holder</span><h1 id="speilsalenShortRecordTitle">SHORT</h1></div>
+        <button class="speilsalen-modal-close" type="button" data-speilsalen-close="speilsalenShortRecordModal" aria-label="Lukk">×</button>
+      </header>
+      <div class="speilsalen-record-content" data-record-content="short"></div>
+    </section>
+  </div>
+
   <script type="module" src="{{ '/assets/js/staff-room-auth.js?v=20260820-roomauth3' | relative_url }}"></script>
+  <script type="module" src="{{ '/assets/js/speilsalen-trophies.js?v=20260827-trophies1' | relative_url }}"></script>
 </body>
 </html>
