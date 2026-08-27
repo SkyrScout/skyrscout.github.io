@@ -706,3 +706,146 @@
   .speilsalen-tier-items{grid-template-columns:1fr}
   .speilsalen-card-plaque strong{font-size:8px}
 }
+
+
+/* =========================================================
+   Trophy Cabinet v3 · larger exhibition cards + tier layouts
+   ========================================================= */
+.speilsalen-tier-grid{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.06fr);
+  gap:14px;
+}
+.speilsalen-tier{
+  min-height:0;
+}
+.speilsalen-tier-items{
+  padding:14px;
+  gap:12px;
+  grid-template-columns:1fr;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-tier-items,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-tier-items{
+  grid-template-columns:1fr;
+}
+.speilsalen-tier[data-tier="medal"] .speilsalen-tier-items{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.speilsalen-video-card{
+  display:grid;
+  grid-template-rows:auto auto;
+  gap:10px;
+  padding:12px;
+  min-width:0;
+  min-height:0;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-video-card,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-video-card{
+  padding:14px;
+}
+.speilsalen-tier[data-tier="medal"] .speilsalen-video-card{
+  padding:10px;
+}
+.speilsalen-card-seal{display:none !important}
+.speilsalen-card-portrait{
+  padding:8px;
+}
+.speilsalen-tier[data-tier="medal"] .speilsalen-card-portrait{
+  padding:6px;
+}
+.speilsalen-card-portrait::before{
+  inset:3px;
+}
+.speilsalen-card-portrait img,
+[data-speilsalen-view="short"] .speilsalen-card-portrait img{
+  width:100%;
+  display:block;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
+[data-speilsalen-view="short"] .speilsalen-card-portrait img{
+  aspect-ratio:4/5;
+}
+.speilsalen-card-plaque{
+  margin:0;
+  padding:10px 11px 10px;
+  display:grid;
+  gap:5px;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-card-plaque,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-card-plaque{
+  padding:12px 13px 12px;
+}
+.speilsalen-card-plaque strong{
+  white-space:normal;
+  text-overflow:clip;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  font-size:12px;
+  line-height:1.25;
+  min-height:2.5em;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-card-plaque strong,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-card-plaque strong{
+  font-size:15px;
+  line-height:1.22;
+  min-height:2.44em;
+}
+.speilsalen-tier[data-tier="medal"] .speilsalen-card-plaque strong{
+  font-size:11px;
+}
+.speilsalen-card-views{
+  margin-top:0 !important;
+  font-size:11px !important;
+  letter-spacing:.04em;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-card-views,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-card-views{
+  font-size:13px !important;
+}
+.speilsalen-trophy-inventory{
+  margin-top:4px;
+  gap:6px;
+}
+.speilsalen-inventory-item{
+  min-width:32px;
+  padding:3px 6px;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-inventory-item,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-inventory-item{
+  min-width:38px;
+  padding:4px 8px;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-inventory-item svg,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-inventory-item svg{
+  width:15px;
+  height:15px;
+  flex-basis:15px;
+}
+.speilsalen-tier[data-tier="crown"] .speilsalen-inventory-item b,
+.speilsalen-tier[data-tier="trophy"] .speilsalen-inventory-item b{
+  font-size:10px;
+}
+@media(max-width:1100px){
+  .speilsalen-tier-grid{
+    grid-template-columns:1fr;
+    overflow:auto;
+  }
+  .speilsalen-tier[data-tier="medal"] .speilsalen-tier-items{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:720px){
+  .speilsalen-tier[data-tier="medal"] .speilsalen-tier-items{
+    grid-template-columns:1fr;
+  }
+  .speilsalen-card-plaque strong{
+    font-size:11px;
+  }
+  .speilsalen-tier[data-tier="crown"] .speilsalen-card-plaque strong,
+  .speilsalen-tier[data-tier="trophy"] .speilsalen-card-plaque strong{
+    font-size:13px;
+  }
+}

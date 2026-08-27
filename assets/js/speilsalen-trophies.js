@@ -205,8 +205,10 @@ function card(item) {
   const tier = highestTier(wallet);
 
   const link = document.createElement("a");
-  link.className = `speilsalen-video-card speilsalen-video-card-${tier}`;
+  link.className = `speilsalen-video-card speilsalen-video-card-${tier} speilsalen-video-card-${item.format}`;
   link.href = item.youtubeUrl || item.pageUrl || "#";
+  link.dataset.tier = tier || "";
+  link.dataset.format = item.format;
   if (item.youtubeUrl) {
     link.target = "_blank";
     link.rel = "noopener noreferrer";
@@ -224,11 +226,7 @@ function card(item) {
     img.dataset.fallbackApplied = "1";
     img.src = `https://i.ytimg.com/vi/${encodeURIComponent(item.videoId)}/mqdefault.jpg`;
   });
-
-  const seal = document.createElement("span");
-  seal.className = "speilsalen-card-seal";
-  seal.appendChild(awardSvg(tier));
-  portrait.append(img, seal);
+  portrait.appendChild(img);
 
   const plaque = document.createElement("div");
   plaque.className = "speilsalen-card-plaque";
@@ -258,7 +256,7 @@ function renderTier(format, tier) {
   const items = state.videos.filter((item) => {
     if (item.format !== format) return false;
     return highestTier(trophyWallet(item.totalViews)) === tier;
-  });
+  }).sort((a, b) => b.totalViews - a.totalViews || a.title.localeCompare(b.title));
   const target = document.querySelector(`[data-tier-items="${format}:${tier}"]`);
   const count = document.querySelector(`[data-tier-count="${format}:${tier}"]`);
   if (!target || !count) return;
@@ -284,7 +282,9 @@ function renderCabinet() {
 }
 
 function recordHolder(format) {
-  return state.videos.find((item) => item.format === format) || null;
+  return state.videos
+    .filter((item) => item.format === format)
+    .sort((a, b) => b.totalViews - a.totalViews || a.title.localeCompare(b.title))[0] || null;
 }
 
 function renderRecord(format) {
