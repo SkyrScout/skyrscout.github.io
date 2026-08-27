@@ -882,11 +882,11 @@
   align-self:flex-start;
 }
 
-/* Medal shelves remain denser, but every card keeps its natural height. */
+/* Medal shelves now use one full-width exhibit per row as requested. */
 .speilsalen-tier[data-tier="medal"] .speilsalen-video-card{
-  flex:0 0 calc(50% - 6px);
-  width:calc(50% - 6px);
-  max-width:calc(50% - 6px);
+  flex:0 0 100%;
+  width:100%;
+  max-width:100%;
   height:auto !important;
   align-self:flex-start;
 }
@@ -930,10 +930,3 @@
 }
 
 /* Keep the dense medal shelf readable at smaller widths. */
-@media(max-width:1150px){
-  .speilsalen-tier[data-tier="medal"] .speilsalen-video-card{
-    flex-basis:100%;
-    width:100%;
-    max-width:100%;
-  }
-}

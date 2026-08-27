@@ -34,6 +34,75 @@ function formatViews(value) {
   return new Intl.NumberFormat("en-GB").format(Math.max(0, Math.round(n)));
 }
 
+
+function looksLikeRawVideoId(text) {
+  const value = String(text || '').trim();
+  if (!value) return true;
+  if (/^-?[A-Za-z0-9_-]{8,}$/.test(value)) return true;
+  if (!/\s/.test(value) && /^[A-Za-z0-9_-]{6,}$/.test(value)) return true;
+  return false;
+}
+
+function preferredTitle(siteTitle, liveTitle, videoId) {
+  const site = String(siteTitle || '').trim();
+  const live = String(liveTitle || '').trim();
+  if (site && !looksLikeRawVideoId(site)) return site;
+  if (live && !looksLikeRawVideoId(live)) return live;
+  if (site) return site;
+  if (live) return live;
+  return String(videoId || '').trim();
+}
+
+function thumbnailFor(videoId, format, siteThumb) {
+  const site = String(siteThumb || '').trim();
+  if (site) return site;
+  return defaultThumbnail(videoId, format);
+}
+
+const titleResolveCache = new Map();
+let titleResolveTimer = null;
+
+async function fetchYoutubeOembedTitle(item) {
+  const url = item?.youtubeUrl || youtubeUrl(item.videoId, item.format);
+  const endpoint = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+  const response = await fetch(endpoint, { mode: 'cors' });
+  if (!response.ok) throw new Error(`oembed ${response.status}`);
+  const data = await response.json();
+  return String(data?.title || '').trim();
+}
+
+function scheduleTitleResolution() {
+  if (titleResolveTimer) return;
+  titleResolveTimer = window.setTimeout(async () => {
+    titleResolveTimer = null;
+    const pending = state.videos.filter((item) => item.needsTitleResolve && !titleResolveCache.has(item.videoId));
+    if (!pending.length) return;
+    const chunk = pending.slice(0, 8);
+    await Promise.all(chunk.map(async (item) => {
+      try {
+        const title = await fetchYoutubeOembedTitle(item);
+        if (title) titleResolveCache.set(item.videoId, title);
+      } catch (error) {
+        console.warn('Speilsalen title resolve failed:', item.videoId, error);
+        titleResolveCache.set(item.videoId, item.title || item.videoId);
+      }
+    }));
+    let changed = false;
+    state.videos = state.videos.map((item) => {
+      const resolved = titleResolveCache.get(item.videoId);
+      if (resolved && resolved !== item.title) {
+        changed = true;
+        return { ...item, title: resolved, needsTitleResolve: false };
+      }
+      return resolved ? { ...item, needsTitleResolve: false } : item;
+    });
+    if (changed) renderAll();
+    if (state.videos.some((item) => item.needsTitleResolve && !titleResolveCache.has(item.videoId))) {
+      scheduleTitleResolution();
+    }
+  }, 40);
+}
+
 function siteCatalog() {
   const out = new Map();
   document.querySelectorAll("[data-trophy-video]").forEach((node) => {
@@ -113,15 +182,18 @@ function mergedVideos(payload) {
       return;
     }
 
-    const title = live.title || site?.title || live.videoId;
+    const cachedTitle = titleResolveCache.get(live.videoId) || "";
+    const title = preferredTitle(site?.title || cachedTitle, live.title || cachedTitle, live.videoId);
+    const needsTitleResolve = looksLikeRawVideoId(title);
     merged.push({
       videoId: live.videoId,
       totalViews: live.totalViews,
       format,
       title,
+      needsTitleResolve,
       pageUrl: site?.pageUrl || "",
       youtubeUrl: site?.youtubeUrl || youtubeUrl(live.videoId, format),
-      thumbnail: site?.thumbnail || defaultThumbnail(live.videoId, format)
+      thumbnail: thumbnailFor(live.videoId, format, site?.thumbnail)
     });
   });
 
@@ -442,6 +514,7 @@ async function refresh() {
     const payload = await backend.fetchHeseFredrik("debug");
     state.videos = mergedVideos(payload || {});
     renderAll();
+    scheduleTitleResolution();
 
     const totalRows = decodeSnapshot(payload || {}).length;
     const unclassified = state.unclassified.length;
