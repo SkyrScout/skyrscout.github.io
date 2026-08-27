@@ -315,7 +315,6 @@ function card(item) {
   title.textContent = item.title;
   title.title = item.title;
   renderTitleEmoji(title);
-  renderTitleEmoji(title);
 
   const views = document.createElement("span");
   views.className = "speilsalen-card-views";
@@ -401,6 +400,7 @@ function renderRecord(format) {
 
   const title = document.createElement("h2");
   title.textContent = item.title;
+  renderTitleEmoji(title);
 
   const views = document.createElement("div");
   views.className = "speilsalen-record-views";
