@@ -2,7 +2,7 @@
 layout: player
 profile_type: "video"
 
-title: "James Ampofo (2003) – Raufoss IL | OBOS-ligaen 2025, Norway"
+title: "James Ampofo (2003) – Raufoss IL | OBOS-ligaen 2025, Norway (2nd Tier)"
 youtube: "https://www.youtube.com/watch?v=p7FxtuLGrSI"
 
 report_by: "Scouty Pippen"

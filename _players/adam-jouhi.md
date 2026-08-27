@@ -2,7 +2,7 @@
 layout: player
 profile_type: "video"
 
-title: "Adam Jouhi (2006) – KäPa | Ykkösliiga 2025, Finland"
+title: "Adam Jouhi (2006) – KäPa | Ykkösliiga 2025, Finland (2nd Tier)"
 youtube: "https://www.youtube.com/watch?v=ygDvfffCphs"
 
 report_by: "Scouty Pippen"

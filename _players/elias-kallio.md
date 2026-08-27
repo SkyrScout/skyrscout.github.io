@@ -2,7 +2,7 @@
 layout: player
 profile_type: "video"
 
-title: "Elias Kallio (2003) – KäPa | Ykkösliiga 2025, Finland"
+title: "Elias Kallio (2003) – KäPa | Ykkösliiga 2025, Finland (2nd Tier)"
 youtube: "https://www.youtube.com/watch?v=zjy_LmErQv0"
 
 report_by: "Scouty Pippen"

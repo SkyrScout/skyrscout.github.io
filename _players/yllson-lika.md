@@ -2,7 +2,7 @@
 layout: player
 profile_type: "video"
 
-title: "Yllson Lika (2005) – KäPa | Ykkösliiga 2025, Finland"
+title: "Yllson Lika (2005) – KäPa | Ykkösliiga 2025, Finland (2nd Tier)"
 youtube: "https://www.youtube.com/watch?v=EMo4l3GrkIQ"
 
 report_by: "Scouty Pippen"
