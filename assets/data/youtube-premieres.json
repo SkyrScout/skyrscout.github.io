@@ -1,8 +1,21 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-08-26T13:25:55Z",
+    "updated_utc": "2026-08-28T13:11:58Z",
     "source": "YouTube Data API"
   },
-  "videos": {}
+  "videos": {
+    "GWKjwpyv7os": {
+      "status": "upcoming",
+      "scheduled_start": "2026-08-29T10:00:00Z",
+      "title": "Raki Aouani (2004) – Riga FC | Virsliga, Latvia",
+      "profiles": [
+        {
+          "player_slug": "raki-aouani",
+          "kind": "main",
+          "main_video_id": "GWKjwpyv7os"
+        }
+      ]
+    }
+  }
 }
