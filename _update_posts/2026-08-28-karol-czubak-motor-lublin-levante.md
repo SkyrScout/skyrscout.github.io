@@ -2,8 +2,13 @@
 title: "Motor Lublin unwilling to consider offers for Karol Czubak amid Levante interest"
 player: "karol-czubak"
 player_name: "Karol Czubak"
-source: "Dziennik Wschodni"
-source_url: "https://www.dziennikwschodni.pl/artykul/391852%2Ckarol-czubak-nie-na-sprzedaz-motor-lublin-nie-straci-kluczowych-pilkarzy"
+sources:
+  - name: "Dziennik Wschodni"
+    url: "https://www.dziennikwschodni.pl/artykul/391852%2Ckarol-czubak-nie-na-sprzedaz-motor-lublin-nie-straci-kluczowych-pilkarzy"
+  - name: "Radio Lublin"
+    url: "https://radio.lublin.pl/2026/08/motor-lublin-nie-straci-liderow-mariusz-misiura-zapowiada-kolejne-wzmocnienia/"
+  - name: "PiłkaNożna.pl"
+    url: "https://pilkanozna.pl/media-karol-czubak-z-transferem-do-klubu-la-liga/"
 published_at: 2026-08-28 16:45:00 +0200
 ---
 
@@ -26,9 +31,3 @@ For now, Levante's reported interest remains just that, while Motor's public sta
 <a class="report-button" href="/players/karol-czubak/">
     Watch scouting video and view the full profile
 </a>
-
-## Sources
-
-- [Dziennik Wschodni – Karol Czubak nie na sprzedaż. Motor Lublin nie straci kluczowych piłkarzy?](https://www.dziennikwschodni.pl/artykul/391852%2Ckarol-czubak-nie-na-sprzedaz-motor-lublin-nie-straci-kluczowych-pilkarzy)
-- [Radio Lublin – Motor Lublin nie straci liderów? Mariusz Misiura zapowiada kolejne wzmocnienia](https://radio.lublin.pl/2026/08/motor-lublin-nie-straci-liderow-mariusz-misiura-zapowiada-kolejne-wzmocnienia/)
-- [PiłkaNożna.pl – Media: Karol Czubak z transferem do klubu La Liga?](https://pilkanozna.pl/media-karol-czubak-z-transferem-do-klubu-la-liga/)
