@@ -82,7 +82,7 @@ report: |
 
   With Hungary currently ranked 17th in UEFA's league coefficients, a move to ETO would represent a clear step up in league quality and could be a sensible next stage in his development.
 
-  There is, however, another option. If Riga can overcome KÍ Klaksvík and qualify for the UEFA Conference League league phase, staying in Latvia could suddenly become the more attractive choice. European group-stage football would give Aouani an excellent platform to showcase himself against stronger opposition and potentially increase his value considerably.
+  However, as Riga broke a barrier this week and overcame KÍ Klaksvík to qualify for the UEFA Conference League league phase, staying in Latvia has suddenly become the more attractive choice. European group-stage football will give Aouani an excellent platform to showcase himself against stronger opposition and potentially increase his value considerably.
 
   For that reason, we would not be surprised if Riga and Aouani decided to wait until the January window before making the next move. If he can stay fit, maintain his current level and, most importantly, keep his emotions under control, Aouani has the profile to take another significant step up the European football pyramid.
 
