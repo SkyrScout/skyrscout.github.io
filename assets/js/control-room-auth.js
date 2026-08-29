@@ -67,7 +67,7 @@ async function startControlRoom() {
   // Apps Script directly; the callable function does that server-side.
   await import("/assets/js/staff-backend.js");
   await loadClassicScript("/assets/js/control-room.js?v=20260824-0215-library-v5");
-  await loadClassicScript("/assets/js/control-room-live.js?v=20260825-hese-history-ui-v1");
+  await loadClassicScript("/assets/js/control-room-live.js?v=20260829-activity-radar-v7");
 }
 
 async function authorizeControlRoom() {

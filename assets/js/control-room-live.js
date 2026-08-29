@@ -57,6 +57,8 @@
     likesHistory: {},
     likeWindow: '24h',
     heseHistory: null,
+    activityLog: [],
+    activitySort: '24h',
     radarMode: 'live',
     historyWindow: '24h',
     selectedHistoryEventId: null
@@ -413,12 +415,14 @@
   }
 
   function mergedVideo(videoId){
+    const activity = state.activityLog.find(item => item && item.videoId === videoId) || null;
     const mover = state.movers.find(item => item && item.videoId === videoId) || null;
     const suspicious = state.suspicious.find(item => item && item.videoId === videoId) || null;
     const alert = state.alerts.find(item => item && item.videoId === videoId) || null;
-    if(!mover && !suspicious && !alert) return null;
-    return Object.assign({}, mover || {}, suspicious || {}, alert || {}, {
+    if(!activity && !mover && !suspicious && !alert) return null;
+    return Object.assign({}, activity || {}, mover || {}, suspicious || {}, alert || {}, {
       videoId,
+      _activity: activity,
       _mover: mover,
       _suspicious: suspicious,
       _alert: alert
@@ -732,6 +736,21 @@
     return items.filter(item => videoType(item) === state.filter);
   }
 
+  function activityLogItems(){
+    const items = Array.isArray(state.activityLog) ? state.activityLog.slice() : [];
+    items.sort((a,b) => {
+      const primaryKey = state.activitySort === '48h' ? 'last48hViews' : 'last24hViews';
+      const secondaryKey = state.activitySort === '48h' ? 'last24hViews' : 'last48hViews';
+      const primary = Number(b && b[primaryKey] || 0) - Number(a && a[primaryKey] || 0);
+      if(primary !== 0) return primary;
+      const secondary = Number(b && b[secondaryKey] || 0) - Number(a && a[secondaryKey] || 0);
+      if(secondary !== 0) return secondary;
+      return String(a && a.title || a && a.videoId || '').localeCompare(String(b && b.title || b && b.videoId || ''), 'en');
+    });
+    if(state.filter === 'all') return items;
+    return items.filter(item => videoType(item) === state.filter);
+  }
+
   function historyWindowData(){
     const history = state.heseHistory && state.heseHistory.windows;
     return history && history[state.historyWindow] && typeof history[state.historyWindow] === 'object'
@@ -782,14 +801,6 @@
     return parts.length ? parts.join(' · ') : 'Signal detected';
   }
 
-  function historyObservedMovement(item){
-    const accumulated = numericOrNull(item && item.accumulatedMovement);
-    if(accumulated !== null) return Math.max(0, accumulated);
-    const observed = numericOrNull(item && item.observedPositiveViews);
-    if(observed !== null) return Math.max(0, observed);
-    return Math.max(0, Number(item && item.viewsSinceSignal || 0));
-  }
-
   function updateFilterButtons(){
     filterButtons.forEach(button => {
       const active = button.dataset.hfFilter === state.filter;
@@ -813,13 +824,24 @@
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
-    const windowBar = panel.querySelector('[data-hf-history-window-bar]');
+    panel.querySelectorAll('[data-hf-activity-sort]').forEach(button => {
+      const active = String(button.dataset.hfActivitySort || '').toLowerCase() === state.activitySort;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    const historyBar = panel.querySelector('[data-hf-history-window-bar]');
+    const activitySortBar = panel.querySelector('[data-hf-activity-sort-bar]');
     const liveHead = panel.querySelector('[data-hf-live-head]');
+    const activityHead = panel.querySelector('[data-hf-activity-head]');
     const historyHead = panel.querySelector('[data-hf-history-head]');
     const live = state.radarMode === 'live';
-    if(windowBar) windowBar.hidden = live;
+    const suspicious = state.radarMode === 'suspicious';
+    const alarm = state.radarMode === 'alarm';
+    if(historyBar) historyBar.hidden = !alarm;
+    if(activitySortBar) activitySortBar.hidden = !suspicious;
     if(liveHead) liveHead.hidden = !live;
-    if(historyHead) historyHead.hidden = live;
+    if(activityHead) activityHead.hidden = !suspicious;
+    if(historyHead) historyHead.hidden = !alarm;
   }
 
   function renderLiveRadarPanel(panel){
@@ -906,6 +928,84 @@
     });
   }
 
+  function renderActivityLogPanel(panel){
+    const list = panel.querySelector('[data-hf-radar-list]');
+    const count = panel.querySelector('[data-hf-radar-count]');
+    if(!list) return;
+    clear(list);
+
+    const all = Array.isArray(state.activityLog) ? state.activityLog : [];
+    const items = activityLogItems();
+    if(count){
+      const base = fmtNumber(items.length) + ' in log';
+      count.textContent = state.filter === 'all'
+        ? base + ' · sorted ' + state.activitySort.toUpperCase()
+        : base + ' of ' + fmtNumber(all.length);
+    }
+
+    if(!items.length){
+      const empty = document.createElement('div');
+      empty.className = 'hf-empty';
+      empty.textContent = state.filter === 'all'
+        ? 'No video currently qualifies for the rolling SUSPICIOUS log.'
+        : 'No ' + (state.filter === 'short' ? 'Shorts' : 'videos') + ' currently qualify for the rolling SUSPICIOUS log.';
+      list.appendChild(empty);
+      return;
+    }
+
+    const focusClone = Boolean(panel.closest('#consoleFocusShell'));
+    items.forEach(item => {
+      const status = String(item.signalLevel || item.activityStatus || 'SUSPICIOUS').toUpperCase();
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'hf-history-row ' + (status === 'ALARM' ? 'is-alarm' : 'is-suspicious');
+      row.dataset.videoId = item.videoId || '';
+      if(state.selectedVideoId === item.videoId && state.selectedHistoryEventId === null) row.classList.add('selected');
+
+      const main = document.createElement('div');
+      main.className = 'hf-history-main';
+      const img = document.createElement('img');
+      img.src = item.thumbnail || ('https://img.youtube.com/vi/' + encodeURIComponent(item.videoId || '') + '/mqdefault.jpg');
+      img.alt = '';
+      img.loading = 'lazy';
+      const copy = document.createElement('div');
+      copy.className = 'hf-history-copy';
+      const strong = document.createElement('strong');
+      strong.textContent = item.title || item.videoId || 'YouTube video';
+      const meta = document.createElement('div');
+      meta.className = 'hf-history-meta';
+      const type = document.createElement('span');
+      type.className = 'hf-type-pill ' + videoType(item);
+      type.textContent = typeLabel(item);
+      const signalPill = document.createElement('span');
+      signalPill.className = status === 'ALARM' ? 'hf-alert-pill' : 'hf-suspicious-pill';
+      signalPill.textContent = status;
+      meta.append(type,signalPill);
+      const when = document.createElement('small');
+      when.textContent = 'Rolling movement · 60M / 24H / 48H';
+      copy.append(strong,meta,when);
+      main.append(img,copy);
+      row.appendChild(main);
+
+      const rolling60 = document.createElement('div');
+      rolling60.className = 'hf-history-value start';
+      rolling60.textContent = fmtDelta(item.rolling60mViews);
+      const h24 = document.createElement('div');
+      h24.className = 'hf-history-value gained';
+      h24.textContent = fmtDelta(item.last24hViews);
+      const h48 = document.createElement('div');
+      h48.className = 'hf-history-value current';
+      h48.textContent = fmtDelta(item.last48hViews);
+      const statusEl = document.createElement('div');
+      statusEl.className = 'hf-history-status ' + (status === 'ALARM' ? 'active' : 'tracking');
+      statusEl.textContent = status;
+      row.append(rolling60,h24,h48,statusEl);
+
+      if(!focusClone) row.addEventListener('click', () => selectVideo(item.videoId));
+      list.appendChild(row);
+    });
+  }
+
   function renderHistoryRadarPanel(panel){
     const list = panel.querySelector('[data-hf-radar-list]');
     const count = panel.querySelector('[data-hf-radar-count]');
@@ -976,19 +1076,19 @@
       main.append(img,copy);
       row.appendChild(main);
 
-      const start = document.createElement('div');
-      start.className = 'hf-history-value start';
-      start.textContent = fmtNumber(item.startViews);
-      const current = document.createElement('div');
-      current.className = 'hf-history-value current';
-      current.textContent = fmtNumber(item.currentViews);
-      const gained = document.createElement('div');
-      gained.className = 'hf-history-value gained';
-      gained.textContent = fmtDelta(historyObservedMovement(item));
+      const rolling60 = document.createElement('div');
+      rolling60.className = 'hf-history-value start';
+      rolling60.textContent = fmtDelta(item.rolling60mViews);
+      const h24 = document.createElement('div');
+      h24.className = 'hf-history-value gained';
+      h24.textContent = fmtDelta(item.last24hViews);
+      const h48 = document.createElement('div');
+      h48.className = 'hf-history-value current';
+      h48.textContent = fmtDelta(item.last48hViews);
       const status = document.createElement('div');
       status.className = 'hf-history-status ' + historyStateLabel(item).toLowerCase();
-      status.textContent = item.escalatedToAlarm && level === 'suspicious' ? '→ ALARM' : historyStateLabel(item);
-      row.append(start,current,gained,status);
+      status.textContent = historyStateLabel(item);
+      row.append(rolling60,h24,h48,status);
 
       if(!focusClone) row.addEventListener('click', () => selectHistoryEvent(item.eventId));
       list.appendChild(row);
@@ -999,6 +1099,7 @@
     if(!panel) return;
     syncRadarPanelControls(panel);
     if(state.radarMode === 'live') renderLiveRadarPanel(panel);
+    else if(state.radarMode === 'suspicious') renderActivityLogPanel(panel);
     else renderHistoryRadarPanel(panel);
   }
 
@@ -1118,24 +1219,18 @@
     const metrics = document.createElement('div');
     metrics.className = 'hf-detail-metrics';
     metrics.append(
-      metric('At signal', fmtNumber(item.startViews), false),
       metric('Current views', fmtNumber(item.currentViews), false),
-      metric('Observed after signal', fmtDelta(historyObservedMovement(item)), true),
+      metric('Rolling 60M', fmtDelta(item.rolling60mViews), false),
+      metric('Last 24H', fmtDelta(item.last24hViews), true),
+      metric('Last 48H', fmtDelta(item.last48hViews), false),
       metric('Trigger movement', fmtDelta(item.triggerDeltaViews), false),
-      metric('Signal state', historyStateLabel(item), item.active === true),
-      metric('Tracking window', '7 DAYS', false)
+      metric('Signal state', historyStateLabel(item), item.active === true)
     );
     detailBody.append(head,metrics);
 
     const note = document.createElement('div');
     note.className = 'hf-detail-note';
-    if(item.active === true){
-      note.textContent = 'Signal is active. The public total continues to be tracked for seven days from first detection.';
-    }else if(item.trackingActive === true){
-      note.textContent = 'Live signal has cleared, but accumulated public views are still tracked until ' + fmtDateTime(item.trackingUntilAt) + '.';
-    }else{
-      note.textContent = 'Seven-day tracking window is complete.';
-    }
+    note.textContent = 'Movement is calculated from saved public-counter samples over rolling 60M, 24H and 48H windows. Signal history is kept separately.';
     detailBody.appendChild(note);
 
     const signalBox = document.createElement('div');
@@ -1172,7 +1267,7 @@
     if(!detailBody) return;
     clear(detailBody);
 
-    if(state.radarMode !== 'live'){
+    if(state.radarMode === 'alarm'){
       let historyItem = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
       const visible = filteredHistoryItems(state.radarMode);
       if(!historyItem || !visible.some(item => Number(item.eventId) === Number(historyItem.eventId))){
@@ -1193,7 +1288,9 @@
 
     let item = state.selectedVideoId ? mergedVideo(state.selectedVideoId) : null;
     if(!item){
-      const fallback = state.alerts[0] || state.suspicious[0] || filteredMovers()[0] || state.movers[0] || null;
+      const fallback = state.radarMode === 'suspicious'
+        ? (activityLogItems()[0] || state.suspicious[0] || null)
+        : (state.alerts[0] || state.suspicious[0] || filteredMovers()[0] || state.movers[0] || null);
       if(fallback){
         state.selectedVideoId = fallback.videoId;
         item = mergedVideo(fallback.videoId);
@@ -1246,16 +1343,16 @@
     metrics.append(
       metric('Total views', fmtNumber(item.totalViews), false),
       metric('Since last poll', fmtDelta(item.deltaSincePoll), false),
-      metric('This clock hour', fmtDelta(item.currentHourViews), status === 'ALARM' && signal && signal.hourKind !== 'previous'),
-      metric('Previous clock hour', fmtDelta(item.previousHourViews), status === 'ALARM' && signal && signal.hourKind === 'previous'),
-      metric('This hour confidence', String(item.currentHourConfidence || '—').toUpperCase(), false),
+      metric('Rolling 60M', fmtDelta(item.rolling60mViews), status === 'SUSPICIOUS'),
+      metric('Last 24H', fmtDelta(item.last24hViews), false),
+      metric('Last 48H', fmtDelta(item.last48hViews), false),
       metric('Signal status', status, status === 'ALARM')
     );
     detailBody.append(head,metrics);
 
     const note = document.createElement('div');
     note.className = 'hf-detail-note';
-    note.textContent = 'Previous clock hour is the stored counter difference between the two hour-boundary snapshots. This clock hour is still in progress.';
+    note.textContent = 'SUSPICIOUS uses rolling movement: +2/60M, +5/24H or +7/48H. Full Hese-Fredrik ALARM uses the existing stronger type-aware rules.';
     detailBody.appendChild(note);
 
     if(signal){
@@ -1348,11 +1445,6 @@
           '+' + fmtNumber(rule.relativeHourMinViews) + ' & ≥' +
             Number(rule.relativeHourMultiplier || 0).toFixed(1) + '×'
         ]);
-        rules.push([
-          label + ' · suspicious',
-          'poll +' + fmtNumber(rule.suspiciousLastPollMinViews) +
-            ' · hour +' + fmtNumber(rule.suspiciousHourMinViews)
-        ]);
       });
     }else{
       const absolute = internalRules && Array.isArray(internalRules.absolute) ? internalRules.absolute : [];
@@ -1361,6 +1453,16 @@
       relative.forEach(rule => rules.push(['Alarm · clock hour relative', '+' + fmtNumber(rule.minViews) + ' & ≥' + Number(rule.multiplier || 0).toFixed(1) + '×']));
       if(numericOrNull(suspicious.lastPollMinViews) !== null) rules.push(['Suspicious · last poll', '+' + fmtNumber(suspicious.lastPollMinViews) + ' views']);
       if(numericOrNull(suspicious.hourMinViews) !== null) rules.push(['Suspicious · current hour', '+' + fmtNumber(suspicious.hourMinViews) + ' views']);
+    }
+
+    if(numericOrNull(suspicious.rolling60mMinViews) !== null){
+      rules.push(['SUSPICIOUS · rolling 60M', '+' + fmtNumber(suspicious.rolling60mMinViews) + ' views']);
+    }
+    if(numericOrNull(suspicious.rolling24hMinViews) !== null){
+      rules.push(['SUSPICIOUS · rolling 24H', '+' + fmtNumber(suspicious.rolling24hMinViews) + ' views']);
+    }
+    if(numericOrNull(suspicious.rolling48hMinViews) !== null){
+      rules.push(['SUSPICIOUS · rolling 48H', '+' + fmtNumber(suspicious.rolling48hMinViews) + ' views']);
     }
 
     if(numericOrNull(suspicious.alarmMinPositivePolls) !== null){
@@ -1577,6 +1679,7 @@
     state.mostLiked7d = Array.isArray(payload.mostLiked7d) ? payload.mostLiked7d : [];
     state.likesHistory = payload.likesHistory || {};
     state.heseHistory = payload.heseHistory && typeof payload.heseHistory === 'object' ? payload.heseHistory : null;
+    state.activityLog = Array.isArray(payload.activityLog) ? payload.activityLog : [];
     state.rules = payload.internalRules || {};
     state.checkedAt = payload.checkedAt;
     state.videosPolled = payload.videosPolled;
@@ -1602,8 +1705,14 @@
         state.selectedVideoId = first ? first.videoId : null;
       }
       state.selectedHistoryEventId = null;
+    }else if(state.radarMode === 'suspicious'){
+      const visibleActivity = activityLogItems();
+      if(!state.selectedVideoId || !visibleActivity.some(item => item.videoId === state.selectedVideoId)){
+        state.selectedVideoId = visibleActivity[0] ? visibleActivity[0].videoId : null;
+      }
+      state.selectedHistoryEventId = null;
     }else{
-      const visibleHistory = filteredHistoryItems(state.radarMode);
+      const visibleHistory = filteredHistoryItems('alarm');
       const selectedHistory = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
       if(!selectedHistory || !visibleHistory.some(item => Number(item.eventId) === Number(selectedHistory.eventId))){
         state.selectedHistoryEventId = visibleHistory[0] ? Number(visibleHistory[0].eventId) : null;
@@ -1666,6 +1775,7 @@
     state.alerts = [];
     state.suspicious = [];
     state.heseHistory = null;
+    state.activityLog = [];
     state.selectedHistoryEventId = null;
     state.radarMode = 'live';
     state.checkedAt = payload.checkedAt;
@@ -1833,12 +1943,34 @@
       state.radarMode = next;
       if(next === 'live'){
         state.selectedHistoryEventId = null;
+      }else if(next === 'suspicious'){
+        const visible = activityLogItems();
+        state.selectedHistoryEventId = null;
+        if(!state.selectedVideoId || !visible.some(item => item.videoId === state.selectedVideoId)){
+          state.selectedVideoId = visible[0] ? visible[0].videoId : null;
+        }
       }else{
-        const visible = filteredHistoryItems(next);
+        const visible = filteredHistoryItems('alarm');
         const current = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
-        if(!current || String(current.signalType || '').toLowerCase() !== next || !visible.some(item => Number(item.eventId) === Number(current.eventId))){
+        if(!current || String(current.signalType || '').toLowerCase() !== 'alarm' || !visible.some(item => Number(item.eventId) === Number(current.eventId))){
           state.selectedHistoryEventId = visible[0] ? Number(visible[0].eventId) : null;
         }
+      }
+      renderRadar();
+      renderDetail();
+      return;
+    }
+
+    const sortButton = event.target.closest('[data-hf-activity-sort]');
+    if(sortButton){
+      const next = String(sortButton.dataset.hfActivitySort || '').toLowerCase();
+      if(!['24h','48h'].includes(next)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      state.activitySort = next;
+      const visible = activityLogItems();
+      if(!state.selectedVideoId || !visible.some(item => item.videoId === state.selectedVideoId)){
+        state.selectedVideoId = visible[0] ? visible[0].videoId : null;
       }
       renderRadar();
       renderDetail();
@@ -1852,7 +1984,7 @@
       event.preventDefault();
       event.stopPropagation();
       state.historyWindow = next;
-      const visible = filteredHistoryItems(state.radarMode);
+      const visible = filteredHistoryItems('alarm');
       const current = state.selectedHistoryEventId !== null ? historyEventById(state.selectedHistoryEventId) : null;
       if(!current || !visible.some(item => Number(item.eventId) === Number(current.eventId))){
         state.selectedHistoryEventId = visible[0] ? Number(visible[0].eventId) : null;

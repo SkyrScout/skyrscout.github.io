@@ -519,16 +519,24 @@ sitemap: false
 <span class="badge" id="hfMoverCount" data-hf-radar-count>—</span>
 </div>
 </div>
+<div class="hf-history-window-bar" data-hf-activity-sort-bar hidden>
+<span>Sort suspicious log</span>
+<div class="hf-history-window-tabs" role="group" aria-label="Sort suspicious activity log">
+<button class="hf-history-window active" type="button" data-hf-activity-sort="24h">24H</button>
+<button class="hf-history-window" type="button" data-hf-activity-sort="48h">48H</button>
+</div>
+</div>
 <div class="hf-history-window-bar" data-hf-history-window-bar hidden>
-<span>History window</span>
-<div class="hf-history-window-tabs" role="group" aria-label="Hese-Fredrik history window">
+<span>Alarm history window</span>
+<div class="hf-history-window-tabs" role="group" aria-label="Hese-Fredrik alarm history window">
 <button class="hf-history-window active" type="button" data-hf-history-window="24h">24H</button>
 <button class="hf-history-window" type="button" data-hf-history-window="7d">7D</button>
 <button class="hf-history-window" type="button" data-hf-history-window="30d">30D</button>
 </div>
 </div>
 <div class="hf-movers-head" data-hf-live-head><span>Video</span><span>Total</span><span>Last poll</span><span>This hr</span><span>Last hr</span><span>Status</span></div>
-<div class="hf-history-head" data-hf-history-head hidden><span>Video</span><span>At signal</span><span>Now</span><span>Observed</span><span>State</span></div>
+<div class="hf-history-head" data-hf-activity-head hidden><span>Video</span><span>60M</span><span>24H</span><span>48H</span><span>Status</span></div>
+<div class="hf-history-head" data-hf-history-head hidden><span>Video</span><span>60M</span><span>24H</span><span>48H</span><span>State</span></div>
 <div class="hf-movers-list" id="hfMoversList" data-hf-radar-list>
 <div class="hf-empty">Waiting for live Hese-Fredrik data…</div>
 </div>
@@ -574,6 +582,6 @@ sitemap: false
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260824-0135-polish-v4"></script>
 <script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260824-0055-polish-v3"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260825-hese-history-ui-v1"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260829-activity-radar-v7"></script>
 </body>
 </html>
