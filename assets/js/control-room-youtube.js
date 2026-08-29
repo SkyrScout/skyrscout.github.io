@@ -166,6 +166,7 @@
     setRealtimeText('[data-yt-realtime-current-hour]', row ? formatSnapshotValue(row.currentHourViews) : '—');
     setRealtimeText('[data-yt-realtime-previous-hour]', row ? formatSnapshotValue(row.previousHourViews) : '—');
     setRealtimeText('[data-yt-realtime-48h]', row ? formatSnapshotValue(row.last48hViews) : '—');
+    setRealtimeText('[data-yt-performance-views]', row ? formatSnapshotValue(row.totalViews) : '—');
 
     const note = row
       ? ('VPS public-counter sample' + (formatSnapshotTime(vpsSnapshot.checkedAt) ? ' · checked ' + formatSnapshotTime(vpsSnapshot.checkedAt) : '') + '.')
@@ -208,7 +209,7 @@
     const pane = panel.querySelector('[data-yt-video-pane="' + format + '"]');
     if(!pane) return;
 
-    const direction = panel.dataset.ytVideoSort === 'oldest' ? 'oldest' : 'newest';
+    const direction = panel.dataset.ytVideoSortState === 'oldest' ? 'oldest' : 'newest';
     const query = String(panel.dataset.ytVideoQuery || '').trim().toLocaleLowerCase('en');
     const list = pane.querySelector('.yt-video-list');
     const rows = Array.from(pane.querySelectorAll('[data-yt-video-row]'));
@@ -252,11 +253,11 @@
     if(!sourcePanel) sourcePanel = selectorPanels()[0] || null;
     if(!sourcePanel) return;
     const format = patch.format || activeSelectorFormat(sourcePanel) || 'long';
-    const sort = patch.sort || sourcePanel.dataset.ytVideoSort || 'newest';
+    const sort = patch.sort || sourcePanel.dataset.ytVideoSortState || 'newest';
     const query = patch.query !== undefined ? patch.query : (sourcePanel.dataset.ytVideoQuery || '');
 
     selectorPanels().forEach(panel => {
-      panel.dataset.ytVideoSort = sort === 'oldest' ? 'oldest' : 'newest';
+      panel.dataset.ytVideoSortState = sort === 'oldest' ? 'oldest' : 'newest';
       panel.dataset.ytVideoQuery = query;
       panel.querySelectorAll('[data-yt-format-tab]').forEach(btn => {
         const active = btn.dataset.ytFormatTab === format;
@@ -409,13 +410,13 @@
       return;
     }
 
-    const sortButton = event.target.closest('[data-yt-video-sort]');
+    const sortButton = event.target.closest('button[data-yt-video-sort]');
     if(sortButton && isYouTubeUi(sortButton)){
       event.preventDefault();
       event.stopPropagation();
       const panel = sortButton.closest('.yt-video-selector-panel');
       if(panel){
-        const sort = panel.dataset.ytVideoSort === 'oldest' ? 'newest' : 'oldest';
+        const sort = panel.dataset.ytVideoSortState === 'oldest' ? 'newest' : 'oldest';
         setSelectorState(panel,{sort});
       }
       return;
@@ -424,6 +425,7 @@
     const video = event.target.closest('[data-yt-video-row]');
     if(video && isYouTubeUi(video)){
       event.preventDefault();
+      event.stopPropagation();
       const id = String(video.dataset.ytVideoId || '');
       const format = video.dataset.ytVideoFormat === 'short' ? 'short' : 'long';
       const original = q('[data-yt-video-row][data-yt-video-format="' + format + '"][data-yt-video-id="' + CSS.escape(id) + '"]');
@@ -457,7 +459,18 @@
   document.addEventListener('controlroom:videometadataupdated', () => {
     selectorPanels().forEach(applySelectorPanel);
     const selected = q('[data-yt-video-row].selected');
-    if(selected) selectVideo(selected);
+    if(selected){
+      selectVideo(selected);
+      return;
+    }
+
+    // Initial selection is resolved only after the VPS publication metadata has
+    // sorted the selector. This prevents an arbitrary Jekyll/source-order row
+    // (previously Aaron Malouda) from becoming the permanent start selection.
+    const panel = selectorPanels()[0] || null;
+    const format = activeSelectorFormat(panel);
+    const first = q('[data-yt-video-pane="' + format + '"] [data-yt-video-row]:not([hidden])');
+    if(first) selectVideo(first);
   });
 
   document.addEventListener('controlroom:vpsfeedupdated', event => {
@@ -468,7 +481,11 @@
     setLatestAvailable: setLatestAvailableLabel
   });
 
-  selectorPanels().forEach(panel => { panel.dataset.ytVideoSort = 'newest'; panel.dataset.ytVideoQuery = ''; });
+  selectorPanels().forEach(panel => { panel.dataset.ytVideoSortState = 'newest'; panel.dataset.ytVideoQuery = ''; });
   renderDetail('external');
-  setFormat('long');
+  // Do not select a source-order row before publication metadata has arrived.
+  // The first real selection is made by controlroom:videometadataupdated after
+  // NEWEST ordering is known.
+  setSelectorState(selectorPanels()[0] || null,{format:'long',sort:'newest'});
+  renderSelectedRealtime();
 })();

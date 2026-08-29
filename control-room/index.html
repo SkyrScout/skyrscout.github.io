@@ -13,7 +13,7 @@ sitemap: false
   <meta name="color-scheme" content="dark">
   <title>Scoutland Yard Control Room</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260829-youtube-layout-v1">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260829-repair-v1">
 </head>
 <body>
 <div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
@@ -108,11 +108,11 @@ sitemap: false
     </div>
   </div>
 </div></section>
-<section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Video</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Report 8 Aug 2026</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">—</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">—</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">—</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">—</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">—</b></div><div class="metric" data-selected-metric-card="uniqueViewers"><span>Unique viewers</span><b data-selected-metric="uniqueViewers">—</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="hf-empty">YouTube Analytics connection pending. Charts will remain empty until real data is available.</div></div></div></section>
+<section class="panel lowerpanel" id="selectedPlayerPanel"><div class="ph"><div class="pt">Selected Video</div><span class="badge" id="selectedPlayerBadge">Colton Swan</span></div><div class="body selectedbody"><div class="selhead"><div class="selthumb"><img alt="Colton Swan thumbnail" id="selectedPlayerThumb" src="https://i.ytimg.com/vi/zPDOV79nRE4/mqdefault.jpg"/></div><div class="selcopy"><h2 id="selectedPlayerName">Colton Swan (2007)</h2><p id="selectedPlayerMeta">Charleston Battery<br/>Report 8 Aug 2026</p></div></div><div class="metrics"><div class="metric" data-selected-metric-card="views"><span>Views</span><b data-selected-metric="views">—</b></div><div class="metric" data-selected-metric-card="likes"><span>Likes</span><b data-selected-metric="likes">—</b></div><div class="metric" data-selected-metric-card="ctr"><span>CTR</span><b data-selected-metric="ctr">—</b></div><div class="metric" data-selected-metric-card="avgViewDuration"><span>Avg view duration</span><b data-selected-metric="avgViewDuration">—</b></div><div class="metric" data-selected-metric-card="watchTime"><span>Watch time</span><b data-selected-metric="watchTime">—</b></div></div><div class="charts" id="selectedPlayerCharts"><div class="hf-empty">YouTube Analytics connection pending. Charts will remain empty until real data is available.</div></div></div></section>
 <section class="panel lowerpanel" id="selectedTrafficPanel"><div class="ph"><div><div class="pt" id="selectedTrafficTitle">Colton Swan // Traffic / Audience</div><div style="font-size:7px;color:#687e8a;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">Selected video data</div></div><span class="badge">DATA PENDING</span></div><div class="trafficbody" id="selectedTrafficBody"><div class="sec">YouTube Analytics</div><div class="kv"><span>Views · last 48 h</span><strong>—</strong></div><div class="sec">Top traffic sources</div><div class="kv"><span>Channel pages</span><strong>—</strong></div><div class="kv"><span>YouTube search</span><strong>—</strong></div><div class="kv"><span>External</span><strong>—</strong></div><div class="kv"><span>Suggested videos</span><strong>—</strong></div><div class="kv"><span>Other YouTube features</span><strong>—</strong></div><div class="sec">Audience</div><div class="kv"><span>Top region</span><strong>—</strong></div><div class="kv"><span>Age</span><strong>—</strong></div><div class="kv"><span>Gender</span><strong>—</strong></div></div></section></section>
 </div><section class="control-screen youtube-screen youtube-screen-v1" data-screen="youtube" hidden="">
 <div class="yt-screen-grid">
-  <section class="panel youtube-panel yt-video-selector-panel" data-yt-video-sort="newest">
+  <section class="panel youtube-panel yt-video-selector-panel" data-yt-video-sort-state="newest">
     <div class="ph">
       <div class="yt-panel-heading"><span class="yt-step">01</span><div class="pt">Video Selector</div></div>
       <div class="yt-header-tools">
@@ -194,9 +194,9 @@ sitemap: false
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Performance data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
-            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
-            <div><strong>Freshness</strong><span>Latest fully processed Analytics data.</span></div>
-            <div><strong>Meaning</strong><span>Performance for the selected video, including views, watch time and audience metrics when available.</span></div>
+            <div><strong>Source</strong><span>YouTube Data API for current public views; YouTube Analytics API for processed performance metrics.</span></div>
+            <div><strong>Freshness</strong><span>Views use the current VPS public-counter feed. Other metrics use latest fully processed Analytics data when connected.</span></div>
+            <div><strong>Meaning</strong><span>Performance for the selected video, including public views plus watch time, average view duration and subscriber contribution when available.</span></div>
             <div><strong>Lag</strong><span>Newer activity may not yet be included. The latest available date is shown when supplied.</span></div>
           </div>
         </div>
@@ -208,7 +208,7 @@ sitemap: false
         <div><strong data-yt-selected-title>Select a video</strong><span data-yt-selected-meta>Performance overview</span></div>
       </div>
       <div class="yt-metric-grid">
-        <div class="yt-metric"><span>Views</span><strong>—</strong><small>Since publishing</small></div>
+        <div class="yt-metric"><span>Views</span><strong data-yt-performance-views>—</strong><small>Since publishing</small></div>
         <div class="yt-metric"><span>Watch time</span><strong>—</strong><small>Hours</small></div>
         <div class="yt-metric"><span>Avg. view duration</span><strong>—</strong><small>Since publishing</small></div>
         <div class="yt-metric"><span>Subscribers</span><strong>—</strong><small>From this video</small></div>
@@ -583,8 +583,8 @@ sitemap: false
 </div>
 
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260824-0135-polish-v4"></script>
-<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260829-vps-realtime-v1"></script>
+<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260829-repair-v1"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260829-activity-radar-v7"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260829-repair-v1"></script>
 </body>
 </html>
