@@ -425,7 +425,7 @@
 
     const finite = buckets.map(bucket => bucket.value).filter(value => value !== null);
     if(!finite.length){
-      return {bars:[], gaps:[], ticks:[], zero:null, expectedVideos:expectedVideos};
+      return {bars:[], ticks:[], zero:null, expectedVideos:expectedVideos};
     }
 
     const rawMax = Math.max(0, ...finite);
@@ -442,19 +442,11 @@
     const inset = Math.max(1.5, slot * 0.12);
     const barWidth = Math.max(2, slot - inset * 2);
     const bars = [];
-    const gaps = [];
 
     buckets.forEach((bucket,index) => {
       const x = index * slot + inset;
       if(bucket.value === null){
-        gaps.push({x:index * slot + 1, width:Math.max(2,slot - 2), index:index});
         return;
-      }
-      // A zero-view partial subtotal has no visible bar height. Keep the bucket
-      // visibly yellow with the same ghost-band marker used for missing sampling;
-      // this marks data completeness, not a fabricated traffic value.
-      if(bucket.partial && bucket.value === 0){
-        gaps.push({x:index * slot + 1, width:Math.max(2,slot - 2), index:index});
       }
       const yValue = yFor(bucket.value);
       const negative = bucket.value < 0;
@@ -483,7 +475,6 @@
 
     return {
       bars:bars,
-      gaps:gaps,
       ticks:ticks,
       zero:Math.max(0, Math.min(100, (zeroY / height) * 100)),
       expectedVideos:expectedVideos
@@ -492,7 +483,6 @@
 
   function renderRealtimeChart(panel, chart, key){
     const barsGroup = panel.querySelector('[data-realtime-bars]');
-    const gapsGroup = panel.querySelector('[data-realtime-gap-bands]');
     const yscale = panel.querySelector('[data-realtime-yscale]');
     const gridlines = panel.querySelector('[data-realtime-gridlines]');
     const zeroLine = panel.querySelector('[data-realtime-zero-line]');
@@ -522,21 +512,6 @@
       });
     }
 
-    if(gapsGroup){
-      gapsGroup.replaceChildren();
-      chart.gaps.forEach(gap => {
-        const rect = document.createElementNS(svgNS,'rect');
-        rect.setAttribute('x',gap.x.toFixed(2));
-        rect.setAttribute('y','1');
-        rect.setAttribute('width',gap.width.toFixed(2));
-        rect.setAttribute('height','298');
-        rect.setAttribute('class','realtime-gap-band');
-        const title = document.createElementNS(svgNS,'title');
-        title.textContent = 'Unsampled bucket';
-        rect.appendChild(title);
-        gapsGroup.appendChild(rect);
-      });
-    }
 
     if(yscale){
       yscale.replaceChildren();

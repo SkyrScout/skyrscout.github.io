@@ -2378,15 +2378,7 @@ body.hf-alert-flash::after{
 .realtime-bucket.is-negative{opacity:.48}
 .realtime-bucket.is-partial.is-negative{opacity:.68}
 .realtime-main [data-realtime-total].is-partial{color:#d8a963}
-.realtime-gap-band{
-  fill:rgba(216,169,99,.045);
-  stroke:rgba(216,169,99,.34);
-  stroke-width:1.2;
-  stroke-dasharray:7 7;
-  vector-effect:non-scaling-stroke;
-}
 .console-focus-shell.realtime-focus .realtime-bucket{opacity:.82}
-.console-focus-shell.realtime-focus .realtime-gap-band{stroke-width:1.5}
 .realtime-yscale span{bottom:auto!important}
 
 /* === YouTube layout: selected-video vs channel-wide panels · 2026-08-29 ===
