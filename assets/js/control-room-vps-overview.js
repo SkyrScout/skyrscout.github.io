@@ -388,25 +388,35 @@
 
     const buckets = Array.from({length:count}, (_,index) => {
       const exactValue = index < exact.length ? exact[index] : null;
+      const partialValue = index < partial.length ? partial[index] : null;
+      const sampledCount = index < sampled.length ? sampled[index] : null;
+      const missingCount = index < missing.length ? missing[index] : null;
+      const isIncomplete = incomplete.has(index);
+
+      // The backend's explicit incomplete-bucket flag is authoritative. A bucket
+      // must never render blue merely because an older/alternate payload also
+      // carries a numeric value in `values`. Use the known subtotal and mark it
+      // PARTIAL; only fully complete buckets are allowed to render blue.
+      if(isIncomplete){
+        const knownSubtotal = partialValue !== null ? partialValue : exactValue;
+        const hasKnownSubtotal = knownSubtotal !== null && sampledCount !== null && sampledCount > 0;
+        if(hasKnownSubtotal){
+          return {
+            value:knownSubtotal,
+            partial:true,
+            sampled:sampledCount,
+            missing:missingCount
+          };
+        }
+        return {value:null,partial:false,sampled:sampledCount,missing:missingCount};
+      }
+
       if(exactValue !== null){
         return {
           value:exactValue,
           partial:false,
-          sampled:index < sampled.length ? sampled[index] : expectedVideos,
-          missing:index < missing.length ? missing[index] : 0
-        };
-      }
-
-      const partialValue = index < partial.length ? partial[index] : null;
-      const sampledCount = index < sampled.length ? sampled[index] : null;
-      const missingCount = index < missing.length ? missing[index] : null;
-      const hasKnownSubtotal = incomplete.has(index) && partialValue !== null && sampledCount !== null && sampledCount > 0;
-      if(hasKnownSubtotal){
-        return {
-          value:partialValue,
-          partial:true,
-          sampled:sampledCount,
-          missing:missingCount
+          sampled:sampledCount !== null ? sampledCount : expectedVideos,
+          missing:missingCount !== null ? missingCount : 0
         };
       }
 
@@ -439,6 +449,12 @@
       if(bucket.value === null){
         gaps.push({x:index * slot + 1, width:Math.max(2,slot - 2), index:index});
         return;
+      }
+      // A zero-view partial subtotal has no visible bar height. Keep the bucket
+      // visibly yellow with the same ghost-band marker used for missing sampling;
+      // this marks data completeness, not a fabricated traffic value.
+      if(bucket.partial && bucket.value === 0){
+        gaps.push({x:index * slot + 1, width:Math.max(2,slot - 2), index:index});
       }
       const yValue = yFor(bucket.value);
       const negative = bucket.value < 0;

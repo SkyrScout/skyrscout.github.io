@@ -137,6 +137,30 @@
     }
   }
 
+  function snapshotRollingValue(row, field, windowMs){
+    if(!row) return null;
+    const direct = snapshotNumber(row[field]);
+    if(direct !== null) return direct;
+
+    // For a video published inside the requested rolling window there cannot be
+    // any pre-publication views. The current cumulative public counter is therefore
+    // also the exact movement since the window began. This fills new uploads
+    // without inventing a missing historical baseline.
+    const publishedAt = snapshotNumber(row.publishedAtMs);
+    const totalViews = snapshotNumber(row.totalViews);
+    const checkedAt = snapshotNumber(vpsSnapshot.checkedAt);
+    if(
+      publishedAt !== null &&
+      totalViews !== null &&
+      checkedAt !== null &&
+      checkedAt >= publishedAt &&
+      checkedAt - publishedAt <= windowMs
+    ){
+      return Math.max(0,totalViews);
+    }
+    return null;
+  }
+
   function ingestVpsSnapshot(detail){
     const schema = Array.isArray(detail && detail.videoSnapshotSchema) ? detail.videoSnapshotSchema : [];
     const rows = Array.isArray(detail && detail.videoSnapshotRows) ? detail.videoSnapshotRows : [];
@@ -165,7 +189,7 @@
 
     setRealtimeText('[data-yt-realtime-current-hour]', row ? formatSnapshotValue(row.currentHourViews) : '—');
     setRealtimeText('[data-yt-realtime-previous-hour]', row ? formatSnapshotValue(row.previousHourViews) : '—');
-    setRealtimeText('[data-yt-realtime-48h]', row ? formatSnapshotValue(row.last48hViews) : '—');
+    setRealtimeText('[data-yt-realtime-48h]', row ? formatSnapshotValue(snapshotRollingValue(row,'last48hViews',48 * 60 * 60 * 1000)) : '—');
     setRealtimeText('[data-yt-performance-views]', row ? formatSnapshotValue(row.totalViews) : '—');
 
     const note = row
