@@ -2388,3 +2388,133 @@ body.hf-alert-flash::after{
 .console-focus-shell.realtime-focus .realtime-bucket{opacity:.82}
 .console-focus-shell.realtime-focus .realtime-gap-band{stroke-width:1.5}
 .realtime-yscale span{bottom:auto!important}
+
+/* === YouTube layout: selected-video vs channel-wide panels · 2026-08-29 ===
+   01-07 follow the selected video. 08 Geography + 09 Most Likes are
+   deliberately channel-wide and use the normal Scoutland Yard cyan language. */
+.yt-screen-grid > .yt-audience-panel{grid-column:1;grid-row:3}
+.yt-screen-grid > .yt-geography-panel{grid-column:2;grid-row:3}
+.yt-screen-grid > .yt-most-liked-panel{grid-column:3;grid-row:3}
+
+.youtube-panel.yt-channel-wide-panel{
+  border-color:var(--line)!important;
+  background:linear-gradient(180deg,#030709,#000)!important;
+  box-shadow:inset 0 1px 0 rgba(49,181,240,.035)!important;
+}
+.youtube-panel.yt-channel-wide-panel>.ph{
+  border-bottom-color:var(--soft)!important;
+  background:linear-gradient(90deg,rgba(10,38,52,.35),transparent)!important;
+}
+.youtube-panel.yt-channel-wide-panel .pt{
+  color:#41afe2!important;
+  text-shadow:0 0 10px rgba(49,181,240,.14)!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-step{
+  border-color:rgba(49,181,240,.42)!important;
+  color:#78cdec!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-channel-wide-badge{
+  border-color:#225a72!important;
+  color:#8ddcf8!important;
+  background:rgba(12,83,110,.14)!important;
+  letter-spacing:.05em;
+  font-weight:900;
+}
+.youtube-panel.yt-channel-wide-panel .yt-freshness-latest,
+.youtube-panel.yt-channel-wide-panel .yt-freshness-live{
+  border-color:#234d60!important;
+  color:#87bdd2!important;
+  background:rgba(9,58,77,.10)!important;
+  box-shadow:none!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-info-button{
+  border-color:#28566a!important;
+  background:#010609!important;
+  color:#86cbe8!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-info-button:hover,
+.youtube-panel.yt-channel-wide-panel .yt-info-button:focus-visible,
+.youtube-panel.yt-channel-wide-panel .yt-info-control.open .yt-info-button{
+  border-color:#39b7ee!important;
+  color:#e6f8ff!important;
+  background:rgba(19,100,143,.18)!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-info-popover{
+  border-color:#28566a!important;
+  background:rgba(1,7,10,.98)!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.72),0 0 20px rgba(29,158,216,.10)!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-info-popover>div{border-bottom-color:#12242d!important}
+.youtube-panel.yt-channel-wide-panel .yt-info-popover strong{color:#70c8ed!important}
+.youtube-panel.yt-channel-wide-panel .yt-info-popover span{color:#a7bbc4!important}
+.youtube-panel.yt-channel-wide-panel.console-focusable:hover{
+  border-color:rgba(49,181,240,.72)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.72),0 0 0 1px rgba(49,181,240,.11),0 0 22px rgba(29,158,216,.10)!important;
+}
+.youtube-panel.yt-channel-wide-panel .console-focus-btn{
+  border-color:#214352!important;
+  color:#75bedd!important;
+  background:#010406!important;
+}
+
+/* Geography controls inherit the channel-wide cyan identity. */
+.youtube-panel.yt-channel-wide-panel .yt-geo-copy strong{color:#74c9ed!important}
+.youtube-panel.yt-channel-wide-panel .yt-geo-range,
+.youtube-panel.yt-channel-wide-panel .yt-geo-tab{
+  border-color:#1e4455!important;
+  color:#88aab9!important;
+  background:#010609!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-geo-range:hover,
+.youtube-panel.yt-channel-wide-panel .yt-geo-range.active,
+.youtube-panel.yt-channel-wide-panel .yt-geo-tab:hover,
+.youtube-panel.yt-channel-wide-panel .yt-geo-tab.active{
+  border-color:#279fd3!important;
+  color:#dcf6ff!important;
+  background:rgba(16,97,140,.16)!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-geo-country-row.active,
+.youtube-panel.yt-channel-wide-panel .yt-geo-country-row:hover{background:rgba(16,97,140,.10)!important}
+.youtube-panel.yt-channel-wide-panel .yt-geo-bar>i,
+.youtube-panel.yt-channel-wide-panel .yt-most-liked-bar>i{background:linear-gradient(90deg,#0b5a83,#1d9ed8)!important}
+.youtube-panel.yt-channel-wide-panel .yt-most-liked-rank{color:#70c8ed!important}
+.youtube-panel.yt-channel-wide-panel .yt-most-liked-type{color:#7897a5!important}
+.youtube-panel.yt-channel-wide-panel .yt-most-liked-list::-webkit-scrollbar-thumb,
+.youtube-panel.yt-channel-wide-panel.yt-geography-panel::-webkit-scrollbar-thumb{background:#173848!important}
+
+/* Keep the same cyan identity when a channel-wide console is opened in Focus Mode. */
+.console-focus-shell .youtube-panel.yt-channel-wide-panel{
+  border-color:rgba(49,181,240,.72)!important;
+  background:linear-gradient(180deg,#04090d,#000)!important;
+}
+.console-focus-shell .youtube-panel.yt-channel-wide-panel>.ph{
+  background:linear-gradient(90deg,rgba(10,38,52,.42),transparent)!important;
+  border-bottom-color:rgba(49,181,240,.18)!important;
+}
+.console-focus-shell .youtube-panel.yt-channel-wide-panel .pt{color:#63c8ef!important}
+
+@media(max-width:900px){
+  .yt-screen-grid > .yt-audience-panel,
+  .yt-screen-grid > .yt-geography-panel,
+  .yt-screen-grid > .yt-most-liked-panel{grid-column:auto;grid-row:auto}
+}
+.youtube-panel.yt-channel-wide-panel .yt-like-tab{
+  border-color:#1e4455!important;
+  background:#010609!important;
+  color:#88aab9!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-like-tab:hover{
+  border-color:#279fd3!important;
+  color:#dcf6ff!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-like-tab.active{
+  border-color:#279fd3!important;
+  background:rgba(16,97,140,.18)!important;
+  color:#fff!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-geo-country-row.selected{
+  background:rgba(16,97,140,.12)!important;
+  box-shadow:inset 2px 0 #1d9ed8!important;
+}
+.youtube-panel.yt-channel-wide-panel .yt-geo-bar{background:#0d1b22!important}
+.youtube-panel.yt-channel-wide-panel .yt-most-liked-bar{background:#0d1b22!important}

@@ -13,7 +13,7 @@ sitemap: false
   <meta name="color-scheme" content="dark">
   <title>Scoutland Yard Control Room</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260825-hese-history-ui-v1">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260829-youtube-layout-v1">
 </head>
 <body>
 <div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
@@ -330,17 +330,44 @@ sitemap: false
     <div class="yt-panel-body yt-detail-body" id="ytDetailBody"></div>
   </section>
 
-  <section class="panel youtube-panel yt-geography-panel">
+  <section class="panel youtube-panel yt-audience-panel" data-console="07" data-youtube-console="07" data-yt-scope="video">
     <div class="ph">
-      <div class="yt-panel-heading"><span class="yt-step">07</span><div class="pt">Geography</div></div>
+      <div class="yt-panel-heading"><span class="yt-step">07</span><div class="pt">Audience</div></div>
       <div class="yt-header-tools">
+        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
+        <div class="yt-info-control" data-yt-info-control>
+          <button class="yt-info-button" type="button" aria-label="About Audience data" aria-expanded="false" data-yt-info-button>i</button>
+          <div class="yt-info-popover" role="tooltip">
+            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed audience data.</span></div>
+            <div><strong>Meaning</strong><span>Shows subscriber mix and demographic breakdowns when YouTube has enough data to report them.</span></div>
+            <div><strong>Lag</strong><span>Privacy thresholds and processing delays can leave some values unavailable.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yt-panel-body yt-audience-body">
+      <div class="yt-audience-split">
+        <div class="yt-audience-card"><span>Watch time from subscribers</span><div><strong>Not subscribed</strong><b>—</b></div><div><strong>Subscribed</strong><b>—</b></div></div>
+        <div class="yt-audience-card"><span>Age</span><div><strong>13–17</strong><b>—</b></div><div><strong>18–24</strong><b>—</b></div><div><strong>25–34</strong><b>—</b></div><div><strong>35–44</strong><b>—</b></div><div><strong>45–54</strong><b>—</b></div></div>
+      </div>
+      <div class="yt-panel-note">Audience values stay empty when YouTube does not return enough data.</div>
+    </div>
+  </section>
+
+  <section class="panel youtube-panel yt-geography-panel yt-channel-wide-panel" data-console="08" data-youtube-console="08" data-yt-scope="channel">
+    <div class="ph">
+      <div class="yt-panel-heading"><span class="yt-step">08</span><div class="pt">Geography</div></div>
+      <div class="yt-header-tools">
+        <span class="badge yt-channel-wide-badge">CHANNEL-WIDE</span>
         <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Geography data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
             <div><strong>Source</strong><span>YouTube Analytics API</span></div>
             <div><strong>Freshness</strong><span>Latest fully processed geography period.</span></div>
-            <div><strong>Meaning</strong><span>Shows where viewers of the selected video are located, with country and city detail when YouTube returns it.</span></div>
+            <div><strong>Scope</strong><span>Channel-wide. This panel is not affected by the video selected in 01.</span></div>
+            <div><strong>Meaning</strong><span>Shows where SkyrScout viewers are located, with country and city detail when YouTube returns it.</span></div>
             <div><strong>Lag</strong><span>Geography is not realtime and may lag behind current traffic.</span></div>
           </div>
         </div>
@@ -405,42 +432,19 @@ sitemap: false
     </div>
   </section>
 
-  <section class="panel youtube-panel yt-audience-panel">
-    <div class="ph">
-      <div class="yt-panel-heading"><span class="yt-step">08</span><div class="pt">Audience</div></div>
-      <div class="yt-header-tools">
-        <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
-        <div class="yt-info-control" data-yt-info-control>
-          <button class="yt-info-button" type="button" aria-label="About Audience data" aria-expanded="false" data-yt-info-button>i</button>
-          <div class="yt-info-popover" role="tooltip">
-            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
-            <div><strong>Freshness</strong><span>Latest processed audience data.</span></div>
-            <div><strong>Meaning</strong><span>Shows subscriber mix and demographic breakdowns when YouTube has enough data to report them.</span></div>
-            <div><strong>Lag</strong><span>Privacy thresholds and processing delays can leave some values unavailable.</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="yt-panel-body yt-audience-body">
-      <div class="yt-audience-split">
-        <div class="yt-audience-card"><span>Watch time from subscribers</span><div><strong>Not subscribed</strong><b>—</b></div><div><strong>Subscribed</strong><b>—</b></div></div>
-        <div class="yt-audience-card"><span>Age</span><div><strong>13–17</strong><b>—</b></div><div><strong>18–24</strong><b>—</b></div><div><strong>25–34</strong><b>—</b></div><div><strong>35–44</strong><b>—</b></div><div><strong>45–54</strong><b>—</b></div></div>
-      </div>
-      <div class="yt-panel-note">Audience values stay empty when YouTube does not return enough data.</div>
-    </div>
-  </section>
-
-  <section class="panel youtube-panel yt-most-liked-panel" data-console="09" data-youtube-console="09">
+  <section class="panel youtube-panel yt-most-liked-panel yt-channel-wide-panel" data-console="09" data-youtube-console="09" data-yt-scope="channel">
     <div class="ph">
       <div class="yt-panel-heading"><span class="yt-step">09</span><div class="pt">Most Likes</div></div>
       <div class="yt-header-tools">
+        <span class="badge yt-channel-wide-badge">CHANNEL-WIDE</span>
         <span class="badge yt-freshness yt-freshness-live">LIVE</span>
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Most Likes data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
             <div><strong>Source</strong><span>VPS collector / YouTube Data API</span></div>
             <div><strong>Freshness</strong><span>Current like totals use the normal VPS poll. 24H and 7D baselines use one local snapshot per hour.</span></div>
-            <div><strong>Meaning</strong><span>24H and 7D rank net likes gained. Lifetime ranks the current public like total.</span></div>
+            <div><strong>Scope</strong><span>Channel-wide. This panel is not affected by the video selected in 01.</span></div>
+            <div><strong>Meaning</strong><span>24H and 7D rank net likes gained across the channel. Lifetime ranks the current public like total.</span></div>
             <div><strong>Rule</strong><span>No extra YouTube poll is made for like history.</span></div>
           </div>
         </div>
