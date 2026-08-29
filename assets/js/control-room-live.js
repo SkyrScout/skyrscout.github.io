@@ -58,7 +58,7 @@
     likeWindow: '24h',
     heseHistory: null,
     radarMode: 'live',
-    historyWindow: '7d',
+    historyWindow: '24h',
     selectedHistoryEventId: null
   };
 
@@ -660,10 +660,13 @@
     const activeIds = new Set((internalAlerts || []).map(a => a.videoId));
     const suspiciousIds = new Set((suspiciousSignals || []).map(a => a.videoId));
     const movers = (Array.isArray(items) ? items : []).filter(item => {
+      if(activeIds.has(item.videoId) || suspiciousIds.has(item.videoId)) return true;
       const poll = numericOrNull(item && item.deltaSincePoll);
       const current = numericOrNull(item && item.currentHourViews);
-      return activeIds.has(item.videoId) || suspiciousIds.has(item.videoId) ||
-        (poll !== null && poll > 0) || (current !== null && current > 0);
+      const previous = numericOrNull(item && item.previousHourViews);
+      return (poll !== null && poll >= LIVE_MIN_LAST_POLL) ||
+        (current !== null && current >= LIVE_MIN_CURRENT_HOUR) ||
+        (previous !== null && previous >= LIVE_MIN_PREVIOUS_HOUR);
     });
 
     clear(overviewList);
@@ -693,9 +696,40 @@
     });
   }
 
+  const LIVE_MIN_LAST_POLL = 2;
+  const LIVE_MIN_CURRENT_HOUR = 5;
+  const LIVE_MIN_PREVIOUS_HOUR = 5;
+
+  function qualifiesForLiveRadar(item){
+    if(!item) return false;
+    const status = activityStatus(item);
+    if(status === 'ALARM' || status === 'SUSPICIOUS') return true;
+    const poll = numericOrNull(item.deltaSincePoll);
+    const current = numericOrNull(item.currentHourViews);
+    const previous = numericOrNull(item.previousHourViews);
+    return (poll !== null && poll >= LIVE_MIN_LAST_POLL) ||
+      (current !== null && current >= LIVE_MIN_CURRENT_HOUR) ||
+      (previous !== null && previous >= LIVE_MIN_PREVIOUS_HOUR);
+  }
+
+  function liveRadarCandidates(){
+    const byId = new Map();
+    state.movers.forEach(item => {
+      if(item && item.videoId) byId.set(item.videoId, mergedVideo(item.videoId) || item);
+    });
+    state.suspicious.forEach(item => {
+      if(item && item.videoId) byId.set(item.videoId, mergedVideo(item.videoId) || item);
+    });
+    state.alerts.forEach(item => {
+      if(item && item.videoId) byId.set(item.videoId, mergedVideo(item.videoId) || item);
+    });
+    return Array.from(byId.values()).filter(qualifiesForLiveRadar);
+  }
+
   function filteredMovers(){
-    if(state.filter === 'all') return state.movers.slice();
-    return state.movers.filter(item => videoType(item) === state.filter);
+    const items = liveRadarCandidates();
+    if(state.filter === 'all') return items;
+    return items.filter(item => videoType(item) === state.filter);
   }
 
   function historyWindowData(){
@@ -713,7 +747,7 @@
   }
 
   function filteredHistoryItems(mode){
-    const items = historyItems(mode).sort((a,b) => Number(b && b.firstSeenAt || 0) - Number(a && a.firstSeenAt || 0));
+    const items = historyItems(mode).sort((a,b) => Number(b && (b.lastSeenAt || b.firstSeenAt) || 0) - Number(a && (a.lastSeenAt || a.firstSeenAt) || 0));
     if(state.filter === 'all') return items;
     return items.filter(item => videoType(item) === state.filter);
   }
@@ -746,6 +780,14 @@
     if(delta !== null) parts.push(fmtDelta(delta));
     if(windowText) parts.push(windowText);
     return parts.length ? parts.join(' · ') : 'Signal detected';
+  }
+
+  function historyObservedMovement(item){
+    const accumulated = numericOrNull(item && item.accumulatedMovement);
+    if(accumulated !== null) return Math.max(0, accumulated);
+    const observed = numericOrNull(item && item.observedPositiveViews);
+    if(observed !== null) return Math.max(0, observed);
+    return Math.max(0, Number(item && item.viewsSinceSignal || 0));
   }
 
   function updateFilterButtons(){
@@ -786,11 +828,12 @@
     if(!list) return;
     clear(list);
 
+    const allMovers = liveRadarCandidates();
     const movers = filteredMovers();
     if(count){
       count.textContent = state.filter === 'all'
-        ? fmtNumber(state.movers.length) + ' active'
-        : fmtNumber(movers.length) + ' of ' + fmtNumber(state.movers.length);
+        ? fmtNumber(allMovers.length) + ' active'
+        : fmtNumber(movers.length) + ' of ' + fmtNumber(allMovers.length);
     }
 
     if(!movers.length){
@@ -928,7 +971,7 @@
         meta.appendChild(escalated);
       }
       const when = document.createElement('small');
-      when.textContent = fmtDateTime(item.firstSeenAt) + ' · ' + historyTriggerText(item);
+      when.textContent = fmtDateTime(item.lastSeenAt || item.firstSeenAt) + ' · ' + historyTriggerText(item);
       copy.append(strong,meta,when);
       main.append(img,copy);
       row.appendChild(main);
@@ -941,7 +984,7 @@
       current.textContent = fmtNumber(item.currentViews);
       const gained = document.createElement('div');
       gained.className = 'hf-history-value gained';
-      gained.textContent = fmtDelta(Math.max(0, Number(item.viewsSinceSignal || 0)));
+      gained.textContent = fmtDelta(historyObservedMovement(item));
       const status = document.createElement('div');
       status.className = 'hf-history-status ' + historyStateLabel(item).toLowerCase();
       status.textContent = item.escalatedToAlarm && level === 'suspicious' ? '→ ALARM' : historyStateLabel(item);
@@ -1053,7 +1096,7 @@
     const h2 = document.createElement('h2');
     h2.textContent = item.title || item.videoId || 'YouTube video';
     const p = document.createElement('p');
-    p.textContent = level + ' · first seen ' + fmtDateTime(item.firstSeenAt);
+    p.textContent = level + ' · first seen ' + fmtDateTime(item.firstSeenAt) + ' · last signal ' + fmtDateTime(item.lastSeenAt || item.firstSeenAt);
     const flags = document.createElement('div');
     flags.className = 'hf-detail-flags';
     const typePill = document.createElement('span');
@@ -1077,7 +1120,7 @@
     metrics.append(
       metric('At signal', fmtNumber(item.startViews), false),
       metric('Current views', fmtNumber(item.currentViews), false),
-      metric('Since signal', fmtDelta(Math.max(0, Number(item.viewsSinceSignal || 0))), true),
+      metric('Observed after signal', fmtDelta(historyObservedMovement(item)), true),
       metric('Trigger movement', fmtDelta(item.triggerDeltaViews), false),
       metric('Signal state', historyStateLabel(item), item.active === true),
       metric('Tracking window', '7 DAYS', false)
