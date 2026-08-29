@@ -211,7 +211,6 @@ sitemap: false
         <div class="yt-metric"><span>Views</span><strong>—</strong><small>Since publishing</small></div>
         <div class="yt-metric"><span>Watch time</span><strong>—</strong><small>Hours</small></div>
         <div class="yt-metric"><span>Avg. view duration</span><strong>—</strong><small>Since publishing</small></div>
-        <div class="yt-metric"><span>Unique viewers</span><strong>—</strong><small>Latest available</small></div>
         <div class="yt-metric"><span>Subscribers</span><strong>—</strong><small>From this video</small></div>
       </div>
       <div class="yt-chart-shell">
@@ -241,15 +240,15 @@ sitemap: false
     <div class="yt-panel-body yt-realtime-body">
       <div class="yt-info-strip"><span class="yt-info-dot">i</span><span>Fresh data and completed Analytics data are labelled separately. No missing period is shown as zero.</span></div>
       <div class="yt-realtime-kpis">
-        <div><span>This hour</span><strong>—</strong><small>LIVE · VPS</small></div>
-        <div><span>Previous hour</span><strong>—</strong><small>RECENT · VPS</small></div>
-        <div><span>Last 48 h</span><strong>—</strong><small>RECENT · VPS</small></div>
+        <div><span>This hour</span><strong data-yt-realtime-current-hour>—</strong><small>LIVE · VPS</small></div>
+        <div><span>Previous hour</span><strong data-yt-realtime-previous-hour>—</strong><small>RECENT · VPS</small></div>
+        <div><span>Last 48 h</span><strong data-yt-realtime-48h>—</strong><small>RECENT · VPS</small></div>
       </div>
       <div class="yt-chart-shell yt-realtime-chart-shell">
-        <div class="yt-chart-head"><span>48-hour activity</span><b>NO FAKE BARS</b></div>
-        <div class="yt-bars-placeholder"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="yt-chart-head"><span>48-hour activity</span><b>SELECTED VIDEO</b></div>
+        <div class="yt-realtime-series-empty" data-yt-realtime-series>Hourly selected-video series is not supplied by the current backend payload yet.</div>
       </div>
-      <div class="yt-panel-note">Exact hourly history is shown only when the backend can supply it reliably.</div>
+      <div class="yt-panel-note" data-yt-realtime-note>Waiting for the VPS feed for the selected video.</div>
     </div>
   </section>
 
@@ -584,7 +583,7 @@ sitemap: false
 </div>
 
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260824-0135-polish-v4"></script>
-<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260824-0055-polish-v3"></script>
+<script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260829-vps-realtime-v1"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
 <script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260829-activity-radar-v7"></script>
 </body>

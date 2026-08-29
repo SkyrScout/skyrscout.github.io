@@ -111,6 +111,68 @@
   function qa(sel, root){ return Array.from((root || screen).querySelectorAll(sel)); }
   function isYouTubeUi(node){ return !!(node && (screen.contains(node) || node.closest('#consoleFocusShell'))); }
 
+  const vpsSnapshot = {
+    checkedAt: null,
+    rows: new Map()
+  };
+
+  function snapshotNumber(value){
+    if(value === null || value === undefined || value === '') return null;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function formatSnapshotValue(value){
+    const n = snapshotNumber(value);
+    return n === null ? '—' : Math.max(0, Math.round(n)).toLocaleString('en-US');
+  }
+
+  function formatSnapshotTime(value){
+    const n = snapshotNumber(value);
+    if(n === null || n <= 0) return '';
+    try{
+      return new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(n));
+    }catch(_error){
+      return '';
+    }
+  }
+
+  function ingestVpsSnapshot(detail){
+    const schema = Array.isArray(detail && detail.videoSnapshotSchema) ? detail.videoSnapshotSchema : [];
+    const rows = Array.isArray(detail && detail.videoSnapshotRows) ? detail.videoSnapshotRows : [];
+    const next = new Map();
+
+    rows.forEach(raw => {
+      if(!Array.isArray(raw)) return;
+      const item = {};
+      schema.forEach((key,index) => { item[String(key)] = raw[index]; });
+      const id = String(item.videoId || '').trim();
+      if(id) next.set(id,item);
+    });
+
+    vpsSnapshot.checkedAt = detail && detail.checkedAt ? detail.checkedAt : null;
+    vpsSnapshot.rows = next;
+    renderSelectedRealtime();
+  }
+
+  function setRealtimeText(selector, value){
+    document.querySelectorAll(selector).forEach(el => { el.textContent = value; });
+  }
+
+  function renderSelectedRealtime(){
+    const id = String(screen.dataset.selectedYoutubeId || '').trim();
+    const row = id ? vpsSnapshot.rows.get(id) : null;
+
+    setRealtimeText('[data-yt-realtime-current-hour]', row ? formatSnapshotValue(row.currentHourViews) : '—');
+    setRealtimeText('[data-yt-realtime-previous-hour]', row ? formatSnapshotValue(row.previousHourViews) : '—');
+    setRealtimeText('[data-yt-realtime-48h]', row ? formatSnapshotValue(row.last48hViews) : '—');
+
+    const note = row
+      ? ('VPS public-counter sample' + (formatSnapshotTime(vpsSnapshot.checkedAt) ? ' · checked ' + formatSnapshotTime(vpsSnapshot.checkedAt) : '') + '.')
+      : (vpsSnapshot.rows.size ? 'No VPS snapshot was returned for the selected video.' : 'Waiting for the VPS feed for the selected video.');
+    setRealtimeText('[data-yt-realtime-note]', note);
+  }
+
 
   function publishedMs(row){
     const n = Number(row && row.dataset ? row.dataset.youtubePublishedAt : NaN);
@@ -249,6 +311,7 @@
 
     screen.dataset.selectedYoutubeId = id;
     screen.dataset.selectedVideoFormat = format;
+    renderSelectedRealtime();
     screen.dispatchEvent(new CustomEvent('youtubeanalytics:videoselected', {detail:{videoId:id, title:title, format:format}}));
   }
 
@@ -395,6 +458,10 @@
     selectorPanels().forEach(applySelectorPanel);
     const selected = q('[data-yt-video-row].selected');
     if(selected) selectVideo(selected);
+  });
+
+  document.addEventListener('controlroom:vpsfeedupdated', event => {
+    ingestVpsSnapshot(event.detail || {});
   });
 
   window.SkyrScoutYouTubeUi = Object.freeze({

@@ -1566,7 +1566,7 @@ body.hf-alert-flash::after{
 .yt-selected-head{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:center;margin-bottom:8px}
 .yt-selected-head img{width:92px;aspect-ratio:16/9;display:block;object-fit:cover;border-radius:6px;border:1px solid #2b1212;background:#000}
 .yt-selected-head strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.yt-selected-head span{display:block;margin-top:3px;color:#806b6b;font-size:7px}
-.yt-metric-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.yt-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
 .yt-metric{min-height:58px;border:1px solid #2c1212;border-radius:7px;background:#030101;padding:6px 7px}.yt-metric span{display:block;color:#8d6b6b;font-size:7px}.yt-metric strong{display:block;font-size:15px;margin-top:3px}.yt-metric small{display:block;color:#5f5050;font-size:6px;margin-top:2px}
 .yt-chart-shell{min-height:0;margin-top:7px;border-top:1px solid #241010;padding-top:5px}.yt-chart-head{display:flex;justify-content:space-between;gap:8px;color:#755f5f;font-size:7px;text-transform:uppercase;letter-spacing:.05em}.yt-chart-head b{color:#8b4947;font-size:6px}
 .yt-line-placeholder{height:66px;margin-top:5px;border-left:1px solid #2d1717;border-bottom:1px solid #2d1717;display:flex;align-items:flex-end;padding:7px;background:repeating-linear-gradient(to top,transparent 0,transparent 21px,rgba(95,37,37,.22) 22px)}.yt-line-placeholder span{color:#5d4d4d;font-size:7px}
@@ -1575,7 +1575,7 @@ body.hf-alert-flash::after{
 .yt-info-strip{display:grid;grid-template-columns:17px minmax(0,1fr);gap:7px;align-items:start;padding:6px 7px;border:1px solid #19323c;border-radius:7px;background:rgba(7,47,63,.09);color:#6e8b98;font-size:7px;line-height:1.35}
 .yt-info-dot{display:grid;place-items:center;width:15px;height:15px;border:1px solid #2c718e;border-radius:50%;color:#75c8e8;font-weight:900}
 .yt-realtime-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}.yt-realtime-kpis>div{border:1px solid #182b33;border-radius:7px;padding:7px;background:#010405}.yt-realtime-kpis span{display:block;color:#72909e;font-size:7px}.yt-realtime-kpis strong{display:block;font-size:17px;margin-top:3px}.yt-realtime-kpis small{display:block;color:#486774;font-size:6px;margin-top:2px;text-transform:uppercase}
-.yt-realtime-chart-shell{margin-top:8px}.yt-bars-placeholder{height:72px;display:flex;align-items:end;gap:4px;padding:8px 2px 0;border-bottom:1px solid #18303a;background:repeating-linear-gradient(to top,transparent 0,transparent 23px,rgba(25,63,77,.25) 24px)}.yt-bars-placeholder i{flex:1;height:4px;background:#1f4f61;border-radius:2px 2px 0 0;opacity:.35}.yt-panel-note{margin-top:6px;color:#5f5353;font-size:7px;line-height:1.35}
+.yt-realtime-chart-shell{margin-top:8px}.yt-realtime-series-empty{height:72px;display:flex;align-items:center;justify-content:center;padding:8px 12px;border-bottom:1px solid #18303a;background:repeating-linear-gradient(to top,transparent 0,transparent 23px,rgba(25,63,77,.25) 24px);color:#58727d;font-size:7px;line-height:1.4;text-align:center}.yt-panel-note{margin-top:6px;color:#5f5353;font-size:7px;line-height:1.35}
 
 .yt-feature-metric{border:1px solid #2c1212;border-radius:8px;padding:8px 9px;background:#030101}.yt-feature-metric span{display:block;color:#91706f;font-size:8px}.yt-feature-metric strong{display:block;font-size:24px;margin-top:3px}.yt-feature-metric small{color:#6c5554;font-size:7px}
 .yt-section-label{margin:8px 0 5px;color:#cb706d;font-size:7px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
@@ -1632,10 +1632,10 @@ body.hf-alert-flash::after{
 
 @media(max-width:1250px){
   .yt-screen-grid{grid-template-columns:minmax(220px,.8fr) minmax(330px,1.2fr) minmax(280px,1fr)}
-  .yt-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.yt-metric:nth-child(4),.yt-metric:nth-child(5){display:none}
+  .yt-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:900px){
-  body{overflow:auto}.main{height:auto;min-height:100vh}.control-screen[data-screen="youtube"]{height:auto;overflow:visible}.yt-screen-grid{height:auto;grid-template-columns:1fr;grid-template-rows:none}.youtube-panel{min-height:360px}.yt-video-selector-panel{min-height:520px}.yt-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.yt-metric:nth-child(4),.yt-metric:nth-child(5){display:block}.yt-audience-split,.yt-geo-columns{grid-template-columns:1fr}
+  body{overflow:auto}.main{height:auto;min-height:100vh}.control-screen[data-screen="youtube"]{height:auto;overflow:visible}.yt-screen-grid{height:auto;grid-template-columns:1fr;grid-template-rows:none}.youtube-panel{min-height:360px}.yt-video-selector-panel{min-height:520px}.yt-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.yt-audience-split,.yt-geo-columns{grid-template-columns:1fr}
 }
 
 /* === YouTube Analytics readability + Focus Mode refinement v4 =============

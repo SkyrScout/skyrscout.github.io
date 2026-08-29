@@ -61,7 +61,9 @@
     activitySort: '24h',
     radarMode: 'live',
     historyWindow: '24h',
-    selectedHistoryEventId: null
+    selectedHistoryEventId: null,
+    videoSnapshotSchema: [],
+    videoSnapshotRows: []
   };
 
   // Video Library interaction state is deliberately kept outside the DOM.
@@ -1683,6 +1685,19 @@
     state.rules = payload.internalRules || {};
     state.checkedAt = payload.checkedAt;
     state.videosPolled = payload.videosPolled;
+    state.videoSnapshotSchema = Array.isArray(payload.videoSnapshotSchema) ? payload.videoSnapshotSchema : [];
+    state.videoSnapshotRows = Array.isArray(payload.videoSnapshotRows) ? payload.videoSnapshotRows : [];
+
+    // Reuse the authenticated debug feed across Control Room panels. This does not
+    // create another backend request; consumers receive the exact per-video snapshot
+    // that Hese-Fredrik already fetched and relayed for this poll.
+    document.dispatchEvent(new CustomEvent('controlroom:vpsfeedupdated', {
+      detail: {
+        checkedAt: payload.checkedAt || null,
+        videoSnapshotSchema: state.videoSnapshotSchema,
+        videoSnapshotRows: state.videoSnapshotRows
+      }
+    }));
 
     if(videos) videos.textContent = fmtNumber(payload.videosPolled);
     if(alertsCount) alertsCount.textContent = fmtNumber(state.alerts.length);
