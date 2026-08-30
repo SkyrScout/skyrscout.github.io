@@ -88,6 +88,100 @@ async function fetchAppsScript(mode) {
   }
 }
 
+
+function parseStoredJson(value, fallback = null) {
+  try {
+    return JSON.parse(String(value || ""));
+  } catch (error) {
+    return fallback;
+  }
+}
+
+async function fetchYouTubeAnalyticsVideo(videoId) {
+  const cleanVideoId = String(videoId || "").trim();
+  if (!/^[A-Za-z0-9_-]{11}$/.test(cleanVideoId)) {
+    throw new HttpsError("invalid-argument", "A valid YouTube video ID is required.");
+  }
+
+  const metaSnapshot = await db.collection("control_room_analytics").doc("meta").get();
+  if (!metaSnapshot.exists) {
+    throw new HttpsError(
+      "unavailable",
+      "YouTube Analytics has not been published to Scoutland Yard yet."
+    );
+  }
+
+  const meta = metaSnapshot.data() || {};
+  const activeSlot = String(meta.activeSlot || "");
+  const generation = String(meta.generation || "");
+
+  if ((activeSlot !== "A" && activeSlot !== "B") || !generation) {
+    throw new HttpsError(
+      "unavailable",
+      "The active YouTube Analytics generation is invalid."
+    );
+  }
+
+  const activeVideoIds = parseStoredJson(meta.videoIdsJson, []);
+  if (!Array.isArray(activeVideoIds) || !activeVideoIds.includes(cleanVideoId)) {
+    throw new HttpsError(
+      "not-found",
+      "No current YouTube Analytics package exists for this video."
+    );
+  }
+
+  const videoSnapshot = await db
+    .collection("control_room_analytics_slots")
+    .doc(activeSlot)
+    .collection("videos")
+    .doc(cleanVideoId)
+    .get();
+
+  if (!videoSnapshot.exists) {
+    throw new HttpsError(
+      "unavailable",
+      "The current YouTube Analytics package is incomplete."
+    );
+  }
+
+  const stored = videoSnapshot.data() || {};
+  if (String(stored.generation || "") !== generation) {
+    throw new HttpsError(
+      "unavailable",
+      "The selected YouTube Analytics package is from the wrong generation."
+    );
+  }
+
+  const payload = parseStoredJson(stored.payloadJson, null);
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    String(payload.videoId || "") !== cleanVideoId
+  ) {
+    throw new HttpsError(
+      "unavailable",
+      "The selected YouTube Analytics package is invalid."
+    );
+  }
+
+  return {
+    payload,
+    meta: {
+      generation,
+      activeSlot,
+      generatedAt: meta.generatedAt || null,
+      analyticsDataThrough: meta.analyticsDataThrough || null,
+      reportingDataThrough: meta.reportingDataThrough || null,
+      collectorVersion: meta.collectorVersion || null,
+      videoCount: Number(meta.videoCount || 0) || 0,
+      publishedAt: meta.publishedAt || null,
+      committedAtMs: Number(meta.committedAtMs || 0) || null,
+      likesCoverage: parseStoredJson(meta.likesCoverageJson, {}),
+      health: parseStoredJson(meta.healthJson, {})
+    }
+  };
+}
+
 exports.controlRoomFeed = onCall(
   {
     timeoutSeconds: 20,
@@ -97,6 +191,28 @@ exports.controlRoomFeed = onCall(
     await assertApprovedStaff(request.auth);
 
     const feed = String(request.data?.feed || "");
+
+    if (feed === "youtube-analytics") {
+      try {
+        const result = await fetchYouTubeAnalyticsVideo(request.data?.videoId);
+        return {
+          ok: true,
+          feed,
+          payload: result.payload,
+          meta: result.meta
+        };
+      } catch (error) {
+        if (error instanceof HttpsError) {
+          throw error;
+        }
+        console.error("controlRoomFeed YouTube Analytics fetch failed", error);
+        throw new HttpsError(
+          "unavailable",
+          "YouTube Analytics could not be reached by the Staff backend."
+        );
+      }
+    }
+
     if (feed !== "hese-fredrik") {
       throw new HttpsError("invalid-argument", "Unknown Control Room feed.");
     }
