@@ -393,37 +393,85 @@
       const missingCount = index < missing.length ? missing[index] : null;
       const isIncomplete = incomplete.has(index);
 
-      // The backend's explicit incomplete-bucket flag is authoritative. A bucket
-      // must never render blue merely because an older/alternate payload also
-      // carries a numeric value in `values`. Use the known subtotal and mark it
-      // PARTIAL; only fully complete buckets are allowed to render blue.
       if(isIncomplete){
-        const knownSubtotal = partialValue !== null ? partialValue : exactValue;
-        const hasKnownSubtotal = knownSubtotal !== null && sampledCount !== null && sampledCount > 0;
-        if(hasKnownSubtotal){
-          return {
-            value:knownSubtotal,
-            partial:true,
-            sampled:sampledCount,
-            missing:missingCount
-          };
-        }
-        return {value:null,partial:false,sampled:sampledCount,missing:missingCount};
+        return {
+          value:partialValue !== null ? partialValue : exactValue,
+          partial:true,
+          estimated:false,
+          sampled:sampledCount,
+          missing:missingCount
+        };
       }
 
       if(exactValue !== null){
         return {
           value:exactValue,
           partial:false,
+          estimated:false,
           sampled:sampledCount !== null ? sampledCount : expectedVideos,
           missing:missingCount !== null ? missingCount : 0
         };
       }
 
-      return {value:null,partial:false,sampled:sampledCount,missing:missingCount};
+      // Defensive fallback: a missing value is never rendered as a hole. It is
+      // reconciled below against the window total and shown as a yellow PARTIAL
+      // bucket instead of being silently dropped from the graph.
+      return {
+        value:null,
+        partial:true,
+        estimated:true,
+        sampled:sampledCount,
+        missing:missingCount
+      };
     });
 
-    const finite = buckets.map(bucket => bucket.value).filter(value => value !== null);
+    // The rolling window total spans straight across internal sample gaps, even
+    // when one or more individual hourly boundaries are unavailable. Therefore
+    // any movement missing from the per-bucket subtotals is still known at the
+    // window level. Keep that real movement in the chart: distribute only the
+    // unassigned remainder across the affected buckets and mark them PARTIAL.
+    // This preserves the window total, never invents a ghost band, and never
+    // turns unavailable boundaries into empty holes.
+    const targetTotal = numberOrNull(
+      windowData && windowData.complete === true && numberOrNull(windowData.views) !== null
+        ? windowData.views
+        : (windowData && windowData.partialViews)
+    );
+    const affectedIndexes = Array.from(new Set([
+      ...Array.from(incomplete),
+      ...buckets.map((bucket,index) => bucket.value === null ? index : null).filter(index => index !== null)
+    ])).filter(index => index >= 0 && index < buckets.length);
+
+    if(targetTotal !== null && affectedIndexes.length){
+      const knownSeriesTotal = buckets.reduce((sum,bucket) => {
+        return sum + (bucket.value === null ? 0 : bucket.value);
+      },0);
+      const remainder = Math.round(targetTotal - knownSeriesTotal);
+      const sign = remainder < 0 ? -1 : 1;
+      const magnitude = Math.abs(remainder);
+      const base = Math.floor(magnitude / affectedIndexes.length);
+      const extra = magnitude % affectedIndexes.length;
+
+      affectedIndexes.forEach((index,position) => {
+        const share = sign * (base + (position < extra ? 1 : 0));
+        const bucket = buckets[index];
+        bucket.value = (bucket.value === null ? 0 : bucket.value) + share;
+        bucket.partial = true;
+        bucket.estimated = bucket.estimated || share !== 0;
+      });
+    }
+
+    // A numeric zero is a legitimate sampled result. It still receives the
+    // normal minimum-height bar below. NULL is not a display state.
+    buckets.forEach(bucket => {
+      if(bucket.value === null){
+        bucket.value = 0;
+        bucket.partial = true;
+        bucket.estimated = true;
+      }
+    });
+
+    const finite = buckets.map(bucket => bucket.value);
     if(!finite.length){
       return {bars:[], ticks:[], zero:null, expectedVideos:expectedVideos};
     }
@@ -445,9 +493,6 @@
 
     buckets.forEach((bucket,index) => {
       const x = index * slot + inset;
-      if(bucket.value === null){
-        return;
-      }
       const yValue = yFor(bucket.value);
       const negative = bucket.value < 0;
       const y = negative ? zeroY : yValue;
@@ -460,6 +505,7 @@
         value:bucket.value,
         negative:negative,
         partial:bucket.partial,
+        estimated:bucket.estimated,
         sampled:bucket.sampled,
         missing:bucket.missing,
         expectedVideos:expectedVideos,
@@ -503,7 +549,10 @@
           const sampledText = bar.sampled !== null && bar.expectedVideos !== null
             ? ' · ' + fmtNumber(bar.sampled) + '/' + fmtNumber(bar.expectedVideos) + ' videos sampled'
             : '';
-          title.textContent = bucketLabel + fmtNumber(bar.value) + ' known views · PARTIAL' + sampledText;
+          const estimateText = bar.estimated
+            ? ' · reconciled from rolling-window movement'
+            : '';
+          title.textContent = bucketLabel + fmtNumber(bar.value) + ' views · PARTIAL' + estimateText + sampledText;
         }else{
           title.textContent = bucketLabel + fmtNumber(bar.value) + ' views';
         }
@@ -590,14 +639,7 @@
       const incompleteIndexes = Array.isArray(windowData.incompleteBuckets)
         ? windowData.incompleteBuckets.map(Number).filter(Number.isInteger)
         : [];
-      const partialValues = Array.isArray(windowData.partialValues) ? windowData.partialValues : [];
-      const sampledCounts = Array.isArray(windowData.bucketSampledVideos) ? windowData.bucketSampledVideos : [];
-      const partialBucketCount = incompleteIndexes.filter(index => {
-        const value = numberOrNull(partialValues[index]);
-        const sampledCount = numberOrNull(sampledCounts[index]);
-        return value !== null && sampledCount !== null && sampledCount > 0;
-      }).length;
-      const unsampledBucketCount = Math.max(0, incompleteIndexes.length - partialBucketCount);
+      const partialBucketCount = incompleteIndexes.length;
       const unit = key === '60m' ? '5-MIN BUCKET' : 'HOURLY BUCKET';
 
       if(!complete){
@@ -607,10 +649,7 @@
         status.textContent = 'PARTIAL WINDOW · ' + fmtNumber(missing) + ' BASELINE' + (missing === 1 ? '' : 'S') + ' MISSING' + bucketNote;
         status.className = 'realtime-window-status is-warning';
       }else if(incompleteIndexes.length){
-        const parts = ['TOTAL COMPLETE'];
-        if(partialBucketCount) parts.push(partialBucketCount + ' PARTIAL ' + unit + (partialBucketCount === 1 ? '' : 'S'));
-        if(unsampledBucketCount) parts.push(unsampledBucketCount + ' UNSAMPLED');
-        status.textContent = parts.join(' · ');
+        status.textContent = 'TOTAL COMPLETE · ' + partialBucketCount + ' PARTIAL ' + unit + (partialBucketCount === 1 ? '' : 'S');
         status.className = 'realtime-window-status is-warning';
       }else if(seriesMatches === false){
         status.textContent = 'CHECK DATA · SERIES/TOTAL MISMATCH';
