@@ -454,9 +454,6 @@ window.controlRoomSnapRows=snapRows;
   });
 
 
-  const coltonReference = {
-    youtubeId: 'zPDOV79nRE4'
-  };
 
   function formatReportDate(value){
     const m = String(value || '').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
@@ -523,8 +520,33 @@ window.controlRoomSnapRows=snapRows;
     if(row) updateSelectedPlayer(row);
   });
 
-  const defaultRow = Array.from(document.querySelectorAll('[data-player-row]')).find(row => row.dataset.youtubeId === coltonReference.youtubeId);
-  if(defaultRow) updateSelectedPlayer(defaultRow);
+  let initialOverviewSelectionResolved = false;
+  document.addEventListener('controlroom:videometadataupdated', () => {
+    if(initialOverviewSelectionResolved) return;
+    window.setTimeout(() => {
+      if(initialOverviewSelectionResolved) return;
+      const alreadySelected = document.querySelector('.video-library-panel [data-video-library-row].selected');
+      if(alreadySelected){
+        initialOverviewSelectionResolved = true;
+        return;
+      }
+      const first = document.querySelector('.video-library-panel [data-video-library-pane="long"] [data-video-library-row]:not([hidden])');
+      if(!first) return;
+      initialOverviewSelectionResolved = true;
+      document.querySelectorAll('[data-video-library-row].selected').forEach(el => el.classList.remove('selected'));
+      first.classList.add('selected');
+      updateSelectedPlayer(first);
+      document.dispatchEvent(new CustomEvent('controlroom:videoselected',{
+        detail:{
+          videoId:String(first.dataset.youtubeId || ''),
+          format:'long',
+          title:String(first.dataset.playerDisplay || first.dataset.playerName || ''),
+          publishedAtMs:Number(first.dataset.youtubePublishedAt || 0) || null,
+          url:String(first.dataset.playerUrl || '')
+        }
+      }));
+    },0);
+  });
 
   // Expose only the small internal hooks needed by other Control Room modules.
   window.SkyrScoutControlRoom = Object.freeze({switchScreen, updateSelectedPlayer});

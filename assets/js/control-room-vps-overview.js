@@ -296,6 +296,23 @@
     }
 
     renderTraffic();
+
+    document.dispatchEvent(new CustomEvent('controlroom:overviewpublicselected',{
+      detail:{
+        videoId:id,
+        checkedAt:state.checkedAt || null,
+        row:{
+          videoId:item.videoId,
+          totalViews:item.totalViews,
+          deltaSincePoll:item.deltaSincePoll,
+          currentHourViews:item.currentHourViews,
+          previousHourViews:item.previousHourViews,
+          last48hViews:item.last48hViews,
+          activityStatus:item.activityStatus,
+          publishedAtMs:item.publishedAtMs
+        }
+      }
+    }));
   }
 
   function realtimePanels(){

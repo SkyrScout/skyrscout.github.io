@@ -38,6 +38,29 @@ async function fetchHeseFredrik(mode = "debug") {
   return data.payload;
 }
 
+async function fetchYouTubeAnalytics(videoId) {
+  const cleanVideoId = String(videoId || "").trim();
+  if (!/^[A-Za-z0-9_-]{11}$/.test(cleanVideoId)) {
+    throw new Error("INVALID_YOUTUBE_VIDEO_ID");
+  }
+
+  const response = await controlRoomFeed({
+    feed: "youtube-analytics",
+    videoId: cleanVideoId
+  });
+
+  const data = response?.data || {};
+
+  if (data.ok !== true || !data.payload || data.payload.videoId !== cleanVideoId) {
+    throw new Error("INVALID_YOUTUBE_ANALYTICS_PAYLOAD");
+  }
+
+  return {
+    payload: data.payload,
+    meta: data.meta || {}
+  };
+}
+
 async function fetchLibraryFolder(folderId = null) {
   const response = await libraryFeed({
     action: "list-folder",
@@ -55,5 +78,6 @@ async function fetchLibraryFolder(folderId = null) {
 
 window.SkyrScoutStaffBackend = Object.freeze({
   fetchHeseFredrik,
+  fetchYouTubeAnalytics,
   fetchLibraryFolder
 });
