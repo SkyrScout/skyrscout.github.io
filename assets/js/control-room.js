@@ -434,7 +434,7 @@ window.controlRoomSnapRows=snapRows;
 
   const subtitles = {
     overview: 'POV workstation. Overview screen.',
-    youtube: 'YouTube intelligence. Private Analytics connection pending.',
+    youtube: 'YouTube intelligence. Live public counters + processed Analytics.',
     website: 'Website intelligence. Connection pending.',
     'hese-fredrik': 'Live movement monitor. Public YouTube-derived backend feed.'
   };
