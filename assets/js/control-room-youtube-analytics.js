@@ -151,12 +151,30 @@
     }), {views:0,estimatedMinutesWatched:0});
   }
 
-  function trafficShareText(item, analytics){
-    if(!item) return 'Not reported';
+  function clampPercent(value){
+    const n = numberOrNull(value);
+    return n === null ? null : Math.max(0,Math.min(100,n));
+  }
+
+  function setBarPercent(element, value){
+    if(!element) return;
+    const pct = clampPercent(value);
+    element.style.setProperty('--yt-bar-pct',(pct === null ? 0 : pct) + '%');
+  }
+
+  function trafficSharePercent(item, analytics){
+    if(!item) return null;
     const total = numberOrNull(analytics?.performance?.views);
     const views = numberOrNull(item.views);
+    if(total === null || total <= 0 || views === null) return null;
+    return views / total * 100;
+  }
+
+  function trafficShareText(item, analytics){
+    if(!item) return 'Not reported';
+    const views = numberOrNull(item.views);
     if(views === null) return '—';
-    const pct = total && total > 0 ? views / total * 100 : null;
+    const pct = trafficSharePercent(item,analytics);
     return (pct === null ? '—' : pct.toFixed(1) + '%') + ' · ' + formatNumber(views);
   }
 
@@ -431,13 +449,25 @@
     if(ctr) ctr.textContent = valueForAvailability(reachStatus.status,formatCtr(reach.impressionsCtr));
     setPanelFreshness('.yt-reach-panel',reachStatus);
 
+    const trafficStatus = availability(result,'trafficSources').status;
     document.querySelectorAll('[data-yt-reach-source]').forEach(row => {
       const key = row.dataset.ytReachSource;
       const strong = row.querySelector('strong');
       if(!strong) return;
-      const trafficStatus = availability(result,'trafficSources').status;
-      strong.textContent = valueForAvailability(trafficStatus,trafficShareText(trafficEntryForKey(analytics,key),analytics));
+      const item = trafficEntryForKey(analytics,key);
+      strong.textContent = valueForAvailability(trafficStatus,trafficShareText(item,analytics));
+      setBarPercent(row,(trafficStatus === 'exact' || trafficStatus === 'partial') ? trafficSharePercent(item,analytics) : null);
     });
+
+    const stack = document.querySelector('.yt-reach-panel .yt-source-stack');
+    if(stack){
+      const keys = ['external','search','channel','direct','suggested'];
+      Array.from(stack.querySelectorAll('i')).forEach((segment,index) => {
+        const item = trafficEntryForKey(analytics,keys[index]);
+        const pct = (trafficStatus === 'exact' || trafficStatus === 'partial') ? trafficSharePercent(item,analytics) : null;
+        segment.style.setProperty('--yt-stack-pct',(clampPercent(pct) || 0) + '%');
+      });
+    }
   }
 
   function renderYouTubeTraffic(result){
@@ -448,7 +478,9 @@
       const strong = button.querySelector('strong');
       if(!strong) return;
       const key = button.dataset.ytSource;
-      strong.textContent = valueForAvailability(status.status,trafficShareText(trafficEntryForKey(analytics,key),analytics));
+      const item = trafficEntryForKey(analytics,key);
+      strong.textContent = valueForAvailability(status.status,trafficShareText(item,analytics));
+      setBarPercent(button,(status.status === 'exact' || status.status === 'partial') ? trafficSharePercent(item,analytics) : null);
     });
   }
 
@@ -495,13 +527,16 @@
       return;
     }
 
+    const detailTotalViews = rows.reduce((sum,item) => sum + (numberOrNull(item.views) || 0),0);
     rows.slice(0,10).forEach(item => {
       const row = document.createElement('div');
       row.className = 'yt-detail-row';
       const name = document.createElement('span');
       const value = document.createElement('strong');
+      const views = numberOrNull(item.views);
       name.textContent = item.detail || (item.meaning === 'unattributed_or_privacy_thresholded' ? 'Unattributed / privacy thresholded' : SOURCE_LABELS[youtube.activeDetail]);
-      value.textContent = formatNumber(item.views);
+      value.textContent = formatNumber(views);
+      setBarPercent(row,detailTotalViews > 0 && views !== null ? views / detailTotalViews * 100 : null);
       row.append(name,value);
       list.appendChild(row);
     });
@@ -650,6 +685,7 @@
       const value = document.createElement('b');
       label.textContent = item.label;
       value.textContent = item.value;
+      setBarPercent(row,item.percent);
       row.append(label,value);
       card.appendChild(row);
     });
@@ -657,27 +693,31 @@
   }
 
   function subscriberRows(rows,status){
-    if(status !== 'exact' && status !== 'partial') return [{label:statusLabel(status),value:'—'}];
+    if(status !== 'exact' && status !== 'partial') return [{label:statusLabel(status),value:'—',percent:null}];
     const list = Array.isArray(rows) ? rows : [];
-    if(!list.length) return [{label:'Not available',value:'—'}];
+    if(!list.length) return [{label:'Not available',value:'—',percent:null}];
     const total = list.reduce((sum,item) => sum + (numberOrNull(item.estimatedMinutesWatched) || 0),0);
     return list.map(item => {
       const raw = String(item.status || '').toLowerCase();
       const label = raw.includes('unsub') || raw.includes('not') ? 'Not subscribed' : raw.includes('sub') ? 'Subscribed' : (item.status || 'Unknown');
       const minutes = numberOrNull(item.estimatedMinutesWatched) || 0;
       const pct = total > 0 ? minutes / total * 100 : null;
-      return {label:String(label),value:pct === null ? '—' : pct.toFixed(1) + '%'};
+      return {label:String(label),value:pct === null ? '—' : pct.toFixed(1) + '%',percent:pct};
     });
   }
 
   function demographicRows(rows,key,labelFn,status){
-    if(status !== 'exact' && status !== 'partial') return [{label:statusLabel(status),value:'—'}];
+    if(status !== 'exact' && status !== 'partial') return [{label:statusLabel(status),value:'—',percent:null}];
     const list = Array.isArray(rows) ? rows : [];
-    if(!list.length) return [{label:'Not available',value:'—'}];
-    return list.map(item => ({
-      label:labelFn(item[key]),
-      value:formatPercentValue(item.viewerPercentage,list)
-    }));
+    if(!list.length) return [{label:'Not available',value:'—',percent:null}];
+    return list.map(item => {
+      const pct = percentageNumber(item.viewerPercentage,list);
+      return {
+        label:labelFn(item[key]),
+        value:pct === null ? '—' : pct.toFixed(1) + '%',
+        percent:pct
+      };
+    });
   }
 
   async function loadOverview(videoId){
