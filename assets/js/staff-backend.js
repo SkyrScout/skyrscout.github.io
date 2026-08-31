@@ -38,6 +38,22 @@ async function fetchHeseFredrik(mode = "debug") {
   return data.payload;
 }
 
+async function fetchYouTubeCatalog() {
+  const response = await controlRoomFeed({
+    feed: "youtube-catalog"
+  });
+
+  const data = response?.data || {};
+  if (data.ok !== true || !Array.isArray(data.catalog)) {
+    throw new Error("INVALID_YOUTUBE_CATALOG_PAYLOAD");
+  }
+
+  return {
+    catalog: data.catalog,
+    meta: data.meta || {}
+  };
+}
+
 async function fetchYouTubeAnalytics(videoId) {
   const cleanVideoId = String(videoId || "").trim();
   if (!/^[A-Za-z0-9_-]{11}$/.test(cleanVideoId)) {
@@ -78,6 +94,7 @@ async function fetchLibraryFolder(folderId = null) {
 
 window.SkyrScoutStaffBackend = Object.freeze({
   fetchHeseFredrik,
+  fetchYouTubeCatalog,
   fetchYouTubeAnalytics,
   fetchLibraryFolder
 });

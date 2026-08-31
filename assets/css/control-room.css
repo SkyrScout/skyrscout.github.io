@@ -2510,3 +2510,32 @@ body.hf-alert-flash::after{
 }
 .youtube-panel.yt-channel-wide-panel .yt-geo-bar{background:#0d1b22!important}
 .youtube-panel.yt-channel-wide-panel .yt-most-liked-bar{background:#0d1b22!important}
+
+
+/* Full-channel selector search fields: visible even before focus. */
+.video-library-search{
+  border-color:#2b647b!important;
+  background:#06131a!important;
+  box-shadow:inset 0 0 0 1px rgba(57,176,226,.10),0 0 0 1px rgba(10,51,68,.28)!important;
+  color:#eefaff!important;
+}
+.video-library-search::placeholder{color:#91aab5!important}
+.video-library-search:hover{border-color:#3689aa!important;background:#081820!important}
+.video-library-search:focus{
+  border-color:#39b7ee!important;
+  background:#081b24!important;
+  box-shadow:0 0 0 2px rgba(57,183,238,.14),inset 0 0 0 1px rgba(57,183,238,.18)!important;
+}
+.yt-video-search{
+  border-color:#7a3734!important;
+  background:#100505!important;
+  box-shadow:inset 0 0 0 1px rgba(220,75,69,.10),0 0 0 1px rgba(82,22,20,.30)!important;
+  color:#fff1f0!important;
+}
+.yt-video-search::placeholder{color:#b58a87!important}
+.yt-video-search:hover{border-color:#a84a45!important;background:#150707!important}
+.yt-video-search:focus{
+  border-color:#ed625b!important;
+  background:#180808!important;
+  box-shadow:0 0 0 2px rgba(237,98,91,.14),inset 0 0 0 1px rgba(237,98,91,.18)!important;
+}

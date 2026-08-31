@@ -97,6 +97,163 @@ function parseStoredJson(value, fallback = null) {
   }
 }
 
+
+let youtubeCatalogCache = {
+  generation: "",
+  heseCheckedAt: 0,
+  expiresAt: 0,
+  value: null
+};
+
+function decodeHeseVideoSnapshot(payload) {
+  const schema = Array.isArray(payload?.videoSnapshotSchema)
+    ? payload.videoSnapshotSchema.map((value) => String(value || ""))
+    : [];
+  const rows = Array.isArray(payload?.videoSnapshotRows)
+    ? payload.videoSnapshotRows
+    : [];
+  const index = new Map(schema.map((name, i) => [name, i]));
+  const out = new Map();
+
+  for (const row of rows) {
+    if (!Array.isArray(row)) continue;
+    const get = (name) => {
+      const i = index.get(name);
+      return i === undefined ? null : row[i];
+    };
+    const videoId = String(get("videoId") || "").trim();
+    if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) continue;
+    const publishedRaw = Number(get("publishedAtMs"));
+    const totalRaw = Number(get("totalViews"));
+    out.set(videoId, {
+      videoType: String(get("videoType") || "unknown"),
+      publishedAtMs: Number.isFinite(publishedRaw) && publishedRaw > 0 ? publishedRaw : null,
+      totalViews: Number.isFinite(totalRaw) ? totalRaw : null
+    });
+  }
+  return out;
+}
+
+async function fetchYouTubeAnalyticsCatalog() {
+  const [metaSnapshot, hese] = await Promise.all([
+    db.collection("control_room_analytics").doc("meta").get(),
+    fetchAppsScript("debug")
+  ]);
+
+  if (!metaSnapshot.exists) {
+    throw new HttpsError(
+      "unavailable",
+      "YouTube Analytics has not been published to Scoutland Yard yet."
+    );
+  }
+
+  const meta = metaSnapshot.data() || {};
+  const activeSlot = String(meta.activeSlot || "");
+  const generation = String(meta.generation || "");
+  const activeVideoIds = parseStoredJson(meta.videoIdsJson, []);
+  const heseCheckedAt = Number(hese?.checkedAt || 0) || 0;
+
+  if (
+    (activeSlot !== "A" && activeSlot !== "B") ||
+    !generation ||
+    !Array.isArray(activeVideoIds) ||
+    !activeVideoIds.length
+  ) {
+    throw new HttpsError(
+      "unavailable",
+      "The active YouTube Analytics catalog is invalid."
+    );
+  }
+
+  const now = Date.now();
+  if (
+    youtubeCatalogCache.value &&
+    youtubeCatalogCache.generation === generation &&
+    youtubeCatalogCache.heseCheckedAt === heseCheckedAt &&
+    youtubeCatalogCache.expiresAt > now
+  ) {
+    return youtubeCatalogCache.value;
+  }
+
+  const refs = activeVideoIds.map((videoId) =>
+    db
+      .collection("control_room_analytics_slots")
+      .doc(activeSlot)
+      .collection("videos")
+      .doc(String(videoId))
+  );
+  const snapshots = await db.getAll(...refs);
+  const heseRows = decodeHeseVideoSnapshot(hese || {});
+  const catalog = [];
+
+  for (const snapshot of snapshots) {
+    if (!snapshot.exists) continue;
+    const stored = snapshot.data() || {};
+    if (String(stored.generation || "") !== generation) continue;
+
+    const packagePayload = parseStoredJson(stored.payloadJson, null);
+    const videoId = String(packagePayload?.videoId || snapshot.id || "").trim();
+    const metadata = packagePayload?.analytics?.metadata || {};
+    if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) continue;
+
+    const heseItem = heseRows.get(videoId) || {};
+    const publishedAt = String(metadata.publishedAt || "").trim() || null;
+    let publishedAtMs = Number(heseItem.publishedAtMs || 0) || null;
+    if (!publishedAtMs && publishedAt) {
+      const parsed = Date.parse(publishedAt);
+      if (Number.isFinite(parsed)) publishedAtMs = parsed;
+    }
+
+    catalog.push({
+      videoId,
+      title: String(metadata.title || videoId),
+      thumbnail: String(metadata.thumbnail || ""),
+      publishedAt,
+      publishedAtMs,
+      videoType: heseItem.videoType === "short" ? "short" :
+        heseItem.videoType === "long" ? "long" : "unknown",
+      totalViews: Number.isFinite(Number(heseItem.totalViews))
+        ? Number(heseItem.totalViews)
+        : null
+    });
+  }
+
+  if (catalog.length !== activeVideoIds.length) {
+    throw new HttpsError(
+      "unavailable",
+      `The YouTube catalog is incomplete (${catalog.length}/${activeVideoIds.length}).`
+    );
+  }
+
+  catalog.sort((a, b) => {
+    const am = Number(a.publishedAtMs || 0);
+    const bm = Number(b.publishedAtMs || 0);
+    if (am !== bm) return bm - am;
+    return String(a.title || "").localeCompare(String(b.title || ""));
+  });
+
+  const result = {
+    catalog,
+    meta: {
+      generation,
+      activeSlot,
+      analyticsDataThrough: meta.analyticsDataThrough || null,
+      publishedAt: meta.publishedAt || null,
+      videoCount: catalog.length,
+      heseCheckedAt,
+      videosPolled: Number(hese?.videosPolled || 0) || 0
+    }
+  };
+
+  youtubeCatalogCache = {
+    generation,
+    heseCheckedAt,
+    expiresAt: now + 5 * 60 * 1000,
+    value: result
+  };
+  return result;
+}
+
 async function fetchYouTubeAnalyticsVideo(videoId) {
   const cleanVideoId = String(videoId || "").trim();
   if (!/^[A-Za-z0-9_-]{11}$/.test(cleanVideoId)) {
@@ -191,6 +348,27 @@ exports.controlRoomFeed = onCall(
     await assertApprovedStaff(request.auth);
 
     const feed = String(request.data?.feed || "");
+
+    if (feed === "youtube-catalog") {
+      try {
+        const result = await fetchYouTubeAnalyticsCatalog();
+        return {
+          ok: true,
+          feed,
+          catalog: result.catalog,
+          meta: result.meta
+        };
+      } catch (error) {
+        if (error instanceof HttpsError) {
+          throw error;
+        }
+        console.error("controlRoomFeed YouTube catalog fetch failed", error);
+        throw new HttpsError(
+          "unavailable",
+          "The full YouTube channel catalog could not be reached by the Staff backend."
+        );
+      }
+    }
 
     if (feed === "youtube-analytics") {
       try {

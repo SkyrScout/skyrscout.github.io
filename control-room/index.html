@@ -13,7 +13,7 @@ sitemap: false
   <meta name="color-scheme" content="dark">
   <title>Scoutland Yard Control Room</title>
   <link rel="icon" href="{{ '/assets/images/skyrscout-favicon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260829-no-ghost-v1">
+  <link rel="stylesheet" href="{{ '/assets/css/control-room.css' | relative_url }}?v=20260831-full-channel-catalog-v1">
 </head>
 <body>
 <div class="staff-auth-gate" id="staffAuthGate" data-state="checking">
@@ -55,7 +55,7 @@ sitemap: false
 <div class="body video-library-body">
   <div class="video-library-controls">
     <div class="video-library-search-wrap">
-      <input class="video-library-search" type="text" data-video-library-search placeholder="Search player, club or video…" aria-label="Search Video Library" autocomplete="off" spellcheck="false">
+      <input class="video-library-search" type="text" data-video-library-search placeholder="Search channel: player, club or video…" aria-label="Search Video Library" autocomplete="off" spellcheck="false">
       <button class="video-library-search-clear" type="button" data-video-library-clear aria-label="Clear Video Library search" title="Clear search">×</button>
     </div>
     <span class="video-library-count" data-video-library-count>{{ site.players | size }} VIDEOS</span>
@@ -138,7 +138,7 @@ sitemap: false
       </div>
       <div class="yt-selector-controls">
         <div class="yt-video-search-wrap">
-          <input class="yt-video-search" type="text" data-yt-video-search placeholder="Search player, club or video…" aria-label="Search Video Selector" autocomplete="off" spellcheck="false">
+          <input class="yt-video-search" type="text" data-yt-video-search placeholder="Search channel: player, club or video…" aria-label="Search Video Selector" autocomplete="off" spellcheck="false">
           <button class="yt-video-search-clear" type="button" data-yt-video-clear aria-label="Clear Video Selector search" title="Clear search">×</button>
         </div>
         <button class="yt-video-sort" type="button" data-yt-video-sort aria-label="Sort Video Selector oldest first" title="Sort by YouTube publication time">NEWEST</button>
@@ -587,6 +587,6 @@ sitemap: false
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260831-geo-window-label-v2"></script>
 <script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260829-existing-data-v3"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260831-youtube-fill-v1"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260831-full-channel-catalog-v1"></script>
 </body>
 </html>
