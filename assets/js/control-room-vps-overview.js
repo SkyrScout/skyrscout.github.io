@@ -1389,6 +1389,21 @@
     return windows[key] || state.geography;
   }
 
+  function updateGeographyPanelBadges(){
+    const active = activeGeography();
+    const text = active && active.endDate
+      ? String(state.geographyWindowKey || '2d').toUpperCase() + ' · ' + fmtDate(active.endDate)
+      : String(state.geographyWindowKey || '2d').toUpperCase();
+
+    geographyBodies().forEach(body => {
+      const panel = body.closest('.sidepanel,.panel');
+      const badge = panel ? panel.querySelector(':scope > .ph .badge') : null;
+      if(badge){
+        badge.textContent = text;
+      }
+    });
+  }
+
   function setGeographyWindow(key){
     if(!state.geography){
       return;
@@ -1407,6 +1422,7 @@
     }
 
     state.geographyWindowKey = nextKey;
+    updateGeographyPanelBadges();
 
     if(
       state.selectedCountryKey &&
@@ -2868,6 +2884,7 @@
         renderGeoOverview
       );
 
+    updateGeographyPanelBadges();
     setMapScopeBadge(null);
 
     renderMapTraffic();
