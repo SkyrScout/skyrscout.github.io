@@ -83,6 +83,18 @@
     return m[3] + '.' + m[2] + '.' + m[1];
   }
 
+  function countryName(code){
+    const clean = String(code || '').trim().toUpperCase();
+    if(!clean) return 'Unknown';
+    try{
+      if(typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function'){
+        const names = new Intl.DisplayNames(['en'],{type:'region'});
+        return names.of(clean) || clean;
+      }
+    }catch(_error){}
+    return clean;
+  }
+
   function availability(result, key){
     return result?.payload?.analytics?.availability?.[key] || {status:'not_available'};
   }
@@ -393,6 +405,7 @@
     renderYouTubeReach(result);
     renderYouTubeTraffic(result);
     renderYouTubeAudience(result);
+    renderYouTubeGeography(result);
     renderYouTubeDetail(result,youtube.activeDetail);
   }
 
@@ -501,6 +514,104 @@
     if(key === 'channel') return 'Channel-page traffic';
     if(key === 'suggested') return 'Suggested-video traffic';
     return 'Direct / unknown';
+  }
+
+  function renderYouTubeGeography(result){
+    const body = document.querySelector('.yt-geography-panel [data-yt-selected-geography-body]');
+    const list = document.querySelector('.yt-geography-panel [data-yt-selected-geography-list]');
+    const videoTitle = document.querySelector('[data-yt-geo-video-title]');
+    const topRegion = document.querySelector('[data-yt-geo-top-region]');
+    const note = document.querySelector('[data-yt-geo-note]');
+    if(!body || !list) return;
+
+    const analytics = result.payload.analytics || {};
+    const meta = analytics.metadata || {};
+    const perf = analytics.performance || {};
+    const status = availability(result,'geography');
+    const rows = Array.isArray(analytics.geography) ? analytics.geography.slice() : [];
+    const residual = analytics.geographyResidual || null;
+    const totalViews = numberOrNull(perf.views);
+
+    setPanelFreshness('.yt-geography-panel',status);
+    if(videoTitle) videoTitle.textContent = meta.title || youtube.videoId || 'Selected video';
+
+    const top = analytics.topRegion || (rows.length ? rows[0] : null);
+    if(topRegion){
+      topRegion.textContent = (status.status === 'exact' || status.status === 'partial')
+        ? (top && top.country ? countryName(top.country) + ' · ' + formatNumber(top.views) : 'Not available')
+        : valueForAvailability(status.status,'—');
+    }
+
+    list.replaceChildren();
+    if(status.status !== 'exact' && status.status !== 'partial'){
+      const empty = document.createElement('div');
+      empty.className = 'yt-panel-note';
+      empty.textContent = status.status === 'pending'
+        ? 'Selected-video geography is still processing.'
+        : status.status === 'incomplete'
+          ? 'Selected-video geography is incomplete.'
+          : 'YouTube did not return country-level geography for this video.';
+      list.appendChild(empty);
+      if(note) note.textContent = 'Missing geography is never displayed as zero.';
+      return;
+    }
+
+    rows.sort((a,b) => (numberOrNull(b.views) || 0) - (numberOrNull(a.views) || 0));
+    const reportedViews = rows.reduce((sum,item) => sum + (numberOrNull(item.views) || 0),0);
+    const denominator = totalViews !== null && totalViews > 0 ? totalViews : reportedViews;
+
+    function addRow(label,sub,views,share,residualRow){
+      const row = document.createElement('div');
+      row.className = 'yt-selected-geo-row' + (residualRow ? ' yt-selected-geo-residual' : '');
+      const left = document.createElement('div');
+      const name = document.createElement('strong');
+      const metaLine = document.createElement('span');
+      name.textContent = label;
+      metaLine.textContent = sub;
+      left.append(name,metaLine);
+      const right = document.createElement('div');
+      const value = document.createElement('b');
+      const pct = document.createElement('span');
+      value.textContent = formatNumber(views);
+      pct.textContent = share === null ? '—' : share.toFixed(1) + '%';
+      right.append(value,pct);
+      const bar = document.createElement('i');
+      bar.style.setProperty('--yt-geo-share',Math.max(0,Math.min(100,share || 0)) + '%');
+      row.append(left,right,bar);
+      list.appendChild(row);
+    }
+
+    rows.slice(0,20).forEach(item => {
+      const views = numberOrNull(item.views) || 0;
+      const share = denominator > 0 ? views / denominator * 100 : null;
+      const minutes = numberOrNull(item.estimatedMinutesWatched);
+      addRow(
+        countryName(item.country),
+        minutes === null
+          ? String(item.country || '').toUpperCase()
+          : String(item.country || '').toUpperCase() + ' · ' + formatHours(minutes / 60),
+        views,
+        share,
+        false
+      );
+    });
+
+    const residualViews = residual ? numberOrNull(residual.views) : null;
+    if(residualViews !== null && residualViews > 0){
+      const share = denominator > 0 ? residualViews / denominator * 100 : null;
+      addRow('Unreported geography','Privacy-thresholded / unattributed',residualViews,share,true);
+    }
+
+    if(!rows.length && !(residualViews > 0)){
+      const empty = document.createElement('div');
+      empty.className = 'yt-panel-note';
+      empty.textContent = 'No selected-video country rows were returned.';
+      list.appendChild(empty);
+    }
+
+    if(note){
+      note.textContent = 'Shares use processed since-publishing views. Unreported geography remains explicit instead of being redistributed.';
+    }
   }
 
   function renderYouTubeAudience(result){
@@ -626,6 +737,12 @@
   }
 
   function setYouTubePending(){
+    const geoTitle = document.querySelector('[data-yt-geo-video-title]');
+    const geoTop = document.querySelector('[data-yt-geo-top-region]');
+    const geoList = document.querySelector('[data-yt-selected-geography-list]');
+    if(geoTitle) geoTitle.textContent = 'Loading selected-video geography…';
+    if(geoTop) geoTop.textContent = '…';
+    if(geoList) geoList.innerHTML = '<div class="yt-panel-note">Loading selected-video geography…</div>';
     ['[data-yt-performance-watch-time]','[data-yt-performance-avg-duration]','[data-yt-performance-subscribers]','[data-yt-performance-subscribers-gained]','[data-yt-performance-subscribers-lost]','[data-yt-reach-impressions]','[data-yt-reach-ctr]'].forEach(sel => {
       const el = document.querySelector(sel);
       if(el) el.textContent = '…';
@@ -633,7 +750,7 @@
   }
 
   function setYouTubeError(){
-    ['.yt-performance-panel','.yt-reach-panel','.yt-traffic-panel','.yt-detail-panel','.yt-audience-panel'].forEach(sel => {
+    ['.yt-performance-panel','.yt-reach-panel','.yt-traffic-panel','.yt-detail-panel','.yt-audience-panel','.yt-geography-panel'].forEach(sel => {
       const badge = document.querySelector(sel + ' [data-yt-latest-label]');
       if(badge) badge.textContent = 'UNAVAILABLE';
     });
@@ -681,6 +798,14 @@
       .console-focus-shell .youtube-panel .yt-reach-ctr-inline b{font-size:24px}
       .analytics-audience-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
       @media(max-width:1100px){.analytics-audience-grid{grid-template-columns:1fr!important}}
+      .yt-selected-geography-body{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:7px;overflow:hidden}
+      .yt-selected-geo-summary{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;border-bottom:1px solid #251111;padding-bottom:7px}
+      .yt-selected-geo-summary>div{min-width:0}.yt-selected-geo-summary span{display:block;color:#926f6f;font-size:6px;font-weight:800;letter-spacing:.08em}
+      .yt-selected-geo-summary strong{display:block;color:#f1e8e8;font-size:9px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.yt-selected-geo-top{text-align:right;flex:0 0 auto}
+      .yt-selected-geo-list{min-height:0;overflow:auto;display:grid;align-content:start;gap:2px;padding-right:3px}.yt-selected-geo-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:6px 0 7px;border-bottom:1px solid #1d1111}
+      .yt-selected-geo-row>div:first-child{min-width:0}.yt-selected-geo-row strong{display:block;color:#eee5e5;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.yt-selected-geo-row span{display:block;color:#806f70;font-size:6px;margin-top:2px}.yt-selected-geo-row>div:nth-child(2){text-align:right}.yt-selected-geo-row b{display:block;color:#fff;font-size:9px}
+      .yt-selected-geo-row i{position:absolute;left:0;bottom:0;width:var(--yt-geo-share,0%);height:1px;background:#ff655c;opacity:.72}.yt-selected-geo-residual strong,.yt-selected-geo-residual b{color:#b99a9a}.yt-selected-geo-residual i{opacity:.28}
+      .console-focus-shell .yt-selected-geo-summary span{font-size:10px}.console-focus-shell .yt-selected-geo-summary strong{font-size:16px}.console-focus-shell .yt-selected-geo-row{padding:10px 0 12px}.console-focus-shell .yt-selected-geo-row strong{font-size:13px}.console-focus-shell .yt-selected-geo-row span{font-size:10px}.console-focus-shell .yt-selected-geo-row b{font-size:14px}
     `;
     document.head.appendChild(style);
   }

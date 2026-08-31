@@ -125,7 +125,7 @@ sitemap: false
           <div class="yt-info-popover" role="tooltip">
             <div><strong>Source</strong><span>YouTube Data API v3 via the SkyrScout VPS collector.</span></div>
             <div><strong>Freshness</strong><span>Publication timestamps refresh with the channel uploads catalogue.</span></div>
-            <div><strong>Meaning</strong><span>Selects the working video for video-specific panels. Channel-wide Geography and Most Likes remain independent.</span></div>
+            <div><strong>Meaning</strong><span>Selects the working video for Performance, Realtime, Reach, Traffic Sources, detail, Audience and Geography. Most Likes remains channel-wide.</span></div>
             <div><strong>Rule</strong><span>Newest / Oldest uses YouTube videoPublishedAt, never SkyrScout site-added date.</span></div>
           </div>
         </div>
@@ -356,80 +356,31 @@ sitemap: false
     </div>
   </section>
 
-  <section class="panel youtube-panel yt-geography-panel yt-channel-wide-panel" data-console="08" data-youtube-console="08" data-yt-scope="channel">
+  <section class="panel youtube-panel yt-geography-panel" data-console="08" data-youtube-console="08" data-yt-scope="video">
     <div class="ph">
       <div class="yt-panel-heading"><span class="yt-step">08</span><div class="pt">Geography</div></div>
       <div class="yt-header-tools">
-        <span class="badge yt-channel-wide-badge">CHANNEL-WIDE</span>
+        <span class="badge yt-selected-video-badge">SELECTED VIDEO</span>
         <span class="badge yt-freshness yt-freshness-latest" data-yt-latest-label>LATEST AVAILABLE</span>
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Geography data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
             <div><strong>Source</strong><span>YouTube Analytics API</span></div>
-            <div><strong>Freshness</strong><span>Latest fully processed geography period.</span></div>
-            <div><strong>Scope</strong><span>Channel-wide. This panel is not affected by the video selected in 01.</span></div>
-            <div><strong>Meaning</strong><span>Shows where SkyrScout viewers are located, with country and city detail when YouTube returns it.</span></div>
-            <div><strong>Lag</strong><span>Geography is not realtime and may lag behind current traffic.</span></div>
+            <div><strong>Freshness</strong><span>Latest fully processed Analytics date.</span></div>
+            <div><strong>Scope</strong><span>The video selected in console 01, since publishing.</span></div>
+            <div><strong>Meaning</strong><span>Shows the countries YouTube attributes views to for this video. Privacy-thresholded or otherwise unreported geography stays explicit.</span></div>
+            <div><strong>Lag</strong><span>Processed Geography is not realtime and may lag behind current traffic.</span></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="yt-panel-body yt-geography-body" data-yt-geography-body>
-      <div class="yt-geo-rangebar">
-        <span class="yt-geo-range-label">TRAFFIC WINDOW</span>
-        <div class="yt-geo-ranges" role="tablist" aria-label="Geography traffic window">
-          <button class="yt-geo-range active" type="button" data-yt-geo-range="2d">2D</button>
-          <button class="yt-geo-range" type="button" data-yt-geo-range="7d">7D</button>
-          <button class="yt-geo-range" type="button" data-yt-geo-range="28d">28D</button>
-          <button class="yt-geo-range" type="button" data-yt-geo-range="90d">90D</button>
-        </div>
+    <div class="yt-panel-body yt-selected-geography-body" data-yt-selected-geography-body>
+      <div class="yt-selected-geo-summary">
+        <div><span>SELECTED VIDEO · SINCE PUBLISHING</span><strong data-yt-geo-video-title>Waiting for selected-video Analytics…</strong></div>
+        <div class="yt-selected-geo-top"><span>TOP REGION</span><strong data-yt-geo-top-region>—</strong></div>
       </div>
-
-      <div class="yt-geo-tabs" role="tablist" aria-label="Geography detail">
-        <button class="yt-geo-tab active" type="button" role="tab" aria-selected="true" data-yt-geo-tab="countries">COUNTRIES</button>
-        <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="cities">CITIES</button>
-        <button class="yt-geo-tab" type="button" role="tab" aria-selected="false" data-yt-geo-tab="videos">TOP VIDEOS</button>
-      </div>
-
-      <div class="yt-geo-view" data-yt-geo-view="countries">
-        <div class="yt-geo-copy">
-          <strong>Countries</strong>
-          <span data-yt-geo-period>Latest available YouTube Analytics geography.</span>
-        </div>
-        <div class="yt-geo-selected-note">
-          Selected: <strong data-yt-geo-selected-inline>—</strong>
-          <span>Choose a country, then open Cities or Top Videos.</span>
-        </div>
-        <div class="yt-geo-country-list" data-yt-geo-countries>
-          <div class="yt-geo-empty">Waiting for geography data…</div>
-        </div>
-      </div>
-
-      <div class="yt-geo-view" data-yt-geo-view="cities" hidden>
-        <div class="yt-geo-detail-head">
-          <div>
-            <span>TOP CITIES IN</span>
-            <strong data-yt-geo-selected-country>—</strong>
-          </div>
-          <b data-yt-geo-selected-total>—</b>
-        </div>
-        <div class="yt-geo-detail-scroll" data-yt-geo-cities>
-          <div class="yt-geo-empty">Choose a country first.</div>
-        </div>
-      </div>
-
-      <div class="yt-geo-view" data-yt-geo-view="videos" hidden>
-        <div class="yt-geo-detail-head">
-          <div>
-            <span>TOP VIDEOS IN</span>
-            <strong data-yt-geo-selected-country>—</strong>
-          </div>
-          <b data-yt-geo-selected-total>—</b>
-        </div>
-        <div class="yt-geo-detail-scroll" data-yt-geo-videos>
-          <div class="yt-geo-empty">Choose a country first.</div>
-        </div>
-      </div>
+      <div class="yt-selected-geo-list" data-yt-selected-geography-list><div class="yt-panel-note">Waiting for selected-video geography…</div></div>
+      <div class="yt-panel-note" data-yt-geo-note>Country rows are shown only where YouTube returns them.</div>
     </div>
   </section>
 
@@ -586,7 +537,6 @@ sitemap: false
 
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260831-geo-window-label-v2"></script>
 <script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260829-existing-data-v3"></script>
-<script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260831-full-channel-catalog-v1"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260831-selected-video-geography-v2"></script>
 </body>
 </html>
