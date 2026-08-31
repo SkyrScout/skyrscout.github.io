@@ -379,10 +379,14 @@
     const watchTime = document.querySelector('[data-yt-performance-watch-time]');
     const avg = document.querySelector('[data-yt-performance-avg-duration]');
     const subs = document.querySelector('[data-yt-performance-subscribers]');
+    const subsGained = document.querySelector('[data-yt-performance-subscribers-gained]');
+    const subsLost = document.querySelector('[data-yt-performance-subscribers-lost]');
     const perfStatus = availability(result,'performance').status;
     if(watchTime) watchTime.textContent = valueForAvailability(perfStatus,formatHours(perf.watchTimeHours));
     if(avg) avg.textContent = valueForAvailability(perfStatus,formatDuration(perf.averageViewDurationSeconds));
     if(subs) subs.textContent = valueForAvailability(perfStatus,formatSigned(perf.subscriberNet));
+    if(subsGained) subsGained.textContent = valueForAvailability(perfStatus,formatNumber(perf.subscribersGained));
+    if(subsLost) subsLost.textContent = valueForAvailability(perfStatus,formatNumber(perf.subscribersLost));
     setPanelFreshness('.yt-performance-panel',availability(result,'performance'));
 
     renderYouTubePerformanceChart(result);
@@ -400,7 +404,7 @@
     shell.replaceChildren();
     const head = document.createElement('div');
     head.className = 'yt-chart-head';
-    head.innerHTML = '<span>Performance since publishing</span><b>' + escapeHtml(statusLabel(status.status)) + '</b>';
+    head.innerHTML = '<span>Performance since publishing</span><b>' + escapeHtml(statusLabel(status.status)) + (status.dataThrough ? ' · ' + escapeHtml(formatDate(status.dataThrough)) : '') + '</b>';
     shell.append(head,createLineChart(analytics.performanceByDay,status.status,status.dataThrough));
   }
 
@@ -622,7 +626,7 @@
   }
 
   function setYouTubePending(){
-    ['[data-yt-performance-watch-time]','[data-yt-performance-avg-duration]','[data-yt-performance-subscribers]','[data-yt-reach-impressions]','[data-yt-reach-ctr]'].forEach(sel => {
+    ['[data-yt-performance-watch-time]','[data-yt-performance-avg-duration]','[data-yt-performance-subscribers]','[data-yt-performance-subscribers-gained]','[data-yt-performance-subscribers-lost]','[data-yt-reach-impressions]','[data-yt-reach-ctr]'].forEach(sel => {
       const el = document.querySelector(sel);
       if(el) el.textContent = '…';
     });
@@ -657,6 +661,8 @@
     style.id = 'controlRoomYouTubeAnalyticsStyle';
     style.textContent = `
       #selectedPlayerCharts{grid-template-columns:1fr!important;grid-template-rows:auto minmax(0,1fr)!important}
+      .yt-performance-panel .yt-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      @media(max-width:1100px){.yt-performance-panel .yt-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
       .analytics-chart-head{display:flex;justify-content:space-between;gap:8px;align-items:center;color:#7f9aa8;font-size:7px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
       .analytics-chart-head b{color:#c6d9e1;font-size:6px;white-space:nowrap}
       .analytics-line-chart{min-height:72px;display:grid;grid-template-rows:minmax(55px,1fr) auto;gap:3px}

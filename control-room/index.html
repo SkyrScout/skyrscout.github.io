@@ -211,7 +211,9 @@ sitemap: false
         <div class="yt-metric"><span>Views</span><strong data-yt-performance-views>—</strong><small>Since publishing</small></div>
         <div class="yt-metric"><span>Watch time</span><strong data-yt-performance-watch-time>—</strong><small>Hours</small></div>
         <div class="yt-metric"><span>Avg. view duration</span><strong data-yt-performance-avg-duration>—</strong><small>Since publishing</small></div>
-        <div class="yt-metric"><span>Subscribers</span><strong data-yt-performance-subscribers>—</strong><small>Net from this video</small></div>
+        <div class="yt-metric"><span>Subscribers · net</span><strong data-yt-performance-subscribers>—</strong><small>Gained minus lost</small></div>
+        <div class="yt-metric"><span>Subscribers gained</span><strong data-yt-performance-subscribers-gained>—</strong><small>Since publishing</small></div>
+        <div class="yt-metric"><span>Subscribers lost</span><strong data-yt-performance-subscribers-lost>—</strong><small>Since publishing</small></div>
       </div>
       <div class="yt-chart-shell">
         <div class="yt-chart-head"><span>Performance since publishing</span><b>DATA PENDING</b></div>
@@ -260,8 +262,8 @@ sitemap: false
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Reach and Discovery data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
-            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
-            <div><strong>Freshness</strong><span>Latest processed Analytics data.</span></div>
+            <div><strong>Source</strong><span>YouTube Reporting API for impressions / CTR; YouTube Analytics API for discovery mix.</span></div>
+            <div><strong>Freshness</strong><span>Latest processed data from each source. Reporting may lag behind Analytics.</span></div>
             <div><strong>Meaning</strong><span>Shows how viewers discover the selected video, including impressions CTR and discovery mix.</span></div>
             <div><strong>Lag</strong><span>Discovery data may trail current live movement.</span></div>
           </div>
@@ -318,8 +320,8 @@ sitemap: false
         <div class="yt-info-control" data-yt-info-control>
           <button class="yt-info-button" type="button" aria-label="About Drill-down data" aria-expanded="false" data-yt-info-button>i</button>
           <div class="yt-info-popover" role="tooltip">
-            <div><strong>Source</strong><span>YouTube Analytics API</span></div>
-            <div><strong>Freshness</strong><span>Latest processed detail available for the selected source.</span></div>
+            <div><strong>Source</strong><span>YouTube Reporting API</span></div>
+            <div><strong>Freshness</strong><span>Latest processed Reporting detail available for the selected source.</span></div>
             <div><strong>Meaning</strong><span>Expands the Traffic Sources console into external sites, search terms or other source-specific detail.</span></div>
             <div><strong>Lag</strong><span>Detailed attribution can be less complete than the headline source totals.</span></div>
           </div>
@@ -585,6 +587,6 @@ sitemap: false
 <script src="{{ '/assets/js/control-room-vps-overview.js' | relative_url }}?v=20260831-geo-window-label-v2"></script>
 <script src="{{ '/assets/js/control-room-youtube.js' | relative_url }}?v=20260829-existing-data-v3"></script>
 <script src="{{ '/assets/js/control-room-youtube-geography.js' | relative_url }}?v=20260820-0114-geo-multirange1"></script>
-<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260831-geo-fixes-v1"></script>
+<script type="module" src="{{ '/assets/js/control-room-auth.js' | relative_url }}?v=20260831-youtube-fill-v1"></script>
 </body>
 </html>

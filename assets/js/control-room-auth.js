@@ -68,7 +68,7 @@ async function startControlRoom() {
   await import("/assets/js/staff-backend.js?v=20260830-youtube-analytics-v1");
   await loadClassicScript("/assets/js/control-room.js?v=20260831-geo-state-owner-v1");
   await loadClassicScript("/assets/js/control-room-live.js?v=20260829-vps-realtime-v1");
-  await loadClassicScript("/assets/js/control-room-youtube-analytics.js?v=20260831-geo-fixes-v1");
+  await loadClassicScript("/assets/js/control-room-youtube-analytics.js?v=20260831-youtube-fill-v1");
 }
 
 async function authorizeControlRoom() {
