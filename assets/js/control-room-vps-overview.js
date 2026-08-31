@@ -61,7 +61,9 @@
     cityMode: false,
     realtimeMonitor: null,
     realtimeWindowKey: '48h',
-    observer: null
+    observer: null,
+    geoTitleCache: new Map(),
+    geoTitleRequests: new Map()
   };
 
   function numberOrNull(value){
@@ -2433,16 +2435,23 @@
   }
 
   function libraryTitle(videoId){
-    if(!videoId){
+    const id = String(videoId || '').trim();
+    if(!id){
       return '';
     }
 
+    const cached = state.geoTitleCache.get(id);
+    if(cached){
+      return cached;
+    }
+
+    const escaped = CSS.escape(id);
     const row =
       document.querySelector(
-        '[data-video-library-row]' +
-        '[data-youtube-id="' +
-        CSS.escape(videoId) +
-        '"]'
+        '[data-video-library-row][data-youtube-id="' + escaped + '"]'
+      ) ||
+      document.querySelector(
+        '[data-yt-video-row][data-yt-video-id="' + escaped + '"]'
       );
 
     if(!row){
@@ -2450,15 +2459,118 @@
     }
 
     const title =
-      row.querySelector(
-        '.vmeta strong'
-      );
+      row.querySelector('.vmeta strong') ||
+      row.querySelector('.yt-video-copy strong');
 
-    return title
-      ? String(
-          title.textContent || ''
-        ).trim()
-      : '';
+    const text = title
+      ? String(title.textContent || '').trim()
+      : String(row.dataset.videoTitle || row.dataset.ytVideoTitle || '').trim();
+
+    if(text){
+      state.geoTitleCache.set(id,text);
+    }
+
+    return text;
+  }
+
+  async function fetchAnalyticsTitle(videoId){
+    const id = String(videoId || '').trim();
+    if(!id){
+      return '';
+    }
+
+    const cached = libraryTitle(id);
+    if(cached){
+      return cached;
+    }
+
+    if(state.geoTitleRequests.has(id)){
+      return state.geoTitleRequests.get(id);
+    }
+
+    const b = backend();
+    if(!b || typeof b.fetchYouTubeAnalytics !== 'function'){
+      return '';
+    }
+
+    const request = b.fetchYouTubeAnalytics(id)
+      .then(result => {
+        const title = String(
+          result &&
+          result.payload &&
+          result.payload.analytics &&
+          result.payload.analytics.metadata &&
+          result.payload.analytics.metadata.title ||
+          ''
+        ).trim();
+
+        if(title){
+          state.geoTitleCache.set(id,title);
+        }
+
+        return title;
+      })
+      .catch(() => '')
+      .finally(() => {
+        state.geoTitleRequests.delete(id);
+      });
+
+    state.geoTitleRequests.set(id,request);
+    return request;
+  }
+
+  function hydrateGeoVideoTitles(countryKeyValue,videoBox){
+    if(!videoBox){
+      return;
+    }
+
+    videoBox.querySelectorAll('[data-vps-geo-video-id]').forEach(row => {
+      const videoId = String(row.dataset.vpsGeoVideoId || '').trim();
+      const titleNode = row.querySelector('[data-vps-geo-video-title]');
+      if(!videoId || !titleNode || row.dataset.vpsGeoTitleResolved === '1'){
+        return;
+      }
+
+      const localTitle = libraryTitle(videoId);
+      if(localTitle){
+        titleNode.textContent = localTitle;
+        titleNode.title = localTitle;
+        row.dataset.vpsGeoTitleResolved = '1';
+        return;
+      }
+
+      fetchAnalyticsTitle(videoId).then(title => {
+        if(
+          !title ||
+          !row.isConnected ||
+          state.selectedCountryKey !== countryKeyValue ||
+          String(row.dataset.vpsGeoVideoId || '') !== videoId
+        ){
+          return;
+        }
+
+        titleNode.textContent = title;
+        titleNode.title = title;
+        row.dataset.vpsGeoTitleResolved = '1';
+      });
+    });
+  }
+
+  function showGeographyWorldState(){
+    state.selectedCountryKey = null;
+    state.cityMode = false;
+    setMapScopeBadge(null);
+
+    geographyBodies().forEach(panel => {
+      const overview = panel.querySelector('.geo-overview-state');
+      const detail = panel.querySelector('.geo-country-state');
+      if(overview){
+        overview.hidden = false;
+      }
+      if(detail){
+        detail.hidden = true;
+      }
+    });
   }
 
   function setMapScopeBadge(countryDisplay){
@@ -2493,6 +2605,8 @@
         .find(c => c.key === key);
 
     if(!country){
+      showGeographyWorldState();
+      renderMapTraffic();
       return;
     }
 
@@ -2594,8 +2708,10 @@
                   return (
                     '<div class="' +
                     'vps-geo-detail-row' +
+                    '" data-vps-geo-video-id="' +
+                    esc(item.videoId || '') +
                     '">' +
-                    '<span title="' +
+                    '<span data-vps-geo-video-title title="' +
                     esc(titleText) +
                     '">' +
                     esc(titleText) +
@@ -2611,6 +2727,8 @@
                   );
                 })
                 .join('');
+
+            hydrateGeoVideoTitles(key,videoBox);
           }else{
             videoBox.className =
               'geo-country-info';
@@ -2687,6 +2805,14 @@
     state.geographyWindowKey = geo.windows && geo.windows[requestedWindow]
       ? requestedWindow
       : String(geo.defaultWindow || '2d').toLowerCase();
+
+    const currentGeo = activeGeography();
+    if(
+      state.selectedCountryKey &&
+      (!currentGeo || !currentGeo.countries.some(country => country.key === state.selectedCountryKey))
+    ){
+      showGeographyWorldState();
+    }
 
     // Share the already-normalized Analytics geography with the YouTube console.
     // Same backend response, no extra YouTube/Analytics polling.
@@ -3091,38 +3217,8 @@
           : null;
 
       if(world){
-        state.selectedCountryKey = null;
-        state.cityMode = false;
+        showGeographyWorldState();
         renderMapTraffic();
-
-        window.setTimeout(
-          () => {
-            setMapScopeBadge(null);
-            geographyBodies()
-              .forEach(panel => {
-                const overview =
-                  panel.querySelector(
-                    '.geo-overview-state'
-                  );
-
-                const detail =
-                  panel.querySelector(
-                    '.geo-country-state'
-                  );
-
-                if(overview){
-                  overview.hidden =
-                    false;
-                }
-
-                if(detail){
-                  detail.hidden =
-                    true;
-                }
-              });
-          },
-          0
-        );
       }
     }
   );

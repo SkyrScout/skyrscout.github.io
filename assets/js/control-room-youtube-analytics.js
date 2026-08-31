@@ -334,8 +334,9 @@
     if((regionStatus === 'exact' || regionStatus === 'partial') && top){
       const total = numberOrNull(analytics.performance?.views);
       const views = numberOrNull(top.views);
-      const pct = total && views !== null ? (views / total * 100).toFixed(1) + '%' : '—';
-      region = countryLabel(top.country) + ' · ' + pct;
+      if(total !== null && total > 0 && views !== null && views > 0){
+        region = countryLabel(top.country) + ' · ' + (views / total * 100).toFixed(1) + '%';
+      }
     }else{
       region = valueForAvailability(regionStatus,'—');
     }

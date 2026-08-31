@@ -66,9 +66,9 @@ async function startControlRoom() {
   // script is allowed to request live data. The browser must never call
   // Apps Script directly; the callable function does that server-side.
   await import("/assets/js/staff-backend.js?v=20260830-youtube-analytics-v1");
-  await loadClassicScript("/assets/js/control-room.js?v=20260830-overview-selection-v1");
+  await loadClassicScript("/assets/js/control-room.js?v=20260831-geo-state-owner-v1");
   await loadClassicScript("/assets/js/control-room-live.js?v=20260829-vps-realtime-v1");
-  await loadClassicScript("/assets/js/control-room-youtube-analytics.js?v=20260830-analytics-ui-v1");
+  await loadClassicScript("/assets/js/control-room-youtube-analytics.js?v=20260831-geo-fixes-v1");
 }
 
 async function authorizeControlRoom() {

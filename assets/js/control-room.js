@@ -234,6 +234,12 @@ window.controlRoomSnapRows=snapRows;
   }
 
   function syncGeography(country,display){
+    // Once the live VPS Geography bridge is present, it owns the data-driven
+    // country detail panel. This older map helper may still control zoom/pan,
+    // but must not overwrite live titles, shares, video rows or city rows with
+    // its original placeholder state.
+    if(window.SkyrScoutGeographyState)return;
+
     geoBodies().forEach(panel=>{
       const overview=panel.querySelector('.geo-overview-state');
       const detail=panel.querySelector('.geo-country-state');
@@ -249,6 +255,8 @@ window.controlRoomSnapRows=snapRows;
   }
 
   function syncBadge(country,display){
+    if(window.SkyrScoutGeographyState)return;
+
     document.querySelectorAll('.map-scope-badge').forEach(el=>{
       el.textContent=country?display+' · geography pending':'Map ready · data pending';
     });
