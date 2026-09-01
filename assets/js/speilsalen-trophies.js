@@ -35,9 +35,10 @@ function formatViews(value) {
 }
 
 
-function looksLikeRawVideoId(text) {
+function looksLikeBadVideoTitle(text) {
   const value = String(text || '').trim();
   if (!value) return true;
+  if (/^\d+$/.test(value)) return true;
   if (/^-?[A-Za-z0-9_-]{8,}$/.test(value)) return true;
   if (!/\s/.test(value) && /^[A-Za-z0-9_-]{6,}$/.test(value)) return true;
   return false;
@@ -54,10 +55,8 @@ function renderTitleEmoji(node) {
 function preferredTitle(siteTitle, liveTitle, videoId) {
   const site = String(siteTitle || '').trim();
   const live = String(liveTitle || '').trim();
-  if (site && !looksLikeRawVideoId(site)) return site;
-  if (live && !looksLikeRawVideoId(live)) return live;
-  if (site) return site;
-  if (live) return live;
+  if (site && !looksLikeBadVideoTitle(site)) return site;
+  if (live && !looksLikeBadVideoTitle(live)) return live;
   return String(videoId || '').trim();
 }
 
@@ -192,7 +191,7 @@ function mergedVideos(payload) {
 
     const cachedTitle = titleResolveCache.get(live.videoId) || "";
     const title = preferredTitle(site?.title || cachedTitle, live.title || cachedTitle, live.videoId);
-    const needsTitleResolve = looksLikeRawVideoId(title);
+    const needsTitleResolve = looksLikeBadVideoTitle(title);
     merged.push({
       videoId: live.videoId,
       totalViews: live.totalViews,
