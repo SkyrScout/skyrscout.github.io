@@ -7,7 +7,7 @@ title: "Bo Hegland - Bo Who? - Masterclass Incoming!"
 
 player_slug: "bo-hegland"
 co_signature_player_slugs: []
-secondary_player_slugs: []
+secondary_player_slugs: "hakon-vold-krohg"
 
 youtube: "https://www.youtube.com/shorts/vivdElJaY2Q"
 
