@@ -57,6 +57,14 @@ Cúcuta, meanwhile, has no intention of simply allowing one of its most valuable
 
 The club had reportedly planned to keep Peralta until the end of 2026 before selling him for a fee in the $2 million to $3 million range.
 
+### The financial context
+
+The reported salary figures help explain why the Russian opportunity could be so significant for Peralta. His monthly salary at Cúcuta has been reported at around five million Colombian pesos, which at current exchange rates is roughly $1,580 per month, or around $19,000 per year before any bonuses.
+
+Sport24, meanwhile, has reported that Rubin offered Peralta a three-year contract worth around $400,000 per season. If both figures are broadly accurate, the Russian offer would be worth more than 20 times his reported annual base salary in Colombia.
+
+That does not necessarily say anything about Peralta's attachment to Cúcuta. In the footage used for our scouting video, he can repeatedly be seen applauding and displaying the club badge. But the scale of the financial opportunity provides important context for why the player may be so determined to secure the move, and why the dispute has escalated so sharply.
+
 ### Free transfer route now being explored
 
 The latest development could completely change the negotiation.
