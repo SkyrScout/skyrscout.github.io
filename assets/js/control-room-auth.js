@@ -69,7 +69,7 @@ async function startControlRoom() {
   await loadClassicScript("/assets/js/control-room.js?v=20260831-geo-state-owner-v1");
   await loadClassicScript("/assets/js/control-room-live.js?v=20260829-vps-realtime-v1");
   await loadClassicScript("/assets/js/control-room-video-catalog.js?v=20260831-full-channel-catalog-v1");
-  await loadClassicScript("/assets/js/control-room-youtube-analytics.js?v=20260831-selected-video-geography-v2");
+  await loadClassicScript("/assets/js/control-room-youtube-analytics.js?v=20260901-analytics-data-fix-v1");
 }
 
 async function authorizeControlRoom() {

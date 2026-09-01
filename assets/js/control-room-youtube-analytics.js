@@ -489,31 +489,37 @@
     const title = document.getElementById('ytDetailTitle');
     if(!body || !title) return;
     const analytics = result.payload.analytics || {};
-    const status = availability(result,'trafficDetails');
-    setPanelFreshness('.yt-detail-panel',status);
+    const globalStatus = availability(result,'trafficDetails');
 
     youtube.activeDetail = SOURCE_KEYS[key] ? key : 'external';
+    const type = (SOURCE_KEYS[youtube.activeDetail] || [])[0];
+    const sourceStatus = (type && analytics.trafficDetailAvailability?.[type]) || globalStatus;
+    setPanelFreshness('.yt-detail-panel',sourceStatus);
+
     title.textContent = detailTitle(youtube.activeDetail);
     body.replaceChildren();
 
     const context = document.createElement('div');
     context.className = 'yt-detail-context';
-    context.innerHTML = '<strong>' + escapeHtml(SOURCE_LABELS[youtube.activeDetail]) + '</strong><span>Detailed attribution for the selected video.</span>';
+    const typeAvailability = type && analytics.trafficDetailAvailability?.[type];
+    const topLimitReached = typeAvailability?.topLimitReached === true;
+    context.innerHTML = '<strong>' + escapeHtml(SOURCE_LABELS[youtube.activeDetail]) + '</strong><span>' +
+      (topLimitReached ? 'Top 25 by views · ' : '') +
+      'Since-publishing attribution from YouTube Analytics.</span>';
     body.appendChild(context);
 
-    if(status.status !== 'exact' && status.status !== 'partial'){
+    if(sourceStatus.status !== 'exact'){
       const note = document.createElement('div');
       note.className = 'yt-panel-note';
-      note.textContent = status.status === 'pending'
-        ? 'YouTube Reporting detail is still processing.'
-        : status.status === 'incomplete'
+      note.textContent = sourceStatus.status === 'pending'
+        ? 'YouTube Analytics detail is still processing.'
+        : sourceStatus.status === 'incomplete'
           ? 'Traffic detail is incomplete.'
-          : 'Detailed attribution is not available for this video.';
+          : 'YouTube did not return detailed rows for this traffic source.';
       body.appendChild(note);
       return;
     }
 
-    const type = (SOURCE_KEYS[youtube.activeDetail] || [])[0];
     const rows = Array.isArray(analytics.trafficDetails?.[type]) ? analytics.trafficDetails[type].slice() : [];
     rows.sort((a,b) => (numberOrNull(b.views) || 0) - (numberOrNull(a.views) || 0));
     const list = document.createElement('div');
@@ -522,25 +528,38 @@
     if(!rows.length){
       const note = document.createElement('div');
       note.className = 'yt-panel-note';
-      note.textContent = 'No detailed rows were returned for this traffic source.';
+      note.textContent = 'YouTube did not return detailed rows for this traffic source.';
       body.appendChild(note);
       return;
     }
 
-    const detailTotalViews = rows.reduce((sum,item) => sum + (numberOrNull(item.views) || 0),0);
-    rows.slice(0,10).forEach(item => {
+    const parent = trafficEntryForKey(analytics,youtube.activeDetail);
+    const parentViews = numberOrNull(parent?.views);
+    rows.slice(0,25).forEach(item => {
       const row = document.createElement('div');
       row.className = 'yt-detail-row';
       const name = document.createElement('span');
       const value = document.createElement('strong');
       const views = numberOrNull(item.views);
-      name.textContent = item.detail || (item.meaning === 'unattributed_or_privacy_thresholded' ? 'Unattributed / privacy thresholded' : SOURCE_LABELS[youtube.activeDetail]);
-      value.textContent = formatNumber(views);
-      setBarPercent(row,detailTotalViews > 0 && views !== null ? views / detailTotalViews * 100 : null);
+      const share = parentViews > 0 && views !== null ? views / parentViews * 100 : null;
+      name.textContent = item.detail || SOURCE_LABELS[youtube.activeDetail];
+      value.textContent = share === null
+        ? formatNumber(views)
+        : share.toLocaleString('en-US',{maximumFractionDigits:1,minimumFractionDigits:1}) + '% · ' + formatNumber(views);
+      setBarPercent(row,share);
       row.append(name,value);
       list.appendChild(row);
     });
     body.appendChild(list);
+
+    const residual = type ? analytics.trafficDetailResiduals?.[type] : null;
+    const residualViews = numberOrNull(residual?.views);
+    if(residualViews !== null && residualViews > 0){
+      const note = document.createElement('div');
+      note.className = 'yt-panel-note';
+      note.textContent = (topLimitReached ? 'Other / unreported / below top 25: ' : 'Unreported detail: ') + formatNumber(residualViews) + ' views.';
+      body.appendChild(note);
+    }
   }
 
   function detailTitle(key){
