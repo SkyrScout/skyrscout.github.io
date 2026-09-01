@@ -1,7 +1,7 @@
 ---
 title: "New podcast episode: Beast from the East"
 published_at: 2026-08-07 07:19:03 +0200
-pinned: true
+pinned: false 
 ---
 
 A new episode of Scout of This World is out now.
