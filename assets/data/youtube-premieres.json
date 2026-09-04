@@ -1,8 +1,21 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-09-01T10:30:16Z",
+    "updated_utc": "2026-09-04T10:22:06Z",
     "source": "YouTube Data API"
   },
-  "videos": {}
+  "videos": {
+    "39jvXnBW0lU": {
+      "status": "upcoming",
+      "scheduled_start": "2026-09-05T10:00:00Z",
+      "title": "Arney Rocha (2003) – Miami FC | USL Championship, USA",
+      "profiles": [
+        {
+          "player_slug": "arney-rocha",
+          "kind": "main",
+          "main_video_id": "39jvXnBW0lU"
+        }
+      ]
+    }
+  }
 }
