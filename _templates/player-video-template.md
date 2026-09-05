@@ -11,6 +11,11 @@
 ###############################################################################
 
 layout: player
+
+# Visibility/archive switch. Set to false to remove this profile from the
+# built site, all site.players lists/counts, feeds and player-derived video
+# surfaces while keeping the source file intact in the repository.
+published: true
 profile_type: "video"
 
 title: ""

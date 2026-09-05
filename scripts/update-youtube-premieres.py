@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate assets/data/youtube-premieres.json from every YouTube link in _players/.
+Generate assets/data/youtube-premieres.json from YouTube links in published _players/ profiles.
 
 Design goals:
 - No manual premiere fields in player profiles.
@@ -41,6 +41,8 @@ YOUTUBE_LINE_RE = re.compile(
     r'(?m)^([ \t]*)(-\s+)?youtube:\s*'
     r'(?:(?:"([^"]+)")|(?:\'([^\']+)\')|([^\s#]+))\s*$'
 )
+
+PUBLISHED_FALSE_RE = re.compile(r'(?mi)^published:\s*false\s*(?:#.*)?$')
 
 
 def warning(message: str) -> None:
@@ -114,6 +116,9 @@ def collect_player_videos() -> dict[str, list[dict[str, str]]]:
             continue
 
         front_matter = extract_front_matter(text)
+        if PUBLISHED_FALSE_RE.search(front_matter):
+            continue
+
         profile_videos = extract_profile_youtube_urls(front_matter)
         if not profile_videos:
             continue

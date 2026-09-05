@@ -1,5 +1,6 @@
 ---
 layout: player
+published: false
 
 title: "Jaime Peralta (2005) – Cúcuta Deportivo | Liga DIMAYOR, Colombia"
 youtube: "https://www.youtube.com/watch?v=6JmQ95BmLaU"

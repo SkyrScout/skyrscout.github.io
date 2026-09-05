@@ -115,10 +115,6 @@ The distinction matters. Peralta's camp had been seeking to end his Cúcuta cont
 
 What began with Rubin Kazan's formal bids has now become a story about Peralta leaving Cúcuta altogether, with the UAE emerging as the reported destination.
 
-<a class="report-button" href="/players/jaime-peralta/">
-    Watch scouting video and view the full profile
-</a>
-
 <blockquote class="twitter-tweet">
     <a href="https://x.com/Sotw_BonScout/status/2095508856247812380">
         View the post on X

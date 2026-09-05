@@ -82,7 +82,7 @@ layout: default
         "url": "https://skyrscout.github.io/"
     }
 
-    {% if page.player %}
+    {% if page.player and update_player_doc %}
     ,
     "about": {
     "@type": "Person",
@@ -140,7 +140,7 @@ layout: default
 
             <h1>{{ page.title }}</h1>
 
-            {% if page.player and page.show_related_player %}
+            {% if page.player and page.show_related_player and update_player_doc %}
                 <p class="update-related-player">
                     Related player:
                     <a href="/players/{{ page.player }}/">
@@ -271,7 +271,7 @@ layout: default
             </section>
         {% endif %}
 
-        {% if page.player and page.show_related_player %}
+        {% if page.player and page.show_related_player and update_player_doc %}
 
             <section class="update-action">
 
