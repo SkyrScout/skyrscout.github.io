@@ -33,7 +33,9 @@ report: |
 
   19-year-old centre-forward from Burkina Faso. Possesses outstanding physical attributes: 197 cm tall, extremely strong, yet surprisingly quick over the ground thanks to his long stride. Excellent dribbling and close control, combined with aerial dominance. Intelligent movement inside the box and effective with his back to goal. He boasts a right foot capable of striking with tremendous power, making him a constant threat when given space.
 
-  Areas for improvement: Needs to use his physique even more effectively, refine his link-up play, and improve the timing of his runs in behind the defence.
+  ### Areas for improvement
+
+  Needs to use his physique even more effectively, refine his link-up play, and improve the timing of his runs in behind the defence.
 
   Scout Pilgrim believes Konate has the potential to reach one of Europe's top five leagues.
 
