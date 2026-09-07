@@ -285,26 +285,63 @@ layout: default
 
                 <div class="short-video-frame">
 
-                    <div class="short-video-wrapper">
+                    <div
+                        class="short-video-wrapper short-video-wrapper-preview"
+                        data-short-youtube-id="{{ youtube_id }}"
+                        data-short-title="{{ page.title | escape }}"
+                    >
 
-                        <iframe
-                            src="https://www.youtube.com/embed/{{ youtube_id }}"
-                            title="{{ page.title }}"
-                            style="
-                                width: 100%;
-                                height: 100%;
-                                border: 0;
-                                border-radius: 12px;
-                            "
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen>
-                        </iframe>
+                        <button
+                            class="short-video-preview"
+                            type="button"
+                            aria-label="Play {{ page.title | escape }}"
+                        >
+                            <img
+                                src="https://img.youtube.com/vi/{{ youtube_id }}/hqdefault.jpg"
+                                alt="{{ page.title | escape }}"
+                            >
+
+                            <span class="short-video-preview-play" aria-hidden="true">
+                                <span></span>
+                            </span>
+                        </button>
 
                     </div>
 
                 </div>
 
             </section>
+
+            <script>
+            (function () {
+                var wrapper = document.querySelector('[data-short-youtube-id="{{ youtube_id }}"]');
+
+                if (!wrapper) {
+                    return;
+                }
+
+                var preview = wrapper.querySelector('.short-video-preview');
+
+                if (!preview) {
+                    return;
+                }
+
+                preview.addEventListener('click', function () {
+                    var videoId = wrapper.getAttribute('data-short-youtube-id');
+                    var title = wrapper.getAttribute('data-short-title') || 'YouTube Short';
+                    var iframe = document.createElement('iframe');
+
+                    iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(videoId) + '?autoplay=1';
+                    iframe.title = title;
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                    iframe.allowFullscreen = true;
+
+                    wrapper.classList.remove('short-video-wrapper-preview');
+                    wrapper.classList.add('short-video-wrapper-playing');
+                    wrapper.replaceChildren(iframe);
+                }, { once: true });
+            })();
+            </script>
 
         {% endif %}
 

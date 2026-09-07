@@ -2296,6 +2296,79 @@ img.emoji {
     border-radius: 12px;
     display: block;
 }
+
+.short-video-wrapper-preview {
+    max-width: 430px;
+    aspect-ratio: 4 / 5;
+}
+
+.short-video-wrapper-playing {
+    max-width: 430px;
+    aspect-ratio: 9 / 16;
+}
+
+.short-video-preview {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background: #05080b;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.short-video-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.short-video-preview::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.08);
+    transition: background 0.18s ease;
+}
+
+.short-video-preview:hover::after,
+.short-video-preview:focus-visible::after {
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.short-video-preview:focus-visible {
+    outline: 2px solid #78daf5;
+    outline-offset: 4px;
+}
+
+.short-video-preview-play {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    width: 64px;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 8, 11, 0.78);
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.short-video-preview-play span {
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 16px solid #ffffff;
+}
 .report-button {
     display: inline-block;
     margin-top: 16px;
