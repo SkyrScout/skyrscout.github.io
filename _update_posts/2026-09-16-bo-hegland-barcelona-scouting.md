@@ -11,6 +11,8 @@ sources:
     url: "https://next.fotbollskanalen.se/artiklar/bollklubben/hegland-om-pastadda-utlandsintresset-det-har-varit-installningen-hela-tiden"
   - name: "Fotbollskanalen"
     url: "https://next.fotbollskanalen.se/bloggar/sillybloggen/uppgifter-hegland-efterfragas-av-flera-klubbar"
+  - name: "TransferFeed"
+    url: "https://www.transferfeed.com/transfers/bo-asulv-hegland-djurgarden-atletico-madrid/54593350"
 published_at: 2026-09-16 12:25:00 +0200
 ---
 
@@ -34,7 +36,7 @@ It is, however, another significant marker of how quickly Hegland's profile has 
 
 Newcastle United were previously reported to have watched him live against Mjällby, while Anderlecht showed concrete interest during the summer window. Reports this week said Hegland turned down a move to the Belgian club, with the player himself later explaining that his focus throughout the summer had been on staying at Djurgården.
 
-French interest has also been reported.
+French interest has also been reported, while Atlético Madrid and Aston Villa have now also been linked with Hegland in recent reports.
 
 ### A useful night to have visitors
 
