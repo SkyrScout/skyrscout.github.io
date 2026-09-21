@@ -22,11 +22,12 @@ positions: []
 
 summary: |
   🇪🇨 Josué Cuero | 23 y/o RB
-  ⚡ Quick & strong, with long throw-ins
-  🎯 Good passer with quality crossing
-  🪄 Carries the ball well at speed & is a good dribbler
-  🔝 Stronger offensively than defensively
-  🪂 Good in the air
+  ⚡ Quick, strong & difficult to stop when carrying the ball at speed
+  🎯 Good passer with dangerous delivery from wide areas
+  🪄 Confident dribbler who can drive forward with the ball
+  📈 Offers more going forward than he does defensively
+  🪂 Competes well in the air
+  💪 Long throw adds another attacking weapon
 
 report: |
   This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
