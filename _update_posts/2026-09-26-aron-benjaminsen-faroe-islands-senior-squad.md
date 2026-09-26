@@ -1,5 +1,5 @@
 ---
-title: "Aron Benjaminsen reportedly promoted to Faroe Islands senior squad after U21 brace"
+title: "Aron Benjaminsen promoted to Faroe Islands senior squad after U21 brace"
 player: "aron-benjaminsen"
 player_name: "Aron Benjaminsen"
 sources:
@@ -14,7 +14,7 @@ sources:
 published_at: 2026-09-26 18:28:00 +0200
 ---
 
-Aron Benjaminsen's international rise appears to have taken another step, with **Færøsk fodbold reporting that the 18-year-old Hearts winger has been promoted from the Faroe Islands U21 squad to the senior national team**.
+Aron Benjaminsen's international rise has taken another step, with **the 18-year-old Hearts winger promoted from the Faroe Islands U21 squad to the senior national team following his two-goal performance against Estonia**.
 
 The promotion comes less than 24 hours after Benjaminsen scored both goals in the Faroe Islands U21s' 2-1 European Championship qualifying win away to Estonia.
 
