@@ -14,19 +14,17 @@ sources:
 published_at: 2026-09-26 18:28:00 +0200
 ---
 
-Aron Benjaminsen's international rise has taken another step, with **the 18-year-old Hearts winger promoted from the Faroe Islands U21 squad to the senior national team following his two-goal performance against Estonia**.
+Aron Benjaminsen has been promoted to the **Faroe Islands senior national-team squad**, one day after scoring both goals in the U21s' 2-1 win away to Estonia.
 
-The promotion comes less than 24 hours after Benjaminsen scored both goals in the Faroe Islands U21s' 2-1 European Championship qualifying win away to Estonia.
+The 18-year-old Hearts winger delivered the decisive performance in Pärnu on Friday. Benjaminsen opened the scoring in the 55th minute before making it 2-0 eleven minutes later with a superb individual goal. Estonia pulled one back from the penalty spot, but the Faroes held on for the victory.
 
-The Faroese Football Association confirmed that Benjaminsen opened the scoring early in the second half before making it 2-0 with an individual goal it described as being "world class". Estonia pulled one back late on, but the Faroes held on for a victory that also set a new U21 qualifying points record for the country.
+The result also gave the Faroe Islands U21s a new national record of 12 points in a qualifying campaign.
 
-A senior promotion would not be entirely unexpected.
+Benjaminsen's promotion had already been left open as a possibility before the Estonia match. Senior head coach Eyðun Klakstein said when the squads were announced that Benjaminsen would first join the U21s for the trip to Estonia before a decision was made on whether he would move into the senior group during the international window.
 
-When the squads for the September and October international fixtures were announced, Faroe Islands head coach Eyðun Klakstein confirmed that Benjaminsen had been discussed for the senior group. He said the plan was for the winger to begin with the U21s against Estonia before the coaching staff decided what would happen next.
+Two goals later, that move has now been made.
 
-After two goals in Pärnu, the answer appears to have arrived rather quickly.
-
-Benjaminsen joined Hearts from Víkingur earlier this month on a four-year deal after a breakout season in Faroese football. Before the move, he had produced 17 goal contributions in 20 league appearances for Víkingur, with eight goals and nine assists, according to Hearts.
+Benjaminsen joined Hearts from Víkingur earlier this month on a four-year deal after a breakout season in Faroese football. Hearts credited him with eight goals and nine assists in 20 league appearances for Víkingur before the transfer.
 
 SkyrScout published its scouting report on Benjaminsen in August, highlighting his explosive acceleration, one-v-one ability and left foot, with RW as his primary position and LW as an alternative.
 
