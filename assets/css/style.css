@@ -74,40 +74,6 @@ body {
     display: none;
 }
 
-.preferred-source-strip {
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding: 8px 20px;
-
-    background: rgba(7, 11, 15, 0.98);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.preferred-source-copy {
-    color: #b9c4ca;
-    font-size: 0.86rem;
-    font-weight: 600;
-    line-height: 1.35;
-}
-
-.preferred-source-button {
-    min-height: 32px;
-}
-
-.preferred-source-fallback {
-    color: #67d3f3;
-    font-size: 0.86rem;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.preferred-source-fallback:hover {
-    color: #ffffff;
-}
-
 /* =========================
    Shared page background
    ========================= */
@@ -402,18 +368,6 @@ img.emoji {
 
     .menu-toggle:checked ~ .navigation-links {
         display: flex;
-    }
-
-    .preferred-source-strip {
-        min-height: 0;
-        flex-direction: column;
-        gap: 7px;
-        padding: 10px 14px 11px;
-        text-align: center;
-    }
-
-    .preferred-source-copy {
-        font-size: 0.8rem;
     }
 
     .page-background {
