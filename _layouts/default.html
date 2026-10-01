@@ -382,6 +382,11 @@
         </script>
 
     {% endif %}
+
+    {% unless page.robots contains 'noindex' %}
+        <script async src="https://news.google.com/swg/js/v1/publisher.js"></script>
+    {% endunless %}
+
     <link rel="stylesheet" href="/assets/css/style.css">
     <link
         rel="icon"

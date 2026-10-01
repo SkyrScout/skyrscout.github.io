@@ -36,4 +36,27 @@
 
     </nav>
 
+    {% unless page.robots contains 'noindex' %}
+        <div class="preferred-source-strip">
+            <span class="preferred-source-copy">
+                Make SkyrScout a preferred source in Google Search.
+            </span>
+
+            <div
+                class="preferred-source-button"
+                google-add-preferred-source-btn
+                data-theme="dark"
+            ></div>
+
+            <noscript>
+                <a
+                    class="preferred-source-fallback"
+                    href="https://www.google.com/preferences/source?q=skyrscout.github.io"
+                >
+                    Add SkyrScout as a preferred source
+                </a>
+            </noscript>
+        </div>
+    {% endunless %}
+
 </header>
