@@ -26,7 +26,6 @@ summary: |
   💪 Strong physical profile with further room to develop
   🪂 Dangerous in the air and a real threat with headed finishes
   ⚡ Not explosive over the first steps, but covers ground well once his long stride opens up
-  🦶 Right-footed with a proven, reliable left foot
 
 report: |
   This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
