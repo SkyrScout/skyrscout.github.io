@@ -77,6 +77,15 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
             font-size: 0.75rem;
         }
 
+        .yard-podcast-actions .yard-card-action {
+            gap: 7px;
+        }
+
+        .yard-podcast-actions .yard-card-action img {
+            width: 16px;
+            height: 16px;
+        }
+
         #yard-latest-shorts .signature-short-card-frame {
             height: 100%;
         }
@@ -632,6 +641,14 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
             return duration;
         }
 
+        const podcastGuides = {
+            {% for guide in site.podcast_guides %}
+                {{ guide.podcast_guid | jsonify }}: {
+                    url: {{ guide.url | relative_url | jsonify }}
+                }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+        };
+
         async function loadLatestPodcast() {
             const container = document.querySelector(
                 "#yard-latest-podcast"
@@ -664,6 +681,7 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                     episode.description
                 );
 
+                const episodeGuide = podcastGuides[episode.guid];
                 const metadata = [];
 
                 if (episode.season_number) {
@@ -744,14 +762,34 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                                 : ""
                         }
 
-                        <a
-                            class="yard-card-action"
-                            href="${episodeUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Open on Spotify
-                        </a>
+                        <div class="yard-podcast-actions">
+                            <a
+                                class="yard-card-action"
+                                href="${episodeUrl}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <img
+                                    src="https://cdn.simpleicons.org/spotify/081015"
+                                    alt=""
+                                    aria-hidden="true"
+                                >
+                                <span>Åpne på Spotify</span>
+                            </a>
+
+                            ${
+                                episodeGuide && episodeGuide.url
+                                    ? `
+                                        <a
+                                            class="yard-card-action yard-card-action--guide"
+                                            href="${episodeGuide.url}"
+                                        >
+                                            Les episodeguiden
+                                        </a>
+                                    `
+                                    : ""
+                            }
+                        </div>
 
                     </div>
                 `;
