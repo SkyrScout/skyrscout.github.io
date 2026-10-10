@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-10-09T10:56:35Z",
+    "updated_utc": "2026-10-10T15:53:36Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "IQGL0XfBHAk": {
-      "status": "upcoming",
-      "scheduled_start": "2026-10-10T10:00:00Z",
-      "title": "Botché Candé (2004) – FK Javor-Matis Ivanjica | Prva liga Srbije, Serbia (2nd Tier)",
-      "profiles": [
-        {
-          "player_slug": "botche-cande",
-          "kind": "main",
-          "main_video_id": "IQGL0XfBHAk"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
