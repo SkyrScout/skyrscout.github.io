@@ -5,7 +5,7 @@ profile_type: "video"
 title: "Andrés Romero (2003) – Monagas SC | Liga FUTVE, Venezuela"
 youtube: "https://www.youtube.com/watch?v=NfYmELmYQC0"
 
-report_by: "Scouty Pippen"
+report_by: "Scout Pilgrim"
 report_date: "15.03.2025"
 site_added: "14.10.2026"
 
@@ -29,7 +29,7 @@ summary: |
   💪 Athletic profile with solid technical fundamentals
 
 report: |
-  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
+  This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
 
   Andrés Romero is a Venezuelan central midfielder with outstanding passing range and vision. He is particularly impressive with his right foot, capable of playing very accurate long passes and switching play quickly from one side of the pitch to the other.
 
