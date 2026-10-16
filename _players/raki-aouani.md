@@ -89,6 +89,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/raki-aouani/profil/spieler/1010647"
 sofascore: "https://www.sofascore.com/football/player/aouani-raki/1410425#tab:season"
 
-podcast: ""
-podcast_timestamp: ""
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "39:32"
 ---

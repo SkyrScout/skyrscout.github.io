@@ -87,6 +87,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/edgar-piloyan/profil/spieler/707602"
 sofascore: "https://www.sofascore.com/football/player/edgar-piloyan/1158169#tab:season"
 
-podcast: ""
-podcast_timestamp: ""
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "1:29:23"
 ---

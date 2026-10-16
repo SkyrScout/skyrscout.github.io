@@ -85,6 +85,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/enzo/profil/spieler/1398431"
 sofascore: "https://www.sofascore.com/football/player/enzo-oliveira-gonzaga/1888305#tab:season"
 
-podcast: ""
-podcast_timestamp: ""
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "48:51"
 ---

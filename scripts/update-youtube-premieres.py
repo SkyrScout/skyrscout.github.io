@@ -43,6 +43,9 @@ YOUTUBE_LINE_RE = re.compile(
 )
 
 PUBLISHED_FALSE_RE = re.compile(r'(?mi)^published:\s*false\s*(?:#.*)?$')
+TITLE_LINE_RE = re.compile(
+    r'(?mi)^title:\s*(?:(?:"([^"]+)")|(?:\'([^\']+)\')|([^\n#]+))\s*$'
+)
 
 
 def warning(message: str) -> None:
@@ -58,6 +61,15 @@ def extract_front_matter(text: str) -> str:
         return ""
 
     return parts[1]
+
+
+def extract_profile_title(front_matter: str) -> str:
+    match = TITLE_LINE_RE.search(front_matter)
+    if not match:
+        return ""
+
+    value = next((group for group in match.groups() if group is not None), "")
+    return html.unescape(value).strip()
 
 
 def extract_profile_youtube_urls(front_matter: str) -> list[tuple[str, str]]:
@@ -123,6 +135,8 @@ def collect_player_videos() -> dict[str, list[dict[str, str]]]:
         if not profile_videos:
             continue
 
+        profile_title = extract_profile_title(front_matter)
+
         parsed: list[tuple[str, str]] = []
         for kind, url in profile_videos:
             video_id = extract_video_id(url)
@@ -153,6 +167,7 @@ def collect_player_videos() -> dict[str, list[dict[str, str]]]:
                 "player_slug": path.stem,
                 "kind": kind,
                 "main_video_id": main_video_id,
+                "profile_title": profile_title,
             }
             sources.setdefault(video_id, []).append(relation)
 
@@ -255,11 +270,36 @@ def fetch_upcoming(
             except ValueError:
                 continue
 
+            relations = video_sources.get(video_id, [])
+            profile_title = next(
+                (
+                    relation.get("profile_title", "")
+                    for relation in relations
+                    if relation.get("kind") == "main"
+                    and relation.get("profile_title")
+                ),
+                "",
+            )
+
+            public_relations = [
+                {
+                    key: value
+                    for key, value in relation.items()
+                    if key != "profile_title"
+                }
+                for relation in relations
+            ]
+
             upcoming[video_id] = {
                 "status": "upcoming",
                 "scheduled_start": scheduled_start,
-                "title": snippet.get("title") or "",
-                "profiles": video_sources.get(video_id, []),
+                # For featured player videos, the profile title is our source
+                # of truth. YouTube's Data API can briefly keep an old title
+                # after a public title edit, which otherwise leaves stale
+                # premiere cards on the site. Additional videos still fall
+                # back to the YouTube title.
+                "title": profile_title or snippet.get("title") or "",
+                "profiles": public_relations,
             }
 
     return dict(sorted(upcoming.items()))

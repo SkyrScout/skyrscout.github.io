@@ -73,6 +73,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/salah-oulad/profil/spieler/559330"
 sofascore: "https://www.sofascore.com/football/player/salah-oulad-mhand/1067114"
 
-podcast: ""
-podcast_timestamp: ""
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "1:05:59"
 ---

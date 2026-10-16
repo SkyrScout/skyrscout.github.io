@@ -94,6 +94,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/arney-rocha/profil/spieler/1016106"
 sofascore: "https://www.sofascore.com/football/player/arney-david-rocha-marimon/1902421#tab:season"
 
-podcast: ""
-podcast_timestamp: ""
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "27:40"
 ---

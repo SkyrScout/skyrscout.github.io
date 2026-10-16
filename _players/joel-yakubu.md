@@ -72,6 +72,6 @@ report: |
 transfermarkt: "https://www.transfermarkt.com/joel-yakubu/profil/spieler/1319423"
 sofascore: "https://www.sofascore.com/football/player/joel-yakubu/2489921#tab:season"
 
-podcast:
-podcast_timestamp:
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "1:20:27"
 ---

@@ -96,4 +96,7 @@ report: |
 
 transfermarkt: "https://www.transfermarkt.com/mamadou-sylla/profil/spieler/1281337"
 sofascore: "https://www.sofascore.com/no/football/player/mamadou-sylla/1943043#tab:season"
+
+podcast: "https://open.spotify.com/episode/1WASftxvRnJwE52foVTc2Q"
+podcast_timestamp: "1:41:50"
 ---
