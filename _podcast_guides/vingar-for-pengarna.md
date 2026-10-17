@@ -26,17 +26,25 @@ Vi starter med noen meget interessante spillere, som vi mener man må følge tet
 
 ### Kjartan Kari Halldorsson - "Islandshest" - [Video](https://www.youtube.com/watch?v=9uDC3zVGKwE)
 
+{% include podcast-player-card.html slug="kjartan-kari-halldorsson" %}
+
 22 år gammel venstre kantspiller fra Island. 165 cm høye Halldorsson var en snartur i Norge og Haugesund tilbake i 2023, før han returnerte til Island der han har herjet i Beste Deild de to siste sesongene og leverer målpoeng i bøtter og spann. Er han klar for en retur til Eliteserien?
 
 ### Elias Kallio - "Elias Bedrock" - [Video](https://www.youtube.com/watch?v=zjy_LmErQv0)
+
+{% include podcast-player-card.html slug="elias-kallio" %}
 
 22 år gammel venstre kantspiller fra Finland. Scorer og leverer assist som en gal mann for KäPa på andre nivå i Finland. Kan han ta steget til et vesentlig høyere nivå? Sandefjordsmør er et klassisk tilbehør til fisk, men passer det også til finsk?
 
 ### Enock Otoo - "The Otoo man Empire strikes back" - [Video](https://www.youtube.com/watch?v=OpncDIr7GIw)
 
+{% include podcast-player-card.html slug="enock-otoo" %}
+
 21 år gammel venstre kantspiller fra Ghana. Otoo kom ikke med på vår forrige episode, til tross for at han tidvis han herjet for FCI Levadia i Estland. Grunnen var et avrevet muskelfeste i lysken, som satte han ut av spill i 4 måneder. Nå er han tilbake for fullt, men kontrakten går ut ved årsskiftet.
 
 ### Promise Victor Eghomwanre - "Episodens bubblare" - [Video](https://www.youtube.com/watch?v=EioYpDLTqRM)
+
+{% include podcast-player-card.html slug="promise-victor-eghomwanre" %}
 
 19 år gammel anvendelig angrepsspiller fra Nigeria. Han kan spille både på kanten og midtbanen, og har til og med vært brukt som spiss. For øyeblikket er han på utlån til BFC Daugavpils fra FS Jelgava, begge i den øverste latviske ligaen. Vår bubblare for denne episoden, men kan han være den spilleren som har det største potensialet?
 
@@ -46,13 +54,19 @@ Det er alltid vanskelig å velge ut hvilke spillere som skal på Topp 3-lista, m
 
 ### Maciej Kuziemka - "Polsk Power" - [Video](https://www.youtube.com/watch?v=YUMS6p0MQBs)
 
+{% include podcast-player-card.html slug="maciej-kuziemka" %}
+
 19 år gammel høyre kantspiller fra Polen. Spiller for Wisla Krakow på andre nivå i Polen og leverer målpoeng på rekke og rad. U21 landslagsspiller som garantert er på blokka til alle klubber som har en seriøs scouting-avdeling.
 
 ### Olawale Farayola - "Ahora vengo Farayola, Farayola" - [Video](https://www.youtube.com/watch?v=4BuiuEc8xSw)
 
+{% include podcast-player-card.html slug="olawale-farayola" %}
+
 23 år gammel kantspiller fra Nigeria som kan spille på begge kantene. Farayola spiller for Alashkert Yerevan FC på øverste nivå i Armenia, og starten hans på denne sesongen har vært som å slippe Godzilla løs på Tokyo.
 
 ### Rogers Mato - "The Last King of Scoutland" - [Video](https://www.youtube.com/watch?v=K4lUsJ6nZgk)
+
+{% include podcast-player-card.html slug="rogers-mato" %}
 
 22 år gammel fra Uganda som like godt spiller høyre som venstre kant. Vardar Skopje og den Nord-Makedonske ligaen holder ikke noe høyt nivå, men det gjør Rogers Mato. Målfarlig og uortodoks i spillestilen har han hjulpet Uganda til en andreplass bak Algerie i VM-kvalifiseringen, men hva holder dette til når han uunngåelig skifter til en bedre liga?
 
