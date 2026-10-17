@@ -6,7 +6,7 @@ profile_type: "video"
 title: "Rogers Mato (2003) – Vardar Skopje | Prva Makedonska Fudbalska Liga, North Macedonia"
 youtube: "https://www.youtube.com/watch?v=K4lUsJ6nZgk"
 
-report_by: "Scouty Pippen"
+report_by: "Scout Pilgrim"
 report_date: "01.10.2025"
 site_added: "17.10.2026"
 
@@ -37,7 +37,7 @@ summary: |
   📈 Physical and technical profile with clear potential for a higher level
 
 report: |
-  This player profile is based on video scouting by Scouty Pippen. A full written scouting report is not currently available.
+  This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
 
   Rogers Mato is a 21-year-old Ugandan winger, soon turning 22, and already an established presence for his national team. He can operate effectively on either flank and is capable of striking the ball cleanly and powerfully with either foot.
 
