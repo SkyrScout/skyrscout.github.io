@@ -24,6 +24,8 @@ Som vanlig har vi sett på fire interessante spillere, som vi mener har spennend
 
 ### Aleksandr Shestyuk - Aleksandr den store - [Video](https://www.youtube.com/watch?v=Rpi-s88hG1g)
 
+{% include podcast-player-card.html slug="aleksandr-shestyuk" %}
+
 23 år gammel spiss fra Belarus. To gode sesonger i hjemlig liga gjorde at den atletiske og målfarlige spissen ble kalt opp til landslagstroppen mot Hellas i siste VM-kvalifiseringskamp. Kontrakten går ut ved nyttår og det er forventet at lag fra vesentlig sterkere ligaer er interessert.
 
 ### Kwame Peprah - The King of Left Field - [Video](https://www.youtube.com/watch?v=G6gEsxijm7g)
