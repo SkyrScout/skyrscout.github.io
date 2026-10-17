@@ -53,5 +53,5 @@ transfermarkt: "https://www.transfermarkt.com/robson-matheus/profil/spieler/6618
 sofascore: "https://www.sofascore.com/no/football/player/robson-matheus/1441657#tab:season"
 
 podcast: "https://open.spotify.com/episode/7iezBUgr0R28EE1FJU3THf"
-podcast_timestamp: ""
+podcast_timestamp: "48:30"
 ---
