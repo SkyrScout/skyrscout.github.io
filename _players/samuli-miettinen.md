@@ -22,24 +22,20 @@ two_footed_ability:
 positions: []
 
 summary: |
-  🇫🇮 Samuli Miettinen | 20 y/o CB
   🦶 Left-footed centre-back with excellent passing range
-  💪 Big, strong & good in duels
+  💪 Big, strong & effective in duels
   ⚡ Strong ball-carrying ability
-  ❓ Pace can look limited, though he may be quicker than first impressions suggest
-  ❌ Can allow runners in behind & lose his man in marking situations
-  🧠 Still makes some typical young-player errors
+  ⚠️ Can lose runners and switch off in marking situations
+  ❌ Pace and defensive concentration remain areas to improve
 
 report: |
   This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
 
-  Samuli Miettinen is a 20-year-old centre-back who is already a regular for Finnish champions KuPS. Big and strong at 188 cm, he is a good dueller and very comfortable with the ball.
+  At just 20 years old, Samuli Miettinen is already a regular for Finnish champions KuPS. A left-footed centre-back with strong ball-carrying ability and an excellent passing range, he fits exactly the type of profile many clubs are looking for. He is big and strong, competes well in duels and is very comfortable progressing the ball from the back.
 
-  A left-footed centre-back with strong ball-carrying ability and an excellent passing range. Exactly the profile everyone is looking for.
+  His pace is less convincing. He does not look particularly quick at first glance, although he may have a little more speed than initially apparent. More concerning are the occasions when he allows runners to get in behind him or loses his man in marking situations. These still look like typical young-player mistakes rather than fundamental flaws, but his defensive concentration and positioning need further development.
 
-  His pace is a question mark. He does not look particularly quick at first glance, although he may be faster than he initially appears. He can allow too many runs in behind him and sometimes loses his man in marking situations. These are typical young-player mistakes.
-
-  His body language when the opposition scores can also be poor.
+  His body language after conceding can also be poor at times, something that should improve as he gains experience and maturity.
 
 transfermarkt: "https://www.transfermarkt.com/samuli-miettinen/profil/spieler/807247"
 sofascore: "https://www.sofascore.com/football/player/samuli-miettinen/1175899#tab:season"
