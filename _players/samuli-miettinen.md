@@ -24,19 +24,19 @@ positions: []
 summary: |
   🇫🇮 Samuli Miettinen | 20 y/o CB
   🦶 Left-footed centre-back with excellent passing range
-  💪 Strong physically and in defensive duels
-  ⚡ Carries the ball forward well from defence
-  ⚠️ Pace is difficult to assess; he may be quicker than he first appears
-  ❌ Can be caught out when opponents run beyond him and can lose track of his man
+  💪 Big, strong & competitive in duels
+  ⚡ Comfortable driving out of defence with the ball
+  ⚠️ Questions over his pace, although he may be quicker than he first looks
+  ❌ Can be vulnerable to runs off his shoulder & occasionally lose his man
 
 report: |
   This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
 
-  At 20, Miettinen was already a regular for Finnish champions KuPS. He is a left-footed centre-back who carries the ball forward well and has an excellent range of passing – a combination that gives him a highly sought-after profile. At 188 cm, he is strong and competes well in duels.
+  Samuli Miettinen is only 20 and already a regular for reigning Finnish champions KuPS. A left-footed centre-back with strong ball-carrying ability and an excellent passing range, he fits exactly the type of profile clubs are looking for. At 188 cm, he is big and strong, and competes well in duels.
 
-  His pace is harder to judge. He can look slow at first, although he may have more speed than first impressions suggest. The bigger concern is that opponents can get beyond him too easily at times, while he can also lose track of his man when marking. These are typical mistakes from a young defender.
+  There are questions over his pace. He can look slow at times, although he may be quicker than first impressions suggest. The bigger concern is his defensive awareness: he can be vulnerable to runs off his shoulder and occasionally loses his man when marking. These are typical young-defender mistakes and areas he needs to sharpen.
 
-  His body language after conceding can also be poor.
+  His body language after conceding is also an area to improve.
 
 transfermarkt: "https://www.transfermarkt.com/samuli-miettinen/profil/spieler/807247"
 sofascore: "https://www.sofascore.com/football/player/samuli-miettinen/1175899#tab:season"
