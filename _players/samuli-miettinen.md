@@ -1,7 +1,7 @@
 ---
 layout: player
 published: true
-profile_type: "video"
+profile_type: video
 
 title: "Samuli Miettinen (2004) – KuPS | Veikkausliiga, Finland"
 youtube: "https://www.youtube.com/watch?v=wYWOpAaELnI"
@@ -22,20 +22,21 @@ two_footed_ability:
 positions: []
 
 summary: |
+  🇫🇮 Samuli Miettinen | 20 y/o CB
   🦶 Left-footed centre-back with excellent passing range
-  💪 Big, strong & effective in duels
-  ⚡ Strong ball-carrying ability
-  ⚠️ Can lose runners and switch off in marking situations
-  ❌ Pace and defensive concentration remain areas to improve
+  💪 Strong physically and in defensive duels
+  ⚡ Carries the ball forward well from defence
+  ⚠️ Pace is difficult to assess; he may be quicker than he first appears
+  ❌ Can be caught out when opponents run beyond him and can lose track of his man
 
 report: |
   This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
 
-  At just 20 years old, Samuli Miettinen is already a regular for Finnish champions KuPS. A left-footed centre-back with strong ball-carrying ability and an excellent passing range, he fits exactly the type of profile many clubs are looking for. He is big and strong, competes well in duels and is very comfortable progressing the ball from the back.
+  At 20, Miettinen was already a regular for Finnish champions KuPS. He is a left-footed centre-back who carries the ball forward well and has an excellent range of passing – a combination that gives him a highly sought-after profile. At 188 cm, he is strong and competes well in duels.
 
-  His pace is less convincing. He does not look particularly quick at first glance, although he may have a little more speed than initially apparent. More concerning are the occasions when he allows runners to get in behind him or loses his man in marking situations. These still look like typical young-player mistakes rather than fundamental flaws, but his defensive concentration and positioning need further development.
+  His pace is harder to judge. He can look slow at first, although he may have more speed than first impressions suggest. The bigger concern is that opponents can get beyond him too easily at times, while he can also lose track of his man when marking. These are typical mistakes from a young defender.
 
-  His body language after conceding can also be poor at times, something that should improve as he gains experience and maturity.
+  His body language after conceding can also be poor.
 
 transfermarkt: "https://www.transfermarkt.com/samuli-miettinen/profil/spieler/807247"
 sofascore: "https://www.sofascore.com/football/player/samuli-miettinen/1175899#tab:season"
