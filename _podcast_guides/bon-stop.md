@@ -54,16 +54,7 @@ Stor, sterk og atletisk midtstopper på 193 cm. Rask, meget god i dueller og kom
 
 ### Samuli Miettinen - Kupp fra KuPS? - [Video](https://www.youtube.com/watch?v=wYWOpAaELnI)
 
-<a class="podcast-guide-player-card" href="https://www.youtube.com/watch?v=wYWOpAaELnI" target="_blank" rel="noopener noreferrer">
-  <span class="podcast-guide-player-thumbnail">
-    <img src="https://img.youtube.com/vi/wYWOpAaELnI/hqdefault.jpg" alt="Video-thumbnail for Samuli Miettinen" loading="lazy">
-  </span>
-  <span class="podcast-guide-player-copy">
-    <span class="podcast-guide-player-label">SkyrScout-video</span>
-    <strong>Samuli Miettinen</strong>
-    <span class="podcast-guide-player-link">Se video →</span>
-  </span>
-</a>
+{% include podcast-player-card.html slug="samuli-miettinen" %}
 
 ## Bon Stop!
 
