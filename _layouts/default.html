@@ -24,8 +24,15 @@
 
     {% assign meta_description = page.meta_description | default: page.description %}
 
-    {% if meta_description == nil and page.summary %}
-        {% assign meta_description = page.summary | strip_newlines | strip %}
+    {% if meta_description == nil or meta_description == empty %}
+        {% if page.summary and page.summary != empty %}
+            {% assign meta_description = page.summary | strip_newlines | strip %}
+        {% elsif page.collection == 'players' and page.youtube %}
+            {% capture meta_description %}
+                SkyrScout video scouting profile: {{ page.title }}.
+            {% endcapture %}
+            {% assign meta_description = meta_description | strip %}
+        {% endif %}
     {% endif %}
 
     {% if meta_description %}
