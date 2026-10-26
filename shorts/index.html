@@ -787,18 +787,42 @@ description: "Quick scouting clips, individual actions and standout moments from
         });
     }
 
+    function normalizeShortSearchText(value) {
+        return String(value || "")
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/g, "")
+            .replace(/æ/g, "ae")
+            .replace(/œ/g, "oe")
+            .replace(/ø/g, "o")
+            .replace(/ł/g, "l")
+            .replace(/đ/g, "d")
+            .replace(/ð/g, "d")
+            .replace(/þ/g, "th")
+            .replace(/ß/g, "ss")
+            .replace(/ı/g, "i")
+            .replace(/ħ/g, "h")
+            .replace(/ŧ/g, "t")
+            .replace(/ŋ/g, "n")
+            .replace(/ə/g, "e")
+            .replace(/ƒ/g, "f")
+            .replace(/ĸ/g, "k")
+            .replace(/[’'`´‘]/g, "")
+            .replace(/[‐‑‒–—−\-_/.,:;()[\]{}|]+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
     function filterShorts() {
-        const searchTerm = shortSearchInput.value
-            .trim()
-            .toLowerCase();
+        const searchTerm = normalizeShortSearchText(shortSearchInput.value);
 
         const hasActiveSearch = Boolean(searchTerm);
         let matchingShorts = 0;
         let visibleShorts = 0;
 
         getShortCards().forEach(function (card) {
-            const matchesSearch =
-                (card.dataset.search || "").includes(searchTerm);
+            const shortText = normalizeShortSearchText(card.dataset.search);
+            const matchesSearch = shortText.includes(searchTerm);
 
             if (matchesSearch) {
                 matchingShorts += 1;
