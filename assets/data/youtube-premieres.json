@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-10-30T11:11:47Z",
+    "updated_utc": "2026-10-31T14:48:48Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "Wvt-a_KCdaE": {
-      "status": "upcoming",
-      "scheduled_start": "2026-10-31T11:00:00Z",
-      "title": "Juan Palacios (2006) – Paide Linnameeskond | Premium Liiga, Estonia",
-      "profiles": [
-        {
-          "player_slug": "juan-palacios",
-          "kind": "main",
-          "main_video_id": "Wvt-a_KCdaE"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
