@@ -24,11 +24,15 @@ Karol Czubak is reportedly emerging as **Slavia Prague's primary striker target*
 
 Polish journalist Karol Tyniec reports that the Motor Lublin centre-forward is currently the main name on Slavia's list as the Czech club considers options for its attack.
 
-Kanał Sportowy, citing Tyniec's report on X, says Czubak is ahead of other names under consideration, including [Rafał Adamski](/players/rafal-adamski/) and Szymon Włodarczyk. TransferFeed has since carried the same information.
+Kanał Sportowy, citing Tyniec's report on X, says Czubak is ahead of other names under consideration, including Rafał Adamski and Szymon Włodarczyk. TransferFeed has since carried the same information.
 
 Adamski is a particularly notable name on that list. Slavia already made a concrete move for the Legia Warszawa striker in the summer, with Meczyki reporting that a **€2 million offer was rejected**. The Czech club then continued to monitor him and sent representatives to watch him live against Radomiak Radom, where Adamski scored in a 5-0 win.
 
 SkyrScout has also profiled Adamski in detail, meaning two of the strikers now mentioned on Slavia's reported shortlist already have full scouting coverage on the site.
+
+<a class="report-button" href="/players/rafal-adamski/">
+    View Rafał Adamski scouting profile
+</a>
 
 At this stage, there is **no reported bid or direct contact with Motor Lublin over Czubak**, so his part of the story remains one of reported transfer interest rather than negotiations.
 
