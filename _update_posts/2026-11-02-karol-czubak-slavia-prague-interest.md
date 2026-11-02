@@ -30,10 +30,6 @@ Adamski is a particularly notable name on that list. Slavia already made a concr
 
 SkyrScout has also profiled Adamski in detail, meaning two of the strikers now mentioned on Slavia's reported shortlist already have full scouting coverage on the site.
 
-<a class="report-button" href="/players/rafal-adamski/">
-    View Rafał Adamski scouting profile
-</a>
-
 At this stage, there is **no reported bid or direct contact with Motor Lublin over Czubak**, so his part of the story remains one of reported transfer interest rather than negotiations.
 
 The link comes at a logical point in Czubak's career.
@@ -55,5 +51,9 @@ For now, Slavia's reported interest has not progressed to a bid or negotiations.
 But if Czubak really is first on their striker list, this is one to keep watching.
 
 <a class="report-button" href="/players/karol-czubak/">
-    Watch scouting video and view the full profile
+    Karol Czubak
+</a>
+
+<a class="report-button" href="/players/rafal-adamski/">
+    Rafał Adamski
 </a>
