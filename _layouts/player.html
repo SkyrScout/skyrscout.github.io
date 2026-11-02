@@ -813,10 +813,12 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
                     {% if update.player == current_player_slug %}
                         {% assign is_player_update = true %}
                     {% elsif update.players %}
-                        {% assign update_player_slugs = update.players | map: "slug" %}
-                        {% if update_player_slugs contains current_player_slug %}
-                            {% assign is_player_update = true %}
-                        {% endif %}
+                        {% for update_player in update.players %}
+                            {% assign update_player_slug = update_player.slug | default: update_player %}
+                            {% if update_player_slug == current_player_slug %}
+                                {% assign is_player_update = true %}
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
 
                     {% if is_player_update %}

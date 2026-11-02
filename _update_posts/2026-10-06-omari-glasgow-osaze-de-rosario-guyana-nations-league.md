@@ -1,7 +1,10 @@
 ---
 title: "Glasgow and De Rosario combine for 12 goal contributions in perfect Guyana window"
-player: "omari-glasgow"
-player_name: "Omari Glasgow"
+players:
+  - slug: "omari-glasgow"
+    name: "Omari Glasgow"
+  - slug: "osaze-de-rosario"
+    name: "Osaze De Rosario"
 sources:
   - name: "Guyana Football Federation"
     url: "https://www.guyanafootball.org/consecutive-wins-and-clean-sheets-for-the-guyana-golden-jaguars-as-2026-2027-nations-league-campaign-continues/"
@@ -40,10 +43,4 @@ Together, the pair have become a major part of a Guyana side now sitting on maxi
 
 SkyrScout has scouting profiles on both players, with Glasgow's profile now joining De Rosario's in our player database.
 
-<a class="report-button" href="/players/omari-glasgow/">
-    Watch Omari Glasgow scouting video and view the full profile
-</a>
 
-<a class="report-button" href="/players/osaze-de-rosario/">
-    Watch Osaze De Rosario scouting video and view the full profile
-</a>

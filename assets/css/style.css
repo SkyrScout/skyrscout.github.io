@@ -3323,6 +3323,19 @@ img.emoji {
     flex: 0 0 auto;
     width: max-content;
 }
+/* Multi-player update profile links */
+
+.update-player-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 1rem;
+}
+
+.update-player-actions .report-button {
+    margin-top: 0;
+}
+
 /* Update articles – improve readability */
 
 .update-article-content {

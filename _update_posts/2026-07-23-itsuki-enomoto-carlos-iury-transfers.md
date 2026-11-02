@@ -16,10 +16,4 @@ Brazilian winger Carlos Iury is heading abroad, joining Dewa United FC in Indone
 
 Both players were previously featured by SkyrScout during their time with the Thai club.
 
-<a class="report-button" href="/players/itsuki-enomoto/">
-    Watch Itsuki Enomoto scouting profile
-</a>
 
-<a class="report-button" href="/players/carlos-iury/">
-    Watch Carlos Iury scouting profile
-</a>

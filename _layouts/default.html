@@ -104,8 +104,14 @@
                 | append: '/hqdefault.jpg'
             %}
         {% endif %}
-    {% elsif page.collection == 'update_posts' and page.player %}
-        {% capture social_player_path %}/players/{{ page.player }}/{% endcapture %}
+    {% elsif page.collection == 'update_posts' %}
+        {% assign social_player_slug = page.player %}
+        {% if social_player_slug == nil and page.players and page.players.size > 0 %}
+            {% assign social_primary_player = page.players | first %}
+            {% assign social_player_slug = social_primary_player.slug | default: social_primary_player %}
+        {% endif %}
+
+        {% capture social_player_path %}/players/{{ social_player_slug }}/{% endcapture %}
         {% assign social_player_doc = site.players
             | where: "url", social_player_path
             | first

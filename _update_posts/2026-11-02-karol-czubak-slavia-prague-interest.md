@@ -1,7 +1,10 @@
 ---
 title: "Slavia Prague reportedly identify Karol Czubak as primary striker target"
-player: "karol-czubak"
-player_name: "Karol Czubak"
+players:
+  - slug: "karol-czubak"
+    name: "Karol Czubak"
+  - slug: "rafal-adamski"
+    name: "Rafał Adamski"
 sources:
   - name: "Kanał Sportowy"
     url: "https://kanalsportowy.pl/pilka-nozna/ekstraklasa/hitowy-transfer-czubaka-do-ligi-mistrzow-jest-glownym-celem/"
@@ -50,10 +53,4 @@ For now, Slavia's reported interest has not progressed to a bid or negotiations.
 
 But if Czubak really is first on their striker list, this is one to keep watching.
 
-<a class="report-button" href="/players/karol-czubak/">
-    Karol Czubak
-</a>
 
-<a class="report-button" href="/players/rafal-adamski/">
-    Rafał Adamski
-</a>

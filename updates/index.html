@@ -100,7 +100,7 @@ description: "News, rumours and confirmed developments involving players feature
                             {{ update.player_name }}
                             {% if update.players %}
                                 {% for update_player in update.players %}
-                                    {{ update_player.name }}
+                                    {{ update_player.name | default: update_player }}
                                 {% endfor %}
                             {% endif %}
                         {% endcapture %}

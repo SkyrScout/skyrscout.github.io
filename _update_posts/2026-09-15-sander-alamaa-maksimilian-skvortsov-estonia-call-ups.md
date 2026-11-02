@@ -1,7 +1,10 @@
 ---
 title: "Sander Alamaa and Maksimilian Skvortsov earn first Estonia senior call-ups"
-player: "sander-alamaa"
-player_name: "Sander Alamaa"
+players:
+  - slug: "sander-alamaa"
+    name: "Sander Alamaa"
+  - slug: "maksimilian-skvortsov"
+    name: "Maksimilian Skvortsov"
 sources:
   - name: "Baltic Football News"
     url: "https://x.com/Balticfootynews/status/2099799561212448896?s=20"
@@ -37,10 +40,4 @@ The first senior call-up is another major step in a rapid rise for both players.
 <blockquote class="twitter-tweet"><a href="https://x.com/Sotw_BonScout/status/2099869128710406229">View the post on X</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<a class="report-button" href="/players/sander-alamaa/">
-    Watch Sander Alamaa scouting video and view the full profile
-</a>
 
-<a class="report-button" href="/players/maksimilian-skvortsov/">
-    Watch Maksimilian Skvortsov scouting video and view the full profile
-</a>
