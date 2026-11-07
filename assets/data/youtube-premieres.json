@@ -1,21 +1,8 @@
 {
   "_meta": {
     "status": "ok",
-    "updated_utc": "2026-11-06T14:07:46Z",
+    "updated_utc": "2026-11-07T16:39:01Z",
     "source": "YouTube Data API"
   },
-  "videos": {
-    "hrF048Low5g": {
-      "status": "upcoming",
-      "scheduled_start": "2026-11-07T11:00:00Z",
-      "title": "Moussa Sambe (2005) – Tartu JK Tammeka | Premium Liiga, Estonia",
-      "profiles": [
-        {
-          "player_slug": "moussa-sambe",
-          "kind": "main",
-          "main_video_id": "hrF048Low5g"
-        }
-      ]
-    }
-  }
+  "videos": {}
 }
