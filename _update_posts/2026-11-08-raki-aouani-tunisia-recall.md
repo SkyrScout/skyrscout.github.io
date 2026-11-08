@@ -26,7 +26,7 @@ The call-up comes after a strong period at club level. Aouani has established hi
 
 DailySports described Aouani as a first-time senior call-up, but that is not accurate. The more interesting story is that he is back in the Tunisia squad and could now finally make his senior international debut.
 
-SkyrScout profiled Aouani earlier this year, highlighting his athleticism, ball-carrying and ability to cover ground in midfield.
+SkyrScout profiled Aouani earlier this year, highlighting his explosive acceleration, excellent dribbling, progressive ball-carrying and ability to threaten from either wing.
 
 <a class="report-button" href="/players/raki-aouani/">
     Watch scouting video and view the full profile
