@@ -13,6 +13,7 @@ position: "Central Midfielder"
 
 nationalities:
   - Finland
+  - Egypt
 birth_date: "2006-09-20"
 height_cm: 177
 dominant_foot: "Right"
