@@ -5,6 +5,8 @@ player_name: "Adam Jouhi"
 sources:
   - name: "RBKweb"
     url: "https://www.rbkweb.no/vis/18503"
+  - name: "Sofascore"
+    url: "https://www.sofascore.com/football/player/adam-jouhi/1502507#tab:season"
   - name: "Veikkausliiga"
     url: "https://www.veikkausliiga.com/pelaajat/257666/jouhi-adam"
   - name: "IF Gnistan"
