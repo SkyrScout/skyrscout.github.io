@@ -21,18 +21,16 @@ positions:
   - role: "Centre-Back"
     side: "centre"
     rank: 1
-
 summary: |
   🇫🇮 Luka Kuittinen | 21 y/o CB
   🪂 Strong in the air with good heading ability
-  💪 Good duel player with solid physical presence
-  🎯 Good passer from the back
-  ⚡ Decent pace
-  ⚠️ Can lose his marker and still shows some youthful defensive tendencies
+  💪 Physically strong & competitive in duels
+  🎯 Comfortable in possession with good distribution from the back
+  ⚡ Decent pace for a 190 cm centre-back
+  ⚠️ Can lose track of his man & still makes some typical young-defender mistakes
 
 report: |
   This player profile is based on video scouting by Scout Pilgrim. A full written scouting report is not currently available.
-
 transfermarkt: "https://www.transfermarkt.com/luka-kuittinen/profil/spieler/737999"
 sofascore: "https://www.sofascore.com/football/player/luka-kuittinen/1046867"
 
