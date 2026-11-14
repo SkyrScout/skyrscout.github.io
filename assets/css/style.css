@@ -170,11 +170,18 @@ img.emoji {
 
 .player-video {
     margin-bottom: 30px;
+    padding: clamp(16px, 2vw, 22px);
+
+    background: rgba(7, 11, 15, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-left: 4px solid #53c8ee;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
 }
 
 .player-video-intro {
-    margin: 0 0 12px;
-    padding: 0 2px;
+    margin: 0 0 14px;
 }
 
 .player-video-kicker {
