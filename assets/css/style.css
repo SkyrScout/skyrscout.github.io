@@ -172,6 +172,34 @@ img.emoji {
     margin-bottom: 30px;
 }
 
+.player-video-intro {
+    margin: 0 0 12px;
+    padding: 0 2px;
+}
+
+.player-video-kicker {
+    display: block;
+    margin-bottom: 5px;
+    color: #53c8ee;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.player-video-cta {
+    margin: 0;
+    color: #f3f7f9;
+    font-size: clamp(1rem, 2vw, 1.18rem);
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.player-video-cta span {
+    color: #53c8ee;
+}
+
 .video-wrapper {
     position: relative;
     width: 100%;

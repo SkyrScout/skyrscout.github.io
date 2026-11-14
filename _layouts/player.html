@@ -282,7 +282,16 @@ layout: default
                 | last
             %}
 
+            {% assign player_video_name = title_parts[0] | split: ' (' | first %}
+
             <section class="player-video">
+
+                <div class="player-video-intro">
+                    <span class="player-video-kicker">SCOUTING VIDEO</span>
+                    <p class="player-video-cta">
+                        <span aria-hidden="true">▶</span> Watch {{ player_video_name }} – full video report
+                    </p>
+                </div>
 
                 <div class="video-wrapper">
 
