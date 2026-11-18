@@ -404,6 +404,9 @@ description: "Scoutland Yard is the SkyrScout control room, featuring the latest
                         <article class="yard-update-card">
 
                             <p class="yard-update-date">
+                                {% if update.segment_label %}
+                                    <span class="update-segment-badge{% if update.segment_style %} update-segment-badge--{{ update.segment_style }}{% endif %}">{{ update.segment_label }}</span>
+                                {% endif %}
                                 {% if update.pinned %}
                                     <span class="yard-update-pin-badge">PINNED</span>
                                 {% endif %}

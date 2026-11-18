@@ -169,6 +169,14 @@ layout: default
     <article class="update-article">
 
         <header class="update-article-header">
+            {% if page.segment_label %}
+                <p class="update-article-segment">
+                    <span class="update-segment-badge{% if page.segment_style %} update-segment-badge--{{ page.segment_style }}{% endif %}">
+                        {{ page.segment_label }}
+                    </span>
+                </p>
+            {% endif %}
+
             <p class="update-article-date">
                 {{ page.date | date: "%d.%m.%Y" }}
             </p>

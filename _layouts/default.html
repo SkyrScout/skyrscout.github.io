@@ -66,7 +66,13 @@
     {% assign social_image = nil %}
     {% assign social_image_is_site_preview = false %}
 
-    {% if page.youtube %}
+    {% if page.social_image %}
+        {% if page.social_image contains 'http://' or page.social_image contains 'https://' %}
+            {% assign social_image = page.social_image %}
+        {% else %}
+            {% assign social_image = page.social_image | absolute_url %}
+        {% endif %}
+    {% elsif page.youtube %}
         {% assign youtube_id = nil %}
 
         {% if page.youtube contains '/shorts/' %}

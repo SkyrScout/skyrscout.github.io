@@ -4129,6 +4129,35 @@ img.emoji {
     border-radius: 4px;
 }
 
+
+.update-article-segment {
+    margin: 0 0 12px;
+}
+
+.update-segment-badge {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 3px 8px;
+    color: #081015;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    line-height: 1.25;
+    vertical-align: 1px;
+    text-transform: uppercase;
+    background: #9fdcff;
+    border-radius: 999px;
+}
+
+.update-segment-badge--investigates {
+    color: #1c1200;
+    background: #ffcf66;
+}
+
+.update-related-news-item .update-segment-badge {
+    margin-bottom: 6px;
+}
+
 /* Podcast guide: inline player video links */
 .podcast-guide-article h3 a,
 .podcast-guide-article h3 a:visited {

@@ -111,6 +111,9 @@ description: "News, rumours and confirmed developments involving players feature
                         >
 
                             <p class="update-date">
+                                {% if update.segment_label %}
+                                    <span class="update-segment-badge{% if update.segment_style %} update-segment-badge--{{ update.segment_style }}{% endif %}">{{ update.segment_label }}</span>
+                                {% endif %}
                                 {% if update.pinned %}
                                     <span class="update-pin-badge">PINNED</span>
                                 {% endif %}

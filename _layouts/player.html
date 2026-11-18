@@ -836,7 +836,12 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
                             <span class="update-related-news-date">
                                 {{ player_update_date | date: "%d.%m.%Y" }}
                             </span>
-                            <strong>{{ update.title }}</strong>
+                            <span>
+                                {% if update.segment_label %}
+                                    <span class="update-segment-badge{% if update.segment_style %} update-segment-badge--{{ update.segment_style }}{% endif %}">{{ update.segment_label }}</span>
+                                {% endif %}
+                                <strong>{{ update.title }}</strong>
+                            </span>
                         </a>
                         {% assign player_update_count = player_update_count | plus: 1 %}
                     {% endif %}
