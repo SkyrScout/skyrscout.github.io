@@ -18,7 +18,6 @@ birth_date: "2004-03-20"
 height_cm: 188
 dominant_foot: "Both"
 two_footed_ability: "Genuine"
-
 positions:
   - role: "Right Winger"
     side: "right"
@@ -28,8 +27,8 @@ summary: |
   🇭🇷🇧🇦 Fran Topić | 20 y/o RW
   🎯 Dangerous inverted winger / wide forward with 5 goals + 2 assists in 16 matches
   🦶 Genuine two-footed finisher with quality off either foot
-  🪄 Efficient dribbler who picks good moments to attack defenders
-  💪 Useful aerially for a winger and offers a strong physical presence
+  🪄 Effective dribbler who picks good moments to attack defenders
+  💪 Strong in the air for a winger & offers a solid physical presence
   ✨ An intriguing attacker with that difficult-to-define "something"
 
 report: |
@@ -39,11 +38,11 @@ report: |
 
   Although primarily used on the right, Topić's skill set suits an inverted winger or wide-forward role. He is a very good finisher with either foot, to the point that SkyrScout considers him genuinely two-footed.
 
-  He is also an efficient dribbler. Topić is not a classic high-volume dribbling winger, but he is good at recognising when he is in a favourable position to take on an opponent and tends to use his dribbling purposefully to create chances.
+  He is also an effective dribbler. Topić is not a classic high-volume dribbling winger, but he is good at recognising when he is in a favourable position to take on an opponent and tends to use his dribbling purposefully to create chances.
 
-  At 188 cm, he also offers useful aerial ability and is a fairly good header of the ball. His defensive work rate is not especially high, although that may partly reflect his role within the team.
+  At 188 cm, he is strong in the air for a winger and is a fairly good header of the ball. His defensive work rate is not especially high, although that may partly reflect his role within the team.
 
-  Topić is an interesting attacking player with a combination of finishing, efficient 1v1 ability and physical presence. There is also an intangible quality to his game, that difficult-to-define "something" that makes him stand out.
+  Topić is an interesting attacking player with a combination of finishing, effective 1v1 ability and physical presence. There is also an intangible quality to his game, that difficult-to-define "something" that makes him stand out.
 
   Height sources vary from 183 cm at SofaScore, through 185 cm elsewhere, to 188 cm at Transfermarkt. The 188 cm figure is considered the most likely to be accurate and up to date.
 
