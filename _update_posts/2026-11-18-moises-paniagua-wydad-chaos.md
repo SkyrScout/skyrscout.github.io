@@ -4,6 +4,7 @@ player: "moises-paniagua"
 player_name: "Moisés Paniagua"
 segment_label: "Scoutland Yard Investigates"
 segment_style: "investigates"
+social_image: "/assets/images/social/scoutland-yard-investigates/moises-paniagua-wydad-chaos.png"
 sources:
   - name: "Radio Mars"
     url: "https://radiomars.ma/fr/?p=8108"
