@@ -69,6 +69,17 @@ layout: default
 
 {% endif %}
 
+{% assign short_creator_href = nil %}
+
+{% if page.short_by == "Bon Scout" %}
+    {% assign short_creator_href = "/about/#bon-scout" %}
+{% elsif page.short_by == "Scout Pilgrim" %}
+    {% assign short_creator_href = "/about/#scout-pilgrim" %}
+{% elsif page.short_by == "Scouty Pippen" %}
+    {% assign short_creator_href = "/about/#scouty-pippen" %}
+{% endif %}
+
+
 {% assign co_signature_player_count = 0 %}
 
 {% if page.co_signature_player_slugs %}
@@ -261,17 +272,29 @@ layout: default
 
             {% endif %}
 
-            {% if page.report_date or page.site_added %}
+            {% if page.short_by or page.report_date or page.site_added %}
                 <p class="report-byline">
+                    {% if page.short_by %}
+                        Short by
+                        {% if short_creator_href %}
+                            <a href="{{ short_creator_href }}">{{ page.short_by }}</a>
+                        {% else %}
+                            {{ page.short_by }}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if page.short_by and page.report_date %}
+                        •
+                    {% endif %}
+
                     {% if page.report_date %}
                         YouTube: {{ page.report_date }}
                     {% endif %}
 
-                    {% if page.report_date and page.site_added %}
-                        •
-                    {% endif %}
-
                     {% if page.site_added %}
+                        {% if page.short_by or page.report_date %}
+                            •
+                        {% endif %}
                         Added to SkyrScout: {{ page.site_added }}
                     {% endif %}
                 </p>

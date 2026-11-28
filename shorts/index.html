@@ -5,10 +5,18 @@ description: "Quick scouting clips, individual actions and standout moments from
 ---
 
 {% assign bon_short_count = site.shorts | where: "short_by", "Bon Scout" | size %}
+{% assign pilgrim_short_count = site.shorts | where: "short_by", "Scout Pilgrim" | size %}
+{% assign pippen_short_count = site.shorts | where: "short_by", "Scouty Pippen" | size %}
 
 <style>
     .shorts-creator-counts-list {
-        grid-template-columns: minmax(0, 360px);
+        grid-template-columns: repeat(auto-fit, minmax(240px, 360px));
+    }
+
+    @media (max-width: 650px) {
+        .shorts-creator-counts-list {
+            grid-template-columns: 1fr;
+        }
     }
 
     .short-list-signature-card {
@@ -310,13 +318,35 @@ description: "Quick scouting clips, individual actions and standout moments from
 
             <div class="players-scout-counts-list shorts-creator-counts-list">
 
-                <a
-                    class="players-scout-count"
-                    href="/about/#bon-scout"
-                >
-                    <strong>{{ bon_short_count }}</strong>
-                    <span>Bon Scout</span>
-                </a>
+                {% if bon_short_count > 0 %}
+                    <a
+                        class="players-scout-count"
+                        href="/about/#bon-scout"
+                    >
+                        <strong>{{ bon_short_count }}</strong>
+                        <span>Bon Scout</span>
+                    </a>
+                {% endif %}
+
+                {% if pilgrim_short_count > 0 %}
+                    <a
+                        class="players-scout-count"
+                        href="/about/#scout-pilgrim"
+                    >
+                        <strong>{{ pilgrim_short_count }}</strong>
+                        <span>Scout Pilgrim</span>
+                    </a>
+                {% endif %}
+
+                {% if pippen_short_count > 0 %}
+                    <a
+                        class="players-scout-count"
+                        href="/about/#scouty-pippen"
+                    >
+                        <strong>{{ pippen_short_count }}</strong>
+                        <span>Scouty Pippen</span>
+                    </a>
+                {% endif %}
 
             </div>
 
@@ -586,13 +616,26 @@ description: "Quick scouting clips, individual actions and standout moments from
                             <p class="player-list-byline">
 
                                 {% if short.short_by %}
+                                    {% assign short_creator_href = nil %}
+                                    {% if short.short_by == "Bon Scout" %}
+                                        {% assign short_creator_href = "/about/#bon-scout" %}
+                                    {% elsif short.short_by == "Scout Pilgrim" %}
+                                        {% assign short_creator_href = "/about/#scout-pilgrim" %}
+                                    {% elsif short.short_by == "Scouty Pippen" %}
+                                        {% assign short_creator_href = "/about/#scouty-pippen" %}
+                                    {% endif %}
+
                                     Short by
-                                    <a
-                                        class="player-list-author-link"
-                                        href="/about/#bon-scout"
-                                    >
+                                    {% if short_creator_href %}
+                                        <a
+                                            class="player-list-author-link"
+                                            href="{{ short_creator_href }}"
+                                        >
+                                            {{ short.short_by }}
+                                        </a>
+                                    {% else %}
                                         {{ short.short_by }}
-                                    </a>
+                                    {% endif %}
                                 {% endif %}
 
                                 {% if short.short_by and short.report_date %}
