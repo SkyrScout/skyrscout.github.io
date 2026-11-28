@@ -277,7 +277,7 @@ layout: default
                     {% if page.short_by %}
                         Short by
                         {% if short_creator_href %}
-                            <a href="{{ short_creator_href }}">{{ page.short_by }}</a>
+                            <a class="report-author-link" href="{{ short_creator_href }}">{{ page.short_by }}</a>
                         {% else %}
                             {{ page.short_by }}
                         {% endif %}
